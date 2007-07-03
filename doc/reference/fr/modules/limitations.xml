@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="shards-limitations">
+    <title>Limitations</title>
+    <sect1 id="shards-limitations-api" revision="1">
+        <title>Implémentation incomplète de l'API Hibernate</title>
+        <para>
+            Pour accélérer la sortie initiale d'Hibernate Shards, certaines parties
+            de l'API Hibernate que nous utilisons rarement n'ont pas été implémentées.
+            Bien sûr, des choses que nous utilisons rarement sont probablement critiques
+            pour d'autres applications, donc si nous vous avons délaissé, nous nous en excusons.
+            Nous prévoyons d'implémenter le reste de l'API rapidement. Pour savoir quelles
+            méthodes ne sont pas implémentées, veuillez voir la javadoc de
+            <classname>ShardedSessionImpl</classname>, <classname>ShardedCriteriaImpl</classname>,
+            et <classname>ShardedQueryImpl</classname>.
+        </para>
+    </sect1>
+    <sect1 id="shards-limitations-cross-shard" revision="1">
+        <title>Graphes d'objets inter-fragments</title>
+        <para>
+            Hibernate Shards ne prend pas en charge actuellement les graphes d'objets
+            inter-fragments.
+        </para>
+        <para>
+            En d'autres mots, il est illégal de créer une association entre des objets A et B
+            quand A et B vivent sur des fragments différents. Pour contourner cela,
+            il faut définir une propriété sur A qui identifie de manière unique un
+            objet de type B, et l'utiliser pour charger un objet B (Vous souvenez-vous comment
+            la vie était avant Hibernate ? Oui, juste comme ça).
+        </para>
+        <para>
+            Par exemple :
+            <programlisting>
+                --besoin d'un domaine pour les exemples--
+            </programlisting>
+        </para>
+        <para>
+            Dans certaines applications, votre modèle peut être construit de telle
+            manière qu'il est difficile de faire ce genre d'erreur, mais dans d'autres
+            ça peut être plus facile. La chose effrayante ici est que si vous faîtes
+            cette erreur, Hibernate prendra en compte le "mauvais" objet dans la liste
+            pour en faire un nouvel objet et, supposant que vous avez activé les
+            opérations en cascade pour cette relation, créera une nouvelle version de
+            cet objet sur un fragment différent. C'est le problème. Pour aider à
+            éviter ce genre de chose, nous avons un intercepteur appelé
+            <classname>CrossShardRelationshipDetectingInterceptor</classname> qui
+            vérifie les relations inter-fragments pour tous les objets qui sont
+            créés ou sauvegargés.
+        </para>
+        <para>
+            Malheureusement il y a un coût associé à l'utilisation de <classname>CrossShardRelationshipDetectingInterceptor</classname>.
+            Pour déterminer le fragment sur lequel un objet associé réside, nous avons besoin de récupérer
+            l'objet en base de données, donc si vous avez des associations chargées à
+            la demande l'intercepteur résoudra ces associations comme partie de ses vérifications.
+            C'est potentiellement assez coûteux, et peut ne pas être approprié pour un
+            système de production. Avec ça en tête, nous avons simplifié l'activation ou non
+            de cette vérification via la propriété "hibernate.shard.enable_cross_shard_relationship_checks"
+            que nous avons référencé dans le chapitre sur la configuration. Si cette
+            propriété est positionnée à "true", un <classname>CrossShardRelationshipDetectingInterceptor</classname>
+            sera inscrit à chaque <classname>ShardedSession</classname> créée.
+            Ne vous inquiétez pas, vous pouvez toujours inscrire votre propre intercepteur.
+            Notre attente est que la plupart des applications auront activé cette
+            vérification dans leurs environnements de développement et d'assurance qualité,
+            et désactivé dans leurs environnements de tests et de production.
+        </para>
+    </sect1>
+    <sect1 id="shards-limitations-txns" revision="1">
+        <title>Transactions réparties</title>
+        <para>
+            Hibernate Shards ne fournit pas de prise en charge pour les transactions
+            réparties dans un environnement non géré. Si votre application requiert
+            des transactions réparties, vous avez besoin de brancher une implémentation
+            de gestion de transactions qui prend en charge les transactions réparties.
+        </para>
+    </sect1>
+    <sect1 id="shards-limitations-interceptors" revision="1">
+        <title>Intercepteurs à état</title>
+        <para>
+            Nous avons fait de notre mieux pour que, dans l'ensemble, le code
+            d'Hibernate Core s'exécute bien lors de l'utilisation d'Hibernate Shards.
+            Il y a, malheureusement, des exceptions, et une d'entre elles est quand
+            votre application a besoin d'utliser un
+            <classname>org.hibernate.Interceptor</classname>
+            qui maintient son état.
+        </para>
+        <para>
+            Les intercepteurs à état (NdT : stateful) ont besoin d'un traitement particulier parce que,
+            sous le capot, nous instancions une
+            <classname>org.hibernate.SessionImpl</classname> par fragment. Si nous voulons un
+            <classname>Interceptor</classname> associé à la
+            <classname>Session</classname>, nous avons besoin de passer par
+            l'<classname>Interceptor</classname>, quelqu'il soit, qui était fourni quand la
+            <classname>ShardedSession</classname> a été créée. Si cet
+            <classname>Interceptor</classname> est à état, l'état de
+            l'<classname>Interceptor</classname> pour une
+            <classname>Session</classname> sera visible dans toutes les
+            <classname>Session</classname>s. Si vous réfléchissez aux choses qui sont typiquement faites dans des
+            <classname>Interceptor</classname>s à état (audit par exemple), vous pouvez voir comment
+            cela peut poser problème.
+        </para>
+        <para>
+            Notre solution est d'obliger les utilisateurs à fournir une
+            <classname>StatefulInterceptorFactory</classname> quand ils créent leurs
+            objets <classname>Session</classname> (lesquels sont réllement des
+            <classname>ShardedSession</classname>s). Si
+            l'<classname>Interceptor</classname> fourni implémente cette interface,
+            Hibernate Shards assurera qu'une nouvelle instance du type de
+            <classname>Interceptor</classname> retournée par
+            <classname>StatefulInterceptorFactory.newInstance()</classname> sera passée
+            à chaque <classname>Session</classname> qui est créée sous le capot.
+            Voici un exemple :
+            <programlisting><![CDATA[
+public class MyStatefulInterceptorFactory extends BaseStatefulInterceptorFactory {
+    public Interceptor newInstance() {
+        return new MyInterceptor();
+    }
+}
+]]></programlisting>
+
+        </para>
+        <para>
+            Beaucoup d'implémentations d'<classname>Interceptor</classname> requièrent
+            une référence à la <classname>Session</classname> à laquelle elles sont associées.
+            Dans le cas d'un <classname>Interceptor</classname> à état, vous voulez que
+            votre <classname>Interceptor</classname> ait une référence à la
+            <classname>Session</classname> réelle (spécifique au fragment). Pour faciliter
+            cela, vous avez le choix d'avoir le type d'<classname>Interceptor</classname>
+            qui est construit par la <classname>StatefulInterceptorFactory</classname>
+            [...]
+            Si l'<classname>Interceptor</classname> contruit par la
+            <classname>StatefulInterceptorFactory</classname> implémente cette interface,
+            Hibernate Shards fournira
+            
+            to have a reference to the real (shard-specific) <classname>Session</classname>, not the shard-aware
+            <classname>Session</classname>. In order to facilitate this, you have the choice of having the type of
+            <classname>Interceptor</classname> that is constructed by the
+            <classname>StatefulInterceptorFactory</classname> implement the
+            <classname>RequiresSession</classname> interface.[...] If the
+            <classname>Interceptor</classname> constructed by the
+            <classname>StatefulInterceptorFactory</classname> implements this interface, Hibernate Shards will provide the
+            <classname>Interceptor</classname> with a reference to the real (shard-specific)
+            <classname>Session</classname> once the factory constructs it. This way your
+            <classname>Interceptor</classname> can safely and accurately interact with a specific shard.  Here's an example:
+            <programlisting><![CDATA[
+public class MyStatefulInterceptor implements Interceptor, RequiresSession {
+    private Session session;
+
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    ... // Implémentation de l'interface Interceptor
+}
+]]></programlisting>
+        </para>
+        <para>
+            Vu la nature fondamentale du problème, nous ne nous attendons pas à changer cela de suite.
+        </para>
+    </sect1>
+    <sect1 id="shards-limitations-base-ids" revision="1">
+        <title>Des objets avec des identifiants qui sont des types de base</title>
+        <para>
+            Avec Hibernate, peu importe ce que vos objets du modèle utilisent commen identifiant
+            tant qu'il peut être représenté par un <classname>Serializable</classname>
+            (ou encapsulé automatiquement dans un <classname>Serializable</classname>).
+            Avec Hibernate Shards vous êtres légèrement plus contraints parce que nous
+            ne prenons pas en charge les types de base.
+        </para>
+        <para>
+            Ainsi, ceci n'est pas bon :
+            <programlisting><![CDATA[
+public class WeatherReport {
+    private int weatherReportId;  // problème
+
+    public int getWeatherReportId() {
+        return weatherReportId;
+    }
+
+    public void setWeatherReportId(int id) {
+        weatherReportId = id;
+    }
+}
+]]></programlisting>
+        </para>
+        <para>
+            Mais ceci est adorable :
+            <programlisting><![CDATA[
+public class WeatherReport {
+    private Integer weatherReportId;  // correct
+
+    public Integer getWeatherReportId() {
+        return weatherReportId;
+    }
+
+    public void setWeatherReportId(Integer id) {
+        weatherReportId = id;
+    }
+}
+]]></programlisting>
+        </para>
+        <para>
+            Avons-nous une bonne raison à cette limitation ? Pas réellement. C'est
+            le résultat d'un choix d'implémentation qui a filtré et qui a un peu
+            aggravé la vie de chacun. Si vous devez simplement utiliser
+            Hibernate Shards et modéliser vos identifiants avec des types de base,
+            n'appelez pas <classname>Session.saveOrUpdate</classname>. Nous avons pour
+            objectif de trouver une solution à ce problème bientôt et de vous laisser modéliser
+            comme bon vous semble (malgré cela, nous préférerions des identifiants objet parce
+            qu'ils permettent de déterminer plus facilement si un objet s'est vu assigner
+            un identifiant ou pas).
+        </para>
+    </sect1>
+    <sect1 id="shards-limitations-replicated-data" revision="1">
+        <title>Données répliquées</title>
+        <para>
+            Même si c'est un framework pour le partionnement horizontal, il y a pratiquement
+            toujours des données en lecture seules (ou du moins changeant rarement) qui vivent
+            dans chaque fragment. Si vous lisez juste ces entités nous n'avons pas de problème,
+            mais si vous voulez associer ces entités avec des entités fragmentées nous allons
+            avoir des problèmes. Supposez que vous ayez une table Country sur chaque fragment avec
+            exactement les mêmes données, et supposez que WeatherReport a un membre Country.
+            Comment garantissons-nous que le Country que vous associez à ce WeatherReport
+            est associé au même fragment que celui du WeatherReport ? Si nous nous trompons,
+            nous finirons avec une relation entre plusieurs fragments, et ce n'est pas bien.
+        </para>
+        <para>
+            Nous avons des idées pour rendre cela facile à traiter, mais nous ne les avons
+            pas encore implémentées. Pour faire court, nous pensons qu'il est plus sûr
+            pour vous de ne pas créer relations objet entre des entités fragmentées et
+            des entités répliquées. En d'autres mots, modélisez seulement la relation
+            comme vous feriez si vous n'utilisiez pas d'ORM. Nous savons que c'est
+            maladroit et annuyant. Nous nous en occuperons bientôt.
+        </para>
+    </sect1>
+</chapter>

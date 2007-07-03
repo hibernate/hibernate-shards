@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="shards-configuration">
+    <title>Configuration</title>
+    <sect1 id="shards-configuration-overview" revision="1">
+        <title>Vue d'ensemble</title>
+        <para>
+            Lors de l'utilisation d'Hibernate Shards, vous vous retrouvez la plupart du temps
+            en train de faire des appels typiques à l'API d'Hibernate Core. Cependant,
+            pour avoir votre source de données fragmentées proprement configurée,
+            vous aurez besoin de comprendre quelques concepts spécifiques à Hibernate
+            Shards. Nous présenterons ces nouveaux concepts dans le cadre d'un exemple
+            concret. Examinons le modèle objet, le schéma de base de données, et
+            le mapping que nous utiliserons dans nos exemples à travers la documentation.
+        </para>
+        <para>
+            Notre application d'exemple recevra des rapports météorologiques de villes
+            du monde entier et stockera cette information dans une base de données
+            relationnelles.
+        </para>
+        <sect2 id="shards-configuration-overview-sample-schema" revision="1">
+            <title>Schéma de base de données d'un rapport météorologique</title>
+            <programlisting><![CDATA[
+CREATE TABLE WEATHER_REPORT (
+    REPORT_ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    CONTINENT ENUM('AFRICA', 'ANTARCTICA', 'ASIA', 'AUSTRALIA', 'EUROPE', 'NORTH AMERICA', 'SOUTH AMERICA'),
+    LATITUDE FLOAT,
+    LONGITUDE FLOAT,
+    TEMPERATURE INT,
+    REPORT_TIME TIMESTAMP
+);
+                ]]></programlisting>
+        </sect2>
+        <sect2 id="shards-configuration-overview-sample-model" revision="1">
+            <title>Modèle objet d'un rapport météorologique</title>
+            <programlisting><![CDATA[
+public class WeatherReport {
+    private Integer reportId;
+    private String continent;
+    private BigDecimal latitude;
+    private BigDecimal longitude;
+    private int temperature;
+    private Date reportTime;
+
+    ... // getters et setters
+}
+                ]]></programlisting>
+        </sect2>
+        <sect2 id="shards-configuration-overview-sample-mapping" revision="1">
+            <title>Contenu de weather.hbm.xml</title>
+            <programlisting><![CDATA[
+<hibernate-mapping package="org.hibernate.shards.example.model">
+    <class name="WeatherReport" table="WEATHER_REPORT">
+        <id name="reportId" column="REPORT_ID">
+            <generator class="native"/>
+        </id>
+        <property name="continent" column="CONTINENT"/>
+        <property name="latitude" column="LATITUDE"/>
+        <property name="longitude" column="LONGITUDE"/>
+        <property name="temperature" column="TEMPERATURE"/>
+        <property name="reportTime" type="timestamp" column="REPORT_TIME"/>
+    </class>
+</hibernate-mapping>
+                ]]></programlisting>
+        </sect2>
+    </sect1>
+    <sect1 id="shards-configuration-sf" revision="1">
+        <title>Obtenir une ShardedSessionFactory</title>
+        <para>
+            Avant que nous vous montrions comment obtenir une
+            <classname>ShardedSessionFactory</classname>,
+            examinons le code qui vous permet d'avoir une
+            <classname>SessionFactory</classname> standard.
+            <programlisting><![CDATA[
+1    public SessionFactory createSessionFactory() {
+2        Configuration config = new Configuration();
+3        config.configure("weather.hibernate.cfg.xml");
+4        config.addResource("weather.hbm.xml");
+5        return config.buildSessionFactory();
+6    }
+]]></programlisting>
+            C'est assez simple. Nous instancions un nouvel objet
+            <classname>Configuration</classname> object (ligne 2), indiquons à
+            <classname>Configuration</classname> de lire ses propriétés à
+            partir d'une ressource nommée "weather.hibernate.cfg.xml" (ligne 3),
+            et ensuite fournissons
+            "weather.hbm.xml" comme une source de données de mapping OR (ligne 4).
+            Nous demandons alors à <classname>Configuration</classname>
+            de construire une
+            <classname>SessionFactory</classname>, que nous retournons (ligne 5).
+        </para>
+        <para>
+            Regardons aussi le fichier de configuration que nous chargeons :
+            <programlisting><![CDATA[
+ 1    <!-- Contenu de weather.hibernate.cfg.xml -->
+ 2    <hibernate-configuration>
+ 3      <session-factory name="HibernateSessionFactory">
+ 4        <property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+ 5        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+ 6        <property name="connection.url">jdbc:mysql://localhost:3306/mydb</property>
+ 7        <property name="connection.username">my_user</property>
+ 8        <property name="connection.password">my_password</property>
+ 9      </session-factory>
+ 10   </hibernate-configuration>
+                ]]></programlisting>
+        </para>
+        <para>
+            Comme vous pouvez le voir, il n'y a rien de particulièrement intéressant
+            dans le fichier de configuration ou le fichier de mapping.
+        </para>
+        <para>
+            Vous serez content d'apprendre que le processus de configuration de votre
+            application pout utiliser Hibernate Shards n'est pas radicalement différent.
+            La principale différence est que nous fournissons l'information de connexité
+            pour plusieurs sources de données, et nous décrivons aussi le comportement
+            de fragmentation désiré via une
+            <classname>ShardStrategyFactory</classname>. Examinons une exemple de code
+            de configuration pour notre application de rapports météorologiques,
+            que nous allons exécuter avec 3 fragments.
+            <programlisting><![CDATA[
+1     public SessionFactory createSessionFactory() {
+2         Configuration prototypeConfig = new Configuration().configure("shard0.hibernate.cfg.xml");
+3         prototypeConfig.addResource("weather.hbm.xml");
+4         List<Configuration> shardConfigs = new ArrayList<Configuration>();
+5         shardConfigs.add(new Configuration().configure("shard0.hibernate.cfg.xml"));
+6         shardConfigs.add(new Configuration().configure("shard1.hibernate.cfg.xml"));
+7         shardConfigs.add(new Configuration().configure("shard2.hibernate.cfg.xml"));
+8         ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
+9         ShardedConfiguration shardedConfig = new ShardedConfiguration(
+10            prototypeConfig,
+11            shardConfigs,
+12            shardStrategyFactory);
+13        return shardedConfig.buildShardedSessionFactory();
+14    }
+15
+16    ShardStrategyFactory buildShardStrategyFactory() {
+17        ShardStrategyFactory shardStrategyFactory = new ShardStrategyFactory() {
+18            public ShardStrategy newShardStrategy(List shardIds) {
+19                RoundRobinShardLoadBalancer loadBalancer = new RoundRobinShardLoadBalancer(shardIds);
+20                ShardSelectionStrategy pss = new RoundRobinShardSelectionStrategy(loadBalancer);
+21                ShardResolutionStrategy prs = new AllShardsShardResolutionStrategy(shardIds);
+22                ShardAccessStrategy pas = new SequentialShardAccessStrategy();
+23                return new ShardStrategyImpl(pss, prs, pas);
+24            }
+25        };
+26        return shardStrategyFactory;
+27    }
+  ]]></programlisting>
+        </para>
+        <para>
+            Que se passe-t-il ici ? D'abord, vous noterez que nous allouons réellement
+            quatre <classname>Configurations</classname>. La première <classname>Configuration</classname>
+            que nous allouons (ligne 2) est la <classname>Configuration</classname> prototype.
+            La <classname>ShardedSessionFactory</classname> que nous contruisons
+            éventuellement (ligne 13) contiendra des références aux 3 objets
+            <classname>SessionFactory</classname> standards. Chacun de ces 3 objets
+            <classname>SessionFactory</classname> standards aura été contruit à partir
+            de la configuration prototype. Les seuls attributs qui différeront de ces
+            objets <classname>SessionFactory</classname> standards sont :
+            <itemizedlist mark="opencircle">
+                <listitem>
+                    <para>connection.url</para>
+                </listitem>
+                <listitem>
+                    <para>connection.user</para>
+                </listitem>
+                <listitem>
+                    <para>connection.password</para>
+                </listitem>
+            </itemizedlist>
+            Les trois objets <classname>Configuration</classname> que nous chargeons
+            (lignes 5 à 7) seront consultés pour l'url, l'utilisateur et le mot de
+            passe spécifiques aux bases de données des fragments, et c'est tout. Ce qui
+            veut dire que si vous changez les paramètres du pool de connexions dans
+            shard1.hibernate.cfg.xml, ils seront ignorés. Si vous ajoutez un autre fichier
+            de mapping à la <classname>Configuration</classname> chargée avec les
+            propriétés définies dans shard2.hibernate.cfg.xml, il sera ignoré.
+            A l'exception des propriétés listées plus haut, la configuration de notre
+            <classname>SessionFactory</classname> vient entièrement de la
+            <classname>Configuration</classname> prototype. Ceci peut sembler un peu strict,
+            mais le code de fragmentation a besoin de supposer que tous les fragments
+            sont configurés de la même manière.
+        </para>
+        <para>
+            Si vous examinez ce code et pensez qu'il semble un peu trop stupide pour
+            fournir des documents de configuration pleinement formés qui, pour économiser
+            deux propriétés spéciales, sont ignorés, soyez rassurés, nous avons regardé
+            ce code et pensé la même chose. Nous prévoyons de faire évoluer le mécanisme
+            de configuration. Nous avons choisi ce mécanisme-ci parce qu'il autorisait
+            la plus grande réutilisation de code de configuration qui était déjà disponible
+            dans Hibernate Core.
+        </para>
+        <para>
+            Une fois que nous avons construit nos objets
+            <classname>Configuration</classname>, nous avons besoin d'assembler
+            une <classname>ShardStrategyFactory</classname> (ligne 8). Une
+            <classname>ShardStrategyFactory</classname> est un objet qui sait comment
+            créer les 3 types de stratégie que les programmeurs peuvent utiliser
+            pour contrôler le comportement de fragmentation du système. Pour plus
+            d'informations à propos de ces stratégies, veuillez regarder les
+            chapitres intitulés "Stratégies de fragmentation".
+        </para>
+        <para>
+            Maintenant que nous avons instancié notre <classname>ShardStrategyFactory</classname>,
+            nous pouvons construire une <classname>ShardedConfiguration</classname> (ligne 9),
+            et une fois que nous avons notre <classname>ShardedConfiguration</classname> nous
+            pouvons lui demander de créer une <classname>ShardedSessionFactory</classname> (ligne 13).
+            Il est important de noter que <classname>ShardedSessionFactory</classname> étend <classname>SessionFactory</classname>.
+            Ceci signifie que nous pouvons retourner une <classname>SessionFactory</classname> standard (ligne 1).
+            Le code Hibernate de notre application n'a pas besoin de savoir qu'il
+            interagit avec des données fragmentées.
+        </para>
+        <para>
+            Examinons maintenant les fichiers de configuration et de mapping que nous
+            avons chargé. Vous les reconnaîtrez, mais il y a quelques ajouts et modifications clef
+            en rapport avec la fragmentation.
+            <programlisting><![CDATA[
+ 1    <!-- Contenu de shard0.hibernate.cfg.xml -->
+ 2    <hibernate-configuration>
+ 3      <session-factory name="HibernateSessionFactory0"> <!-- notez le nom différent -->
+ 4        <property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+ 5        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+ 6        <property name="connection.url">jdbc:mysql://localhost:3306/mydb</property>
+ 7        <property name="connection.username">my_user</property>
+ 8        <property name="connection.password">my_password</property>
+ 9        <property name="hibernate.connection.shard_id">0</property> <!-- nouveau -->
+ 10       <property name="hibernate.shard.enable_cross_shard_relationship_checks">true</property> <!-- nouveau -->
+ 11    </session-factory>
+ 12  </hibernate-configuration>
+                ]]></programlisting>
+            <programlisting><![CDATA[
+ 1    <!-- Contenu de shard1.hibernate.cfg.xml -->
+ 2    <hibernate-configuration>
+ 3      <session-factory name="HibernateSessionFactory1"> <!-- notez le nom différent -->
+ 4        <property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+ 5        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+ 6        <property name="connection.url">jdbc:mysql://localhost:3306/mydb</property>
+ 7        <property name="connection.username">my_user</property>
+ 8        <property name="connection.password">my_password</property>
+ 9        <property name="hibernate.connection.shard_id">1</property> <!-- nouveau -->
+ 10       <property name="hibernate.shard.enable_cross_shard_relationship_checks">true</property> <!-- nouveau -->
+ 11    </session-factory>
+ 12  </hibernate-configuration>
+                ]]></programlisting>
+            Nous passerons outre le contenu de shard2.hibernate.cfg.xml puisqu'il
+            devrait être évident. Nous donnons à chaque session factory un nom
+            unique via l'attribut "name" de l'élément "session-factory", et nous leur
+            donnons aussi un identifiant de fragment. Ceci est obligatoire. Si vous
+            essayez de configurer une
+            <classname>ShardedSessionFactory</classname> avec un objet
+            <classname>Configuration</classname> qui n'a pas d'identifiant de fragment,
+            vous obtiendrez une erreur. Actuellement nous obligeons à ce que l'idenfiant de
+            fragment d'une des session factory soit 0. Au-delà de ça, la représentation
+            interne d'un identifiant de fragment est un, donc toutes les valeurs dans
+            cette plage sont légales. Finalement, chaque fragment qui est mappé dans une
+            <classname>ShardedSessionFactory</classname> doit avoir un identifiant unique.
+            Si vous avez un fragment dupliqué, vous aurez une erreur.
+        </para>
+        <para>
+            L'autre ajout notable est la propriété, plutôt verbeuse mais heureusement descriptive,
+            "hibernate.shard.enable_cross_shard_relationship_checks.". Vous pouvez lire
+            d'avantage à ce propos dans le chapitre sur les limitations.
+        </para>
+        <para>
+            Maintenant regardons de nouveau comment le fichier de mapping a changé.
+            <programlisting><![CDATA[
+<hibernate-mapping package="org.hibernate.shards.example.model">
+    <class name="WeatherReport" table="WEATHER_REPORT">
+        <id name="reportId" column="REPORT_ID" type="long">
+            <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
+        </id>
+        <property name="continent" column="CONTINENT"/>
+        <property name="latitude" column="LATITUDE"/>
+        <property name="longitude" column="LONGITUDE"/>
+        <property name="temperature" column="TEMPERATURE"/>
+        <property name="reportTime" type="timestamp" column="REPORT_TIME"/>
+    </class>
+</hibernate-mapping>
+                ]]></programlisting>
+            Le seul changement signficatif dans le fichier de mapping par rapport à la
+            version sans fragmentation est dans notre sélection d'un générateur
+            d'idenfitiant pour données fragmentées. Nous couvrirons cette génération
+            d'identifiants plus en détail dans le chapitre sur les stratégies de
+            fragmentation.
+        </para>
+    </sect1>
+    <sect1 id="shards-configuration-limitations" revision="1">
+        <title>Limitations de la configuration</title>
+        <para>
+            Beaucoup d'entre vous réaliserons rapidement que le mécanisme de configuration
+            que nous avons fourni ne fonctionnera pas si vous configurez votre
+            <classname>SessionFactory</classname> via JPA ou Hibernate Annotations.
+            C'est vrai. Nous espérons que ces insuffisances seront corrigées sous peu.
+        </para>
+    </sect1>
+</chapter>

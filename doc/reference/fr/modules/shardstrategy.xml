@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="shards-shardstrategy">
+    <title>Shard Strategy</title>
+    <sect1 id="shards-strategy-overview" revision="1">
+        <title>Vue d'ensemble</title>
+        <para>
+            Hibernate Shards vous donne une énorme flexibilité pour configurer la
+            manière dont vos données sont réparties à travers vos fragments et la
+            façon d'interroger vos données à travers vos fragments. Le point d'entrée
+            pour cette configuration est l'interface
+            <classname>org.hibernate.shards.strategy.ShardStrategy</classname> :
+            <programlisting><![CDATA[
+public interface ShardStrategy {
+    ShardSelectionStrategy getShardSelectionStrategy();
+    ShardResolutionStrategy getShardResolutionStrategy();
+    ShardAccessStrategy getShardAccessStrategy();
+}
+]]></programlisting>
+            Comme vous pouvez le voir, une
+            <classname>ShardStrategy</classname> est composée de trois sous-stratégies.
+            Nous parlerons d'elles chacune leur tour.
+        </para>
+    </sect1>
+    <sect1 id="shards-strategy-shardaccess" revision="1">
+        <title>ShardAccessStrategy</title>
+        <para>
+            Nous commencerons avec la plus simple des stratégies :
+            <classname>ShardAccessStrategy</classname>. Hibernate Shards utilise la
+            <classname>ShardAccessStrategy</classname> pour déterminer comment appliquer
+            les opérations de base de données à travers plusieurs fragments. La
+            <classname>ShardAccessStrategy</classname> est consultée lorsque vous
+            exécutez une requête sur vos fragments. Nous avons déjà fourni deux implémentations
+            de cette interface que nous pensons suffisantes pour la majorité des applications.
+        </para>
+        <sect2 id="shards-strategy-shardaccess-seq" revision="1">
+            <title>SequentialShardAccessStrategy</title>
+            <para>
+                <classname>SequentialShardAccessStrategy</classname> se comporte
+                exactement comme l'indique son nom : les requêtes sont exécutées
+                en séquence sur vos fragments. Selon le type de requêtes que vous
+                exécutez, vous pouvez vouloir éviter cette implémentation parce
+                qu'elle exécutera les requêtes à travers les fragments dans le même
+                ordre à chaque fois. Si vous exécutez beaucoup de requêtes limitées
+                en nombre de lignes retournées et non triées, ceci <emphasis>pourrait</emphasis>
+                donner lieu à une pauvre utilisation de vos fragments (les fragments
+                apparaissant en tête de liste seront harcelés, et ceux en fin de liste
+                resteront là à ne rien faire, à se croiser les doigts). Si ceci vous
+                concerne, vous devriez plutôt envisager d'utiliser la
+                <classname>LoadBalancedSequentialShardAccessStrategy</classname>.
+                Cette implémentation reçoit une vue alternée de vos fragments à chaque
+                invocation, et ainsi distribue également la charge de requêtes.
+            </para>
+        </sect2>
+        <sect2 id="shards-strategy-shardaccess-par" revision="1">
+            <title>ParallelShardAccessStrategy</title>
+            <para>
+                <classname>ParallelShardAccessStrategy</classname> se comporte
+                exactement comme l'indique son nom : les requêtes sont exécutées
+                sur les fragments en parallèle. Lorsque vous utilisez cette
+                implémentation, vous avez besoin de fournir un
+                <classname>java.util.concurrent.ThreadPoolExecutor</classname> qui
+                soit approprié aux performances et aux besoins de votre application.
+                Voici un simple exemple :
+                <programlisting><![CDATA[
+    ThreadFactory factory = new ThreadFactory() {
+        public Thread newThread(Runnable r) {
+            Thread t = Executors.defaultThreadFactory().newThread(r);
+            t.setDaemon(true);
+            return t;
+        }
+    };
+
+    ThreadPoolExecutor exec =
+        new ThreadPoolExecutor(
+            10,
+            50,
+            60,
+            TimeUnit.SECONDS,
+            new SynchronousQueue<Runnable>(),
+            factory);
+
+    return new ParallelShardAccessStrategy(exec);
+    ]]></programlisting>
+Veuillez noter que ce sont juste des valeurs d'exemple - une configuration propre
+d'un pool de threads va au-delà de la portée de ce document.
+            </para>
+        </sect2>
+    </sect1>
+    <sect1 id="shards-strategy-shardselection" revision="1">
+        <title>ShardSelectionStrategy</title>
+        <para>
+            Hibernate Shards utilise la
+            <classname>ShardSelectionStrategy</classname> pour déterminer le fragment
+            sur lequel un nouvel objet devrait être créé. Il vous revient entièrement
+            de décider à quoi doit ressembler l'implémentation de cette interface,
+            mais nous avons fourni une implémentation round-robin pour commencer
+            (<classname>RoundRobinShardSelectionStrategy</classname>). Nous espérons
+            que de nombreuses applications voudrons implémenter une fragmentation
+            basée sur les attributs, ainsi pour notre application d'exemple qui
+            stocke les rapports météo fragmentons les rapports par continent dont
+            les rapports sont originaires :
+            
+            <programlisting><![CDATA[
+public class WeatherReportShardSelectionStrategy implements ShardSelectionStrategy {
+    public ShardId selectShardIdForNewObject(Object obj) {
+        if(obj instanceof WeatherReport) {
+            return ((WeatherReport)obj).getContinent().getShardId();
+        }
+        throw new IllegalArgumentException();
+    }
+}
+]]></programlisting>
+
+        </para>
+        <para>
+            Il est important de noter que si un graphe d'objets multi-niveau est sauvegardé
+            via la fonctionnalité de cascade d'Hibernate, la
+            <classname>ShardSelectionStrategy</classname> sera seulement consultée
+            lors de la sauvegarde de l'objet de plus haut niveau. Tous les objets
+            enfants seront automatiquement sauvegardés sur le même fragment que le
+            parent. Vous pouvez trouver votre <classname>ShardSelectionStrategy</classname>
+            plus facile à implémenter si vous empêcher les développeur de créer de
+            nouveaux objets à plus d'un niveau dans votre hiérarchie d'objets. Vous
+            vous pouvez accomplir cela en informant votre <classname>ShardSelectionStrategy</classname>
+            des objets de plus haut niveau de votre modèle, et ainsi lever une exception
+            si elle rencontre un objet qui ne fait pas partie de cet ensemble. Si vous
+            ne souhaitez pas imposer cette restriction, souvenez-vous juste que si
+            vous effectuez une sélection des fragments basée sur les attributs, les
+            attributs que vous utilisez pour prendre votre décision ont besoin d'être
+            disponibles sur chaque objet qui est passé à session.save().
+        </para>
+    </sect1>
+    <sect1 id="shards-strategy-shardresolution" revision="1">
+        <title>ShardResolutionStrategy</title>
+        <para>
+            Hibernate Shards utilise la
+            <classname>ShardResolutionStrategy</classname> pour déterminer l'ensemble
+            des fragments sur lesquels un objet avec un identifiant donné peut résider.
+            Revenons à notre application de rapports météorologiques et supposons,
+            par exemple, que chaque continent a un éventail d'identifiants qui lui
+            sont associés. N'importe quand nous assignons un identifiant à un WeatherReport,
+            nous en prenons un qui tombe dans l'intervalle légal pour le continent
+            auquel le WeatherReport appartient. Notre <classname>ShardResolutionStrategy</classname>
+            peut utiliser cette information pour identifier sur quel fragment un
+            WeatherReport réside simplement en regardant l'identifiant :
+            <programlisting><![CDATA[
+public class WeatherReportShardResolutionStrategy extends AllShardsShardResolutionStrategy {
+    public WeatherReportShardResolutionStrategy(List<ShardId> shardIds) {
+        super(shardIds);
+    }
+
+    public List<ShardId> selectShardIdsFromShardResolutionStrategyData(
+            ShardResolutionStrategyData srsd) {
+        if(srsd.getEntityName().equals(WeatherReport.class.getName())) {
+            return Continent.getContinentByReportId(srsd.getId()).getShardId();
+        }
+        return super.selectShardIdsFromShardResolutionStrategyData(srsd);
+    }
+}
+]]></programlisting>
+            Il est intéressant de montrer que nous n'avons pas (encore) implémenté
+            de cache qui mette en correspondance le nom de l'entité et l'identifiant
+            du fragment, la <classname>ShardResolutionStrategy</classname> serait
+            un excellent endroit pour brancher un tel cache.
+        </para>
+        <para>
+            Shard Resolution est étroitement lié à la génération d'identifiants. Si
+            vous sélectionnez un générateur d'identifiants pour votre classe qui code
+            l'identifiant du fragment dans l'identifiant de l'objet, votre
+            <classname>ShardResolutionStrategy</classname> ne sera plus jamais
+            appelée. Si vous avez l'intention d'utiliser seulement des générateurs
+            d'identifiant qui codent l'identifiant du fragment dans les identifiants
+            de vos objets, vous devriez utiliser
+            <classname>AllShardsShardResolutionStrategy</classname> en tant que
+            <classname>ShardResolutionStrategy</classname>.
+        </para>
+    </sect1>
+    <sect1 id="shards-strategy-idgen" revision="1">
+        <title>Génération d'identifiants</title>
+        <para>
+            Hibernate Sharding prend en charge n'importe quelle stratégie de génération
+            d'identifiant ; le seul pré-requis est que les identifiants d'objet soient
+            uniques à travers tous les fragments. Il y a quelques simples stratégies
+            de génération d'identifiant qui prennent en charge ce pré-requis :
+            <itemizedlist>
+                <listitem>
+                    <para>
+                        <emphasis>Génération native d'identifiants</emphasis>
+                        - utilisez la stratégie de génération d'identfiants
+                        <code>native</code> d'Hibernate, et configurez vos bases
+                        de données de manière à ce que les identifiants n'entrent
+                        jamais en collision. Par exemple, si vous utilisez la génération
+                        d'identifiants <code>identity</code>, vous avez 5 bases de
+                        données à travers lesquelles vous répartirez les données
+                        de manière égale, et vous ne vous attendez pas à n'avoir
+                        jamais plus d'1 million d'enregistrements, vous pourriez
+                        configurer la base de données 0 pour retourner des identifiants
+                        commençant à 0, la base de données 1 pour retourner des
+                        identifiants commençant à 200000, la base de données 2 pour
+                        retourner des identifiants commençant à 400000, etc. Tant
+                        que vos suppositions concernant les données sont correctes,
+                        les identifiants de vos objets n'entreront jamais en collision.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>Génération d'UUID au niveau applicatif</emphasis>
+                        - par définition vous ne devez pas vous préoccuper des collisions
+                        d'identifiants, mais vous avez besoin d'être disposé à traiter les
+                        clefs primaires peu maniables de nos objets.
+                    </para>
+                    <para>
+                        Hibernate Shards fournit une implémentation d'un générateur d'UUID
+                        simple et prenant en compte les fragments -
+                        <classname>ShardedUUIDGenerator</classname>.
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <emphasis>Génération hilo répartie</emphasis>
+                        - l'idée est d'avoir une table hilo sur un seul fragment, lequel assure
+                        que les identifiants générés par l'algorithme hi/lo sont uniques à travers
+                        tous les fragments. Les deux principaux inconvénients de cette approche
+                        sont que les accès à la table hilo peuvent devenir le goulot d'étranglement
+                        dans la génération d'identifiants, et que stocker la table hilo sur
+                        une seule base de données crée un seul point de panne du système.
+                    </para>
+                    <para>
+                        Hibernate Shards fournit une implémentation de l'algorithme de génération hilo répartie -
+                        <classname>ShardedTableHiLoGenerator</classname>.  Cette implémentation est basée sur
+                        <classname>org.hibernate.id.TableHiLoGenerator</classname>, donc pour des informations
+                        sur la structure attendue de la table de la base de données table de laquelle l'implémentation
+                        dépend, veuillez lire la documentation de cette classe.
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            La génération d'identifiants est aussi étroitement liée à la résolution de fragment.
+            L'objectif de la résolution de fragment est de trouve le fragment sur lequel vit un objet,
+            pour un identifiant d'objet donné. Il y a deux manières d'accomplir cela :
+            <itemizedlist>
+                <listitem>
+                    <para>Utiliser la
+                        <classname>ShardResolutionStrategy</classname>, décrite au-dessus
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>Coder l'identifiant du fragment dans l'identifiant de l'objet durant
+                        la génération de l'identifiant, et récupérer l'identifiant du fragment
+                        pendant la réslution du fragment
+                    </para>
+                </listitem>
+            </itemizedlist>
+            Le principal avantage de coder l'identifiant du fragment dans l'identifiant
+            de l'objet est que cela permet à Hibernate Shards de résoudre le fragment
+            à partir de l'identifiant de l'objet beaucoup plus rapidement, sans
+            recherche en base de données, sans recherche dans un cache, etc. Hibernate
+            Shards ne requiert aucun algorithme spécifique pour coder/décoder l'identifiant
+            d'un fragment - tout ce que vous avezà faire est d'utiliser un générateur
+            d'identifiants qui implémente l'interface
+            <classname>ShardEncodingIdentifierGenerator</classname>. Des deux générateurs
+            d'identifiants inclus dans Hibernate Shards, le
+            <classname>ShardedUUIDGenerator</classname>
+            implémente cette interface.
+        </para>
+    </sect1>
+</chapter>

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<chapter id="shards-querying">
+    <title>Requêtes</title>
+    <sect1 id="shards-querying-overview" revision="1">
+        <title>Vue d'ensemble</title>
+        <para>
+            Exécuter des requêtes à travers des fragments peut être difficile. Dans
+            ce chapitre nous parlerons de ce qui fonctionne, ce qui ne fonctionne pas, et
+            ce que vous pouvez faire pour éviter les ennuis.
+        </para>
+    </sect1>
+    <sect1 id="shards-querying-criteria" revision="1">
+        <title>Criteria</title>
+        <para>
+            Comme nous en avons parlé dans le chapitre sur les limitations, nous
+            n'avons pas encore d'implémentation complète de l'API Hibernate Core.
+            Cette limitation s'applique à <classname>ShardedCriteriaImpl</classname>,
+            qui est une implémentation de l'interface <classname>Criteria</classname>
+            prenant en compte les fragments. Dans ce chapitre nous n'entrerons pas dans
+            les détails des choses spécifiques qui n'ont pas été implémentées. Nous
+            allons plutôt discuter des types de requêtes <classname>Criteria</classname>
+            qui sont problématiques dans un environnement fragmenté.
+        </para>
+        <para>
+            Dis simplement, les requêtes qui effectuent des tris posent problème. Pourquoi ?
+            Parce que nous ne pouvons pas retourner une liste proprement triée sans la
+            capacité de comparer une valeur de la liste à toute autre valeur de la liste,
+            et la liste entière n'est pas disponible jusqu'à ce que tous les résultats
+            des requêtes individuelles aient été collectés dans la partie applicative.
+            Le tri a besoin de s'effectuer à l'intérieur d'Hibernate Shards, et pour
+            que cela arrive, nous demandons à tous les objets retournés par une requête
+            <classname>Criteria</classname> avec une clause "order-by" d'implémenter
+            l'interface <classname>Comparable</classname>. Si le type des objets que
+            vous retournez n'implémente pas cette interface, vous aurez une exception.
+        </para>
+        <para>
+            Les clauses "distinct" posent aussi problème. Tellement de problèmes, en fait,
+            que pour le moment nous les prenons même pas en charge. Désolé pour ça.
+        </para>
+        <para>
+            D'un autre côté, alors que "distinct" et "order-by" posent problèmes, les
+            agrégats fonctionnent bien. Considérez l'exemple suivante :
+            <programlisting><![CDATA[
+        // récupère la moyenne de toutes les températures enregistrées depuis jeudi dernier
+        Criteria crit = session.createCriteria(WeatherReport.class);
+        crit.add(Restrictions.gt("timestamp", lastThursday));
+        crit.setProjection(Projections.avg("temperature"));
+        return crit.list();
+            ]]></programlisting>
+            Dans un environnement avec un seul fragment, cette requête peut obtenir
+            une réponse facilement, mais dans un environnement avec plusieurs fragments
+            c'est un peu plus embêtant. Pourquoi ? Parce qu'obtenir la moyenne de chaque
+            fragment n'est pas suffisant pour calculer la moyenne à travers tous les
+            fragments. Pour calculer ce morceau d'informations, nous n'avons pas seulement
+            besoin de la moyenne mais du nombre d'enregistrements de chaque fragment.
+            C'est exactement ce que nous faisons, et l'impact sur les performances
+            (faire un "count" supplémentaire dans chaque requête) est probablement
+            négligeable. Maintenant, si nous voulions la médiane, nous aurions des problèmes
+            (ajouter le "count" à la requête ne fournirait pas assez d'informations pour
+            réaliser le calcul), mais pour le moment <classname>Criteria</classname>
+            n'expose pas de fonction médiane, donc nous traiterons ça lorsque cela
+            arrivera et sera un problème.
+        </para>
+    </sect1>
+    <sect1 id="shards-querying-hql" revision="1">
+        <title>HQL</title>
+        <para>
+            Notre prise en charge de HQL n'est pas, pour le moment, aussi bon que
+            la prise en charge des requêtes <classname>Criteria</classname>. Nous n'avons
+            pas encore implémenté d'extensions à l'analyseur lexico-syntaxique de
+            requêtes, donc nous prenons pas en charge "distinct", "order-by", ou les agrégats.
+            Cela signifie que vous pouvez seulement utiliser HQL pour des requêtes très
+            simples. Vous feriez probablement mieux d'éviter le HQL de cette version
+            si vous le pouvez.
+        </para>
+    </sect1>
+    <sect1 id="shards-querying-strategy" revision="1">
+        <title>Use of Shard Strategy When Querying</title>
+        <para>
+            Le seul composant de votre stratégie de fragmentation qui est consulté lors
+            de l'exécution d'une requête (<classname>Criteria</classname> ou HQL) est
+            la <classname>ShardAccessStrategy</classname>. <classname>ShardSelectionStrategy</classname>
+            est ignorée parce qu'exécuter une requête ne crée pas de nouvel enregistrement
+            dans la base de données. <classname>ShardResolutionStrategy</classname>
+            est ignorée parce qu'actuellement nous partons du principe que vous voulez
+            toujours que votre requête soit exécutée sur tous les fragments. Si ce n'est
+            pas le cas, la meilleure chose à faire de transtyper votre <classname>Session</classname>
+            en une <classname>ShardedSession</classname> et d'en extraire la <classname>Session</classname>
+            spécifique au fragment dont vous avez besoin. Maladroit, mais ça fonctionne.
+            Nous proposerons une meilleure solution dans une prochaine version.
+        </para>
+    </sect1>
+</chapter>

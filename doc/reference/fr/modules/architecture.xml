@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<chapter id="shards-architecture">
+    <title>Architecture</title>
+    <sect1 id="shards-architecture-overview" revision="1">
+        <title>Vue d'ensemble</title>
+        <para>
+            Hibernate Shards est une extension d'Hibernate Core, conçu pour encapsuler et minimiser
+            la complexité de travailler avec des données fragmentées (horizontalement
+            partitionnées). Hibernate Shards peut être conceptuellement divisé en
+            deux domaines que vous aurez besoin de comprendre pour réussir. Les deux
+            domaines sont :
+            <itemizedlist mark="opencircle">
+                <listitem>
+                    <para>la logique de fragmentation généralisée ;</para>
+                </listitem>
+                <listitem>
+                    <para>la logique de fragmentation spécifique à l'application.</para>
+                </listitem>
+            </itemizedlist>
+            Nous discuterons de chacun de ces domaines à leur tour.
+        </para>
+    </sect1>
+    <sect1 id="shards-architecture-general" revision="1">
+        <title>La logique de fragmentation généralisée</title>
+        <para>Le but premier d'Hibernate Shards est de permettre aux développeurs
+        d'application d'interroger et de négocier des ensembles de données fragmentés
+        en utilisant l'API standard d'Hibernate Core. Ceci permet aux applications
+        existantes qui utilisent Hibernate, mais pas encore la fragmentation, d'adopter
+        notre solution sans modification majeure s'ils atteignent cette étape. Ceci
+        permet aussi aux développeurs d'application qui connaissent Hibernate, qui ont
+        besoin de fragmentation et qui partent de zéro, de devenir productifs en un
+        minimum de temps parce qu'il n'y a pas besoin de découvrir un nouvel outil.
+        Avec cet objectif en tête, il n'est pas surprenant qu'Hibernate Shards
+        soit composé principalement d'implémentations prenant en compte la fragmentation
+        de beaucoup d'interfaces d'Hibernate Core que vous connaissez et aimez.
+        </para>
+        <para>
+            La plupart du code applicatif en rapport avec Hibernate interagit avec
+            quatre interfaces fournies par Hibernate Core :
+            <itemizedlist mark="opencircle">
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.Session</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.SessionFactory</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.Criteria</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.Query</classname>
+                    </para>
+                </listitem>
+            </itemizedlist>
+        </para>
+        <para>
+            Hibernate Shards fournit des extensions prenant en compte la fragmentation
+            à ces quatre interfaces, ainsi votre code n'a pas besoin de savoir qu'il
+            interagit avec un ensemble de données fragmenté (à moins, bien sûr, que vous
+            ayez des raisons spécifiques pour révéler ce fait). Les extensions sont :
+            <itemizedlist mark="opencircle">
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.shards.session.ShardedSession</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.shards.ShardedSessionFactory</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.shards.criteria.ShardedCriteria</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.shards.query.ShardedQuery</classname>
+                    </para>
+                </listitem>
+            </itemizedlist>
+            Les implémentations que nous fournissons pour ces quatre interfaces
+            servent de moteur à fragmentation, lequel connaît la logique de fragmentation
+            spécifique à l'application à travers vos différents stockages de données.
+            Nous n'espérons pas que les développeurs d'application aient besoin
+            d'écrire trop de code qui interagit sciemment avec ces interfaces, donc si
+            vous vous retrouvez en train de déclarer ou de passer des instances "Sharded",
+            revenez un pas en arrière et regardez si vous ne pouvez pas plutôt le faire avec
+            l'interface parente.
+        </para>
+    </sect1>
+    <sect1 id="shards-architecture-application" revision="1">
+        <title>La logique de fragmentation spécifique à l'application</title>
+        <para>
+            Chaque application qui utilise Hibernate Shards aura ses propres règles pour
+            répartir ses données à travers les fragments. Plutôt que de tenter d'anticiper
+            toutes ces règles (effort pratiquement voué à l'échec), nous avons fourni
+            un ensemble d'interfaces derrière lesquelles vous pouvez coder la logique
+            de distribution des données de votre application. Ces interfaces sont :
+            <itemizedlist mark="opencircle">
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.shards.strategy.selection.ShardSelectionStrategy</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.shards.strategy.resolution.ShardResolutionStrategy</classname>
+                    </para>
+                </listitem>
+                <listitem>
+                    <para>
+                        <classname>org.hibernate.shards.strategy.access.ShardAccessStrategy</classname>
+                    </para>
+                </listitem>
+            </itemizedlist>
+            Les implémentations que vous fournissez pour ces trois interfaces, plus
+            l'implémentation de la génération des identifiants que vous choisissez
+            (plus d'informations à ce sujet dans le chapitre "Stratégie de fragmentation")
+            constituent la <emphasis>stratégie de fragmentation</emphasis> de votre
+            application.
+        </para>
+        <para>
+            Pour vous aider à mettre en place cela rapidement, Hibernate Shards arrive
+            avec deux implémentations simples de ces interfaces. Nous attendons qu'elles
+            vous aident dans votre prototypage ou dans les premières étapes du développement
+            applicatif réel, mais nous espérons aussi que, tôt ou tard, la plupart des
+            applications fourniront leurs propres implémentations.
+        </para>
+        <para>Pour plus d'informations sur les stratégies de fragmentation, veuillez consulter le chapitre du même nom.</para>
+    </sect1>
+    <sect1 id="shards-architecture-requirements" revision="1">
+        <title>Pré-requis système</title>
+        <para>
+          Hibernate Shards a les mêmes pré-requis qu'Hibernate Core, avec la restriction
+          supplémentaire qui exige Java 1.5 ou supérieur.
+        </para>
+  </sect1>
+</chapter>

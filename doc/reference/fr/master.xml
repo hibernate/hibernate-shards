@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.3CR3//EN"
+        "../../../../../Hibernate3/doc/reference/support/docbook-dtd/docbookx.dtd" [
+        <!ENTITY architecture SYSTEM "modules/architecture.xml">
+        <!ENTITY configuration SYSTEM "modules/configuration.xml">
+        <!ENTITY shardstrategy SYSTEM "modules/shardstrategy.xml">
+        <!ENTITY resharding SYSTEM "modules/resharding.xml">
+        <!ENTITY querying SYSTEM "modules/querying.xml">
+        <!ENTITY limitations SYSTEM "modules/limitations.xml">
+        ]>
+<book lang="fr">
+    <bookinfo>
+        <title>Hibernate Shards</title>
+        <subtitle>Horizontal Partitioning With Hibernate</subtitle>
+        <subtitle>Reference Guide</subtitle>
+        <releaseinfo>3.0.0.Beta1</releaseinfo>
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="images/hibernate_logo_a.png" format="PNG"/>
+            </imageobject>
+        </mediaobject>
+    </bookinfo>
+    <toc/>
+    <preface id="preface">
+        <title>Préface</title>
+        <para>Traducteur(s) : Vincent Ricard</para>
+        <para>
+            Vous ne pouvez pas toujours mettre vos données relationnelles dans une
+            seule base de données relationnelle. Parfois vous avez simplement trop
+            de données. Parfois vous avez une architecture de déploiement répartie
+            (la latence réseau entre la Californie et l'Inde peut être trop grande
+            pour avoir une seule base de données). Il peut même y avoir des raisons
+            non techniques (un client potentiel ne traitera simplement pas à moins
+            que les données de sa compagnie soient dans sa propre instance de base).
+            Quelques soient vos raisons, parler de plusieurs bases de données
+            relationnelles complique inévitablement le développement de votre
+            application. Hibernate Shards est un framework qui est conçu pour
+            encapsuler et minimiser cette complexité en ajoutant la prise en charge du
+            <ulink url="http://en.wikipedia.org/w/index.php?title=Partition_%28database%29&amp;oldid=99996308"
+            >partitionnement horizontal</ulink> au dessus d'Hibernate Core. Nous
+            avons simplement pour but de founir une vue unifiée de plusieurs bases
+            de données via Hibernate.
+        </para>
+        <para>
+            Qu'est donc un "shard" (NdT : fragment) ? Bonne question. "Shard" est juste un autre
+            mot pour "segment" ou "partition", mais c'est le terme choisi par
+            Google. Hibernate Shards était à l'origine le
+            <ulink url="http://www.google.com/support/jobs/bin/static.py?page=about.html">projet de 20 pourcents</ulink>
+            d'une petite équipe d'ingénieurs Google, donc la nomenclature du projet
+            tournait autour des fragments depuis le début. Nous ouvrons les sources
+            que nous avons jusqu'ici parce que nous voulons que la communauté
+            Hibernate puisse bénéficier de nos efforts dès que possible, mais aussi
+            avec l'espoir et le désir que cette communauté puisse nous aider à
+            atteindre une version GA plus rapidement que si nous gardions pour nous.
+            Nous nous attendons tout à fait à trouver des défauts dans notre
+            conception et notre implémentation, et nous apprécions votre patience
+            pendant que nous travaillons à les corriger.
+        </para>
+    </preface>
+
+    &architecture;
+
+    &configuration;
+
+    &shardstrategy;
+
+    &resharding;
+
+    &querying;
+
+    &limitations;
+</book>
