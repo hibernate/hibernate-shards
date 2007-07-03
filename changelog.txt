@@ -1,0 +1,7 @@
+Hibernate Shards Changelog
+==========================
+
+3.0.0.Beta1 (19-03-2007)
+------------------------
+
+Initial release (See the documentation for more information)
