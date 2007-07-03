@@ -1,0 +1,89 @@
+<!--
+
+  Hibernate Annotations ANT build script.
+
+  You need JDK 5.0 installed to build Hibernate Annotations.
+
+-->
+
+<project name="Hibernate Shards" default="dist" basedir=".">
+
+    <!-- Give user a chance to override without editing this file
+               (and without typing -D each time it compiles it) -->
+    <property file="build.properties"/>
+    <property file="${user.home}/.ant.properties"/>
+
+    <!-- Name of project and version, used to create filenames -->
+    <property name="Name" value="Hibernate Shards"/>
+    <property name="name" value="hibernate-shards"/>
+    <property name="version" value="3.0.0.Beta1"/>
+    <property name="javadoc.packagenames" value="org.hibernate.shards.*"/>
+    <property name="copy.test" value="true"/>
+    <property name="javac.source" value="1.5"/>
+    <property name="javac.target" value="1.5"/>
+    <property name="jdbc.dir" value="jdbc"/>
+    <property name="common.dir" value="${basedir}/../common"/>
+
+    <import file="${common.dir}/common-build.xml"/>
+
+    <!-- test set customization to support permuted tests -->
+    <fileset dir="${testclasses.dir}" id="junit.batchtestset">
+        <include name="**/*Test.class"/>
+        <include name="**/PermutedIntegrationTests.class"/>
+	<exclude name="**/*PermutedTest.class"/>
+    </fileset>
+
+    <!-- unit test class path customization -->
+    <path id="junit.moduleclasspath">
+        <pathelement location="etc"/>
+        <fileset dir="${jdbc.dir}">
+            <include name="*.jar"/>
+            <include name="*.zip"/>
+        </fileset>
+    </path>
+
+    <!-- override any needed target that need customization
+         typical usage: override compile and refers to common-build.compile to delegate to the common target -->
+
+    <target name="jar" depends="compile" description="Build the distribution .jar file">
+        <!-- probably make sense to move that up -->
+        <mkdir dir="${classes.dir}/META-INF"/>
+        <manifest file="${classes.dir}/META-INF/MANIFEST.MF">
+            <attribute name="Product" value="${Name}"/>
+            <attribute name="Version" value="${version}"/>
+        </manifest>
+        <antcall target="common-build.jar"/>
+    </target>
+
+    <target name="compiletest" depends="common-build.compiletest">
+        <copy todir="${testclasses.dir}">
+            <fileset dir="${test.dir}">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <!-- Some of this can probably be moved to common-build... -->
+	<target name="dist" depends="jar,javadoc,copysource,copytest,copylib,extras"
+			description="Build everything">
+
+		<ant inheritall="false" dir="${basedir}/doc/reference"/>
+		<copy todir="${dist.dir}/doc/reference" failonerror="false">
+			<fileset dir="${basedir}/doc/reference/build">
+				<include name="**/*.*"/>
+			</fileset>
+		</copy>
+
+		<copy todir="${dist.dir}" failonerror="false">
+			<fileset dir="${common.dir}">
+				<include name="common-build.xml"/>
+			</fileset>
+		</copy>
+
+        <copy file="${basedir}/build.properties.dist" tofile="${dist.dir}/build.properties" failonerror="false">
+		</copy>
+		<antcall target="common-build.dist"/>
+	</target>
+
+
+</project>
