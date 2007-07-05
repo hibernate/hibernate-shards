@@ -19,6 +19,7 @@
 package org.hibernate.shards.integration;
 
 import junit.framework.TestCase;
+
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.shards.ShardId;
@@ -53,7 +54,11 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Base class for all sharding integration tests.
@@ -132,10 +137,18 @@ public abstract class BaseShardingIntegrationTestCase extends TestCase implement
     DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
     String dbPlatformConfigDirectory = "platform/" + dbPlatform.getName().toLowerCase() +"/config/";
     IdGenType idGenType = getIdGenType();
-    Configuration config = new Configuration();
+    Configuration config = createPrototypeConfiguration();
     config.configure(BaseShardingIntegrationTestCase.class.getResource(dbPlatformConfigDirectory + "shard0.hibernate.cfg.xml"));
     config.addURL(BaseShardingIntegrationTestCase.class.getResource(dbPlatformConfigDirectory + idGenType.getMappingFile()));
     return config;
+  }
+
+  /**
+   * You can override this if you want to return your own subclass of Configuration.
+   * @return The {@link Configuration} to use as the prototype
+   */
+  protected Configuration createPrototypeConfiguration() {
+    return new Configuration();
   }
 
   protected List<ShardConfiguration> buildConfigurations() {
@@ -238,7 +251,7 @@ public abstract class BaseShardingIntegrationTestCase extends TestCase implement
   /**
    * Override if you want additional tables in your schema
    */
-  protected void createDatabaseHook(Connection conn) {
+  protected void createDatabaseHook(Connection conn) throws SQLException {
   }
 
   /**

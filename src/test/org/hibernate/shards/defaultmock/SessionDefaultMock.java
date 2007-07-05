@@ -18,7 +18,18 @@
 
 package org.hibernate.shards.defaultmock;
 
-import org.hibernate.*;
+import org.hibernate.CacheMode;
+import org.hibernate.Criteria;
+import org.hibernate.EntityMode;
+import org.hibernate.Filter;
+import org.hibernate.FlushMode;
+import org.hibernate.HibernateException;
+import org.hibernate.LockMode;
+import org.hibernate.Query;
+import org.hibernate.ReplicationMode;
+import org.hibernate.SQLQuery;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.classic.Session;
 import org.hibernate.stat.SessionStatistics;
 import org.hibernate.type.Type;
@@ -34,105 +45,171 @@ import java.util.List;
  */
 public class SessionDefaultMock implements Session {
 
+  /**
+   * @deprecated
+   */
   public Object saveOrUpdateCopy(Object object) throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Object saveOrUpdateCopy(Object object, Serializable id)
       throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Object saveOrUpdateCopy(String entityName, Object object)
       throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Object saveOrUpdateCopy(String entityName, Object object,
       Serializable id) throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public List find(String query) throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public List find(String query, Object value, Type type)
       throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public List find(String query, Object[] values, Type[] types)
       throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Iterator iterate(String query) throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Iterator iterate(String query, Object value, Type type)
       throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Iterator iterate(String query, Object[] values, Type[] types)
       throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Collection filter(Object collection, String filter)
       throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Collection filter(Object collection, String filter, Object value,
       Type type) throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Collection filter(Object collection, String filter, Object[] values,
       Type[] types) throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public int delete(String query) throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public int delete(String query, Object value, Type type)
       throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public int delete(String query, Object[] values, Type[] types)
       throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Query createSQLQuery(String sql, String returnAlias,
       Class returnClass) {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Query createSQLQuery(String sql, String[] returnAliases,
       Class[] returnClasses) {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public void save(Object object, Serializable id) throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public void save(String entityName, Object object, Serializable id)
       throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public void update(Object object, Serializable id) throws HibernateException {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public void update(String entityName, Object object, Serializable id)
       throws HibernateException {
     throw new UnsupportedOperationException();
@@ -170,6 +247,9 @@ public class SessionDefaultMock implements Session {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public Connection connection() throws HibernateException {
     throw new UnsupportedOperationException();
   }
@@ -408,6 +488,9 @@ public class SessionDefaultMock implements Session {
     throw new UnsupportedOperationException();
   }
 
+  /**
+   * @deprecated
+   */
   public void reconnect() throws HibernateException {
     throw new UnsupportedOperationException();
   }

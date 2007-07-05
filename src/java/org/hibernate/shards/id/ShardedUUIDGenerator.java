@@ -18,13 +18,12 @@
 
 package org.hibernate.shards.id;
 
-import org.hibernate.shards.ShardId;
-import org.hibernate.shards.util.Preconditions;
-import org.hibernate.shards.session.ShardedSessionImpl;
-
 import org.hibernate.dialect.Dialect;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.UUIDHexGenerator;
+import org.hibernate.shards.ShardId;
+import org.hibernate.shards.session.ShardedSessionImpl;
+import org.hibernate.shards.util.Preconditions;
 import org.hibernate.type.Type;
 import org.hibernate.util.PropertiesHelper;
 
@@ -41,7 +40,6 @@ import java.util.Properties;
 public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncodingIdentifierGenerator {
 
   private IdType idType;
-  private int shardId;
 
   private static String ZERO_STRING = "00000000000000000000000000000000";
   private static String ID_TYPE_PROPERTY = "sharded-uuid-type";
