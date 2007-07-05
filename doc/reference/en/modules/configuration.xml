@@ -60,7 +60,7 @@ public class WeatherReport {
                 ]]></programlisting>
         </sect2>
     </sect1>
-    <sect1 id="shards-configuration-sf" revision="1">
+    <sect1 id="shards-configuration-sf" revision="2">
         <title>Obtaining a ShardedSessionFactory</title>
         <para>
             Before we show you how to obtain a
@@ -118,10 +118,10 @@ public class WeatherReport {
 1     public SessionFactory createSessionFactory() {
 2         Configuration prototypeConfig = new Configuration().configure("shard0.hibernate.cfg.xml");
 3         prototypeConfig.addResource("weather.hbm.xml");
-4         List<Configuration> shardConfigs = new ArrayList<Configuration>();
-5         shardConfigs.add(new Configuration().configure("shard0.hibernate.cfg.xml"));
-6         shardConfigs.add(new Configuration().configure("shard1.hibernate.cfg.xml"));
-7         shardConfigs.add(new Configuration().configure("shard2.hibernate.cfg.xml"));
+4         List<ShardConfiguration> shardConfigs = new ArrayList<ShardConfiguration>();
+5         shardConfigs.add(buildShardConfig("shard0.hibernate.cfg.xml"));
+6         shardConfigs.add(buildShardConfig("shard1.hibernate.cfg.xml"));
+7         shardConfigs.add(buildShardConfig("shard2.hibernate.cfg.xml"));
 8         ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
 9         ShardedConfiguration shardedConfig = new ShardedConfiguration(
 10            prototypeConfig,
@@ -142,6 +142,11 @@ public class WeatherReport {
 25        };
 26        return shardStrategyFactory;
 27    }
+28
+29    ShardConfiguration buildShardConfig(String configFile) {
+30        Configuration config = new Configuration().configure(configFile);
+31        return new ConfigurationToShardConfigurationAdapter(config);
+32    }
   ]]></programlisting>
         </para>
         <para>
@@ -164,9 +169,14 @@ public class WeatherReport {
                 <listitem>
                     <para>connection.password</para>
                 </listitem>
+              <listitem>
+                  <para>connection.datasource</para>
+              </listitem>
             </itemizedlist>
-            The three <classname>Configuration</classname> objects we're loading (lines 5 - 7) will be consulted for the
-            shard-specific database url, database user, and database password, and that's all. This means that if you change the
+            The three <classname>ShardConfiguration</classname> objects we're loading (lines 5 - 7) will be consulted for the
+            shard-specific database url, database user, database password, datasource identifier, and that's all.  (For a discussion
+            of what these properties are and how they are used, please consult the Hibernate Core documentation.)
+            This means that if you change the
             connection pool parameters in shard1.hibernate.cfg.xml, those parameters will be ignored. If you add another
             mapping file to the <classname>Configuration</classname>
             loaded with the properties defined in shard2.hibernate.cfg.xml, that mapping will be ignored.
@@ -178,9 +188,12 @@ public class WeatherReport {
         <para>
             If you're looking at this code and thinking it seems a bit silly to provide fully-formed configuration
             documents that, save a couple special properties, are ignored, rest assured we've looked at this code and
-            thought the same thing. We expect the configuration mechanism to evolve over time. We picked this particular
-            mechanism because it allowed the greatest reuse of configuration code that was already available in
-            Hibernate Core.
+            thought the same thing.  That's why the <classname>ShardedConfiguration</classname> constructor takes
+            a <classname>List&lt;ShardConfiguration&gt;</classname> as opposed to a
+            <classname>List&lt;Configuration&gt;</classname>.  <classname>ShardConfiguration</classname>
+            is an interface so you can make the shard-specific configuration data available any way you'd like.  In our example
+            we're using an implementation of this interface that wraps a standard <classname>Configuration</classname>
+            (line 31) just to avoid introducing any unfamiliar configuration mechanisms.
         </para>
         <para>
             Once we've built our <classname>Configuration</classname>
