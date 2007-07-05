@@ -51,5 +51,9 @@ public class ConfigurationToShardConfigurationAdapter implements ShardConfigurat
 
   public Integer getShardId() {
     return Integer.parseInt(config.getProperty(ShardedEnvironment.SHARD_ID_PROPERTY));
-  }  
+  }
+
+  public String getShardDatasource() {
+    return config.getProperty(Environment.DATASOURCE);
+  }
 }

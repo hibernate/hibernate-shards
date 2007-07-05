@@ -225,11 +225,22 @@ public class ShardedConfiguration {
    * in the prototype config.
    */
   void populatePrototypeWithVariableProperties(ShardConfiguration config) {
-    prototypeConfiguration.setProperty(Environment.USER, config.getShardUser());
-    prototypeConfiguration.setProperty(Environment.PASS, config.getShardPassword());
-    prototypeConfiguration.setProperty(Environment.URL, config.getShardUrl());
-    prototypeConfiguration.setProperty(Environment.SESSION_FACTORY_NAME, config.getShardSessionFactoryName());
-    prototypeConfiguration.setProperty(ShardedEnvironment.SHARD_ID_PROPERTY, config.getShardId().toString());
+    safeSet(prototypeConfiguration, Environment.USER, config.getShardUser());
+    safeSet(prototypeConfiguration, Environment.PASS, config.getShardPassword());
+    safeSet(prototypeConfiguration, Environment.URL, config.getShardUrl());
+    safeSet(prototypeConfiguration, Environment.DATASOURCE, config.getShardDatasource());
+    safeSet(prototypeConfiguration, Environment.SESSION_FACTORY_NAME, config.getShardSessionFactoryName());
+    safeSet(prototypeConfiguration, ShardedEnvironment.SHARD_ID_PROPERTY, config.getShardId().toString());
+  }
+
+  /**
+   * Set the key to the given value on the given config, but only if the
+   * value is not null.
+   */
+  static void safeSet(Configuration config, String key, String value) {
+    if(value != null) {
+      config.setProperty(key, value);
+    }
   }
 
   /**

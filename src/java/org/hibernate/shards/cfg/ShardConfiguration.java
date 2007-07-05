@@ -26,16 +26,19 @@ package org.hibernate.shards.cfg;
 public interface ShardConfiguration {
 
   /**
-   * @return the url of the shard
+   * @see org.hibernate.cfg.Environment#URL
+   * @return the url of the shard.
    */
   String getShardUrl();
 
   /**
+   * @see org.hibernate.cfg.Environment#USER
    * @return the user that will be sent to the shard for authentication
    */
   String getShardUser();
 
   /**
+   * @see org.hibernate.cfg.Environment#PASS
    * @return the password that will be sent to the shard for authentication
    */
   String getShardPassword();
@@ -50,4 +53,10 @@ public interface ShardConfiguration {
    * @return unique id of the shard
    */
   Integer getShardId();
+
+  /**
+   * @see org.hibernate.cfg.Environment#DATASOURCE
+   * @return the datasource for the shard
+   */
+  String getShardDatasource();
 }

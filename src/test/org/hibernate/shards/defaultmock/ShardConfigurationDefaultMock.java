@@ -43,5 +43,9 @@ public class ShardConfigurationDefaultMock implements ShardConfiguration {
   public Integer getShardId() {
     throw new UnsupportedOperationException();
   }
+
+  public String getShardDatasource() {
+    throw new UnsupportedOperationException();
+  }
 }
 

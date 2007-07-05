@@ -162,5 +162,9 @@ public class ShardedConfigurationTest extends TestCase {
     public Integer getShardId() {
       return shardId;
     }
+
+    public String getShardDatasource() {
+      return null;
+    }
   }
 }
