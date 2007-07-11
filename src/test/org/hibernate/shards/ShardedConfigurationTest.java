@@ -54,7 +54,7 @@ public class ShardedConfigurationTest extends TestCase {
     shardStrategyFactory = new MyShardStrategyFactory();
     Configuration protoConfig = new Configuration();
     protoConfig.setProperty(Environment.DIALECT, HSQLDialect.class.getName());
-    shardConfig = new MyShardConfig("user", "url", "pwd", "sfname", 33);
+    shardConfig = new MyShardConfig("user", "url", "pwd", "sfname", "prefix", 33);
 
     shardedConfiguration =
         new ShardedConfiguration(
@@ -90,7 +90,8 @@ public class ShardedConfigurationTest extends TestCase {
   }
 
   public void testShardIdRequired() {
-    ShardConfiguration config = new MyShardConfig("user", "url", "pwd", "sfname", null);
+    ShardConfiguration config =
+        new MyShardConfig("user", "url", "pwd", "sfname", null, null);
     try {
       shardedConfiguration.populatePrototypeWithVariableProperties(config);
       fail("expected npe");
@@ -132,14 +133,16 @@ public class ShardedConfigurationTest extends TestCase {
     private final String url;
     private final String password;
     private final String sessionFactoryName;
+    private final String cacheRegionPrefix;
     private final Integer shardId;
 
     public MyShardConfig(String user, String url, String password,
-        String sessionFactoryName, Integer shardId) {
+        String sessionFactoryName, String cacheRegionPrefix, Integer shardId) {
       this.user = user;
       this.url = url;
       this.password = password;
       this.sessionFactoryName = sessionFactoryName;
+      this.cacheRegionPrefix = cacheRegionPrefix;
       this.shardId = shardId;
     }
 
@@ -165,6 +168,10 @@ public class ShardedConfigurationTest extends TestCase {
 
     public String getShardDatasource() {
       return null;
+    }
+
+    public String getShardCacheRegionPrefix() {
+      return cacheRegionPrefix;
     }
   }
 }

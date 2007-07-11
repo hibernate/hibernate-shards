@@ -59,4 +59,10 @@ public interface ShardConfiguration {
    * @return the datasource for the shard
    */
   String getShardDatasource();
+
+  /**
+   * @see org.hibernate.cfg.Environment#CACHE_REGION_PREFIX
+   * @return the cache region prefix for the shard
+   */
+  String getShardCacheRegionPrefix();
 }

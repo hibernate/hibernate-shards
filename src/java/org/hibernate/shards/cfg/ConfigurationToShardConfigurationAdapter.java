@@ -56,4 +56,8 @@ public class ConfigurationToShardConfigurationAdapter implements ShardConfigurat
   public String getShardDatasource() {
     return config.getProperty(Environment.DATASOURCE);
   }
+
+  public String getShardCacheRegionPrefix() {
+    return config.getProperty(Environment.CACHE_REGION_PREFIX);
+  }
 }

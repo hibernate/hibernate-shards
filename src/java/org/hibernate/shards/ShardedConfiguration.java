@@ -229,6 +229,7 @@ public class ShardedConfiguration {
     safeSet(prototypeConfiguration, Environment.PASS, config.getShardPassword());
     safeSet(prototypeConfiguration, Environment.URL, config.getShardUrl());
     safeSet(prototypeConfiguration, Environment.DATASOURCE, config.getShardDatasource());
+    safeSet(prototypeConfiguration, Environment.CACHE_REGION_PREFIX, config.getShardCacheRegionPrefix());
     safeSet(prototypeConfiguration, Environment.SESSION_FACTORY_NAME, config.getShardSessionFactoryName());
     safeSet(prototypeConfiguration, ShardedEnvironment.SHARD_ID_PROPERTY, config.getShardId().toString());
   }

@@ -47,5 +47,9 @@ public class ShardConfigurationDefaultMock implements ShardConfiguration {
   public String getShardDatasource() {
     throw new UnsupportedOperationException();
   }
+
+  public String getShardCacheRegionPrefix() {
+    throw new UnsupportedOperationException();
+  }
 }
 
