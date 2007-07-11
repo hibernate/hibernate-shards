@@ -900,6 +900,35 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
     }
   }
 
+  public void testMergeUnpersisted() {
+    session.beginTransaction();
+    Building b = building("b1");
+    Building returnedB = (Building)session.merge(b);
+    commitAndResetSession();
+    Building mergedB = (Building)session.get(Building.class,
+        returnedB.getBuildingId());
+    assertNotNull(mergedB);
+    assertEquals("b1", mergedB.getName());
+  }
+
+  public void testMergePersisted() {
+    session.beginTransaction();
+    Building b = building("b1");
+    session.save(b);
+    commitAndResetSession();
+    session.evict(b);
+
+    session.beginTransaction();
+    b.setName("b2");
+    session.merge(b);
+    assertFalse(session.contains(b));
+    commitAndResetSession();
+
+    Building mergedB = (Building)session.get(Building.class, b.getBuildingId());
+    assertNotNull(mergedB);
+    assertEquals("b2", mergedB.getName());
+  }
+
   public void testReplicate() {
     session.beginTransaction();
     Building idB = building("just need to get id");

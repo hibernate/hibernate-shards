@@ -20,66 +20,33 @@ package org.hibernate.shards.session;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.CacheMode;
-import org.hibernate.Criteria;
-import org.hibernate.EntityMode;
-import org.hibernate.Filter;
-import org.hibernate.FlushMode;
-import org.hibernate.HibernateException;
-import org.hibernate.Interceptor;
-import org.hibernate.LockMode;
-import org.hibernate.Query;
-import org.hibernate.ReplicationMode;
-import org.hibernate.SQLQuery;
-import org.hibernate.SessionException;
-import org.hibernate.Transaction;
-import org.hibernate.TransientObjectException;
-import org.hibernate.UnresolvableObjectException;
+import org.hibernate.*;
 import org.hibernate.classic.Session;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.proxy.HibernateProxy;
-import org.hibernate.shards.CrossShardAssociationException;
-import org.hibernate.shards.Shard;
-import org.hibernate.shards.ShardId;
-import org.hibernate.shards.ShardImpl;
-import org.hibernate.shards.ShardOperation;
-import org.hibernate.shards.ShardedTransaction;
+import org.hibernate.shards.*;
 import org.hibernate.shards.criteria.CriteriaFactoryImpl;
 import org.hibernate.shards.criteria.CriteriaId;
 import org.hibernate.shards.criteria.ShardedCriteriaImpl;
 import org.hibernate.shards.engine.ShardedSessionFactoryImplementor;
 import org.hibernate.shards.engine.ShardedSessionImplementor;
 import org.hibernate.shards.id.ShardEncodingIdentifierGenerator;
-import org.hibernate.shards.query.AdHocQueryFactoryImpl;
-import org.hibernate.shards.query.ExitOperationsQueryCollector;
-import org.hibernate.shards.query.NamedQueryFactoryImpl;
-import org.hibernate.shards.query.QueryId;
-import org.hibernate.shards.query.ShardedQueryImpl;
+import org.hibernate.shards.query.*;
 import org.hibernate.shards.stat.ShardedSessionStatistics;
 import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.exit.FirstNonNullResultExitStrategy;
 import org.hibernate.shards.strategy.selection.ShardResolutionStrategyData;
 import org.hibernate.shards.strategy.selection.ShardResolutionStrategyDataImpl;
 import org.hibernate.shards.transaction.ShardedTransactionImpl;
-import org.hibernate.shards.util.Iterables;
-import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Maps;
-import org.hibernate.shards.util.Pair;
-import org.hibernate.shards.util.Preconditions;
-import org.hibernate.shards.util.Sets;
+import org.hibernate.shards.util.*;
 import org.hibernate.stat.SessionStatistics;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;
 import java.sql.Connection;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Concrete implementation of a ShardedSession, and also the central component of
@@ -612,6 +579,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
     List<ShardId> shardIds = selectShardIdsFromShardResolutionStrategyData(new
                                  ShardResolutionStrategyDataImpl(object.getClass(), id));
     if (shardIds.size() == 1) {
+      setCurrentSubgraphShardId(shardIds.get(0));
       shardIdsToShards.get(shardIds.get(0)).establishSession().replicate(entityName, object, replicationMode);
     } else {
       Object result = null;
@@ -901,19 +869,30 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
     return shardIdListToShardList(shardIds);
   }
 
-  /**
-   * Unsupported.  This is a scope decision, not a technical decision.
-   */
   public Object merge(Object object) throws HibernateException {
-    throw new UnsupportedOperationException();
+    return merge(null, object);
   }
 
-  /**
-   * Unsupported.  This is a scope decision, not a technical decision.
-   */
   public Object merge(String entityName, Object object)
       throws HibernateException {
-    throw new UnsupportedOperationException();
+    Serializable id = extractId(object);
+    List<ShardId> shardIds = selectShardIdsFromShardResolutionStrategyData(new
+        ShardResolutionStrategyDataImpl(object.getClass(), id));
+    if (shardIds.size() == 1) {
+      setCurrentSubgraphShardId(shardIds.get(0));
+      return shardIdsToShards.get(shardIds.get(0)).establishSession().merge(entityName, object);
+    } else {
+      Object result = null;
+      if (id != null) result = get(object.getClass(), id);
+      if (result == null) {  // non-persisted object
+        ShardId shardId = selectShardIdForNewObject(object);
+        setCurrentSubgraphShardId(shardId);
+        return shardIdsToShards.get(shardId).establishSession().merge(entityName, object);
+      } else {
+        Shard objectShard = getShardForObject(result, shardIdListToShardList(shardIds));
+        return objectShard.establishSession().merge(entityName, object);
+      }
+    }
   }
 
   public void persist(Object object) throws HibernateException {
@@ -1501,7 +1480,8 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 
   List<ShardId> selectShardIdsFromShardResolutionStrategyData(ShardResolutionStrategyData srsd) {
     IdentifierGenerator idGenerator = shardedSessionFactory.getIdentifierGenerator(srsd.getEntityName());
-    if (idGenerator instanceof ShardEncodingIdentifierGenerator) {
+    if ((idGenerator instanceof ShardEncodingIdentifierGenerator) &&
+        (srsd.getId() != null)) {
       return Collections.singletonList(((ShardEncodingIdentifierGenerator)idGenerator).extractShardId(srsd.getId()));
     }
     return shardStrategy.getShardResolutionStrategy().selectShardIdsFromShardResolutionStrategyData(srsd);
