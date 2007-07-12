@@ -169,13 +169,16 @@ public class WeatherReport {
                 <listitem>
                     <para>connection.password</para>
                 </listitem>
+                <listitem>
+                    <para>connection.datasource</para>
+                </listitem>
               <listitem>
-                  <para>connection.datasource</para>
+                    <para>cache.region_prefix</para>
               </listitem>
             </itemizedlist>
             The three <classname>ShardConfiguration</classname> objects we're loading (lines 5 - 7) will be consulted for the
-            shard-specific database url, database user, database password, datasource identifier, and that's all.  (For a discussion
-            of what these properties are and how they are used, please consult the Hibernate Core documentation.)
+            shard-specific database url, database user, database password, datasource identifier, cache region prefix, and that's all.
+            (For a discussion of what these properties are and how they are used, please consult the Hibernate Core documentation.)
             This means that if you change the
             connection pool parameters in shard1.hibernate.cfg.xml, those parameters will be ignored. If you add another
             mapping file to the <classname>Configuration</classname>
@@ -276,12 +279,85 @@ public class WeatherReport {
             shard-aware id generator. We'll cover id generation in more detail in the chapter on Shard Strategies.
         </para>
     </sect1>
+    <sect1 id="shards-configuration-anno" revision="1">
+        <title>Using Hibernate Annotations With Shards</title>
+        <para>
+            In the above example we're using Hibernate mapping files (hbm.xml)
+            to specify our mappings, but it's just as easy to use Hibernate
+            Annotations.  We can annotate our <classname>WeatherReport</classname>
+            class as follows:
+            <programlisting><![CDATA[
+@Entity
+@Table(name="WEATHER_REPORT")
+public class WeatherReport {
+
+    @Id @GeneratedValue(generator="WeatherReportIdGenerator")
+    @GenericGenerator(name="WeatherReportIdGenerator", strategy="org.hibernate.shards.id.ShardedUUIDGenerator")
+    @Column(name="REPORT_ID")
+    private Integer reportId;
+
+    @Column(name="CONTINENT")
+    private String continent;
+
+    @Column(name="LATITUDE")
+    private BigDecimal latitude;
+
+    @Column(name="LONGITUDE")
+    private BigDecimal longitude;
+
+    @Column(name="TEMPERATURE")
+    private int temperature;
+
+    @Column(name="REPORT_TIME")
+    private Date reportTime;
+
+    ... // getters and setters
+}
+]]></programlisting>
+            This is a pretty standard use of Hibernate Annotations.  The only
+            thing here that's particularly noteworthy is the use of the
+            <classname>GenericGenerator</classname> annotation, which is part
+            of Hibernate Annotations but not JPA.  We need this to specify our
+            shard-aware id generator.
+         </para>
+         <para>
+            The changes we now need to make to the <code>createSessionFactory()</code>
+            method we implemented above are actually quite small:
+           <programlisting><![CDATA[
+ 1     public SessionFactory createSessionFactory() {
+ 2         AnnotationConfiguration prototypeConfig = new AnnotationConfiguration().configure("shard0.hibernate.cfg.xml");
+ 3         prototypeConfig.addAnnotatedClass(WeatherReport.class);
+ 4         List<ShardConfiguration> shardConfigs = new ArrayList<ShardConfiguration>();
+ 5         shardConfigs.add(buildShardConfig("shard0.hibernate.cfg.xml"));
+ 6         shardConfigs.add(buildShardConfig("shard1.hibernate.cfg.xml"));
+ 7         shardConfigs.add(buildShardConfig("shard2.hibernate.cfg.xml"));
+ 8         ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
+ 9         ShardedConfiguration shardedConfig = new ShardedConfiguration(
+ 10            prototypeConfig,
+ 11            shardConfigs,
+ 12            shardStrategyFactory);
+ 13        return shardedConfig.buildShardedSessionFactory();
+ 14    }
+ ]]></programlisting>
+           The only changes between this method and the non-annotated versions
+           are on lines 2 and 3.  On line 2 we're declaring and instantiating an
+           <classname>AnnotationConfiguration</classname> instead of a
+           <classname>Configuration</classname>, and on line 3 we're adding
+           an annotated class to the configuration instead of an xml mapping file.
+           That's it!
+         </para>
+         <para>
+           Please note that while Hibernate Shards works with Hibernate Annotations,
+           Hibernate Shards does not ship with Hibernate Annotations.  You'll need
+           to download Hibernate Annotations and its dependencies separately.
+         </para>
+    </sect1>
     <sect1 id="shards-configuration-limitations" revision="1">
         <title>Configuration Limitations</title>
         <para>
             Many of you will quickly realize that the configuration mechanism we've provided won't work if you're
             configuring your <classname>SessionFactory</classname>
-            via JPA or Hibernate Annotations. It's true. We expect these deficiencies to be addressed shortly.
+            via JPA. It's true. We expect this deficiency to be addressed shortly.
         </para>
     </sect1>
 </chapter>
