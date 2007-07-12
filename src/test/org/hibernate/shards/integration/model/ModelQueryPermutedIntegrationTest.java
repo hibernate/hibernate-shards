@@ -19,11 +19,14 @@
 package org.hibernate.shards.integration.model;
 
 import org.hibernate.Query;
+import org.hibernate.QueryException;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
 import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.Floor;
 import org.hibernate.shards.model.Office;
+import org.hibernate.shards.util.Lists;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -85,48 +88,53 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
     super.tearDown();
   }
 
-  public void testLoadAllBuildings() throws Exception {
+  public void testLoadAllBuildings()  {
     String queryString = "from Building";
     Query query = session.createQuery(queryString);
+    @SuppressWarnings("unchecked")
     List<Building> buildings = query.list();
     assertEquals(2, buildings.size());
     assertTrue(buildings.contains(b1));
     assertTrue(buildings.contains(b2));
   }
 
-  public void testLoadBuildingByName() throws Exception {
+  public void testLoadBuildingByName()  {
     String queryString = "from Building as b where b.name=:name";
     Query query = session.createQuery(queryString).setString("name", "b2");
     Building b2Reloaded = (Building) query.uniqueResult();
     assertEquals(b2.getBuildingId(), b2Reloaded.getBuildingId());
   }
 
-  public void testLoadBuildingsByLikeName() throws Exception {
+  public void testLoadBuildingsByLikeName()  {
     String queryString = "from Building as b where b.name like :name";
     Query query = session.createQuery(queryString).setString("name", "b%");
+    @SuppressWarnings("unchecked")
     List<Building> buildings = query.list();
     assertEquals(2, buildings.size());
     assertTrue(buildings.contains(b1));
     assertTrue(buildings.contains(b2));
   }
 
-  public void testLoadHighFloors() throws Exception {
+  public void testLoadHighFloors()  {
     String queryString = "from Floor as f where f.number >= 3";
     Query query = session.createQuery(queryString);
+    @SuppressWarnings("unchecked")
     List<Floor> floors = query.list();
     assertEquals(1, floors.size());
   }
 
-  public void testLoadBuildingsWithHighFloors() throws Exception {
+  public void testLoadBuildingsWithHighFloors() {
     String queryString = "from Floor as f where f.number >= 3";
     Query query = session.createQuery(queryString);
+    @SuppressWarnings("unchecked")
     List<Floor> floors = query.list();
     assertEquals(1, floors.size());
   }
 
-  public void testLoadBuildingsWithHighFloorsAndLargeOffices() throws Exception {
+  public void testLoadBuildingsWithHighFloorsAndLargeOffices() {
     String queryString = "from Building b join b.floors floor join floor.offices office where office.label = 'LAHGE'";
     Query query = session.createQuery(queryString);
+    @SuppressWarnings("unchecked")
     List<Building> buildings = query.list();
     assertEquals(2, buildings.size());
   }
@@ -134,6 +142,7 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
   public void testNamedQuery() {
     Query query = session.getNamedQuery("SelectFloorsHigherThan");
     query.setInteger("lowestFloor", 3);
+    @SuppressWarnings("unchecked")
     List<Floor> floors = query.list();
     assertEquals(1, floors.size());
   }
@@ -141,6 +150,7 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
   public void testSetMaxResults() {
     String queryString = "from Floor";
     Query query = session.createQuery(queryString).setMaxResults(1);
+    @SuppressWarnings("unchecked")
     List<Floor> floors = query.list();
     assertEquals(1, floors.size());
   }
@@ -148,16 +158,47 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
   public void testSetFirstResultQuery() {
     String queryString = "from Floor";
     Query query = session.createQuery(queryString).setFirstResult(2);
+    @SuppressWarnings("unchecked")
     List<Floor> floors = query.list();
     assertEquals(2, floors.size());
   }
 
-  public void xtestAggregating() throws Exception {
+  public void xtestAggregating()  {
     //TODO(maulik) make this test work
     String queryString = "min(floor.number) from Floor floor";
     Query query = session.createQuery(queryString);
+    @SuppressWarnings("unchecked")
     List<Building> buildings = query.list();
     assertEquals(2, buildings.size());
   }
 
+  public void testCreateSimpleFilter() {
+    Building b = (Building) session.get(Building.class, b1.getBuildingId());
+    assertNotNull(b);
+    Collection<Floor> coll = b.getFloors();
+    Query query = session.createFilter(coll, "");
+    @SuppressWarnings("unchecked")
+    List<Floor> filteredFloors = query.list();
+    assertEquals(3, filteredFloors.size());
+  }
+
+  public void testCreateFancyFilter() {
+    Building b = (Building) session.get(Building.class, b1.getBuildingId());
+    assertNotNull(b);
+    Collection<Floor> coll = b.getFloors();
+    Query query = session.createFilter(coll, "where number > 2");
+    @SuppressWarnings("unchecked")
+    List<Floor> filteredFloors = query.list();
+    assertEquals(1, filteredFloors.size());
+  }
+
+  public void testCreateFilterForUnattachedCollection() {
+    List<Floor> floors = Lists.newArrayList();
+    try {
+      session.createFilter(floors, "");
+      fail("expected query exception");
+    } catch (QueryException qe) {
+      // good
+    }
+  }
 }

@@ -37,6 +37,7 @@ import org.hibernate.TransientObjectException;
 import org.hibernate.UnresolvableObjectException;
 import org.hibernate.classic.Session;
 import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.proxy.HibernateProxy;
@@ -1150,11 +1151,29 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
   }
 
   /**
-   * Unsupported.  This is a scope decision, not a technical decision.
+   * The {@link org.hibernate.impl.SessionImpl#createFilter(Object, String)} implementation
+   * requires that the collection that is passed in is a persistent collection.
+   * Since we don't support cross-shard relationships, if we receive a persistent
+   * collection that collection is guaranteed to be associated with a single
+   * shard.  If we can figure out which shard the collection is associated with
+   * we can just delegate this operation to that shard.
    */
   public Query createFilter(Object collection, String queryString)
       throws HibernateException {
-    throw new UnsupportedOperationException();
+    Shard shard = getShardForCollection(collection, shards);
+    Session session;
+    if(shard == null) {
+      // collection not associated with any of our shards, so just delegate to
+      // a random shard.  We'll end up failing, but we'll fail with the
+      // error that users typically get.
+      session = getSomeSession();
+      if (session == null) {
+        session = shards.get(0).establishSession();
+      }
+    } else {
+      session = shard.establishSession();
+    }
+    return session.createFilter(collection, queryString);
   }
 
   public Query getNamedQuery(String queryName) throws HibernateException {
@@ -1509,6 +1528,18 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 
   public ShardId getShardIdForObject(Object obj) {
     return getShardIdForObject(obj, shards);
+  }
+
+  private Shard getShardForCollection(Object coll, List<Shard> shardsToConsider) {
+    for(Shard shard : shardsToConsider) {
+      if(shard.getSession() != null) {
+        SessionImplementor si = ((SessionImplementor)shard.getSession());
+        if(si.getPersistenceContext().getCollectionEntryOrNull(coll) != null) {
+          return shard;
+        }
+      }
+    }
+    return null;
   }
 
   List<ShardId> selectShardIdsFromShardResolutionStrategyData(ShardResolutionStrategyData srsd) {
