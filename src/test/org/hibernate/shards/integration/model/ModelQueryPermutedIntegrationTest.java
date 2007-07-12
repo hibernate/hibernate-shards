@@ -18,12 +18,11 @@
 
 package org.hibernate.shards.integration.model;
 
+import org.hibernate.Query;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
 import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.Floor;
 import org.hibernate.shards.model.Office;
-
-import org.hibernate.Query;
 
 import java.util.List;
 

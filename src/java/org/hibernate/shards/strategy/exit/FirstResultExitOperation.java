@@ -18,8 +18,8 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author maulik@google.com (Maulik Shah)

@@ -36,7 +36,11 @@ import org.hibernate.shards.util.Sets;
 
 import javax.naming.NamingException;
 import java.sql.Connection;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * @author maxr@google.com (Max Ross)

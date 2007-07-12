@@ -18,15 +18,32 @@
 
 package org.hibernate.shards.integration.model;
 
-import org.hibernate.*;
+import org.hibernate.HibernateException;
+import org.hibernate.LockMode;
+import org.hibernate.ReplicationMode;
+import org.hibernate.SessionFactory;
+import org.hibernate.TransactionException;
 import org.hibernate.classic.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
 import org.hibernate.shards.integration.MemoryLeakPlugger;
-import static org.hibernate.shards.integration.model.ModelDataFactory.*;
-import org.hibernate.shards.model.*;
+import static org.hibernate.shards.integration.model.ModelDataFactory.building;
+import static org.hibernate.shards.integration.model.ModelDataFactory.elevator;
+import static org.hibernate.shards.integration.model.ModelDataFactory.escalator;
+import static org.hibernate.shards.integration.model.ModelDataFactory.floor;
+import static org.hibernate.shards.integration.model.ModelDataFactory.office;
+import static org.hibernate.shards.integration.model.ModelDataFactory.person;
+import static org.hibernate.shards.integration.model.ModelDataFactory.tenant;
+import static org.hibernate.shards.integration.model.ModelDataFactory.window;
+import org.hibernate.shards.model.Building;
+import org.hibernate.shards.model.Escalator;
+import org.hibernate.shards.model.Floor;
+import org.hibernate.shards.model.Office;
+import org.hibernate.shards.model.Person;
+import org.hibernate.shards.model.Tenant;
+import org.hibernate.shards.model.Window;
 import org.hibernate.shards.session.ShardedSessionFactory;
 import org.hibernate.shards.session.ShardedSessionImpl;
 import org.hibernate.shards.session.SubsetShardedSessionFactoryImpl;

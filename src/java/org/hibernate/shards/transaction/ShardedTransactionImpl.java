@@ -31,12 +31,11 @@ import org.hibernate.shards.session.OpenSessionEvent;
 import org.hibernate.shards.session.SetupTransactionOpenSessionEvent;
 import org.hibernate.shards.util.Lists;
 
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
 
 /**
  * @author tomislav@google.com (Tomislav Nad)

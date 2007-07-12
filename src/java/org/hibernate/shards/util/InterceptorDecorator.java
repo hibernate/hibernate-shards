@@ -18,9 +18,9 @@
 
 package org.hibernate.shards.util;
 
-import org.hibernate.Interceptor;
 import org.hibernate.CallbackException;
 import org.hibernate.EntityMode;
+import org.hibernate.Interceptor;
 import org.hibernate.Transaction;
 import org.hibernate.type.Type;
 

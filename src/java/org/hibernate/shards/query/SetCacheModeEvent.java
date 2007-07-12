@@ -18,8 +18,8 @@
 
 package org.hibernate.shards.query;
 
-import org.hibernate.Query;
 import org.hibernate.CacheMode;
+import org.hibernate.Query;
 
 /**
  * @author maulik@google.com (Maulik Shah)

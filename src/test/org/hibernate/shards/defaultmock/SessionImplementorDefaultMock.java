@@ -18,35 +18,35 @@
 
 package org.hibernate.shards.defaultmock;
 
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.QueryParameters;
+import org.hibernate.CacheMode;
+import org.hibernate.EntityMode;
+import org.hibernate.FlushMode;
+import org.hibernate.HibernateException;
+import org.hibernate.Interceptor;
+import org.hibernate.Query;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
+import org.hibernate.Transaction;
+import org.hibernate.collection.PersistentCollection;
 import org.hibernate.engine.EntityKey;
 import org.hibernate.engine.PersistenceContext;
+import org.hibernate.engine.QueryParameters;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.SessionImplementor;
 import org.hibernate.engine.query.sql.NativeSQLQuerySpecification;
-import org.hibernate.Interceptor;
-import org.hibernate.HibernateException;
-import org.hibernate.ScrollableResults;
-import org.hibernate.ScrollMode;
-import org.hibernate.Transaction;
-import org.hibernate.EntityMode;
-import org.hibernate.CacheMode;
-import org.hibernate.FlushMode;
-import org.hibernate.Query;
 import org.hibernate.event.EventListeners;
-import org.hibernate.type.Type;
-import org.hibernate.loader.custom.CustomQuery;
-import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.impl.CriteriaImpl;
 import org.hibernate.jdbc.Batcher;
 import org.hibernate.jdbc.JDBCContext;
-import org.hibernate.collection.PersistentCollection;
+import org.hibernate.loader.custom.CustomQuery;
+import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.type.Type;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.Iterator;
-import java.util.Map;
 import java.sql.Connection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author maxr@google.com (Max Ross)

@@ -18,10 +18,9 @@
 
 package org.hibernate.shards.session;
 
-import org.hibernate.shards.util.InterceptorDecorator;
-
 import org.hibernate.CallbackException;
 import org.hibernate.Interceptor;
+import org.hibernate.shards.util.InterceptorDecorator;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;

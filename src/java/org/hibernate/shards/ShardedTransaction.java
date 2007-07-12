@@ -18,8 +18,8 @@
 
 package org.hibernate.shards;
 
-import org.hibernate.Transaction;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 /**
  * Simple interface to represent a shard-aware {@link Transaction}.

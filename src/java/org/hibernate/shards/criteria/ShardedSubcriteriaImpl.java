@@ -18,11 +18,6 @@
 
 package org.hibernate.shards.criteria;
 
-import org.hibernate.shards.Shard;
-import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Maps;
-import org.hibernate.shards.util.Preconditions;
-
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -31,10 +26,14 @@ import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.impl.CriteriaImpl;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
+import org.hibernate.impl.CriteriaImpl;
+import org.hibernate.shards.Shard;
+import org.hibernate.shards.util.Lists;
+import org.hibernate.shards.util.Maps;
+import org.hibernate.shards.util.Preconditions;
 import org.hibernate.transform.ResultTransformer;
 
 import java.util.List;

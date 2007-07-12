@@ -18,10 +18,9 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import org.hibernate.shards.util.Preconditions;
-
 import org.hibernate.criterion.Order;
 import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.shards.util.Preconditions;
 
 import java.util.Collections;
 import java.util.Comparator;

@@ -18,6 +18,7 @@
 
 package org.hibernate.shards.strategy.access;
 
+import junit.framework.TestCase;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardDefaultMock;
 import org.hibernate.shards.ShardId;
@@ -28,12 +29,10 @@ import org.hibernate.shards.strategy.exit.ExitStrategyDefaultMock;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Sets;
 
-import junit.framework.TestCase;
-
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * @author maxr@google.com (Max Ross)

@@ -18,13 +18,6 @@
 
 package org.hibernate.shards.query;
 
-import org.hibernate.shards.Shard;
-import org.hibernate.shards.ShardOperation;
-import org.hibernate.shards.strategy.access.ShardAccessStrategy;
-import org.hibernate.shards.strategy.exit.ConcatenateListsExitStrategy;
-import org.hibernate.shards.strategy.exit.FirstNonNullResultExitStrategy;
-import org.hibernate.shards.util.Preconditions;
-
 import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
@@ -32,6 +25,12 @@ import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.shards.Shard;
+import org.hibernate.shards.ShardOperation;
+import org.hibernate.shards.strategy.access.ShardAccessStrategy;
+import org.hibernate.shards.strategy.exit.ConcatenateListsExitStrategy;
+import org.hibernate.shards.strategy.exit.FirstNonNullResultExitStrategy;
+import org.hibernate.shards.util.Preconditions;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.Type;
 

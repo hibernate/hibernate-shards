@@ -18,12 +18,11 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import org.hibernate.shards.util.Preconditions;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.CountProjection;
 import org.hibernate.criterion.Projection;
+import org.hibernate.shards.util.Preconditions;
 
 import java.util.List;
 

@@ -19,7 +19,6 @@
 package org.hibernate.shards.integration;
 
 import net.sf.cglib.proxy.Callback;
-
 import org.hibernate.engine.StatefulPersistenceContext;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.shards.Shard;

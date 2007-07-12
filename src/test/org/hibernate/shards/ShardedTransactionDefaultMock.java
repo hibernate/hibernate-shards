@@ -18,8 +18,8 @@
 
 package org.hibernate.shards;
 
-import org.hibernate.Session;
 import org.hibernate.HibernateException;
+import org.hibernate.Session;
 
 import javax.transaction.Synchronization;
 

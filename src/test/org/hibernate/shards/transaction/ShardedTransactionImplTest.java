@@ -19,7 +19,6 @@
 package org.hibernate.shards.transaction;
 
 import junit.framework.TestCase;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Transaction;
 import org.hibernate.TransactionException;
@@ -31,9 +30,8 @@ import org.hibernate.shards.defaultmock.SessionDefaultMock;
 import org.hibernate.shards.engine.ShardedSessionImplementorDefaultMock;
 import org.hibernate.shards.util.Lists;
 
-import java.util.List;
-
 import javax.transaction.Synchronization;
+import java.util.List;
 
 /**
  * @author tomislav@google.com (Tomislav Nad)

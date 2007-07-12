@@ -18,14 +18,7 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import org.hibernate.shards.defaultmock.EntityPersisterDefaultMock;
-import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
-import org.hibernate.shards.defaultmock.ClassMetadataDefaultMock;
-import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.StringUtil;
-
 import junit.framework.TestCase;
-
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -33,6 +26,11 @@ import org.hibernate.criterion.AvgProjection;
 import org.hibernate.criterion.Projections;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.shards.defaultmock.ClassMetadataDefaultMock;
+import org.hibernate.shards.defaultmock.EntityPersisterDefaultMock;
+import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
+import org.hibernate.shards.util.Lists;
+import org.hibernate.shards.util.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

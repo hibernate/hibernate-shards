@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.query;
 
-import org.hibernate.shards.defaultmock.QueryDefaultMock;
 import junit.framework.TestCase;
-import org.hibernate.Query;
 import org.hibernate.FlushMode;
+import org.hibernate.Query;
+import org.hibernate.shards.defaultmock.QueryDefaultMock;
 
 /**
  * @author maulik@google.com (Maulik Shah)

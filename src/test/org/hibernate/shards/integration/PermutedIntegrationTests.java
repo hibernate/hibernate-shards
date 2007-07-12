@@ -18,16 +18,15 @@
 
 package org.hibernate.shards.integration;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 import org.hibernate.shards.integration.id.IdGeneratorPermutedIntegrationTest;
 import org.hibernate.shards.integration.model.InterceptorBehaviorPermutedIntegrationTest;
 import org.hibernate.shards.integration.model.ModelCriteriaPermutedIntegrationTest;
 import org.hibernate.shards.integration.model.ModelPermutedIntegrationTest;
 import org.hibernate.shards.integration.model.ModelQueryPermutedIntegrationTest;
 import org.hibernate.shards.util.Lists;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import java.util.ArrayList;
 import java.util.Collections;

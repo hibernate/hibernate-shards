@@ -18,13 +18,11 @@
 
 package org.hibernate.shards.session;
 
-import org.hibernate.shards.defaultmock.InterceptorDefaultMock;
-import org.hibernate.shards.ShardId;
-
 import junit.framework.TestCase;
-
-import org.hibernate.Interceptor;
 import org.hibernate.CallbackException;
+import org.hibernate.Interceptor;
+import org.hibernate.shards.ShardId;
+import org.hibernate.shards.defaultmock.InterceptorDefaultMock;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;

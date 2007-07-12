@@ -18,13 +18,12 @@
 
 package org.hibernate.shards.strategy.access;
 
-import org.hibernate.shards.Shard;
-import org.hibernate.shards.ShardOperation;
-import org.hibernate.shards.strategy.exit.ExitStrategy;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.HibernateException;
+import org.hibernate.shards.Shard;
+import org.hibernate.shards.ShardOperation;
+import org.hibernate.shards.strategy.exit.ExitStrategy;
 
 import java.util.List;
 import java.util.concurrent.Callable;

@@ -18,19 +18,18 @@
 
 package org.hibernate.shards.integration.model;
 
-import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
-import org.hibernate.shards.model.Building;
-import org.hibernate.shards.session.BaseStatefulInterceptorFactory;
-import org.hibernate.shards.session.ShardedSession;
-import org.hibernate.shards.session.RequiresSession;
-import org.hibernate.shards.util.Lists;
-
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Interceptor;
-import org.hibernate.TransactionException;
 import org.hibernate.Session;
+import org.hibernate.TransactionException;
 import org.hibernate.impl.SessionImpl;
+import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
+import org.hibernate.shards.model.Building;
+import org.hibernate.shards.session.BaseStatefulInterceptorFactory;
+import org.hibernate.shards.session.RequiresSession;
+import org.hibernate.shards.session.ShardedSession;
+import org.hibernate.shards.util.Lists;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;

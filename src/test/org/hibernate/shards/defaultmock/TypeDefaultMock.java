@@ -18,20 +18,20 @@
 
 package org.hibernate.shards.defaultmock;
 
-import org.hibernate.type.Type;
-import org.hibernate.type.ForeignKeyDirection;
+import org.dom4j.Node;
+import org.hibernate.EntityMode;
+import org.hibernate.HibernateException;
+import org.hibernate.MappingException;
 import org.hibernate.engine.Mapping;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.engine.SessionImplementor;
-import org.hibernate.MappingException;
-import org.hibernate.EntityMode;
-import org.hibernate.HibernateException;
-import org.dom4j.Node;
+import org.hibernate.type.ForeignKeyDirection;
+import org.hibernate.type.Type;
 
+import java.io.Serializable;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.PreparedStatement;
-import java.io.Serializable;
 import java.util.Map;
 
 /**

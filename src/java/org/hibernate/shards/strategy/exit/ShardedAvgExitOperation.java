@@ -18,12 +18,11 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Pair;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.Projection;
+import org.hibernate.shards.util.Lists;
+import org.hibernate.shards.util.Pair;
 
 import java.math.BigDecimal;
 import java.util.List;

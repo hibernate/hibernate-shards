@@ -18,12 +18,11 @@
 
 package org.hibernate.shards.id;
 
-import org.hibernate.shards.session.ControlSessionProvider;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.engine.SessionImplementor;
 import org.hibernate.id.TableHiLoGenerator;
+import org.hibernate.shards.session.ControlSessionProvider;
 
 import java.io.Serializable;
 

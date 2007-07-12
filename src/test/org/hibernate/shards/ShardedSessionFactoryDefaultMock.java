@@ -18,7 +18,12 @@
 
 package org.hibernate.shards;
 
-import org.hibernate.*;
+import org.hibernate.ConnectionReleaseMode;
+import org.hibernate.HibernateException;
+import org.hibernate.Interceptor;
+import org.hibernate.MappingException;
+import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
 import org.hibernate.cache.Cache;
 import org.hibernate.cache.QueryCache;
 import org.hibernate.cache.UpdateTimestampsCache;
@@ -27,7 +32,12 @@ import org.hibernate.classic.Session;
 import org.hibernate.connection.ConnectionProvider;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.SQLFunctionRegistry;
-import org.hibernate.engine.*;
+import org.hibernate.engine.FilterDefinition;
+import org.hibernate.engine.NamedQueryDefinition;
+import org.hibernate.engine.NamedSQLQueryDefinition;
+import org.hibernate.engine.ResultSetMappingDefinition;
+import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.SessionImplementor;
 import org.hibernate.engine.query.QueryPlanCache;
 import org.hibernate.exception.SQLExceptionConverter;
 import org.hibernate.id.IdentifierGenerator;

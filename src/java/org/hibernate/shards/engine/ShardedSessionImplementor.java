@@ -18,8 +18,8 @@
 
 package org.hibernate.shards.engine;
 
-import org.hibernate.shards.session.ShardedSession;
 import org.hibernate.shards.Shard;
+import org.hibernate.shards.session.ShardedSession;
 
 import java.util.List;
 

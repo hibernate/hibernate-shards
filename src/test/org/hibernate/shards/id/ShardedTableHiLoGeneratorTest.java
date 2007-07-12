@@ -18,12 +18,7 @@
 
 package org.hibernate.shards.id;
 
-import org.hibernate.shards.defaultmock.SessionDefaultMock;
-import org.hibernate.shards.defaultmock.SessionImplementorDefaultMock;
-import org.hibernate.shards.session.ControlSessionProvider;
-
 import junit.framework.TestCase;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.Query;
@@ -43,13 +38,16 @@ import org.hibernate.jdbc.Batcher;
 import org.hibernate.jdbc.JDBCContext;
 import org.hibernate.loader.custom.CustomQuery;
 import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.shards.defaultmock.SessionDefaultMock;
+import org.hibernate.shards.defaultmock.SessionImplementorDefaultMock;
+import org.hibernate.shards.session.ControlSessionProvider;
 import org.hibernate.type.Type;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.sql.Connection;
 
 /**
  * @author maxr@google.com (Max Ross)

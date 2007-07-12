@@ -22,9 +22,9 @@ import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.Elevator;
 import org.hibernate.shards.model.Escalator;
 import org.hibernate.shards.model.Floor;
-import org.hibernate.shards.model.Tenant;
-import org.hibernate.shards.model.Person;
 import org.hibernate.shards.model.Office;
+import org.hibernate.shards.model.Person;
+import org.hibernate.shards.model.Tenant;
 import org.hibernate.shards.model.Window;
 
 import java.util.List;

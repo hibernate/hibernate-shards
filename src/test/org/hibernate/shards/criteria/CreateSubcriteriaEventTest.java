@@ -19,7 +19,6 @@
 package org.hibernate.shards.criteria;
 
 import junit.framework.TestCase;
-
 import org.hibernate.Criteria;
 import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
 

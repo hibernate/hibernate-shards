@@ -18,10 +18,9 @@
 
 package org.hibernate.shards.strategy.exit;
 
+import org.hibernate.criterion.Projection;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Sets;
-
-import org.hibernate.criterion.Projection;
 
 import java.util.List;
 import java.util.Set;

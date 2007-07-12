@@ -18,26 +18,26 @@
 
 package org.hibernate.shards.defaultmock;
 
-import org.hibernate.persister.entity.EntityPersister;
-import org.hibernate.MappingException;
+import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
-import org.hibernate.EntityMode;
-import org.hibernate.tuple.entity.EntityMetamodel;
-import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.MappingException;
 import org.hibernate.cache.CacheConcurrencyStrategy;
 import org.hibernate.cache.entry.CacheEntryStructure;
-import org.hibernate.id.IdentifierGenerator;
-import org.hibernate.type.Type;
-import org.hibernate.type.VersionType;
+import org.hibernate.engine.CascadeStyle;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.engine.SessionImplementor;
-import org.hibernate.engine.CascadeStyle;
 import org.hibernate.engine.ValueInclusion;
+import org.hibernate.id.IdentifierGenerator;
+import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.tuple.entity.EntityMetamodel;
+import org.hibernate.type.Type;
+import org.hibernate.type.VersionType;
 
 import java.io.Serializable;
-import java.util.Map;
 import java.util.Comparator;
+import java.util.Map;
 
 /**
  * @author maulik@google.com (Maulik Shah)

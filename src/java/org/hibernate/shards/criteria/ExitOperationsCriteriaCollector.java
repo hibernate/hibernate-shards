@@ -18,14 +18,6 @@
 
 package org.hibernate.shards.criteria;
 
-import org.hibernate.shards.strategy.exit.DistinctExitOperation;
-import org.hibernate.shards.strategy.exit.ExitOperationsCollector;
-import org.hibernate.shards.strategy.exit.FirstResultExitOperation;
-import org.hibernate.shards.strategy.exit.MaxResultsExitOperation;
-import org.hibernate.shards.strategy.exit.OrderExitOperation;
-import org.hibernate.shards.strategy.exit.ProjectionExitOperationFactory;
-import org.hibernate.shards.util.Lists;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.AggregateProjection;
@@ -34,6 +26,13 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.RowCountProjection;
 import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.shards.strategy.exit.DistinctExitOperation;
+import org.hibernate.shards.strategy.exit.ExitOperationsCollector;
+import org.hibernate.shards.strategy.exit.FirstResultExitOperation;
+import org.hibernate.shards.strategy.exit.MaxResultsExitOperation;
+import org.hibernate.shards.strategy.exit.OrderExitOperation;
+import org.hibernate.shards.strategy.exit.ProjectionExitOperationFactory;
+import org.hibernate.shards.util.Lists;
 
 import java.util.List;
 

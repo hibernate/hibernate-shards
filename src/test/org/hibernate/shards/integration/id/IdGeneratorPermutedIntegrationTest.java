@@ -23,7 +23,6 @@ import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
 import org.hibernate.shards.model.Building;
 import org.hibernate.shards.util.Lists;
 
-
 import java.util.List;
 
 /**

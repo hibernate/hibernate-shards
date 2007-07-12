@@ -19,7 +19,6 @@
 package org.hibernate.shards.query;
 
 import junit.framework.TestCase;
-
 import org.hibernate.Query;
 import org.hibernate.shards.defaultmock.QueryDefaultMock;
 

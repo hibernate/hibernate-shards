@@ -18,8 +18,8 @@
 
 package org.hibernate.shards.query;
 
-import org.hibernate.Session;
 import org.hibernate.Query;
+import org.hibernate.Session;
 
 /**
  * @author maulik@google.com (Maulik Shah)

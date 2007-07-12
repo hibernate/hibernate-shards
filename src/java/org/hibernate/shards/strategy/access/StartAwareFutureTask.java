@@ -21,8 +21,8 @@ package org.hibernate.shards.strategy.access;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 /**
  * Extension of FutureTask that provides slightly different cancel()

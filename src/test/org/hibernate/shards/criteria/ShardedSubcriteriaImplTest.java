@@ -18,19 +18,17 @@
 
 package org.hibernate.shards.criteria;
 
-import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
-import org.hibernate.shards.Shard;
-import org.hibernate.shards.ShardDefaultMock;
-import org.hibernate.shards.ShardId;
-import org.hibernate.shards.util.Sets;
-import org.hibernate.shards.util.Lists;
-
 import junit.framework.TestCase;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.shards.Shard;
+import org.hibernate.shards.ShardDefaultMock;
+import org.hibernate.shards.ShardId;
+import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
+import org.hibernate.shards.util.Lists;
+import org.hibernate.shards.util.Sets;
 
 import java.util.List;
 import java.util.Set;

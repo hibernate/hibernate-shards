@@ -18,7 +18,6 @@
 package org.hibernate.shards.strategy.exit;
 
 import junit.framework.TestCase;
-
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardDefaultMock;
 

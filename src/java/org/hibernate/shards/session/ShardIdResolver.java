@@ -18,8 +18,8 @@
 
 package org.hibernate.shards.session;
 
-import org.hibernate.shards.ShardId;
 import org.hibernate.shards.Shard;
+import org.hibernate.shards.ShardId;
 
 import java.util.List;
 

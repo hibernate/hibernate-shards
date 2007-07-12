@@ -18,9 +18,9 @@
 
 package org.hibernate.shards.query;
 
-import org.hibernate.shards.defaultmock.QueryDefaultMock;
 import junit.framework.TestCase;
 import org.hibernate.Query;
+import org.hibernate.shards.defaultmock.QueryDefaultMock;
 
 import java.math.BigDecimal;
 

@@ -18,7 +18,14 @@
 
 package org.hibernate.shards.defaultmock;
 
-import org.hibernate.*;
+import org.hibernate.CacheMode;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.FlushMode;
+import org.hibernate.HibernateException;
+import org.hibernate.LockMode;
+import org.hibernate.ScrollMode;
+import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;

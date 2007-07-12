@@ -18,6 +18,12 @@
 
 package org.hibernate.shards.integration.model;
 
+import junit.framework.TestCase;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.StatefulPersistenceContext;
+import org.hibernate.impl.SessionImpl;
 import org.hibernate.shards.integration.IdGenType;
 import org.hibernate.shards.integration.MemoryLeakPlugger;
 import static org.hibernate.shards.integration.model.ModelDataFactory.person;
@@ -28,14 +34,6 @@ import org.hibernate.shards.model.Person;
 import org.hibernate.shards.model.Tenant;
 import org.hibernate.shards.util.JdbcUtil;
 import org.hibernate.shards.util.Lists;
-
-import junit.framework.TestCase;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-import org.hibernate.engine.StatefulPersistenceContext;
-import org.hibernate.impl.SessionImpl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;

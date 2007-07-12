@@ -19,7 +19,6 @@
 package org.hibernate.shards;
 
 import junit.framework.TestCase;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;

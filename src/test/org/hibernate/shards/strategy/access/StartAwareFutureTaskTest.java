@@ -20,8 +20,8 @@ package org.hibernate.shards.strategy.access;
 
 import junit.framework.TestCase;
 
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
 
 /**
  * @author maxr@google.com (Max Ross)

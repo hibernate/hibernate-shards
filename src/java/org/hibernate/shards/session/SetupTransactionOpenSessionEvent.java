@@ -18,9 +18,8 @@
 
 package org.hibernate.shards.session;
 
-import org.hibernate.shards.ShardedTransaction;
-
 import org.hibernate.Session;
+import org.hibernate.shards.ShardedTransaction;
 
 /**
  * OpenSessionEvent which adds newly opened session to the specified

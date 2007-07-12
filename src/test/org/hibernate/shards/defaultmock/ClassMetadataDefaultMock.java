@@ -18,14 +18,14 @@
 
 package org.hibernate.shards.defaultmock;
 
+import org.hibernate.EntityMode;
+import org.hibernate.HibernateException;
+import org.hibernate.engine.SessionImplementor;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.Type;
-import org.hibernate.HibernateException;
-import org.hibernate.EntityMode;
-import org.hibernate.engine.SessionImplementor;
 
-import java.util.Map;
 import java.io.Serializable;
+import java.util.Map;
 
 /**
  * @author maxr@google.com (Max Ross)

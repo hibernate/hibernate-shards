@@ -19,7 +19,6 @@
 package org.hibernate.shards.integration;
 
 import junit.framework.TestCase;
-
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.shards.ShardId;
