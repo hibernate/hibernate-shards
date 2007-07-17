@@ -89,7 +89,7 @@ import java.util.Set;
  * other components of Hibernate Shards. This class is not threadsafe.
  *
  * @author maxr@google.com (Max Ross)
- *         tomislav@google.com (Tomislav Nad)
+ *         Tomislav Nad
  */
 public class ShardedSessionImpl implements ShardedSession, ShardedSessionImplementor,
     ShardIdResolver {

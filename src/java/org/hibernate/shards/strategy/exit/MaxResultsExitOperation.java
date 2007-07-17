@@ -21,7 +21,7 @@ package org.hibernate.shards.strategy.exit;
 import java.util.List;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class MaxResultsExitOperation implements ExitOperation {
 

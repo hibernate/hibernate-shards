@@ -38,7 +38,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public class ShardedTransactionImpl implements ShardedTransaction {
 

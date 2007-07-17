@@ -26,7 +26,7 @@ import java.io.Serializable;
 import java.util.Properties;
 
 /**
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public class ShardedUUIDGeneratorTest extends TestCase {
   private ShardedUUIDGenerator gen;

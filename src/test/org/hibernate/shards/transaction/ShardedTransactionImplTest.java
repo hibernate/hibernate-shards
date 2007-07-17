@@ -34,7 +34,7 @@ import javax.transaction.Synchronization;
 import java.util.List;
 
 /**
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public class ShardedTransactionImplTest extends TestCase {
 

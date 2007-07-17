@@ -24,7 +24,7 @@ import org.hibernate.criterion.RowCountProjection;
 import org.hibernate.engine.SessionFactoryImplementor;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class ProjectionExitOperationFactory {
 

@@ -39,7 +39,7 @@ import java.util.List;
 
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class AggregateExitOperationTest extends TestCase {
 

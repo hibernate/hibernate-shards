@@ -21,7 +21,7 @@ package org.hibernate.shards.strategy.exit;
 import junit.framework.TestCase;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class ExitOperationUtilsTest extends TestCase {
 

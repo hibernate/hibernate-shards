@@ -26,7 +26,7 @@ import java.lang.reflect.Method;
 import java.util.List;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class ExitOperationUtils {
 

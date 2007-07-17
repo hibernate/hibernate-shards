@@ -35,7 +35,7 @@ import java.util.Properties;
  * Supports generation of either 32-character hex String UUID or 128 bit
  * BigInteger UUID that encodes the shard.
  *
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncodingIdentifierGenerator {
 

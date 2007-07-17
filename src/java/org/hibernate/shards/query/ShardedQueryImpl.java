@@ -61,7 +61,7 @@ import java.util.Map;
  *
  * {@inheritDoc}
  *
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class ShardedQueryImpl implements ShardedQuery {
   private final QueryId queryId;

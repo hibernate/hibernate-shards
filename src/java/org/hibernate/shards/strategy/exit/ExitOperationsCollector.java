@@ -30,7 +30,7 @@ import java.util.List;
  * the sum of maxResults(200) should be the sum of only 200 results, not the
  * sum of the sums of 200 results per shard.
  *
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public interface ExitOperationsCollector {
 

@@ -22,7 +22,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class QueryFactoryDefaultMock implements QueryFactory {
   public Query createQuery(Session session) {

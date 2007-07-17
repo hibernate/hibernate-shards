@@ -24,7 +24,7 @@ import org.hibernate.shards.session.ShardedSessionException;
 import java.util.Date;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetTimestampEvent implements QueryEvent {
 

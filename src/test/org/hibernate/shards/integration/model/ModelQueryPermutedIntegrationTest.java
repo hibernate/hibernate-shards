@@ -30,7 +30,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTestCase {
 

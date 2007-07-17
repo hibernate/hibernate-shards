@@ -40,7 +40,7 @@ import java.util.Comparator;
 import java.util.Map;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class EntityPersisterDefaultMock implements EntityPersister {
 

@@ -25,7 +25,7 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 import java.util.Date;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetTimestampEventTest extends TestCase {
 

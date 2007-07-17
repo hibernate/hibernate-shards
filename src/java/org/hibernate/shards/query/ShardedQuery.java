@@ -26,7 +26,7 @@ import org.hibernate.Query;
  *
  * @see org.hibernate.Query
  *
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 
 public interface ShardedQuery extends Query {

@@ -22,7 +22,7 @@ import org.hibernate.Query;
 import org.hibernate.shards.session.ShardedSessionException;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetFloatEvent implements QueryEvent {
 

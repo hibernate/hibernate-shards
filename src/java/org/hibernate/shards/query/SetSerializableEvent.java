@@ -24,7 +24,7 @@ import org.hibernate.shards.session.ShardedSessionException;
 import java.io.Serializable;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetSerializableEvent implements QueryEvent {
 

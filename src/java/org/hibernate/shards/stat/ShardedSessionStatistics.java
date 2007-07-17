@@ -31,7 +31,7 @@ import java.util.Set;
  * Sharded implementation of the SessionStatistics that aggregates the
  * statistics of all underlying individual SessionStatistics.
  *
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public class ShardedSessionStatistics implements SessionStatistics {
 

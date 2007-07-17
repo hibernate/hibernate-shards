@@ -22,7 +22,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class AdHocQueryFactoryImpl implements QueryFactory {
 

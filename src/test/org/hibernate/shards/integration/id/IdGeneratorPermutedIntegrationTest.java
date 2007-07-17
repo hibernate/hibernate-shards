@@ -26,7 +26,7 @@ import org.hibernate.shards.util.Lists;
 import java.util.List;
 
 /**
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public class IdGeneratorPermutedIntegrationTest extends BaseShardingIntegrationTestCase {
 

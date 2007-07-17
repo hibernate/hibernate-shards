@@ -24,7 +24,7 @@ import org.hibernate.shards.session.ShardedSessionException;
 import java.util.Locale;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetLocaleEvent implements QueryEvent {
 

@@ -19,7 +19,7 @@
 package org.hibernate.shards.query;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class QueryId {
 

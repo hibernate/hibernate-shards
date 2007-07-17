@@ -50,7 +50,7 @@ import java.util.Set;
  * hibernate.properties file). While we would like to maintain the Hibernate paradigm
  * as much as possible, this is one place it might be different.
  *
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class ShardedConfiguration {
 

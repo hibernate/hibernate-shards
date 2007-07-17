@@ -26,7 +26,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
  public class SetPropertiesEventTest extends TestCase {
 

@@ -23,7 +23,7 @@ import org.hibernate.shards.session.ShardedSessionException;
 
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetEntityEvent implements QueryEvent {
 

@@ -24,7 +24,7 @@ import org.hibernate.shards.session.ShardedSessionException;
 import java.math.BigDecimal;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetBigDecimalEvent implements QueryEvent {
 

@@ -30,7 +30,7 @@ import java.io.Serializable;
  * TableHiLoGenerator which uses control shard to store table with hi values.
  *
  * @see org.hibernate.id.TableHiLoGenerator
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 
 public class ShardedTableHiLoGenerator extends TableHiLoGenerator implements GeneratorRequiringControlSessionProvider {

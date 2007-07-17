@@ -22,7 +22,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.Query;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetFlushModeEvent implements QueryEvent {
 

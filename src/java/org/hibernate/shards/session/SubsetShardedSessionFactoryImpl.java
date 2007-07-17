@@ -34,7 +34,7 @@ import java.util.Set;
  * prevent the SubsetShardedSessionFactoryImpl from closing any session
  * factories that belong to a ShardedSessionFactoryImpl.
  *
- * @author maulik@google.com (Maulik Shah)@google.com (Maulik Shah)
+ * @author Maulik Shah@google.com (Maulik Shah)
  */
 public class SubsetShardedSessionFactoryImpl extends ShardedSessionFactoryImpl {
 

@@ -21,7 +21,7 @@ package org.hibernate.shards.query;
 import org.hibernate.Query;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class QueryEventDefaultMock implements QueryEvent {
 

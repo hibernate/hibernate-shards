@@ -35,7 +35,7 @@ import java.util.List;
  *
  * {@inheritDoc}
  *
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class ExitOperationsQueryCollector implements ExitOperationsCollector {
 

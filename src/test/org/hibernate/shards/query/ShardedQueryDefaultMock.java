@@ -40,7 +40,7 @@ import java.util.Locale;
 import java.util.Map;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class ShardedQueryDefaultMock implements ShardedQuery {
   public QueryId getQueryId() {

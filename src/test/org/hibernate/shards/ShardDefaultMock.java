@@ -35,7 +35,7 @@ import java.util.Set;
 
 /**
  * @author maxr@google.com (Max Ross)
- *         tomislav@google.com (Tomislav Nad)
+ *         Tomislav Nad
  */
 public class ShardDefaultMock implements Shard {
 

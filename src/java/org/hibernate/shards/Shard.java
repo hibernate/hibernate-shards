@@ -41,7 +41,7 @@ import java.util.Set;
  * itself?
  *
  * @author maxr@google.com (Max Ross)
- *         tomislav@google.com (Tomislav Nad)
+ *         Tomislav Nad
  */
 public interface Shard {
 

@@ -24,7 +24,7 @@ import org.hibernate.Transaction;
 /**
  * Simple interface to represent a shard-aware {@link Transaction}.
  *
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public interface ShardedTransaction extends Transaction {
 

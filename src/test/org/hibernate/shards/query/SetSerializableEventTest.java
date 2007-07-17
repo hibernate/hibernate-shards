@@ -25,7 +25,7 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 import java.io.Serializable;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetSerializableEventTest extends TestCase {
 

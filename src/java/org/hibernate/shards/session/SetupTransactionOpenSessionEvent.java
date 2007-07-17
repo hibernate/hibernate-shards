@@ -25,7 +25,7 @@ import org.hibernate.shards.ShardedTransaction;
  * OpenSessionEvent which adds newly opened session to the specified
  * ShardedTransaction.
  *
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public class SetupTransactionOpenSessionEvent implements OpenSessionEvent {
 

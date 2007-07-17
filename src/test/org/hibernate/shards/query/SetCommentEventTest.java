@@ -23,7 +23,7 @@ import org.hibernate.Query;
 import org.hibernate.shards.defaultmock.QueryDefaultMock;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
  public class SetCommentEventTest extends TestCase {
 

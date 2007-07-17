@@ -30,7 +30,7 @@ import java.util.List;
  * @see ShardedSession the interface to the application
  * @see org.hibernate.shards.session.ShardedSessionImpl the actual implementation
  *
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public interface ShardedSessionImplementor {
 

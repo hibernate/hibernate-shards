@@ -27,7 +27,7 @@ import org.hibernate.type.Type;
 import java.util.Collection;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetParameterListEventTest extends TestCase {
 

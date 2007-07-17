@@ -39,7 +39,7 @@ import java.util.List;
 /**
  * Implements the ExitOperationsCollector interface for Critierias
  *
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class ExitOperationsCriteriaCollector implements ExitOperationsCollector {
 

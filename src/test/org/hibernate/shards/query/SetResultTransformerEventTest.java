@@ -24,7 +24,7 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 import org.hibernate.transform.ResultTransformer;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetResultTransformerEventTest extends TestCase {
 

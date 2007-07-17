@@ -22,7 +22,7 @@ import org.hibernate.Query;
 import org.hibernate.transform.ResultTransformer;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetResultTransformerEvent implements QueryEvent {
 

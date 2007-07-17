@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * Internal interface for implementors of ShardedSessionFactory
  *
- * @author Tomislav Nad (tomislav@google.com)
+ * @author Tomislav Nad
  */
 public interface ShardedSessionFactoryImplementor extends ShardedSessionFactory, SessionFactoryImplementor {
 

@@ -25,7 +25,7 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 import java.math.BigInteger;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetBigIntegerEventTest extends TestCase {
 

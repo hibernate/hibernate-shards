@@ -24,7 +24,7 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 import org.hibernate.type.Type;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetParametersEventTest extends TestCase {
 

@@ -24,7 +24,7 @@ import org.hibernate.Session;
 import javax.transaction.Synchronization;
 
 /**
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public class ShardedTransactionDefaultMock implements ShardedTransaction {
 

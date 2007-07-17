@@ -29,7 +29,7 @@ import org.hibernate.Query;
  * which need to be applied to the actual {@link org.hibernate.Query} when
  * it is allocated.
  *
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 
 public interface QueryEvent {

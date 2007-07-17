@@ -24,7 +24,7 @@ import org.hibernate.shards.ShardId;
 import java.io.Serializable;
 
 /**
- * @author tomislav@google.com (Tomislav Nad)
+ * @author Tomislav Nad
  */
 public interface ShardEncodingIdentifierGenerator extends IdentifierGenerator {
 

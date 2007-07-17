@@ -22,7 +22,7 @@ import org.hibernate.Query;
 import org.hibernate.type.Type;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetParametersEvent implements QueryEvent {
 

@@ -23,7 +23,7 @@ import org.hibernate.shards.session.ShardedSessionException;
 import org.hibernate.type.Type;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetParameterEvent implements QueryEvent {
   private static enum CtorType {

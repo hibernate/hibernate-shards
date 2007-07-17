@@ -22,7 +22,7 @@ import org.hibernate.LockMode;
 import org.hibernate.Query;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class SetLockModeEvent implements QueryEvent {
 

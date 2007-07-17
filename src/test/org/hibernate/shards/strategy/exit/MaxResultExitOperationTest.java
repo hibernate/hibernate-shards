@@ -25,7 +25,7 @@ import org.hibernate.shards.util.Lists;
 import java.util.List;
 
 /**
- * @author maulik@google.com (Maulik Shah)
+ * @author Maulik Shah
  */
 public class MaxResultExitOperationTest extends TestCase {
 
