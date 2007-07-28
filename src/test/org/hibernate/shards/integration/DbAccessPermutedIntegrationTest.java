@@ -18,15 +18,14 @@
 
 package org.hibernate.shards.integration;
 
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.shards.engine.ShardedSessionFactoryImplementor;
-import org.hibernate.shards.util.JdbcStrategy;
-import org.hibernate.shards.util.JdbcUtil;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
+import java.math.BigDecimal;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -46,36 +45,33 @@ public class DbAccessPermutedIntegrationTest extends BaseShardingIntegrationTest
   private void testShard(SessionFactory sf) throws SQLException {
     Session session = sf.openSession();
     try {
-      Connection conn = session.connection();
-      insertRecord(conn);
-      updateRecord(conn);
-      selectRecord(conn);
-      deleteRecord(conn);
+      insertRecord(session);
+      updateRecord(session);
+      selectRecord(session);
+      deleteRecord(session);
     } finally {
       session.close();
     }
   }
 
-  private void insertRecord(Connection conn) throws SQLException {
-    assertEquals(1, JdbcUtil.executeUpdate(conn, "INSERT INTO sample_table(id, str_col) values (0, 'yam')", false));
+  private void insertRecord(Session session) throws SQLException {
+    assertEquals(1, session.createSQLQuery("INSERT INTO sample_table(id, str_col) values (0, 'yam')").executeUpdate());
   }
 
-  private void updateRecord(Connection conn) throws SQLException {
-    assertEquals(1, JdbcUtil.executeUpdate(conn, "UPDATE sample_table set str_col = 'max' where id = 0", false));
+  private void updateRecord(Session session) throws SQLException {
+    assertEquals(1, session.createSQLQuery("UPDATE sample_table set str_col = 'max' where id = 0").executeUpdate());
   }
 
-  private void selectRecord(Connection conn) throws SQLException {
-    JdbcStrategy strat = new JdbcStrategy() {
-      public void extractData(ResultSet rs) throws SQLException {
-        assertEquals(0, rs.getInt("id"));
-        assertEquals("max", rs.getString("str_col"));
-        assertFalse(rs.next());
-      }
-    };
-    JdbcUtil.executeJdbcQuery(conn, "select id, str_col from sample_table where id = 0", strat, false);
+  private void selectRecord(Session session) throws SQLException {
+    SQLQuery query = session.createSQLQuery("select id, str_col from sample_table where id = 0");
+    List results = query.list();
+    assertEquals(1, results.size());
+    Object[] result = (Object[]) results.get(0);
+    assertEquals(new BigDecimal(0), result[0]);
+    assertEquals("max", result[1]);
   }
 
-  private void deleteRecord(Connection conn) throws SQLException {
-    assertEquals(1, JdbcUtil.executeUpdate(conn, "DELETE from sample_table where id = 0", false));
+  private void deleteRecord(Session session) throws SQLException {
+    assertEquals(1, session.createSQLQuery("DELETE from sample_table where id = 0").executeUpdate());
   }
 }
