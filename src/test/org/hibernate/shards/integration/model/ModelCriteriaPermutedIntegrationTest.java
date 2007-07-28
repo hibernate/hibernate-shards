@@ -53,9 +53,12 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
     super.setUp();
     session.beginTransaction();
     b1 = ModelDataFactory.building("b1");
-    b1f1 = ModelDataFactory.floor(b1, 1);
-    b1f2 = ModelDataFactory.floor(b1, 2);
-    b1f3 = ModelDataFactory.floor(b1, 3);
+    // because of the fuzziness in how avg gets computed on hsqldb
+    // we need to make sure the per-shard avg is a round number, otherwise
+    // our test will fail
+    b1f1 = ModelDataFactory.floor(b1, 1, new BigDecimal(10.00));
+    b1f2 = ModelDataFactory.floor(b1, 2, new BigDecimal(20.00));
+    b1f3 = ModelDataFactory.floor(b1, 3, new BigDecimal(30.00));
     b1f3o1 = ModelDataFactory.office("NOT LAHGE", b1f3);
     b1f3o2 = ModelDataFactory.office("LAHGE", b1f3);
     session.save(b1);
@@ -63,7 +66,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 
     session.beginTransaction();
     b2 = ModelDataFactory.building("b2");
-    b2f1 = ModelDataFactory.floor(b2, 1);
+    b2f1 = ModelDataFactory.floor(b2, 1, new BigDecimal(20.00));
     b2f1o1 = ModelDataFactory.office("LAHGE", b2f1);
     session.save(b2);
     session.getTransaction().commit();
@@ -220,7 +223,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
     assertEquals(2, l.size());
   }
 
-  public void testProjection() {
+  public void testRowCountProjection() {
     Criteria crit = session.createCriteria(Building.class).setProjection(Projections.rowCount());
     Criteria floorCrit = crit.createCriteria("floors");
     Criteria officeCrit = floorCrit.createCriteria("offices");
@@ -234,6 +237,14 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
     }
     assertEquals(2, total);
   }
+
+  public void testAvgProjection() {
+    Criteria crit = session.createCriteria(Floor.class).setProjection(Projections.avg("squareFeet"));
+    List<Double> l = list(crit);
+    assertEquals(1, l.size());
+    assertEquals(20.0, l.get(0));
+  }
+
 
   public void testMaxResults() throws Exception {
     Criteria crit = session.createCriteria(Building.class).setMaxResults(1);

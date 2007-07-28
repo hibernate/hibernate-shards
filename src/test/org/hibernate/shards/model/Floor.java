@@ -21,6 +21,7 @@ package org.hibernate.shards.model;
 import org.hibernate.shards.util.Lists;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -30,6 +31,7 @@ public class Floor {
 
   private Serializable floorId;
   private int number;
+  private BigDecimal squareFeet;
   private List<Tenant> tenants;
   private List<Office> offices = Lists.newArrayList();
   private List<Elevator> elevators = Lists.newArrayList();
@@ -51,6 +53,14 @@ public class Floor {
 
   public void setNumber(int number) {
     this.number = number;
+  }
+
+  public BigDecimal getSquareFeet() {
+    return squareFeet;
+  }
+
+  public void setSquareFeet(BigDecimal squareFeet) {
+    this.squareFeet = squareFeet;
   }
 
   public List<Tenant> getTenants() {

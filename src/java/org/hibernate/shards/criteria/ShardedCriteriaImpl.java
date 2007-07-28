@@ -26,9 +26,12 @@ import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.AvgProjection;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardOperation;
 import org.hibernate.shards.strategy.access.ShardAccessStrategy;
@@ -126,7 +129,28 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 
   public Criteria setProjection(Projection projection) {
     criteriaCollector.addProjection(projection);
+    if(projection instanceof AvgProjection) {
+      setAvgProjection(projection);
+    }
+    // TODO - handle ProjectionList
     return this;
+  }
+
+  private void setAvgProjection(Projection projection) {
+    // We need to modify the query to pull back not just the average but also
+    // the count.  We'll do this by creating a ProjectionList with both the
+    // average and the row count.
+    ProjectionList projectionList = Projections.projectionList();
+    projectionList.add(projection);
+    projectionList.add(Projections.rowCount());
+    CriteriaEvent event = new SetProjectionEvent(projectionList);
+    for (Shard shard : shards) {
+      if (shard.getCriteriaById(criteriaId) != null) {
+        shard.getCriteriaById(criteriaId).setProjection(projectionList);
+      } else {
+        shard.addCriteriaEvent(criteriaId, event);
+      }
+    }
   }
 
   public Criteria add(Criterion criterion) {

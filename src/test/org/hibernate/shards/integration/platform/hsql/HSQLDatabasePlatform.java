@@ -46,7 +46,7 @@ public class HSQLDatabasePlatform extends BaseDatabasePlatform {
     ,"INSERT INTO hibernate_unique_key(next_hi) VALUES(1)"
     ,"CREATE TABLE Elevator (elevatorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0))"
     ,"CREATE TABLE Building (buildingId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50))"
-    ,"CREATE TABLE Floor (floorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0), upEscalatorId DECIMAL(40,0), downEscalatorId DECIMAL(40,0), number DECIMAL(40,0))"
+    ,"CREATE TABLE Floor (floorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0), upEscalatorId DECIMAL(40,0), downEscalatorId DECIMAL(40,0), number DECIMAL(40,0), squareFeet DECIMAL(40, 4))"
     ,"CREATE TABLE Tenant (tenantId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50))"
     ,"CREATE TABLE BuildingTenant (buildingId DECIMAL(40,0), tenantId DECIMAL(40,0), PRIMARY KEY(buildingId, tenantId))"
     ,"CREATE TABLE Office (officeId DECIMAL(40,0) PRIMARY KEY, floorId DECIMAL(40,0), label VARCHAR(50), windowId DECIMAL(40,0))"

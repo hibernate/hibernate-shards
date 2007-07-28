@@ -18,6 +18,7 @@
 package org.hibernate.shards;
 
 import junit.framework.TestCase;
+
 import org.hibernate.shards.util.Lists;
 
 import java.util.Collections;
@@ -117,6 +118,7 @@ public final class NonPermutedTests {
     classes.add(org.hibernate.shards.strategy.access.ParallelShardOperationCallableTest.class);
     classes.add(org.hibernate.shards.strategy.access.StartAwareFutureTaskTest.class);
     classes.add(org.hibernate.shards.strategy.exit.AggregateExitOperationTest.class);
+    classes.add(org.hibernate.shards.strategy.exit.AvgResultsExitOperationTest.class);
     classes.add(org.hibernate.shards.strategy.exit.ExitOperationUtilsTest.class);
     classes.add(org.hibernate.shards.strategy.exit.FirstNonNullResultExitStrategyTest.class);
     classes.add(org.hibernate.shards.strategy.exit.FirstResultExitOperationTest.class);

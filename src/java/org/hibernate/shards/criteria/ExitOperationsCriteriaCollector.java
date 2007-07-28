@@ -26,6 +26,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.RowCountProjection;
 import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.shards.strategy.exit.AvgResultsExitOperation;
 import org.hibernate.shards.strategy.exit.DistinctExitOperation;
 import org.hibernate.shards.strategy.exit.ExitOperationsCollector;
 import org.hibernate.shards.strategy.exit.FirstResultExitOperation;
@@ -162,14 +163,16 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
       result = new MaxResultsExitOperation(maxResults).apply(result);
     }
 
-    ProjectionExitOperationFactory factory = ProjectionExitOperationFactory
-        .getFactory();
+    ProjectionExitOperationFactory factory =
+        ProjectionExitOperationFactory.getFactory();
 
     if (rowCountProjection != null) {
       result = factory.getProjectionExitOperation(rowCountProjection, sessionFactoryImplementor).apply(result);
     }
 
-    // TODO(maulik) average should go here
+    if (avgProjection != null) {
+      result = new AvgResultsExitOperation().apply(result);
+    }
 
     // min, max, sum
     if (aggregateProjection != null) {

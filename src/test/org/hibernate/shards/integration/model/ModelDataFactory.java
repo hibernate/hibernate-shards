@@ -27,6 +27,7 @@ import org.hibernate.shards.model.Person;
 import org.hibernate.shards.model.Tenant;
 import org.hibernate.shards.model.Window;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -53,14 +54,19 @@ public class ModelDataFactory {
   }
 
   public static Floor floor(Building b, int number) {
-    return floor(b, number, null, null);
+    return floor(b, number, null, null, null);
   }
 
-  public static Floor floor(Building b, int number, Escalator up, Escalator down) {
+  public static Floor floor(Building b, int number, BigDecimal squareFeet) {
+    return floor(b, number, squareFeet, null, null);
+  }
+
+  public static Floor floor(Building b, int number, BigDecimal squareFeet, Escalator up, Escalator down) {
     Floor f = new Floor();
     f.setBuilding(b);
     b.getFloors().add(f);
     f.setNumber(number);
+    f.setSquareFeet(squareFeet);
     f.setGoingDown(down);
     f.setGoingUp(up);
     return f;

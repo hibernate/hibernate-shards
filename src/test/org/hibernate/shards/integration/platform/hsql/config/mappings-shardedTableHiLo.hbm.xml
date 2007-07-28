@@ -109,6 +109,7 @@
       <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
     </id>
     <property name="number" not-null="true"/>
+    <property name="squareFeet" not-null="false"/>
     <many-to-one name="goingUp" column="upEscalatorId" unique="true" not-null="false" class="Escalator" cascade="all"/>
     <many-to-one name="goingDown" column="downEscalatorId" unique="true" not-null="false" class="Escalator" cascade="all"/>
     <many-to-one name="building" column="buildingId" not-null="true" class="Building"/>
