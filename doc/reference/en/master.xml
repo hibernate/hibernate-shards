@@ -13,7 +13,7 @@
         <title>Hibernate Shards</title>
         <subtitle>Horizontal Partitioning With Hibernate</subtitle>
         <subtitle>Reference Guide</subtitle>
-        <releaseinfo>3.0.0.Beta1</releaseinfo>
+        <releaseinfo>3.0.0.Beta2</releaseinfo>
         <mediaobject>
             <imageobject>
                 <imagedata fileref="images/hibernate_logo_a.png" format="PNG"/>
