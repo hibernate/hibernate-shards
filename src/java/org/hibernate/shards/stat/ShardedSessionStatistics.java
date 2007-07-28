@@ -19,6 +19,8 @@
 package org.hibernate.shards.stat;
 
 import org.hibernate.Session;
+import org.hibernate.engine.CollectionKey;
+import org.hibernate.engine.EntityKey;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.engine.ShardedSessionImplementor;
 import org.hibernate.shards.session.OpenSessionEvent;
@@ -69,18 +71,22 @@ public class ShardedSessionStatistics implements SessionStatistics {
     return count;
   }
 
-  public Set getEntityKeys() {
-    Set entityKeys = Sets.newHashSet();
+  public Set<EntityKey> getEntityKeys() {
+    Set<EntityKey> entityKeys = Sets.newHashSet();
     for (SessionStatistics s : sessionStatistics) {
-      entityKeys.addAll(s.getEntityKeys());
+      @SuppressWarnings("unchecked")
+      Set<EntityKey> shardEntityKeys = (Set<EntityKey>)s.getEntityKeys();
+      entityKeys.addAll(shardEntityKeys);
     }
     return entityKeys;
   }
 
-  public Set getCollectionKeys() {
-    Set collectionKeys = Sets.newHashSet();
+  public Set<CollectionKey> getCollectionKeys() {
+    Set<CollectionKey> collectionKeys = Sets.newHashSet();
     for (SessionStatistics s : sessionStatistics) {
-      collectionKeys.addAll(s.getCollectionKeys());
+      @SuppressWarnings("unchecked")
+      Set<CollectionKey> shardCollectionKeys = (Set<CollectionKey>)s.getCollectionKeys();
+      collectionKeys.addAll(shardCollectionKeys);
     }
     return collectionKeys;
   }

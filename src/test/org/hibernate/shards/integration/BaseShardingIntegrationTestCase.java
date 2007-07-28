@@ -19,6 +19,9 @@
 package org.hibernate.shards.integration;
 
 import junit.framework.TestCase;
+
+import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.shards.ShardId;
@@ -126,7 +129,7 @@ public abstract class BaseShardingIntegrationTestCase extends TestCase implement
     Map<Integer, Integer> virtualShardToShardMap = Maps.newHashMap();
     if (isVirtualShardingEnabled()) {
       for(int i = 0; i < getNumShards(); ++i) {
-        virtualShardToShardMap.put(Integer.valueOf(i), Integer.valueOf(i % getNumDatabases()));
+        virtualShardToShardMap.put(i, i % getNumDatabases());
       }
     }
     return virtualShardToShardMap;
@@ -249,12 +252,16 @@ public abstract class BaseShardingIntegrationTestCase extends TestCase implement
 
   /**
    * Override if you want additional tables in your schema
+   * @param conn the connection
+   * @throws SQLException thrown if any of the operations performed with the
+   * connection throws the same
    */
   protected void createDatabaseHook(Connection conn) throws SQLException {
   }
 
   /**
    * Override if you want more than the default
+   * @return the number of databases
    */
   protected int getNumDatabases() {
     return perm.getNumDbs();
@@ -290,32 +297,26 @@ public abstract class BaseShardingIntegrationTestCase extends TestCase implement
   }
 
   protected <T> T reloadAssertNotNull(Session session, T reloadMe) {
-    T result = (T) reloadAll(session, reloadMe)[0];
+    T result = reload(session, reloadMe);
     assertNotNull(result);
     return result;
   }
 
   protected <T> T reload(Session session, T reloadMe) {
-    return (T) reloadAll(session, reloadMe)[0];
-  }
-
-  protected Object[] reloadAll(Session session, Object... reloadMe) {
-    List<Object> retVal = Lists.newArrayList();
-    for(Object obj : reloadMe) {
-      Class clazz = obj.getClass();
-      String className = clazz.getSimpleName();
-      try {
-        Method m = clazz.getMethod("get" + className + "Id");
-        retVal.add(session.get(clazz, (Serializable) m.invoke(obj)));
-      } catch (NoSuchMethodException e) {
-        throw new RuntimeException(e);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException(e);
-      } catch (InvocationTargetException e) {
-        throw new RuntimeException(e);
-      }
+    Class<?> clazz = reloadMe.getClass();
+    String className = clazz.getSimpleName();
+    try {
+      Method m = clazz.getMethod("get" + className + "Id");
+      @SuppressWarnings("unchecked")
+      T result = (T) get(session, clazz, (Serializable) m.invoke(reloadMe));
+      return result;
+    } catch (NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    } catch (IllegalAccessException e) {
+      throw new RuntimeException(e);
+    } catch (InvocationTargetException e) {
+      throw new RuntimeException(e);
     }
-    return retVal.toArray();
   }
 
   protected ShardId getShardIdForObject(Object obj) {
@@ -360,6 +361,30 @@ public abstract class BaseShardingIntegrationTestCase extends TestCase implement
       throw new RuntimeException(perm.getMessageWithPermutationPrefix(t.getMessage()), t);
       // TODO(maxr) handel assertion failure separately so they get properly reported
     }
+  }
+
+  protected <T> List<T> list(Criteria crit) {
+    @SuppressWarnings("unchecked")
+    List<T> result = crit.list();
+    return result;
+  }
+
+  protected <T> List<T> list(Query query) {
+    @SuppressWarnings("unchecked")
+    List<T> result = query.list();
+    return result;
+  }
+
+  protected <T> T uniqueResult(Criteria crit) {
+    @SuppressWarnings("unchecked")
+    T result = (T) crit.uniqueResult();
+    return result;
+  }
+
+  protected <T> T get(Session session, Class<?> clazz, Serializable id) {
+    @SuppressWarnings("unchecked")
+    T result = (T) session.get(clazz, id);
+    return result;
   }
 }
 

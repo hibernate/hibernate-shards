@@ -108,7 +108,7 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
       buildings.add(b);
     }
     commitAndResetSession();
-    List<Integer> counts =  session.createCriteria(Building.class).setProjection(Projections.rowCount()).list();
+    List<Integer> counts =  list(session.createCriteria(Building.class).setProjection(Projections.rowCount()));
     int total = 0;
     for(Integer count : counts) {
       total += count;
@@ -656,7 +656,7 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
     for(int i=0; i<getNumShards(); i++) {
       saveBuilding("building-"+i);
     }
-    List<Building> buildings = session.createQuery("from Building").list();
+    List<Building> buildings = list(session.createQuery("from Building"));
     assertEquals(getNumShards(), buildings.size());
     resetSession();
 
@@ -686,7 +686,7 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
     // do we only search certain shards?
     // we should only get back the buildings that were on shard 0, i.e. a single building
     Session sessionWithParticularShards = ssfWithParticularShards.openSession();
-    List<Building> buildingsFromDesiredShards = sessionWithParticularShards.createQuery("from Building").list();
+    List<Building> buildingsFromDesiredShards = list(sessionWithParticularShards.createQuery("from Building"));
 
     if (!isVirtualShardingEnabled()) {
       assertEquals(1, buildingsFromDesiredShards.size());

@@ -40,12 +40,14 @@ public class ExitOperationUtils {
     return nonNullList;
   }
 
-  public static List<Comparable> getComparableList(List<Object> results) {
-    return (List<Comparable>) (List) results;  // I feel dirty
+  public static List<Comparable<Object>> getComparableList(List<Object> results) {
+    @SuppressWarnings("unchecked")
+    List<Comparable<Object>> result = (List<Comparable<Object>>) (List) results;
+    return result;
   }
 
 
-  public static Comparable getPropertyValue(Object obj, String propertyName) {
+  public static Comparable<Object> getPropertyValue(Object obj, String propertyName) {
     /**
      * TODO(maulik) respect the client's choice in how Hibernate accesses
      * property values.
@@ -72,15 +74,17 @@ public class ExitOperationUtils {
       }
       String[] methods = ("get" + propertyPath.toString().replaceAll("\\.", ".get")).split("\\.");
       Object root = obj;
-      for (int i=0; i < methods.length; i++) {
+      for (String method : methods) {
         Class clazz = root.getClass();
-        Method m = clazz.getMethod(methods[i]);
+        Method m = clazz.getMethod(method);
         root = m.invoke(root);
         if (root == null) {
           break;
         }
       }
-      return (Comparable) root;
+      @SuppressWarnings("unchecked")
+      Comparable<Object> result = (Comparable<Object>) root;
+      return result;
     } catch (NoSuchMethodException e) {
       throw new RuntimeException(e);
     } catch (IllegalAccessException e) {

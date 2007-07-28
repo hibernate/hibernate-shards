@@ -20,6 +20,7 @@ package org.hibernate.shards.strategy.exit;
 
 
 import junit.framework.TestCase;
+
 import org.hibernate.shards.util.Lists;
 
 import java.util.List;
@@ -56,7 +57,8 @@ public class FirstResultExitOperationTest extends TestCase {
     List<Object> objects = exitOp.apply(list);
     assertTrue(objects.isEmpty());
 
-    list = Lists.newArrayList(null, null, null);
+    Object nullObj = null;
+    list = Lists.newArrayList(nullObj, nullObj, nullObj);
 
     objects = exitOp.apply(list);
     assertTrue(objects.isEmpty());

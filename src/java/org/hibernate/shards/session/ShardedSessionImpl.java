@@ -710,7 +710,9 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
         if(collections == null) {
           collections = Lists.newArrayList();
         }
-        collections.add((Collection<Object>) pair.getSecond());
+        @SuppressWarnings("unchecked")
+        Collection<Object> coll = (Collection<Object>) pair.getSecond();
+        collections.add(coll);
       } else {
         shardId = checkForConflictingShardId(shardId, obj.getClass(), pair.getSecond());
         /**

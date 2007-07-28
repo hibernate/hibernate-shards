@@ -19,6 +19,7 @@
 package org.hibernate.shards.strategy.exit;
 
 import junit.framework.TestCase;
+
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -102,7 +103,7 @@ public class OrderExitOperationTest extends TestCase {
 
   public void testApply() throws Exception {
     Order order = Order.asc("value");
-    OrderExitOperation oeo = new OrderExitOperation(order, new SessionFactoryMock());
+    OrderExitOperation oeo = new OrderExitOperation(order);
     List unShuffledList = oeo.apply(shuffledList);
 
     assertTrue(nonNullData.equals(unShuffledList));
@@ -112,8 +113,8 @@ public class OrderExitOperationTest extends TestCase {
     Order orderValue = Order.asc("value");
     Order orderName = Order.desc("name");
 
-    OrderExitOperation oeoValue = new OrderExitOperation(orderValue, new SessionFactoryMock());
-    OrderExitOperation oeoName = new OrderExitOperation(orderName, new SessionFactoryMock());
+    OrderExitOperation oeoValue = new OrderExitOperation(orderValue);
+    OrderExitOperation oeoName = new OrderExitOperation(orderName);
 
     List<MyInt> answer =
         Lists.newArrayList(

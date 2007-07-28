@@ -19,7 +19,6 @@
 package org.hibernate.shards.strategy.exit;
 
 import org.hibernate.criterion.Order;
-import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.shards.util.Preconditions;
 
 import java.util.Collections;
@@ -32,28 +31,26 @@ import java.util.List;
 public class OrderExitOperation implements ExitOperation {
 
   private final Order order;
-  private final SessionFactoryImplementor sessionFactoryImplementor;
   private final String propertyName;
 
-  public OrderExitOperation(Order order, SessionFactoryImplementor sessionFactoryImplementor) {
+  public OrderExitOperation(Order order) {
     //TODO(maulik) support Ignore case!
     Preconditions.checkState(order.toString().endsWith("asc") ||
                              order.toString().endsWith("desc"));
 
     this.order = order;
     this.propertyName = getSortingProperty(order);
-    this.sessionFactoryImplementor = sessionFactoryImplementor;
   }
 
   public List<Object> apply(List<Object> results) {
-    List nonNullList = ExitOperationUtils.getNonNullList(results);
-    Comparator comparator = new Comparator() {
+    List<Object> nonNullList = ExitOperationUtils.getNonNullList(results);
+    Comparator<Object> comparator = new Comparator<Object>() {
       public int compare(Object o1, Object o2) {
         if (o1 == o2) {
           return 0;
         }
-        Comparable o1Value = ExitOperationUtils.getPropertyValue(o1, propertyName);
-        Comparable o2Value = ExitOperationUtils.getPropertyValue(o2, propertyName);
+        Comparable<Object> o1Value = ExitOperationUtils.getPropertyValue(o1, propertyName);
+        Comparable<Object> o2Value = ExitOperationUtils.getPropertyValue(o2, propertyName);
         if (o1Value == null) {
           return -1;
         }

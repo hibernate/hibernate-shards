@@ -75,7 +75,9 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
         if(collections == null) {
           collections = Lists.newArrayList();
         }
-        collections.add((Collection<Object>) pair.getSecond());
+        @SuppressWarnings("unchecked")
+        Collection<Object> objColl = (Collection<Object>) pair.getSecond();
+        collections.add(objColl);
       } else {
         checkForConflictingShardId(entity.getClass().getName(), expectedShardId, pair.getSecond());
       }
@@ -107,7 +109,7 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
   }
 
   void checkForConflictingShardId(String classOfUpdatedObject, ShardId expectedShardId, Object associatedObject) {
-    ShardId localShardId = null;
+    ShardId localShardId;
     /*
      * Here's something you wish you didn't need to know: If the associated
      * object is an unitialized proxy and the object is not on the same
@@ -154,7 +156,9 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
       throws CallbackException {
     ShardId expectedShardId = getAndRefreshExpectedShardId(((PersistentCollection)collection).getOwner());
     Preconditions.checkNotNull(expectedShardId);
-    checkIterable("<Unknown>", expectedShardId, (Iterable<Object>) collection);
+    @SuppressWarnings("unchecked")
+    Iterable<Object> iterable = (Iterable<Object>) collection;
+    checkIterable("<Unknown>", expectedShardId, iterable);
   }
 
   private ShardId getAndRefreshExpectedShardId(Object object) {

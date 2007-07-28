@@ -21,8 +21,6 @@ package org.hibernate.shards.strategy.exit;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.AggregateProjection;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.shards.util.Preconditions;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -35,7 +33,6 @@ public class AggregateExitOperation implements ProjectionExitOperation {
 
   private final SupportedAggregations aggregate;
 
-  private final SessionFactoryImplementor sessionFactoryImplementor;
   private final String fieldName;
 
   private final Log log = LogFactory.getLog(getClass());
@@ -58,9 +55,7 @@ public class AggregateExitOperation implements ProjectionExitOperation {
 
   }
 
-  public AggregateExitOperation(AggregateProjection projection, SessionFactoryImplementor sessionFactoryImplementor) {
-    Preconditions.checkNotNull(sessionFactoryImplementor);
-    this.sessionFactoryImplementor = sessionFactoryImplementor;
+  public AggregateExitOperation(AggregateProjection projection) {
     /**
      * an aggregateProjection's toString returns
      * min( ..., max( ..., sum( ..., or avg( ...

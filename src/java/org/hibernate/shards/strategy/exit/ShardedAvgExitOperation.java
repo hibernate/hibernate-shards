@@ -42,11 +42,12 @@ public class ShardedAvgExitOperation implements ProjectionExitOperation {
   public List<Object> apply(List<Object> results) {
     BigDecimal value = new BigDecimal(0.0);
     BigDecimal count = new BigDecimal(0.0);
-    for(Object obj : results) {
-      Pair<Number, Number> pair = (Pair<Number, Number>) obj;
+    @SuppressWarnings("unchecked")
+    List<Pair<Double, Integer>> pairList = (List<Pair<Double, Integer>>) (List) results;
+    for(Pair<Double, Integer> pair : pairList) {
       // we know the order of the pair (avg, count) by convention of ShardedAvgProjection
-      value = value.add(new BigDecimal(pair.first.toString()));
-      count = count.add(new BigDecimal(pair.second.toString()));
+      value = value.add(new BigDecimal(pair.first));
+      count = count.add(new BigDecimal(pair.second));
     }
     return Lists.newArrayList((Object)value.divide(count));
   }

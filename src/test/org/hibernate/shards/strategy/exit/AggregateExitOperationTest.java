@@ -19,6 +19,7 @@
 package org.hibernate.shards.strategy.exit;
 
 import junit.framework.TestCase;
+
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -76,38 +77,38 @@ public class AggregateExitOperationTest extends TestCase {
 
   public void testCtor() throws Exception {
     try {
-      new AggregateExitOperation(new AvgProjection("foo"), new SessionFactoryMock());
+      new AggregateExitOperation(new AvgProjection("foo"));
       fail();
     } catch (IllegalArgumentException e) {
       // good
     }
     try {
-      new AggregateExitOperation(new AvgProjection("foo"), new SessionFactoryDefaultMock());
+      new AggregateExitOperation(new AvgProjection("foo"));
       fail();
     } catch (IllegalArgumentException e) {
       // good
     }
-    new AggregateExitOperation(Projections.max("foo"), new SessionFactoryDefaultMock());
-    new AggregateExitOperation(Projections.min("foo"), new SessionFactoryDefaultMock());
-    new AggregateExitOperation(Projections.sum("foo"), new SessionFactoryDefaultMock());
+    new AggregateExitOperation(Projections.max("foo"));
+    new AggregateExitOperation(Projections.min("foo"));
+    new AggregateExitOperation(Projections.sum("foo"));
   }
 
   public void testSum() throws Exception {
-    AggregateExitOperation exitOp = new AggregateExitOperation(Projections.sum("value"), new SessionFactoryMock());
+    AggregateExitOperation exitOp = new AggregateExitOperation(Projections.sum("value"));
 
     List<Object> result = exitOp.apply(data);
     assertEquals(new BigDecimal(11.0), (BigDecimal)result.get(0));
   }
 
   public void testMax() throws Exception {
-    AggregateExitOperation exitOp = new AggregateExitOperation(Projections.max("value"), new SessionFactoryMock());
+    AggregateExitOperation exitOp = new AggregateExitOperation(Projections.max("value"));
 
     List<Object> result = exitOp.apply(data);
     assertEquals(5, ((MyInt)result.get(0)).getValue());
   }
 
   public void testMin() throws Exception {
-    AggregateExitOperation exitOp = new AggregateExitOperation(Projections.min("value"), new SessionFactoryMock());
+    AggregateExitOperation exitOp = new AggregateExitOperation(Projections.min("value"));
 
     List<Object> result = exitOp.apply(data);
     assertEquals(0, ((MyInt)result.get(0)).getValue());

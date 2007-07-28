@@ -33,13 +33,13 @@ public class QueryResult {
 
   private final Map<Shard, List> resultMap = Maps.newHashMap();
 
-  private final List entityList = Lists.newArrayList();
+  private final List<Object> entityList = Lists.newArrayList();
 
   public Map<Shard, List> getResultMap() {
     return Collections.unmodifiableMap(resultMap);
   }
 
-  public void add(Shard shard, List list) {
+  public void add(Shard shard, List<Object> list) {
     resultMap.put(shard, list);
     entityList.addAll(list);
   }
@@ -49,7 +49,7 @@ public class QueryResult {
     entityList.addAll(result.getEntityList());
   }
 
-  public List getEntityList() {
+  public List<Object> getEntityList() {
     return entityList;
   }
 

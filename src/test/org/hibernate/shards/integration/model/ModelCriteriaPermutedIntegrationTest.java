@@ -281,13 +281,5 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
     List<Office> answer = Lists.newArrayList(b2f1o1, b1f3o1, b1f3o2);
     assertTrue(answer.equals(l));
   }
-
-  private <T> List<T> list(Criteria crit) {
-    return crit.list();
-  }
-
-  private <T> T uniqueResult(Criteria crit) {
-    return (T) crit.uniqueResult();
-  }
 }
 

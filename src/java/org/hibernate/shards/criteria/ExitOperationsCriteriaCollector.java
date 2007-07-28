@@ -154,7 +154,7 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
     }
 
     for(Order order : orders) {
-      result = new OrderExitOperation(order, sessionFactoryImplementor).apply(result);
+      result = new OrderExitOperation(order).apply(result);
     }
     if (firstResult != null) {
       result = new FirstResultExitOperation(firstResult).apply(result);

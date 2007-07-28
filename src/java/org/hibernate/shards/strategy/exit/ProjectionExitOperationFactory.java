@@ -42,7 +42,7 @@ public class ProjectionExitOperationFactory {
       return new RowCountExitOperation(projection);
     }
     if (projection instanceof AggregateProjection) {
-      return new AggregateExitOperation((AggregateProjection) projection, sessionFactoryImplementor);
+      return new AggregateExitOperation((AggregateProjection) projection);
     }
 
 
