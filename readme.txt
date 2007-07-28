@@ -1,6 +1,6 @@
 Hibernate Shards
 ================
-Version: 3.0.0.Beta1, 19.03.2007
+Version: 3.0.0.Beta2, 28.07.2007
 
 Description
 -----------
@@ -26,11 +26,15 @@ Contact
 Latest Documentation:
 
    http://hibernate.org
+   http://shards.hibernate.org
 
 Bug Reports:
 
    Hibernate JIRA (preferred)
-   hibernate-devel@lists.sourceforge.net
+
+Discussion:
+
+  hibernate-shards-dev@googlegroups.com
 
 Free Technical Support:
 

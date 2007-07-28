@@ -16,7 +16,7 @@
     <!-- Name of project and version, used to create filenames -->
     <property name="Name" value="Hibernate Shards"/>
     <property name="name" value="hibernate-shards"/>
-    <property name="version" value="3.0.0.Beta1"/>
+    <property name="version" value="3.0.0.Beta2"/>
     <property name="javadoc.packagenames" value="org.hibernate.shards.*"/>
     <property name="copy.test" value="true"/>
     <property name="javac.source" value="1.5"/>
