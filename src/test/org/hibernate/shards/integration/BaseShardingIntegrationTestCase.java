@@ -44,16 +44,13 @@ import org.hibernate.shards.strategy.resolution.AllShardsShardResolutionStrategy
 import org.hibernate.shards.strategy.resolution.ShardResolutionStrategy;
 import org.hibernate.shards.strategy.selection.RoundRobinShardSelectionStrategy;
 import org.hibernate.shards.strategy.selection.ShardSelectionStrategy;
-import org.hibernate.shards.util.JdbcUtil;
+import org.hibernate.shards.util.DatabaseUtils;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Maps;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -101,8 +98,8 @@ public abstract class BaseShardingIntegrationTestCase extends TestCase implement
   protected void setUp() throws Exception {
     super.setUp();
     for(int i = 0; i < getNumDatabases(); i++) {
-      destroyDatabase(i);
-      createDatabase(i);
+      DatabaseUtils.destroyDatabase(i, getIdGenType());
+      DatabaseUtils.createDatabase(i, getIdGenType());
     }
     Configuration prototypeConfig = buildPrototypeConfig();
     List<ShardConfiguration> configurations = buildConfigurations();
@@ -210,53 +207,6 @@ public abstract class BaseShardingIntegrationTestCase extends TestCase implement
     }
     ShardedSessionImpl.setCurrentSubgraphShardId(null);
     super.tearDown();
-  }
-
-  public Connection createConnection(int index) throws SQLException {
-    DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-    return
-        DriverManager.getConnection(
-            dbPlatform.getUrl(index),
-            dbPlatform.getUser(),
-            dbPlatform.getPassword());
-  }
-
-  private void destroyDatabase(int index) throws SQLException {
-    DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-    Connection conn = createConnection(index);
-    try {
-      for(String statement : dbPlatform.getDropTableStatements(getIdGenType())) {
-        try {
-          JdbcUtil.executeUpdate(conn, statement, false);
-        } catch (SQLException sqle) {
-          // not interested, keep moving
-        }
-      }
-    } finally {
-      conn.close();
-    }
-  }
-
-  private void createDatabase(int index) throws SQLException {
-    DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-    Connection conn = createConnection(index);
-    try {
-      for(String statement : dbPlatform.getCreateTableStatements(getIdGenType())) {
-        JdbcUtil.executeUpdate(conn, statement, false);
-      }
-      createDatabaseHook(conn);
-    } finally {
-      conn.close();
-    }
-  }
-
-  /**
-   * Override if you want additional tables in your schema
-   * @param conn the connection
-   * @throws SQLException thrown if any of the operations performed with the
-   * connection throws the same
-   */
-  protected void createDatabaseHook(Connection conn) throws SQLException {
   }
 
   /**

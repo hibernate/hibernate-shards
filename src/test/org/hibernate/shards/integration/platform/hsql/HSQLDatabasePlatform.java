@@ -55,6 +55,7 @@ public class HSQLDatabasePlatform extends BaseDatabasePlatform {
     ,"CREATE TABLE Escalator (escalatorId DECIMAL(40,0) PRIMARY KEY, bottomFloorId DECIMAL(40,0), topFloorId DECIMAL(40,0))"
     ,"CREATE TABLE Person (personId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50), tenantId DECIMAL(40,0), officeId DECIMAL(40,0))"
     ,"CREATE TABLE IdIsBaseType (idIsBaseTypeId DECIMAL(40,0) PRIMARY KEY, value VARCHAR(50))"
+    ,"CREATE TABLE WEATHER_REPORT (REPORT_ID DECIMAL(40,0) PRIMARY KEY, CONTINENT VARCHAR(50), LATITUDE DECIMAL(10,2), LONGITUDE DECIMAL(10,2), TEMPERATURE DECIMAL(10,0), REPORT_TIME TIMESTAMP)"
   );
 
   protected static final List<String> DROP_TABLE_STATEMENTS = Lists.newArrayList(

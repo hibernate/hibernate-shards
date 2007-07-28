@@ -132,7 +132,7 @@ public class WeatherReport {
 15
 16    ShardStrategyFactory buildShardStrategyFactory() {
 17        ShardStrategyFactory shardStrategyFactory = new ShardStrategyFactory() {
-18            public ShardStrategy newShardStrategy(List shardIds) {
+18            public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
 19                RoundRobinShardLoadBalancer loadBalancer = new RoundRobinShardLoadBalancer(shardIds);
 20                ShardSelectionStrategy pss = new RoundRobinShardSelectionStrategy(loadBalancer);
 21                ShardResolutionStrategy prs = new AllShardsShardResolutionStrategy(shardIds);
@@ -223,7 +223,7 @@ public class WeatherReport {
  3      <session-factory name="HibernateSessionFactory0"> <!-- note the different name -->
  4        <property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
  5        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
- 6        <property name="connection.url">jdbc:mysql://localhost:3306/mydb</property>
+ 6        <property name="connection.url">jdbc:mysql://dbhost0:3306/mydb</property>
  7        <property name="connection.username">my_user</property>
  8        <property name="connection.password">my_password</property>
  9        <property name="hibernate.connection.shard_id">0</property> <!-- new -->
@@ -237,7 +237,7 @@ public class WeatherReport {
  3      <session-factory name="HibernateSessionFactory1"> <!-- note the different name -->
  4        <property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
  5        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
- 6        <property name="connection.url">jdbc:mysql://localhost:3306/mydb</property>
+ 6        <property name="connection.url">jdbc:mysql://dbhost1:3306/mydb</property>
  7        <property name="connection.username">my_user</property>
  8        <property name="connection.password">my_password</property>
  9        <property name="hibernate.connection.shard_id">1</property> <!-- new -->
@@ -246,7 +246,8 @@ public class WeatherReport {
  12  </hibernate-configuration>
                 ]]></programlisting>
             We'll skip the contents of shard2.hibernate.cfg.xml because the pattern should by now be obvious. We're
-            giving each session factory a unique name via the name attribute of the session-factory element, and we're
+            giving each session factory a unique name via the name attribute of the session-factory element,
+            and we're associating each session factory with a different database server.  We're
             also giving each session factory a shard id. This is required. If you try to configure a
             <classname>ShardedSessionFactory</classname> with a <classname>Configuration</classname>
             object that does not have a shard id you'll get an error. At the moment we require that the shard id of one
