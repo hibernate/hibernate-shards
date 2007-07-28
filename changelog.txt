@@ -1,6 +1,52 @@
 Hibernate Shards Changelog
 ==========================
 
+
+3.0.0.Beta2 (7-28-2007)
+
+** Bug
+    * [HSHARDS-3] - setMaxResults method of Query is behaving wrong
+    * [HSHARDS-5] - Syntax errors in documentation code for Obtaining a ShardedSessionFactory
+    * [HSHARDS-7] - Typo
+    * [HSHARDS-8] - ConcatenateListsExitStrategy has null shard when using SequentialShardAccessStrategy
+    * [HSHARDS-10] - example weather.hbm.xml is wrong
+
+
+** Improvement
+    * [HSHARDS-6] - Shard configuration file names in documentation not consistant
+
+** New Feature
+    * [HSHARDS-36] - Support Hibernate Annotations
+    * [HSHARDS-38] - Support different second level cache prefixes across shards
+    * [HSHARDS-39] - Support average for Criteria
+
+
+** Task
+    * [HSHARDS-12] - ShardedSessionImpl.connection()
+    * [HSHARDS-13] - ShardedSessionImpl.load(Class theClass, Serializable id, LockMode lockMode);
+    * [HSHARDS-14] - ShardedSessionImpl.load(String entityName, Serializable id, LockMode lockMode);
+    * [HSHARDS-15] - ShardedSessionImpl.load(Class theClass, Serializable id);
+    * [HSHARDS-16] - ShardedSessionImpl.load(String entityName, Serializable id);
+    * [HSHARDS-17] - ShardedSessionImpl.load(Object  object, Serializable id);
+    * [HSHARDS-18] - ShardedSessionImpl.replicate(Object obj, ReplicationMode replicationMode);
+    * [HSHARDS-19] - ShardedSessionImpl.replicate(String entityName, Object obj, ReplicationMode replicationMode);
+    * [HSHARDS-20] - ShardedSessionImpl.merge(Object obj);
+    * [HSHARDS-21] - ShardedSessionImpl.merge(String entityName, Object obj);
+    * [HSHARDS-22] - ShardedSessionImpl.persist(Object obj);
+    * [HSHARDS-23] - ShardedSessionImpl.persist(String entityName, Object obj);
+    * [HSHARDS-24] - ShardedSessionImpl.lock(Object obj, LockMode lockMode);
+    * [HSHARDS-25] - ShardedSessionImpl.lock(String entityName, Object obj, LockMode lockMode);
+    * [HSHARDS-26] - ShardedSessionImpl.refresh(Object obj, LockMode lockMode);
+    * [HSHARDS-27] - ShardedSessionImpl.refresh(Object obj);
+    * [HSHARDS-28] - ShardedSessionImpl.getCurrentLockMode(Object obj);
+    * [HSHARDS-30] - ShardedSessionImpl.createFilter(Object collection, String queryString);
+    * [HSHARDS-31] - ShardedSessionImpl.getEntityName(Object object);
+    * [HSHARDS-32] - ShardedSessionImpl.getSessionStatistics();
+    * [HSHARDS-33] - ShardedSessionImpl.disconnect();
+    * [HSHARDS-34] - ShardedSessionImpl.reconnect();
+
+
+
 3.0.0.Beta1 (19-03-2007)
 ------------------------
 
