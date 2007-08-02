@@ -1,6 +1,6 @@
 Hibernate Shards
 ================
-Version: 3.0.0.Beta2, 28.07.2007
+Version: 3.0.0.Beta2, 02.08.2007
 
 Description
 -----------

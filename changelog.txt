@@ -2,7 +2,7 @@ Hibernate Shards Changelog
 ==========================
 
 
-3.0.0.Beta2 (7-28-2007)
+3.0.0.Beta2 (8-2-2007)
 
 ** Bug
     * [HSHARDS-3] - setMaxResults method of Query is behaving wrong
