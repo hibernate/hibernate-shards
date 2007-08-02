@@ -41,12 +41,12 @@
 
 
 	<!-- set Hibernate core related properties -->
-    <property name="hibernate-core.home" location="${common-build.basedir}/../hibernate-3.2"/>
+    <property name="hibernate-core.home" location="${common-build.basedir}/../../hibernate-3.2"/>
     <property name="hibernate-core.jar" location="${hibernate-core.home}/hibernate3.jar"/>
     <property name="hibernate-core.lib.dir" location="${hibernate-core.home}/lib"/>
     <property name="hibernate-core.jdbc.dir" location="${hibernate-core.home}/lib"/>  <!-- for some reason jdbc.dir is renamed to lib instead of jdbc when doing a dist of hibernate3 -->
     <property name="hibernate-core.doc.api" location="${hibernate-core.home}/doc/api"/>
-    <property name="hibernate-cvs.doc.reference" location="${common-build.basedir}/../Hibernate3/doc/reference"/>
+    <property name="hibernate-cvs.doc.reference" location="${common-build.basedir}/../../Hibernate3/doc/reference"/>
 
 	<!--
 	Explicitly define tasks from ant..
