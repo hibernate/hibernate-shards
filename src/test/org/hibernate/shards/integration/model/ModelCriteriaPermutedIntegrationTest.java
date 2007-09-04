@@ -229,10 +229,10 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
     Criteria officeCrit = floorCrit.createCriteria("offices");
     officeCrit.add(Restrictions.eq("label", "LAHGE"));
     // now how we execute the query via the floorcrit
-    List<Integer> l = list(officeCrit);
-    assertEquals(1, l.size());
+    List<Integer> list = list(officeCrit);
+    assertEquals(1, list.size());
     int total = 0;
-    for(int shardTotal : l) {
+    for(int shardTotal : list) {
       total += shardTotal;
     }
     assertEquals(2, total);

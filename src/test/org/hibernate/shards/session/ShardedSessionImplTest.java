@@ -667,4 +667,20 @@ public class ShardedSessionImplTest extends TestCase {
     }
   }
 
+  public void testIsOpen() {
+    ShardedSessionFactoryImplementor ssf = new ShardedSessionFactoryDefaultMock() {
+      @Override
+      public Map<SessionFactoryImplementor, Set<ShardId>> getSessionFactoryShardIdMap() {
+        return Collections.emptyMap();
+      }
+    };
+
+    ShardStrategy shardStrategy = new ShardStrategyDefaultMock();
+    Set<Class<?>> classesRequiringShardLocks = Sets.newHashSet();
+    ShardedSessionImpl ssi =
+        new ShardedSessionImpl(ssf, shardStrategy, classesRequiringShardLocks, true);
+    assertTrue(ssi.isOpen());
+    ssi.close();
+    assertFalse(ssi.isOpen());
+  }
 }

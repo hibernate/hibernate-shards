@@ -456,13 +456,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
   }
 
   public boolean isOpen() {
-    // one open session means the sharded session is open
-    for (Shard shard : shards) {
-      if (shard.getSession() != null && shard.getSession().isOpen()) {
-        return true;
-      }
-    }
-    return false;
+    return !closed;
   }
 
   public boolean isConnected() {
