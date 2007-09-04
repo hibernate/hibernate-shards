@@ -19,6 +19,7 @@ package org.hibernate.shards;
 
 import junit.framework.TestCase;
 
+import org.hibernate.shards.session.ShardAwareInterceptorTest;
 import org.hibernate.shards.util.Lists;
 
 import java.util.Collections;
@@ -104,7 +105,6 @@ public final class NonPermutedTests {
     classes.add(org.hibernate.shards.query.SetTimeEventTest.class);
     classes.add(org.hibernate.shards.query.SetTimeoutEventTest.class);
     classes.add(org.hibernate.shards.query.SetTimestampEventTest.class);
-    classes.add(org.hibernate.shards.session.CrossShardRelationshipDetectingInterceptorDecoratorTest.class);
     classes.add(org.hibernate.shards.session.CrossShardRelationshipDetectingInterceptorTest.class);
     classes.add(org.hibernate.shards.session.DisableFilterOpenSessionEventTest.class);
     classes.add(org.hibernate.shards.session.EnableFilterOpenSessionEventTest.class);
@@ -128,6 +128,7 @@ public final class NonPermutedTests {
     classes.add(org.hibernate.shards.strategy.exit.RowCountExitOperationTest.class);
     classes.add(org.hibernate.shards.strategy.selection.LoadBalancedShardSelectionStrategyTest.class);
     classes.add(org.hibernate.shards.transaction.ShardedTransactionImplTest.class);
+    classes.add(ShardAwareInterceptorTest.class);
 
     // end generated code
 

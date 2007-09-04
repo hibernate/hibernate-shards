@@ -18,10 +18,7 @@
 
 package org.hibernate.shards.session;
 
-import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardId;
-
-import java.util.List;
 
 /**
  * Interface for objects that are able to resolve shard of objects.
@@ -29,16 +26,6 @@ import java.util.List;
  * @author maxr@google.com (Max Ross)
  */
 interface ShardIdResolver {
-
-  /**
-   * Gets ShardId of the shard given object lives on. Only consideres given
-   * Shards.
-   *
-   * @param obj Object whose Shard should be resolved
-   * @param shardsToConsider Shards which should be considered during resolution
-   * @return ShardId of the shard the object lives on; null if shard could not be resolved
-   */
-  /*@Nullable*/ ShardId getShardIdForObject(Object obj, List<Shard> shardsToConsider);
 
   /**
    * Gets ShardId of the shard given object lives on.

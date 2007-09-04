@@ -18,6 +18,8 @@
 
 package org.hibernate.shards.model;
 
+import org.hibernate.shards.ShardId;
+import org.hibernate.shards.session.ShardAware;
 import org.hibernate.shards.util.Lists;
 
 import java.io.Serializable;
@@ -26,13 +28,14 @@ import java.util.List;
 /**
  * @author maxr@google.com (Max Ross)
  */
-public class Building {
+public class Building implements ShardAware {
 
   private Serializable buildingId;
   private String name;
   private List<Floor> floors = Lists.newArrayList();
   private List<Tenant> tenants = Lists.newArrayList();
   private List<Elevator> elevators = Lists.newArrayList();
+  private ShardId shardId;
 
   public Serializable getBuildingId() {
     return buildingId;
@@ -96,5 +99,13 @@ public class Building {
   @Override
   public int hashCode() {
     return (buildingId != null ? buildingId.hashCode() : 0);
+  }
+
+  public void setShardId(ShardId shardId) {
+    this.shardId = shardId;
+  }
+
+  public ShardId getShardId() {
+    return shardId;
   }
 }

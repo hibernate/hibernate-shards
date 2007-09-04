@@ -19,6 +19,7 @@
 package org.hibernate.shards.session;
 
 import junit.framework.TestCase;
+
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
@@ -28,17 +29,16 @@ import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardDefaultMock;
 import org.hibernate.shards.ShardId;
-import org.hibernate.shards.ShardImpl;
 import org.hibernate.shards.ShardedSessionFactoryDefaultMock;
 import org.hibernate.shards.defaultmock.ClassMetadataDefaultMock;
 import org.hibernate.shards.defaultmock.InterceptorDefaultMock;
-import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
 import org.hibernate.shards.defaultmock.TypeDefaultMock;
 import org.hibernate.shards.engine.ShardedSessionFactoryImplementor;
 import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.ShardStrategyDefaultMock;
 import org.hibernate.shards.strategy.selection.ShardSelectionStrategy;
 import org.hibernate.shards.strategy.selection.ShardSelectionStrategyDefaultMock;
+import org.hibernate.shards.util.InterceptorList;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Pair;
@@ -48,6 +48,7 @@ import org.hibernate.type.Type;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -534,33 +535,6 @@ public class ShardedSessionImplTest extends TestCase {
     Interceptor interceptor = new InterceptorDefaultMock();
     assertTrue(ShardedSessionImpl.buildShardListFromSessionFactoryShardIdMap(sessionFactoryShardIdMap, false, resolver, interceptor).isEmpty());
     assertTrue(ShardedSessionImpl.buildShardListFromSessionFactoryShardIdMap(sessionFactoryShardIdMap, true, resolver, interceptor).isEmpty());
-
-    sessionFactoryShardIdMap.put(new SessionFactoryDefaultMock(), Sets.newHashSet(new ShardId(0)));
-    sessionFactoryShardIdMap.put(new SessionFactoryDefaultMock(), Sets.newHashSet(new ShardId(1)));
-
-    List<Shard> shards = ShardedSessionImpl.buildShardListFromSessionFactoryShardIdMap(sessionFactoryShardIdMap, false, resolver, null);
-    assertEquals(2, shards.size());
-    for(Shard shard : shards) {
-      assertNull(((ShardImpl)shard).getInterceptor());
-    }
-
-    shards = ShardedSessionImpl.buildShardListFromSessionFactoryShardIdMap(sessionFactoryShardIdMap, false, resolver, interceptor);
-    assertEquals(2, shards.size());
-    for(Shard shard : shards) {
-      assertSame(interceptor, ((ShardImpl)shard).getInterceptor());
-    }
-
-    shards = ShardedSessionImpl.buildShardListFromSessionFactoryShardIdMap(sessionFactoryShardIdMap, true, resolver, null);
-    assertEquals(2, shards.size());
-    for(Shard shard : shards) {
-      assertTrue(((ShardImpl)shard).getInterceptor() instanceof CrossShardRelationshipDetectingInterceptor);
-    }
-
-    shards = ShardedSessionImpl.buildShardListFromSessionFactoryShardIdMap(sessionFactoryShardIdMap, true, resolver, interceptor);
-    assertEquals(2, shards.size());
-    for(Shard shard : shards) {
-      assertTrue(((ShardImpl)shard).getInterceptor() instanceof CrossShardRelationshipDetectingInterceptorDecorator);
-    }
   }
 
   public void testFinalizeOnOpenSession() throws Throwable {
@@ -592,18 +566,39 @@ public class ShardedSessionImplTest extends TestCase {
     assertFalse(closeCalled[0]);
   }
 
-  public void testNonStatefulInterceptorWrapping() {
-    CrossShardRelationshipDetectingInterceptor csrdi =
-        new CrossShardRelationshipDetectingInterceptor(new ShardIdResolverDefaultMock());
-    Interceptor stateless = new InterceptorDefaultMock();
-    Pair<Interceptor, OpenSessionEvent> result = ShardedSessionImpl.decorateInterceptor(csrdi, stateless);
-    assertTrue(result.first instanceof CrossShardRelationshipDetectingInterceptorDecorator);
-    assertSame(csrdi, ((CrossShardRelationshipDetectingInterceptorDecorator)result.first).getCrossShardRelationshipDetectingInterceptor());
-    CrossShardRelationshipDetectingInterceptorDecorator csrdid = (CrossShardRelationshipDetectingInterceptorDecorator) result.first;
-    assertSame(csrdi, csrdid.getCrossShardRelationshipDetectingInterceptor());
-    assertSame(stateless, csrdid.getDelegate());
+  public void testBuildInterceptorList_NoInterceptorProvided_CrossShardDisabled() {
+    Pair<InterceptorList, SetSessionOnRequiresSessionEvent> result =
+        ShardedSessionImpl.buildInterceptorList(null, new ShardIdResolverDefaultMock(), false);
+    assertNotNull(result.first);
     assertNull(result.second);
+    assertEquals(1, result.first.getInnerList().size());
+    assertTrue(result.first.getInnerList().iterator().next() instanceof ShardAwareInterceptor);
   }
+
+  public void testBuildInterceptorList_NoInterceptorProvided_CrossShardEnabled() {
+    Pair<InterceptorList, SetSessionOnRequiresSessionEvent> result =
+        ShardedSessionImpl.buildInterceptorList(null, new ShardIdResolverDefaultMock(), true);
+    assertNotNull(result.first);
+    assertNull(result.second);
+    assertEquals(2, result.first.getInnerList().size());
+    Iterator<Interceptor> innerListIter = result.first.getInnerList().iterator();
+    assertTrue(innerListIter.next() instanceof ShardAwareInterceptor);
+    assertTrue(innerListIter.next() instanceof CrossShardRelationshipDetectingInterceptor);
+  }
+
+  public void testBuildInterceptorList_StatelessInterceptorProvided_CrossShardEnabled() {
+    InterceptorDefaultMock interceptor = new InterceptorDefaultMock();
+    Pair<InterceptorList, SetSessionOnRequiresSessionEvent> result =
+        ShardedSessionImpl.buildInterceptorList(interceptor, new ShardIdResolverDefaultMock(), true);
+    assertNotNull(result.first);
+    assertNull(result.second);
+    assertEquals(3, result.first.getInnerList().size());
+    Iterator<Interceptor> innerListIter = result.first.getInnerList().iterator();
+    assertTrue(innerListIter.next() instanceof ShardAwareInterceptor);
+    assertTrue(innerListIter.next() instanceof CrossShardRelationshipDetectingInterceptor);
+    assertSame(interceptor, innerListIter.next());
+  }
+
 
   private static class Factory extends InterceptorDefaultMock implements StatefulInterceptorFactory {
     private final Interceptor interceptorToReturn;
@@ -618,23 +613,21 @@ public class ShardedSessionImplTest extends TestCase {
     }
   }
 
-  public void testStatefulInterceptorWrapping() {
-    CrossShardRelationshipDetectingInterceptor csrdi =
-        new CrossShardRelationshipDetectingInterceptor(new ShardIdResolverDefaultMock());
+  public void testBuildInterceptorList_StatefulInterceptorProvided_CrossShardEnabled() {
     Interceptor interceptorToReturn = new InterceptorDefaultMock();
     Interceptor factory = new Factory(interceptorToReturn);
-    Pair<Interceptor, OpenSessionEvent> result = ShardedSessionImpl.decorateInterceptor(csrdi, factory);
-    assertTrue(result.first instanceof CrossShardRelationshipDetectingInterceptorDecorator);
-    assertSame(csrdi, ((CrossShardRelationshipDetectingInterceptorDecorator)result.first).getCrossShardRelationshipDetectingInterceptor());
-    CrossShardRelationshipDetectingInterceptorDecorator csrdid = (CrossShardRelationshipDetectingInterceptorDecorator) result.first;
-    assertSame(csrdi, csrdid.getCrossShardRelationshipDetectingInterceptor());
-    assertSame(interceptorToReturn, csrdid.getDelegate());
+    Pair<InterceptorList, SetSessionOnRequiresSessionEvent> result =
+        ShardedSessionImpl.buildInterceptorList(factory, new ShardIdResolverDefaultMock(), true);
+    assertNotNull(result.first);
     assertNull(result.second);
+    assertEquals(3, result.first.getInnerList().size());
+    Iterator<Interceptor> innerListIter = result.first.getInnerList().iterator();
+    assertTrue(innerListIter.next() instanceof ShardAwareInterceptor);
+    assertTrue(innerListIter.next() instanceof CrossShardRelationshipDetectingInterceptor);
+    assertSame(interceptorToReturn, innerListIter.next());
   }
 
-  public void testStatefulInterceptorWrappingWithRequiresSession() {
-    CrossShardRelationshipDetectingInterceptor csrdi =
-        new CrossShardRelationshipDetectingInterceptor(new ShardIdResolverDefaultMock());
+  public void testBuildInterceptorList_StatefulInterceptorRequiresSessionProvided_CrossShardEnabled() {
     class RequiresSessionInterceptor extends InterceptorDefaultMock implements RequiresSession {
       Session setSessionCalledWith;
       public void setSession(Session session) {
@@ -643,13 +636,15 @@ public class ShardedSessionImplTest extends TestCase {
     }
     Interceptor interceptorToReturn = new RequiresSessionInterceptor();
     Interceptor factory = new Factory(interceptorToReturn);
-    Pair<Interceptor, OpenSessionEvent> result = ShardedSessionImpl.decorateInterceptor(csrdi, factory);
-    assertTrue(result.first instanceof CrossShardRelationshipDetectingInterceptorDecorator);
-    assertSame(csrdi, ((CrossShardRelationshipDetectingInterceptorDecorator)result.first).getCrossShardRelationshipDetectingInterceptor());
-    CrossShardRelationshipDetectingInterceptorDecorator csrdid = (CrossShardRelationshipDetectingInterceptorDecorator) result.first;
-    assertSame(csrdi, csrdid.getCrossShardRelationshipDetectingInterceptor());
-    assertSame(interceptorToReturn, csrdid.getDelegate());
+    Pair<InterceptorList, SetSessionOnRequiresSessionEvent> result =
+        ShardedSessionImpl.buildInterceptorList(factory, new ShardIdResolverDefaultMock(), true);
+    assertNotNull(result.first);
     assertNotNull(result.second);
+    assertEquals(3, result.first.getInnerList().size());
+    Iterator<Interceptor> innerListIter = result.first.getInnerList().iterator();
+    assertTrue(innerListIter.next() instanceof ShardAwareInterceptor);
+    assertTrue(innerListIter.next() instanceof CrossShardRelationshipDetectingInterceptor);
+    assertSame(interceptorToReturn, innerListIter.next());
   }
 
   private static final class MyType extends TypeDefaultMock {

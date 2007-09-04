@@ -19,6 +19,8 @@ package org.hibernate.shards.integration.model;
 
 import org.hibernate.HibernateException;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
+import static org.hibernate.shards.integration.model.ModelDataFactory.building;
+import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.IdIsBaseType;
 
 /**
@@ -63,5 +65,16 @@ public class ModelIntegrationTest extends BaseShardingIntegrationTestCase {
     commitAndResetSession();
     hli = reload(hli);
     assertNotNull(hli);
+  }
+
+  public void testShardAware() {
+    Building b = building("yam");
+    assertNull(b.getShardId());
+    session.beginTransaction();
+    session.save(b);
+    assertNotNull(b.getShardId());
+    commitAndResetSession();
+    Building bReloaded = reload(b);
+    assertEquals(b.getShardId(), bReloaded.getShardId());
   }
 }

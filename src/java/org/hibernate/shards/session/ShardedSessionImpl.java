@@ -64,6 +64,7 @@ import org.hibernate.shards.strategy.exit.FirstNonNullResultExitStrategy;
 import org.hibernate.shards.strategy.selection.ShardResolutionStrategyData;
 import org.hibernate.shards.strategy.selection.ShardResolutionStrategyDataImpl;
 import org.hibernate.shards.transaction.ShardedTransactionImpl;
+import org.hibernate.shards.util.InterceptorList;
 import org.hibernate.shards.util.Iterables;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Maps;
@@ -186,63 +187,59 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
       Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
       boolean checkAllAssociatedObjectsForDifferentShards,
       ShardIdResolver shardIdResolver,
-      /*@Nullable*/ final Interceptor interceptor) {
-    List<Shard> list = Lists.newArrayList();
+      /*@Nullable*/ Interceptor interceptor) {
+    List<Shard> shardList = Lists.newArrayList();
     for(Map.Entry<SessionFactoryImplementor, Set<ShardId>> entry : sessionFactoryShardIdMap.entrySet()) {
-      OpenSessionEvent eventToRegister = null;
-      Interceptor interceptorToSet = interceptor;
-      if(checkAllAssociatedObjectsForDifferentShards) {
-        // cross shard association checks for updates are handled using interceptors
-        CrossShardRelationshipDetectingInterceptor csrdi = new CrossShardRelationshipDetectingInterceptor(shardIdResolver);
-        if(interceptorToSet == null) {
-          // no interceptor to wrap so just use the cross-shard detecting interceptor raw
-          // this is safe because it's a stateless interceptor
-          interceptorToSet = csrdi;
-        } else {
-          // user specified their own interceptor, so wrap it with a decorator
-          // that will still do the cross shard association checks
-          Pair<Interceptor, OpenSessionEvent> result = decorateInterceptor(csrdi, interceptor);
-          interceptorToSet = result.first;
-          eventToRegister = result.second;
+      Pair<InterceptorList, SetSessionOnRequiresSessionEvent> pair =
+          buildInterceptorList(
+              interceptor,
+              shardIdResolver,
+              checkAllAssociatedObjectsForDifferentShards);
+      Shard shard = new ShardImpl(entry.getValue(), entry.getKey(), pair.first);
+      shardList.add(shard);
+      if(pair.second != null) {
+        shard.addOpenSessionEvent(pair.second);
+      }
+    }
+    return shardList;
+  }
+
+  /**
+   * Construct an {@link InterceptorList} with all the interceptors we'll want
+   * to register when we create a {@link ShardedSessionImpl}.
+   * @param providedInterceptor the {@link Interceptor} passed in by the client
+   * @param shardIdResolver knows how to resolve a {@link ShardId} from an object
+   * @param checkAllAssociatedObjectsForDifferentShards true if cross-shard
+   * relationship detection is enabled
+   * @return
+   */
+  static Pair<InterceptorList, SetSessionOnRequiresSessionEvent> buildInterceptorList(
+      Interceptor providedInterceptor,
+      ShardIdResolver shardIdResolver,
+      boolean checkAllAssociatedObjectsForDifferentShards) {
+    // everybody gets a ShardAware interceptor
+    List<Interceptor> interceptorList =
+        Lists.<Interceptor>newArrayList(new ShardAwareInterceptor(shardIdResolver));
+    if(checkAllAssociatedObjectsForDifferentShards) {
+      // cross shard association checks during updates are handled using interceptors
+      CrossShardRelationshipDetectingInterceptor csrdi =
+          new CrossShardRelationshipDetectingInterceptor(shardIdResolver);
+      interceptorList.add(csrdi);
+    }
+    SetSessionOnRequiresSessionEvent openSessionEvent = null;
+    if(providedInterceptor != null) {
+      // user-provided an interceptor
+      if(providedInterceptor instanceof StatefulInterceptorFactory) {
+        // it's stateful so we need to create a new one for each shard
+        providedInterceptor = ((StatefulInterceptorFactory)providedInterceptor).newInstance();
+        if(providedInterceptor instanceof RequiresSession) {
+          openSessionEvent =
+              new SetSessionOnRequiresSessionEvent((RequiresSession)providedInterceptor);
         }
-      } else if(interceptorToSet != null) {
-        // user specified their own interceptor so need to account for the fact
-        // that it might be stateful
-        Pair<Interceptor, OpenSessionEvent> result = handleStatefulInterceptor(interceptorToSet);
-        interceptorToSet = result.first;
-        eventToRegister = result.second;
       }
-      Shard shard =
-          new ShardImpl(
-              entry.getValue(),
-              entry.getKey(),
-              interceptorToSet);
-      list.add(shard);
-      if(eventToRegister != null) {
-        shard.addOpenSessionEvent(eventToRegister);
-      }
+      interceptorList.add(providedInterceptor);
     }
-    return list;
-  }
-
-  static Pair<Interceptor, OpenSessionEvent> handleStatefulInterceptor(
-      Interceptor mightBeStateful) {
-    OpenSessionEvent openSessionEvent = null;
-    if(mightBeStateful instanceof StatefulInterceptorFactory) {
-      mightBeStateful = ((StatefulInterceptorFactory)mightBeStateful).newInstance();
-      if(mightBeStateful instanceof RequiresSession) {
-        openSessionEvent = new SetSessionOnRequiresSessionEvent((RequiresSession)mightBeStateful);
-      }
-    }
-    return Pair.of(mightBeStateful, openSessionEvent);
-  }
-
-  static Pair<Interceptor, OpenSessionEvent> decorateInterceptor(
-      CrossShardRelationshipDetectingInterceptor csrdi,
-      Interceptor decorateMe) {
-    Pair<Interceptor, OpenSessionEvent> pair = handleStatefulInterceptor(decorateMe);
-    Interceptor decorator = new CrossShardRelationshipDetectingInterceptorDecorator(csrdi, pair.first);
-    return Pair.of(decorator, pair.second);
+    return Pair.of(new InterceptorList(interceptorList), openSessionEvent);
   }
 
   private Object applyGetOperation(
@@ -1484,6 +1481,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
   };
 
   private Shard getShardForObject(Object obj, List<Shard> shardsToConsider) {
+    // TODO(maxr) optimize this by keeping an identity map of objects to shardId
     for(Shard shard : shardsToConsider) {
       if(shard.getSession() != null && shard.getSession().contains(obj)) {
         return shard;
@@ -1505,7 +1503,9 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
   }
 
   public ShardId getShardIdForObject(Object obj, List<Shard> shardsToConsider) {
-    // TODO(maxr) optimize this by keeping an identity map of objects to shardId
+    // TODO(maxr)
+    // Also, wouldn't it be faster to first see if there's just a single shard
+    // id mapped to the shard?
     Shard shard = getShardForObject(obj, shardsToConsider);
     if(shard == null) {
       return null;

@@ -31,6 +31,7 @@ import org.hibernate.shards.cfg.ShardConfiguration;
 import org.hibernate.shards.integration.platform.DatabasePlatform;
 import org.hibernate.shards.integration.platform.DatabasePlatformFactory;
 import org.hibernate.shards.loadbalance.RoundRobinShardLoadBalancer;
+import org.hibernate.shards.session.ShardAware;
 import org.hibernate.shards.session.ShardedSession;
 import org.hibernate.shards.session.ShardedSessionFactory;
 import org.hibernate.shards.session.ShardedSessionImpl;
@@ -270,7 +271,11 @@ public abstract class BaseShardingIntegrationTestCase extends TestCase implement
   }
 
   protected ShardId getShardIdForObject(Object obj) {
-    return session.getShardIdForObject(obj);
+    ShardId shardId = session.getShardIdForObject(obj);
+    if(obj instanceof ShardAware) {
+      assertEquals(((ShardAware)obj).getShardId(), shardId); 
+    }
+    return shardId;
   }
 
   private ShardAccessStrategy getShardAccessStrategy() {

@@ -18,19 +18,12 @@
 
 package org.hibernate.shards.session;
 
-import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardId;
-
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)
  */
 class ShardIdResolverDefaultMock implements ShardIdResolver {
-
-  public ShardId getShardIdForObject(Object obj, List<Shard> shardsToConsider) {
-    throw new UnsupportedOperationException();
-  }
 
   public ShardId getShardIdForObject(Object obj) {
     throw new UnsupportedOperationException();
