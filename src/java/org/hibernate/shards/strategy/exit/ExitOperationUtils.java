@@ -65,7 +65,7 @@ public class ExitOperationUtils {
     try {
       StringBuilder propertyPath = new StringBuilder();
       for(int i=0; i < propertyName.length(); i++) {
-        String s =propertyName.substring(i,i+1);
+        String s = propertyName.substring(i,i+1);
         if (i == 0 || propertyName.charAt(i-1) == '.') {
           propertyPath.append(StringUtil.capitalize(s));
         } else {
@@ -75,8 +75,8 @@ public class ExitOperationUtils {
       String[] methods = ("get" + propertyPath.toString().replaceAll("\\.", ".get")).split("\\.");
       Object root = obj;
       for (String method : methods) {
-        Class clazz = root.getClass();
-        Method m = clazz.getMethod(method);
+        Method m = findPotentiallyPrivateMethod(root.getClass(), method);
+        m.setAccessible(true);
         root = m.invoke(root);
         if (root == null) {
           break;
@@ -94,4 +94,23 @@ public class ExitOperationUtils {
     }
   }
 
+  static Method findPotentiallyPrivateMethod(Class clazz, String methodName)
+      throws NoSuchMethodException {
+    try {
+      return clazz.getMethod(methodName);
+    } catch (NoSuchMethodException nsme) {
+      // that's ok, we'll try the slower approach
+    }
+
+    // we need to make sure we can access private methods on subclasses, and
+    // the only way to do that is to work our way up the class hierarchy
+    while (clazz != null) {
+      try {
+        return clazz.getDeclaredMethod(methodName);
+      } catch (NoSuchMethodException e) {
+        clazz = (Class) clazz.getGenericSuperclass();
+      }
+    }
+    throw new NoSuchMethodException(methodName);
+  }
 }

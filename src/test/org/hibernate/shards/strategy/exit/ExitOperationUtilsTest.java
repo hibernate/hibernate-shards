@@ -25,40 +25,66 @@ import junit.framework.TestCase;
  */
 public class ExitOperationUtilsTest extends TestCase {
 
-    private class MyInt {
-      private final Integer i;
+  private class MyInt {
+    private final Integer i;
 
-      private final String name;
+    private final String name;
 
-      private MyInt innerMyInt;
+    private final String rank;
 
-      public MyInt(int i, String name) {
-        this.i = i;
-        this.name = name;
-      }
+    private MyInt innerMyInt;
 
-      public MyInt getInnerMyInt() {
-        return innerMyInt;
-      }
-
-      public void setInnerMyInt(MyInt innerMyInt) {
-        this.innerMyInt = innerMyInt;
-      }
-
-      public Number getValue() {
-        return i;
-      }
-
-      public String getName() {
-        return name;
-      }
-
+    public MyInt(int i, String name, String rank) {
+      this.i = i;
+      this.name = name;
+      this.rank = rank;
     }
 
+    // these private methods, while unused, are used to verify that the method
+    // works for private methods
+    private MyInt getInnerMyInt() {
+      return innerMyInt;
+    }
+
+    private void setInnerMyInt(MyInt innerMyInt) {
+      this.innerMyInt = innerMyInt;
+    }
+
+    private Number getValue() {
+      return i;
+    }
+
+    private String getName() {
+      return name;
+    }
+    protected String getRank() {
+      return rank;
+    }
+  }
+
+  private class MySubInt extends MyInt {
+
+    public MySubInt(int i, String name, String rank) {
+      super(i, name, rank);
+    }
+  }
+
   public void testGetPropertyValue() throws Exception {
-    MyInt myInt = new MyInt(1,"one");
-    myInt.setInnerMyInt(new MyInt(5, "five"));
+    MyInt myInt = new MySubInt(1,"one", "a");
+    myInt.setInnerMyInt(new MySubInt(5, "five", "b"));
+
+    assertEquals(1, ExitOperationUtils.getPropertyValue(myInt,"value"));
+    assertEquals("one", ExitOperationUtils.getPropertyValue(myInt,"name"));
+    assertEquals("a", ExitOperationUtils.getPropertyValue(myInt,"rank"));
+
     assertEquals(5, ExitOperationUtils.getPropertyValue(myInt,"innerMyInt.value"));
     assertEquals("five", ExitOperationUtils.getPropertyValue(myInt,"innerMyInt.name"));
+    assertEquals("b", ExitOperationUtils.getPropertyValue(myInt,"innerMyInt.rank"));
+    try {
+      ExitOperationUtils.getPropertyValue(myInt,"innerMyInt.doesNotExist");
+      fail("expected rte");
+    } catch (RuntimeException rte) {
+      // good
+    }
   }
 }
