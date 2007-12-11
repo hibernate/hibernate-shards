@@ -132,55 +132,6 @@ public class MyStatefulInterceptor implements Interceptor, RequiresSession {
             Due to the basic nature of the problem we don't expect this to change anytime soon.
         </para>
     </sect1>
-    <sect1 id="shards-limitations-base-ids" revision="1">
-        <title>Objects With Ids That Are Base Types</title>
-        <para>
-            With Hibernate your model objects can use whatever they want as their ids so long as the id can be
-            represented by a <classname>Serializable</classname> (or autoboxed into a
-            <classname>Serializable</classname>). With Hibernate Shards you are slightly more constrained
-            because we don't support base types.
-        </para>
-        <para>
-            So this is no good:
-            <programlisting><![CDATA[
-public class WeatherReport {
-    private int weatherReportId;  // trouble
-
-    public int getWeatherReportId() {
-        return weatherReportId;
-    }
-
-    public void setWeatherReportId(int id) {
-        weatherReportId = id;
-    }
-}
-]]></programlisting>
-        </para>
-        <para>
-            But this is just lovely:
-            <programlisting><![CDATA[
-public class WeatherReport {
-    private Integer weatherReportId;  // goodness
-
-    public Integer getWeatherReportId() {
-        return weatherReportId;
-    }
-
-    public void setWeatherReportId(Integer id) {
-        weatherReportId = id;
-    }
-}
-]]></programlisting>
-        </para>
-        <para>
-            Do we have a good reason for this limitation? Not really. It's the result of an implementation
-            choice that has leaked out and made everyone's lives a tiny bit worse. If you simply must
-            use Hibernate Shards and you simply must model your ids with base types, don't call
-            <classname>Session.saveOrUpdate</classname>. We aim to address this leak soon and let you get back
-            to modeling whatever way you like (although for the record, we prefer object ids because
-            they make it easy to determine whether or not an object has had an id assigned).
-        </para>
-    </sect1>
     <sect1 id="shards-limitations-replicated-data" revision="1">
         <title>Replicated Data</title>
         <para>
