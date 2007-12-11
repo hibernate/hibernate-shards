@@ -1255,7 +1255,10 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 
   public Connection disconnect() throws HibernateException {
     for (Shard s : getShards()) {
-      s.getSession().disconnect();
+      Session session = s.getSession();
+      if (session != null) {
+        session.disconnect();
+      }
     }
     // we do not allow application-supplied connections, so we can always return
     // null

@@ -32,6 +32,7 @@ import org.hibernate.shards.ShardId;
 import org.hibernate.shards.ShardedSessionFactoryDefaultMock;
 import org.hibernate.shards.defaultmock.ClassMetadataDefaultMock;
 import org.hibernate.shards.defaultmock.InterceptorDefaultMock;
+import org.hibernate.shards.defaultmock.SessionDefaultMock;
 import org.hibernate.shards.defaultmock.TypeDefaultMock;
 import org.hibernate.shards.engine.ShardedSessionFactoryImplementor;
 import org.hibernate.shards.strategy.ShardStrategy;
@@ -682,5 +683,31 @@ public class ShardedSessionImplTest extends TestCase {
     assertTrue(ssi.isOpen());
     ssi.close();
     assertFalse(ssi.isOpen());
+  }
+
+  public void testDisconnectWithNullSessions() {
+
+    ShardedSessionImpl ssi = new MyShardedSessionImpl() {
+
+      public List<Shard> getShards() {
+        Shard shard1 = new ShardDefaultMock() {
+          public org.hibernate.classic.Session getSession() {
+            return new SessionDefaultMock() {
+              public Connection disconnect() throws HibernateException {
+                return null;
+              }
+            };
+          }
+        };
+        Shard shard2 = new ShardDefaultMock() {
+
+          public org.hibernate.classic.Session getSession() {
+            return null;
+          }
+        };
+        return Lists.newArrayList(shard1, shard2);
+      }
+    };
+    ssi.disconnect();
   }
 }
