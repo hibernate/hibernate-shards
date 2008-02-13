@@ -26,6 +26,7 @@ import org.hibernate.MappingException;
 import org.hibernate.criterion.Order;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.shards.criteria.InMemoryOrderBy;
 import org.hibernate.shards.defaultmock.ClassMetadataDefaultMock;
 import org.hibernate.shards.defaultmock.EntityPersisterDefaultMock;
 import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
@@ -34,7 +35,6 @@ import org.hibernate.shards.util.StringUtil;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -43,28 +43,21 @@ import java.util.List;
  */
 public class OrderExitOperationTest extends TestCase {
 
-  private List<Object> data;
-  private ArrayList<Object> shuffledList;
-  private List<Object> nonNullData;
-
   private class MyInt {
     private final Integer i;
 
     private final String name;
 
-    private MyInt innerMyInt;
+    private final MyInt innerMyInt;
 
-    public MyInt(int i, String name) {
+    public MyInt(int i, String name, MyInt inner) {
       this.i = i;
       this.name = name;
+      this.innerMyInt = inner;
     }
 
     public MyInt getInnerMyInt() {
       return innerMyInt;
-    }
-
-    public void setInnerMyInt(MyInt innerMyInt) {
-      this.innerMyInt = innerMyInt;
     }
 
     public Number getValue() {
@@ -83,51 +76,137 @@ public class OrderExitOperationTest extends TestCase {
     }
   }
 
-  protected void setUp() throws Exception {
-    super.setUp();
-    String[] names = {"tomislav", "max", "maulik", "gut", "null", "bomb"};
-    data = Lists.newArrayList();
-    for(int i=0; i<6; i++) {
-      if (i == 4) {
-        data.add(null);
-      } else {
-        data.add(new MyInt(i, names[i]));
-      }
-    }
+  public void testApplySingleOrdering() throws Exception {
+    List<Object> data = Lists.newArrayList();
+    data.add(new MyInt(3, "tomislav", null));
+    data.add(new MyInt(1, "bomb", null));
+    data.add(new MyInt(27, "max", null));
+    data.add(new MyInt(2, "maulik", null));
+    data.add(new MyInt(5, "gut", null));
+    
+    InMemoryOrderBy imob = new InMemoryOrderBy(null, Order.asc("value"));
+    OrderExitOperation oeo = new OrderExitOperation(Collections.singletonList(imob));
+    List<MyInt> sortedList = (List<MyInt>)(List)oeo.apply(data);
 
-    nonNullData = ExitOperationUtils.getNonNullList(data);
+    assertEquals(1, sortedList.get(0).getValue());
+    assertEquals(2, sortedList.get(1).getValue());
+    assertEquals(3, sortedList.get(2).getValue());
+    assertEquals(5, sortedList.get(3).getValue());
+    assertEquals(27, sortedList.get(4).getValue());
 
-    shuffledList = Lists.newArrayList(data);
-    Collections.shuffle(shuffledList);
+    imob = new InMemoryOrderBy(null, Order.desc("value"));
+    oeo = new OrderExitOperation(Collections.singletonList(imob));
+    sortedList = (List<MyInt>)(List)oeo.apply(data);
+
+    assertEquals(27, sortedList.get(0).getValue());
+    assertEquals(5, sortedList.get(1).getValue());
+    assertEquals(3, sortedList.get(2).getValue());
+    assertEquals(2, sortedList.get(3).getValue());
+    assertEquals(1, sortedList.get(4).getValue());
   }
 
-  public void testApply() throws Exception {
-    Order order = Order.asc("value");
-    OrderExitOperation oeo = new OrderExitOperation(order);
-    List unShuffledList = oeo.apply(shuffledList);
+  public void testApplySingleNestedOrdering() throws Exception {
+    List<Object> data = Lists.newArrayList();
+    data.add(new MyInt(3, "tomislav", new MyInt(3, "tomislav", null)));
+    data.add(new MyInt(1, "bomb", new MyInt(1, "bomb", null)));
+    data.add(new MyInt(27, "max", new MyInt(27, "max", null)));
+    data.add(new MyInt(2, "maulik", new MyInt(2, "maulik", null)));
+    data.add(new MyInt(5, "gut", new MyInt(5, "gut", null)));
 
-    assertTrue(nonNullData.equals(unShuffledList));
+    InMemoryOrderBy imob = new InMemoryOrderBy(null, Order.asc("innerMyInt.value"));
+    OrderExitOperation oeo = new OrderExitOperation(Collections.singletonList(imob));
+    List<MyInt> sortedList = (List<MyInt>)(List)oeo.apply(data);
+
+    assertEquals(1, sortedList.get(0).getValue());
+    assertEquals(2, sortedList.get(1).getValue());
+    assertEquals(3, sortedList.get(2).getValue());
+    assertEquals(5, sortedList.get(3).getValue());
+    assertEquals(27, sortedList.get(4).getValue());
+
+    imob = new InMemoryOrderBy(null, Order.desc("innerMyInt.value"));
+    oeo = new OrderExitOperation(Collections.singletonList(imob));
+    sortedList = (List<MyInt>)(List)oeo.apply(data);
+
+    assertEquals(27, sortedList.get(0).getValue());
+    assertEquals(5, sortedList.get(1).getValue());
+    assertEquals(3, sortedList.get(2).getValue());
+    assertEquals(2, sortedList.get(3).getValue());
+    assertEquals(1, sortedList.get(4).getValue());
   }
 
-  public void testMultipleOrderings() throws Exception {
-    Order orderValue = Order.asc("value");
-    Order orderName = Order.desc("name");
+  public void testApplyMultipleOrderings() {
+    List<Object> data = Lists.newArrayList();
+    data.add(new MyInt(2, "tomislav", null));
+    data.add(new MyInt(1, "bomb", null));
+    data.add(new MyInt(27, "max", null));
+    data.add(new MyInt(2, "maulik", null));
+    data.add(new MyInt(5, "gut", null));
 
-    OrderExitOperation oeoValue = new OrderExitOperation(orderValue);
-    OrderExitOperation oeoName = new OrderExitOperation(orderName);
+    List<InMemoryOrderBy> list = Lists.newArrayList(
+        new InMemoryOrderBy(null, Order.asc("value")),
+        new InMemoryOrderBy(null, Order.desc("name"))
+    );
 
-    List<MyInt> answer =
-        Lists.newArrayList(
-            new MyInt(0, "tomislav"),
-            new MyInt(1, "max"),
-            new MyInt(2, "maulik"),
-            new MyInt(3, "gut"),
-            new MyInt(5, "bomb"));
-    List unShuffledList = oeoName.apply(oeoValue.apply(shuffledList));
+    OrderExitOperation operation = new OrderExitOperation(list);
+    List<MyInt> sortedList = (List<MyInt>)(List)operation.apply(data);
 
+    assertEquals(1, sortedList.get(0).getValue());
+    assertEquals(2, sortedList.get(1).getValue());
+    assertEquals("tomislav", sortedList.get(1).getName());
+    assertEquals(2, sortedList.get(2).getValue());
+    assertEquals("maulik", sortedList.get(2).getName());
+    assertEquals(5, sortedList.get(3).getValue());
+    assertEquals(27, sortedList.get(4).getValue());
+  }
 
-    assertEquals(answer, unShuffledList);
+  public void testApplyMultipleNestedOrderings() {
+    List<Object> data = Lists.newArrayList();
+    data.add(new MyInt(2, "tomislav", new MyInt(2, "tomislav", null)));
+    data.add(new MyInt(1, "bomb", new MyInt(1, "bomb", null)));
+    data.add(new MyInt(27, "max", new MyInt(27, "max", null)));
+    data.add(new MyInt(2, "maulik", new MyInt(2, "maulik", null)));
+    data.add(new MyInt(5, "gut", new MyInt(5, "gut", null)));
 
+    List<InMemoryOrderBy> list = Lists.newArrayList(
+        new InMemoryOrderBy(null, Order.asc("innerMyInt.value")),
+        new InMemoryOrderBy(null, Order.desc("innerMyInt.name"))
+    );
+
+    OrderExitOperation operation = new OrderExitOperation(list);
+    List<MyInt> sortedList = (List<MyInt>)(List)operation.apply(data);
+
+    assertEquals(1, sortedList.get(0).getValue());
+    assertEquals(2, sortedList.get(1).getValue());
+    assertEquals("tomislav", sortedList.get(1).getName());
+    assertEquals(2, sortedList.get(2).getValue());
+    assertEquals("maulik", sortedList.get(2).getName());
+    assertEquals(5, sortedList.get(3).getValue());
+    assertEquals(27, sortedList.get(4).getValue());
+  }
+
+  public void testApplyMultipleMixedOrderings() {
+    List<Object> data = Lists.newArrayList();
+    data.add(new MyInt(2, "tomislav", new MyInt(2, "tomislav", null)));
+    data.add(new MyInt(1, "bomb", new MyInt(1, "bomb", null)));
+    data.add(new MyInt(27, "max", new MyInt(27, "max", null)));
+    data.add(new MyInt(2, "maulik", new MyInt(2, "maulik", null)));
+    data.add(new MyInt(5, "gut", new MyInt(5, "gut", null)));
+
+    List<InMemoryOrderBy> list = Lists.newArrayList(
+        new InMemoryOrderBy(null, Order.asc("innerMyInt.value")),
+        new InMemoryOrderBy(null, Order.desc("name"))
+    );
+
+    OrderExitOperation operation = new OrderExitOperation(list);
+    List<MyInt> sortedList = (List<MyInt>)(List)operation.apply(data);
+
+    assertEquals(1, sortedList.get(0).getValue());
+    assertEquals(2, sortedList.get(1).getValue());
+    assertEquals("tomislav", sortedList.get(1).getName());
+    assertEquals(2, sortedList.get(2).getValue());
+    assertEquals("maulik", sortedList.get(2).getName());
+    assertEquals(5, sortedList.get(3).getValue());
+    assertEquals(27, sortedList.get(4).getValue());
   }
 
   static class SessionFactoryMock extends SessionFactoryDefaultMock {

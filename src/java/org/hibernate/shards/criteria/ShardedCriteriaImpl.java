@@ -65,7 +65,13 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 
   // the criteria collector we use to process the results of executing
   // the Criteria across multiple shards
-  private final ExitOperationsCriteriaCollector criteriaCollector;
+  final ExitOperationsCriteriaCollector criteriaCollector;
+
+  // the last value with which setFirstResult was called
+  private int firstResult;
+
+  // the last value with which maxResults was called
+  private Integer maxResults;
 
   /**
    * Construct a ShardedCriteriaImpl
@@ -166,7 +172,16 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
   }
 
   public Criteria addOrder(Order order) {
-    criteriaCollector.addOrder(order);
+    // Order applies to top-level object so we pass a null association path
+    criteriaCollector.addOrder(null, order);
+    CriteriaEvent event = new AddOrderEvent(order);
+    for (Shard shard : shards) {
+      if (shard.getCriteriaById(criteriaId) != null) {
+        shard.getCriteriaById(criteriaId).addOrder(order);
+      } else {
+        shard.addCriteriaEvent(criteriaId, event);
+      }
+    }
     return this;
   }
 
@@ -244,10 +259,18 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
    * established we need to create the actual subcriteria, and for each shard
    * where the Criteria has not yet been established we need to register an
    * event that will create the Subcriteria when the Criteria is established.
+   *
+   * @param factory the factory to use to create the subcriteria
+   * @param associationPath the association path to the property on which we're
+   * creating a subcriteria
+   *
+   * @return a new ShardedSubcriteriaImpl
    */
-  private ShardedSubcriteriaImpl createSubcriteria(SubcriteriaFactory factory) {
+  private ShardedSubcriteriaImpl createSubcriteria(
+      SubcriteriaFactory factory, String associationPath) {
 
-    ShardedSubcriteriaImpl subcrit = new ShardedSubcriteriaImpl(shards, this);
+    ShardedSubcriteriaImpl subcrit =
+        new ShardedSubcriteriaImpl(shards, this, criteriaCollector, associationPath);
 
     for (Shard shard : shards) {
       Criteria crit = shard.getCriteriaById(criteriaId);
@@ -265,25 +288,25 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
   public Criteria createCriteria(String associationPath)
       throws HibernateException {
     SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath);
-    return createSubcriteria(factory);
+    return createSubcriteria(factory, associationPath);
   }
 
   public Criteria createCriteria(String associationPath, int joinType)
       throws HibernateException {
     SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, joinType);
-    return createSubcriteria(factory);
+    return createSubcriteria(factory, associationPath);
   }
 
   public Criteria createCriteria(String associationPath, String alias)
       throws HibernateException {
     SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias);
-    return createSubcriteria(factory);
+    return createSubcriteria(factory, associationPath);
   }
 
   public Criteria createCriteria(String associationPath, String alias,
       int joinType) throws HibernateException {
     SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias, joinType);
-    return createSubcriteria(factory);
+    return createSubcriteria(factory, associationPath);
   }
 
   public Criteria setResultTransformer(ResultTransformer resultTransformer) {
@@ -299,14 +322,42 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
     return this;
   }
 
-  public Criteria setMaxResults(int maxResults) {
-    criteriaCollector.setMaxResults(maxResults);
+  /*
+      A description of the trickyness that goes on with first result and
+      max result:
+      You can safely apply the maxResult on each individual shard so long as there
+      is no firstResult specified.  If firstResult is specified you can't
+      safely apply it on each shard but you can set maxResult to be the existing
+      value of maxResult + firstResult.
+   */
 
+  public Criteria setMaxResults(int maxResults) {
+    // the criteriaCollector will use the maxResult value that was passed in
+    criteriaCollector.setMaxResults(maxResults);
+    this.maxResults = maxResults;
+    int adjustedMaxResults = maxResults + firstResult;
+    // the query executed against each shard will use maxResult + firstResult
+    SetMaxResultsEvent event = new SetMaxResultsEvent(adjustedMaxResults);
+    for (Shard shard : shards) {
+      if (shard.getCriteriaById(criteriaId) != null) {
+        shard.getCriteriaById(criteriaId).setMaxResults(adjustedMaxResults);
+      } else {
+        shard.addCriteriaEvent(criteriaId, event);
+      }
+    }
     return this;
   }
 
   public Criteria setFirstResult(int firstResult) {
     criteriaCollector.setFirstResult(firstResult);
+    this.firstResult = firstResult;
+    // firstResult cannot be safely applied to the Criteria that will be
+    // executed against the Shard.  If a maxResult has been set we need to adjust
+    // that to take the firstResult into account.  Just calling setMaxResults
+    // will take care of this for us.
+    if(maxResults != null) {
+      setMaxResults(maxResults);
+    }
     return this;
   }
 

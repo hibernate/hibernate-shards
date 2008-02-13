@@ -15,37 +15,34 @@
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
-
 package org.hibernate.shards.criteria;
 
-import org.hibernate.Criteria;
+import junit.framework.TestCase;
+
+import org.hibernate.criterion.Order;
 
 /**
- * Event that allows the maxResults of a {@link Criteria} to be set lazily.
- * @see Criteria#setMaxResults(int)
- *
  * @author maxr@google.com (Max Ross)
  */
-class SetMaxResultsEvent implements CriteriaEvent {
+public class InMemoryOrderByTest extends TestCase {
 
-  // the maxResults we'll set when the event fires
-  private final int maxResults;
+  public void testTopLevel() {
+    InMemoryOrderBy imob = new InMemoryOrderBy(null, Order.asc("yam"));
+    assertEquals("yam", imob.getExpression());
+    assertTrue(imob.isAscending());
 
-  /**
-   * Constructs a SetMaxResultsEvent
-   *
-   * @param maxResults the maxResults we'll set on the {@link Criteria} when
-   * the event fires.
-   */
-  public SetMaxResultsEvent(int maxResults) {
-    this.maxResults = maxResults;
+    imob = new InMemoryOrderBy(null, Order.desc("yam"));
+    assertEquals("yam", imob.getExpression());
+    assertFalse(imob.isAscending());
   }
 
-  public void onEvent(Criteria crit) {
-    crit.setMaxResults(maxResults);
-  }
+  public void testSubObject() {
+    InMemoryOrderBy imob = new InMemoryOrderBy("a.b.c", Order.asc("yam"));
+    assertEquals("a.b.c.yam", imob.getExpression());
+    assertTrue(imob.isAscending());
 
-  public int getMaxResults() {
-    return maxResults;
+    imob = new InMemoryOrderBy("a.b.c", Order.desc("yam"));
+    assertEquals("a.b.c.yam", imob.getExpression());
+    assertFalse(imob.isAscending());
   }
 }

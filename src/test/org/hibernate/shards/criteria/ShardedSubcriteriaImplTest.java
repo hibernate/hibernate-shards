@@ -19,6 +19,7 @@
 package org.hibernate.shards.criteria;
 
 import junit.framework.TestCase;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
@@ -50,7 +51,10 @@ public class ShardedSubcriteriaImplTest extends TestCase {
     Shard s2 = new MyShard();
     Shard s3 = new MyShard();
     List<Shard> shards = Lists.newArrayList(s1, s2, s3);
-    ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(shards,  new ShardedCriteriaDefaultMock());
+    ExitOperationsCriteriaCollector collector =
+        new ExitOperationsCriteriaCollector();
+    ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(
+        shards,  new ShardedCriteriaDefaultMock(), collector, "");
     assertEquals(shards.size(), ss.getShardToCriteriaMap().size());
     assertEquals(shards.size(), ss.getShardToEventListMap().size());
   }
@@ -65,7 +69,10 @@ public class ShardedSubcriteriaImplTest extends TestCase {
         return null;
       }
     };
-    ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(shards,  parent);
+    ExitOperationsCriteriaCollector collector =
+        new ExitOperationsCriteriaCollector();
+    ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(
+        shards, parent, collector, "");
     ss.list();
     assertTrue(called[0]);
   }
@@ -80,7 +87,10 @@ public class ShardedSubcriteriaImplTest extends TestCase {
         return null;
       }
     };
-    ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(shards,  parent);
+    ExitOperationsCriteriaCollector collector =
+        new ExitOperationsCriteriaCollector();
+    ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(
+        shards, parent, collector, "");
     ss.uniqueResult();
     assertTrue(called[0]);
   }
@@ -103,7 +113,10 @@ public class ShardedSubcriteriaImplTest extends TestCase {
         return null;
       }
     };
-    ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(shards,  parent);
+    ExitOperationsCriteriaCollector collector =
+        new ExitOperationsCriteriaCollector();
+    ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(
+        shards, parent, collector, "");
     ss.scroll();
     assertTrue(scrollNoArgsCalled[0]);
     assertFalse(scroll1ArgCalled[0]);
@@ -124,7 +137,10 @@ public class ShardedSubcriteriaImplTest extends TestCase {
     Shard someOtherShard = new ShardDefaultMock();
     List<Shard> shards = Lists.newArrayList(shard, someOtherShard);
     ShardedCriteria parent = new ShardedCriteriaDefaultMock();
-    ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(shards,  parent);
+    ExitOperationsCriteriaCollector collector =
+        new ExitOperationsCriteriaCollector();
+    ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(
+        shards, parent, collector, "");
     ss.getShardToEventListMap().get(shard).add(new CriteriaEventDefaultMock());
     final Criteria subcritToReturn = new CriteriaDefaultMock();
     SubcriteriaFactory factory = new SubcriteriaFactoryDefaultMock() {

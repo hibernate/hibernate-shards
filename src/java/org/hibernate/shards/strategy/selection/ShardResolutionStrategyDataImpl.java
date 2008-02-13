@@ -44,4 +44,31 @@ public class ShardResolutionStrategyDataImpl implements ShardResolutionStrategyD
     return id;
   }
 
+
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+
+    ShardResolutionStrategyDataImpl that = (ShardResolutionStrategyDataImpl) o;
+
+    if (!entityName.equals(that.entityName)) {
+      return false;
+    }
+    if (!id.equals(that.id)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  public int hashCode() {
+    int result;
+    result = entityName.hashCode();
+    result = 31 * result + id.hashCode();
+    return result;
+  }
 }

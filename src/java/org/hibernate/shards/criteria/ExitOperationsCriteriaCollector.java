@@ -66,7 +66,7 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
   private SessionFactoryImplementor sessionFactoryImplementor;
 
   // Order operations applied to the Criteria
-  private List<Order> orders = Lists.newArrayList();
+  private List<InMemoryOrderBy> orders = Lists.newArrayList();
 
   // Our friendly neighborhood logger
   private final Log log = LogFactory.getLog(getClass());
@@ -123,11 +123,14 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
   /**
    * Add the given Order
    *
+   * @param associationPath the association path leading to the object to which
+   * this order clause applies - null if the order clause applies to the top
+   * level object
    * @param order the order to add
    * @return this
    */
-  public ExitOperationsCollector addOrder(Order order) {
-    this.orders.add(order);
+  public ExitOperationsCollector addOrder(String associationPath, Order order) {
+    orders.add(new InMemoryOrderBy(associationPath, order));
     return this;
   }
 
@@ -153,9 +156,12 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
       result = new DistinctExitOperation(distinct).apply(result);
     }
 
-    for(Order order : orders) {
-      result = new OrderExitOperation(order).apply(result);
-    }
+    // not clear to me why we need to create an OrderExitOperation
+    // are we even taking advantage of the fact that it implements the
+    // ExitOperation interface?
+    OrderExitOperation op = new OrderExitOperation(orders);
+    result = op.apply(result);
+
     if (firstResult != null) {
       result = new FirstResultExitOperation(firstResult).apply(result);
     }
@@ -189,4 +195,11 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
     this.sessionFactoryImplementor = sessionFactoryImplementor;
   }
 
+  Integer getMaxResults() {
+    return maxResults;
+  }
+
+  Integer getFirstResult() {
+    return firstResult;
+  }
 }

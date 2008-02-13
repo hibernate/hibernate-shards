@@ -229,10 +229,10 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
     Criteria officeCrit = floorCrit.createCriteria("offices");
     officeCrit.add(Restrictions.eq("label", "LAHGE"));
     // now how we execute the query via the floorcrit
-    List<Integer> list = list(officeCrit);
-    assertEquals(1, list.size());
+    List<Integer> result = list(officeCrit);
+    assertEquals(1, result.size());
     int total = 0;
-    for(int shardTotal : list) {
+    for(int shardTotal : result) {
       total += shardTotal;
     }
     assertEquals(2, total);
@@ -240,15 +240,56 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 
   public void testAvgProjection() {
     Criteria crit = session.createCriteria(Floor.class).setProjection(Projections.avg("squareFeet"));
-    List<Double> l = list(crit);
-    assertEquals(1, l.size());
-    assertEquals(20.0, l.get(0));
+    List<Double> result = list(crit);
+    assertEquals(1, result.size());
+    assertEquals(20.0, result.get(0));
   }
-
 
   public void testMaxResults() throws Exception {
     Criteria crit = session.createCriteria(Building.class).setMaxResults(1);
     assertEquals(1, list(crit).size());
+  }
+
+  public void testFirstAndMaxResults() {
+    Building b3 = ModelDataFactory.building("b3");
+    Building b4 = ModelDataFactory.building("b4");
+    Building b5 = ModelDataFactory.building("b5");
+    session.beginTransaction();
+    session.save(b5);
+    session.save(b3);
+    session.save(b4);
+    commitAndResetSession();
+
+    Criteria crit =
+        session.createCriteria(Building.class).addOrder(Order.desc("name")).
+            setFirstResult(2).setMaxResults(2);
+    List<Building> buildings = list(crit);
+    assertEquals(2, buildings.size());
+    assertEquals(b3, buildings.get(0));
+    assertEquals(b2, buildings.get(1));
+  }
+
+  public void testFirstAndMaxResultsWithSubCrit() {
+    Building b3 = ModelDataFactory.building("b3");
+    Floor b3f1 = ModelDataFactory.floor(b3, 1);
+    Building b4 = ModelDataFactory.building("b4");
+    Floor b4f1 = ModelDataFactory.floor(b4, 1);
+    Building b5 = ModelDataFactory.building("b5");
+    Floor b5f1 = ModelDataFactory.floor(b5, 1);
+    session.beginTransaction();
+    session.save(b5);
+    session.save(b3);
+    session.save(b4);
+    commitAndResetSession();
+
+    Criteria crit =
+        session.createCriteria(Building.class).addOrder(Order.desc("name")).
+            createCriteria("floors").add(Restrictions.eq("number", 1)).
+            setFirstResult(2).setMaxResults(2);
+    List<Building> buildings = list(crit);
+    assertEquals(2, buildings.size());
+    assertEquals(b3, buildings.get(0));
+    assertEquals(b2, buildings.get(1));
   }
 
   public void testAggregateProjection() throws Exception {
@@ -276,10 +317,11 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 
   public void testMultiOrdering() throws Exception {
     Criteria crit = session.createCriteria(Office.class);
-    crit.addOrder(Order.asc("label")).addOrder(Order.desc("floor.building.name"));
-    List<Office> l = list(crit);
-    List<Office> answer = Lists.newArrayList(b2f1o1, b1f3o1, b1f3o2);
-    assertTrue(answer.equals(l));
+    crit.addOrder(Order.asc("label")).createCriteria("floor").
+        createCriteria("building").addOrder(Order.desc("name"));
+    List<Office> listResult = list(crit);
+    List<Office> answer = Lists.newArrayList(b2f1o1, b1f3o2, b1f3o1);
+    assertTrue(answer.equals(listResult));
   }
 }
 

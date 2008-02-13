@@ -108,4 +108,9 @@ public class Building implements ShardAware {
   public ShardId getShardId() {
     return shardId;
   }
+
+  @Override
+  public String toString() {
+    return buildingId.toString() + "," + name;
+  }
 }

@@ -48,6 +48,7 @@ public final class NonPermutedTests {
     classes.add(org.hibernate.shards.criteria.CreateAliasEventTest.class);
     classes.add(org.hibernate.shards.criteria.CreateSubcriteriaEventTest.class);
     classes.add(org.hibernate.shards.criteria.CriteriaFactoryImplTest.class);
+    classes.add(org.hibernate.shards.criteria.InMemoryOrderByTest.class);
     classes.add(org.hibernate.shards.criteria.SetCacheModeEventTest.class);
     classes.add(org.hibernate.shards.criteria.SetCacheRegionEventTest.class);
     classes.add(org.hibernate.shards.criteria.SetCacheableEventTest.class);
@@ -61,6 +62,7 @@ public final class NonPermutedTests {
     classes.add(org.hibernate.shards.criteria.SetProjectionEventTest.class);
     classes.add(org.hibernate.shards.criteria.SetResultTransformerEventTest.class);
     classes.add(org.hibernate.shards.criteria.SetTimeoutEventTest.class);
+    classes.add(org.hibernate.shards.criteria.ShardedCriteriaImplTest.class);
     classes.add(org.hibernate.shards.criteria.ShardedSubcriteriaImplTest.class);
     classes.add(org.hibernate.shards.criteria.SubcriteriaFactoryImplTest.class);
     classes.add(org.hibernate.shards.id.ShardedTableHiLoGeneratorTest.class);

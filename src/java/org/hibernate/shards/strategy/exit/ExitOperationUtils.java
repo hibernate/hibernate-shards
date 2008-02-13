@@ -50,7 +50,8 @@ public class ExitOperationUtils {
   public static Comparable<Object> getPropertyValue(Object obj, String propertyName) {
     /**
      * TODO(maulik) respect the client's choice in how Hibernate accesses
-     * property values.
+     * property values.  Also need to implement some caching - this gets called
+     * from a Comparator!
      *
      * Currently this method access members of an object using getters only,
      * event of the client has specifed to use direct field access. Ideally,

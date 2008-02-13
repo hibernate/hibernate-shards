@@ -220,8 +220,8 @@ public class ShardedConfiguration {
   }
 
   /**
-   * Takes the values of the properties declared in VARIABLE_PROPERTIES from
-   * a shard-specific config and sets them as the values of the same properties
+   * Takes the values of the properties exposed by the ShardConfiguration
+   * interface and sets them as the values of the corresponding properties
    * in the prototype config.
    */
   void populatePrototypeWithVariableProperties(ShardConfiguration config) {

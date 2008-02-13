@@ -63,18 +63,29 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
   // when the actual Criteria objects are established
   private final Map<Shard, List<CriteriaEvent>> shardToEventListMap = Maps.newHashMap();
 
+  private final ExitOperationsCriteriaCollector criteriaCollector;
+
+  private final String associationPath;
+
   /**
    * Construct a ShardedSubcriteriaImpl
    *
    * @param shards the shards that we're aware of
    * @param parent our parent
+   * @param criteriaCollector the collector for extit operations
+   * @param associationPath the association path for the subcriteria
    */
-  public ShardedSubcriteriaImpl(List<Shard> shards, ShardedCriteria parent) {
+  public ShardedSubcriteriaImpl(List<Shard> shards, ShardedCriteria parent,
+      ExitOperationsCriteriaCollector criteriaCollector, String associationPath) {
     Preconditions.checkNotNull(shards);
     Preconditions.checkNotNull(parent);
     Preconditions.checkArgument(!shards.isEmpty());
+    Preconditions.checkNotNull(criteriaCollector);
+    Preconditions.checkNotNull(associationPath);
     this.shards = shards;
     this.parent = parent;
+    this.criteriaCollector = criteriaCollector;
+    this.associationPath = associationPath;
     // let's set up our maps
     for(Shard shard : shards) {
       shardToCriteriaMap.put(shard, null);
@@ -137,6 +148,7 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
   }
 
   public Criteria addOrder(Order order) {
+    criteriaCollector.addOrder(associationPath, order);
     CriteriaEvent event = new AddOrderEvent(order);
     for (Shard shard : shards) {
       if (shardToCriteriaMap.get(shard) != null) {
@@ -223,33 +235,13 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
     return this;
   }
 
-  /**
-   * TODO(maxr)
-   * This clearly isn't what people want.  We should be building an
-   * exit strategy that returns once we've accumulated maxResults
-   * across _all_ shards, not each shard.
-   */
   public Criteria setMaxResults(int maxResults) {
-    CriteriaEvent event = new SetMaxResultsEvent(maxResults);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setMaxResults(maxResults);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
-    }
+    parent.setMaxResults(maxResults);
     return this;
   }
 
   public Criteria setFirstResult(int firstResult) {
-    CriteriaEvent event = new SetFirstResultEvent(firstResult);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setFirstResult(firstResult);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
-    }
+    parent.setFirstResult(firstResult);
     return this;
   }
 
@@ -358,9 +350,12 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
     return getParentCriteria().uniqueResult();
   }
 
-  private ShardedSubcriteriaImpl createSubcriteria(SubcriteriaFactory factory) {
+  private ShardedSubcriteriaImpl createSubcriteria(SubcriteriaFactory factory,
+      String newAssociationPath) {
+    String fullAssociationPath = associationPath + "." + newAssociationPath;
     // first build our sharded subcrit
-    ShardedSubcriteriaImpl subcrit = new ShardedSubcriteriaImpl(shards, parent);
+    ShardedSubcriteriaImpl subcrit =
+        new ShardedSubcriteriaImpl(shards, parent, criteriaCollector, fullAssociationPath);
     for (Shard shard : shards) {
       // see if we already have a concreate Criteria object for each shard
       if (shardToCriteriaMap.get(shard) != null) {
@@ -395,25 +390,25 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
   public Criteria createCriteria(String associationPath)
       throws HibernateException {
     SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath);
-    return createSubcriteria(factory);
+    return createSubcriteria(factory, associationPath);
   }
 
   public Criteria createCriteria(String associationPath, int joinType)
       throws HibernateException {
     SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, joinType);
-    return createSubcriteria(factory);
+    return createSubcriteria(factory, associationPath);
   }
 
   public Criteria createCriteria(String associationPath, String alias)
       throws HibernateException {
     SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias);
-    return createSubcriteria(factory);
+    return createSubcriteria(factory, associationPath);
   }
 
   public Criteria createCriteria(String associationPath, String alias,
       int joinType) throws HibernateException {
     SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias, joinType);
-    return createSubcriteria(factory);
+    return createSubcriteria(factory, associationPath);
   }
 
   public ShardedCriteria getParentCriteria() {

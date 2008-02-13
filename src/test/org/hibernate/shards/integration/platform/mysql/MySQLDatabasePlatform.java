@@ -38,15 +38,15 @@ public class MySQLDatabasePlatform extends BaseDatabasePlatform {
 
   private static final Iterable<String> CREATE_TABLE_STATEMENTS = Lists.newArrayList(
      "CREATE TABLE hibernate_unique_key (id DECIMAL(40,0) PRIMARY KEY, next_hi DECIMAL(40,0))"
-    ,"INSERT INTO hibernate_unique_key(next_hi) VALUES(1)"
+    ,"INSERT INTO hibernate_unique_key(id, next_hi) VALUES(1,1)"
     ,"CREATE TABLE sample_table (id DECIMAL(40,0) PRIMARY KEY, str_col VARCHAR(256))"
     ,"CREATE TABLE sample_table2 (id DECIMAL(40,0) PRIMARY KEY, str_col VARCHAR(256))"
     ,"CREATE TABLE Elevator (elevatorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0))"
     ,"CREATE TABLE Building (buildingId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50))"
-    ,"CREATE TABLE Floor (floorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0), upEscalatorId DECIMAL(40,0), downEscalatorId DECIMAL(40,0), number DECIMAL(40,0))"
+    ,"CREATE TABLE Floor (floorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0), upEscalatorId DECIMAL(40,0), downEscalatorId DECIMAL(40,0), number DECIMAL(40,0), squareFeet DECIMAL(40, 4))"
     ,"CREATE TABLE Tenant (tenantId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50))"
     ,"CREATE TABLE BuildingTenant (buildingId DECIMAL(40,0), tenantId DECIMAL(40,0), PRIMARY KEY(buildingId, tenantId))"
-    ,"CREATE TABLE Office (officeId DECIMAL(40,0) PRIMARY KEY, floorId DECIMAL(40,0), label VARCHAR(50))"
+    ,"CREATE TABLE Office (officeId DECIMAL(40,0) PRIMARY KEY, floorId DECIMAL(40,0), label VARCHAR(50), windowId DECIMAL(40,0))"
     ,"CREATE TABLE FloorElevator (floorId DECIMAL(40,0), elevatorId DECIMAL(40,0), PRIMARY KEY(floorId, elevatorId))"
     ,"CREATE TABLE Escalator (escalatorId DECIMAL(40,0) PRIMARY KEY, bottomFloorId DECIMAL(40,0), topFloorId DECIMAL(40,0))"
     ,"CREATE TABLE Person (personId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50), tenantId DECIMAL(40,0), officeId DECIMAL(40,0))"

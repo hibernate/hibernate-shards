@@ -18,8 +18,8 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import org.hibernate.criterion.Order;
-import org.hibernate.shards.util.Preconditions;
+import org.hibernate.shards.criteria.InMemoryOrderBy;
+import org.hibernate.shards.util.Lists;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,50 +30,68 @@ import java.util.List;
  */
 public class OrderExitOperation implements ExitOperation {
 
-  private final Order order;
-  private final String propertyName;
+  private final List<InMemoryOrderBy> orderByList;
 
-  public OrderExitOperation(Order order) {
-    //TODO(maulik) support Ignore case!
-    Preconditions.checkState(order.toString().endsWith("asc") ||
-                             order.toString().endsWith("desc"));
+  private static final Comparator<Object> EQUALS = new Comparator<Object>() {
+    public int compare(Object o, Object o1) {
+      return 0;
+    }
+  };
 
-    this.order = order;
-    this.propertyName = getSortingProperty(order);
+  public OrderExitOperation(List<InMemoryOrderBy> orderByList) {
+    this.orderByList = Lists.newArrayList(orderByList);
+    // need to reverse the list so we build the comparator from the inside out
+    Collections.reverse(this.orderByList);
   }
 
   public List<Object> apply(List<Object> results) {
     List<Object> nonNullList = ExitOperationUtils.getNonNullList(results);
-    Comparator<Object> comparator = new Comparator<Object>() {
-      public int compare(Object o1, Object o2) {
-        if (o1 == o2) {
-          return 0;
-        }
-        Comparable<Object> o1Value = ExitOperationUtils.getPropertyValue(o1, propertyName);
-        Comparable<Object> o2Value = ExitOperationUtils.getPropertyValue(o2, propertyName);
-        if (o1Value == null) {
-          return -1;
-        }
-        return o1Value.compareTo(o2Value);
-      }
-    };
 
+    Comparator<Object> comparator = buildComparator();
     Collections.sort(nonNullList, comparator);
-    if (order.toString().endsWith("desc")) {
-      Collections.reverse(nonNullList);
-    }
 
     return nonNullList;
   }
 
-  private static String getSortingProperty(Order order) {
-    /**
-     * This method relies on the format that Order is using:
-     * propertyName + ' ' + (ascending?"asc":"desc")
-     */
-    String str = order.toString();
-    return str.substring(0, str.indexOf(' '));
+  private Comparator<Object> buildComparator() {
+    // the most-inner comparator is one that returns 0 for everything.
+    Comparator<Object> inner = EQUALS;
+    for(InMemoryOrderBy order : orderByList) {
+      inner = new PropertyComparator(order.getExpression(), inner);
+      if(!order.isAscending()) {
+        inner = Collections.reverseOrder(inner);
+      }
+    }
+    return inner;
   }
 
-  
+  private static final class PropertyComparator implements Comparator<Object> {
+
+    private final String propertyName;
+    private final Comparator<Object> tieBreaker;
+
+    public PropertyComparator(String propertyName, Comparator<Object> tieBreaker) {
+      this.propertyName = propertyName;
+      this.tieBreaker = tieBreaker;
+    }
+
+    public int compare(Object o1, Object o2) {
+      int result;
+      if (o1 == o2) {
+        result = 0;
+      } else {
+        Comparable<Object> o1Value = ExitOperationUtils.getPropertyValue(o1, propertyName);
+        Comparable<Object> o2Value = ExitOperationUtils.getPropertyValue(o2, propertyName);
+        if (o1Value == null) {
+          result = -1;
+        } else {
+          result = o1Value.compareTo(o2Value);
+        }
+      }
+      if(result == 0) {
+        result = tieBreaker.compare(o1, o2);
+      }
+      return result;
+    }
+  }
 }

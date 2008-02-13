@@ -36,7 +36,6 @@ public class RowCountExitOperation implements ProjectionExitOperation {
 
   public List<Object> apply(List<Object> results) {
     List<Object> nonNullResults = ExitOperationUtils.getNonNullList(results);
-    
     return Collections.singletonList((Object) nonNullResults.size());
   }
 }
