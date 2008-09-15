@@ -23,6 +23,21 @@ import org.hibernate.shards.strategy.resolution.ShardResolutionStrategy;
 import org.hibernate.shards.strategy.selection.ShardSelectionStrategy;
 
 /**
+ * Interface to specify Sharding behavior.
+ * 
+ * This class determines through {@link ShardAccessStrategy}, {@link ShardResolutionStrategy}, and
+ * {@link ShardSelectionStrategy} how to read, persist and update entities in the sharded collection of databases.
+ * 
+ *  <p>When given a query the {@link ShardAccessStrategy} will determine how the query will be distributed across 
+ * the known shards - in sequence, in parallel, or some combination of the two.
+ *  </p> 
+ *  <p> When looking for an entity with a known Id and type {@link ShardResolutionStrategy} will return all possible shards
+ * that this entity might reside on. 
+ *  </p> 
+ *  <p> When given an entity the {@link ShardSelectionStrategy} will determine which shard that object should be persisted
+ * or updated on.
+ *  </p> 
+ * 
  * @author maxr@google.com (Max Ross)
  */
 public interface ShardStrategy {
