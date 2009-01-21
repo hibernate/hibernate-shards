@@ -144,7 +144,7 @@ public class InterceptorList implements Interceptor {
 
   public void postFlush(Iterator entities) throws CallbackException {
     for(Interceptor interceptor : interceptors) {
-      interceptor.preFlush(entities);
+      interceptor.postFlush(entities);
     }
   }
 
