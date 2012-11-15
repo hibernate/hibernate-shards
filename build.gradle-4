@@ -1,0 +1,197 @@
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'uploadAuth'
+apply from: "./libraries.gradle"
+
+group = 'org.hibernate'
+version = '4.0.0-SNAPSHOT'
+
+targetCompatibility = "1.6"
+sourceCompatibility = "1.6"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    mavenRepo name: 'jboss-nexus', url: "http://repository.jboss.org/nexus/content/groups/public/"
+    mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        mavenRepo name: 'jboss-nexus', url: "http://repository.jboss.org/nexus/content/groups/public/"
+        mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
+    }
+    dependencies {
+        classpath 'org.hibernate.build.gradle:gradle-upload-auth-plugin:1.1.1'
+    }
+}
+
+
+// set up special classpath elements ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+configurations {
+    jbossLoggingTool {
+        description = "Dependencies for running the JBoss logging AnnotationProcessor tool"
+    }
+    deployerJars {
+        description = 'Jars needed for doing deployment to JBoss Nexus repo'
+    }
+    // for all imported dependencies, exclude xml-apis (which are jdk specific) from transitivity
+    all*.exclude group: 'xml-apis', module: 'xml-apis'
+}
+
+
+// declare dependencies ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+dependencies {
+    compile( libraries.hibernate_orm )
+    compile( libraries.logging )
+
+    testCompile( libraries.hibernate_testing )
+    testCompile( libraries.junit )  // may already be a transitive dep from testing
+
+    testRuntime( libraries.h2 )
+    testRuntime( libraries.javassist ) // may already be a transitive dep from orm
+    testRuntime( libraries.slf4j_api )
+    testRuntime( libraries.slf4j_log4j12 )
+    testRuntime( libraries.jcl_slf4j )
+    testRuntime( libraries.jcl_api )
+    testRuntime( libraries.jcl )
+
+    jbossLoggingTool( libraries.logging_processor )
+
+    deployerJars( 'org.apache.maven.wagon:wagon-http:1.0' )
+}
+
+// MacOS fun-ness ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ext.toolsJar = file("${System.getProperty('java.home')}/../lib/tools.jar")
+if ( ext.toolsJar.exists() ) {
+    dependencies{
+        testCompile files( toolsJar )
+    }
+}
+
+// set up logging generation task ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ext.generatedLoggingSrcDir = file( "${project.buildDir}/generated-src/logging/" )
+task generateMainLoggingClasses(type: Compile) {
+    ext.aptDumpDir = file( "${project.buildDir}/tmp/apt/logging" )
+    classpath = compileJava.classpath + configurations.jbossLoggingTool
+    source = sourceSets.main.java.srcDirs
+    destinationDir = aptDumpDir
+    options.define(
+            compilerArgs: [
+                    "-nowarn",
+                    "-proc:only",
+                    "-encoding", "UTF-8",
+                    "-processor", "org.jboss.logging.processor.apt.LoggingToolsProcessor",
+                    "-s", "$generatedLoggingSrcDir.absolutePath",
+                    "-AloggingVersion=3.0",
+                    "-source", "1.6",
+                    "-target", "1.6",
+                    "-AtranslationFilesPath=${project.rootDir}/src/main/resources"
+            ]
+    );
+    outputs.dir generatedLoggingSrcDir;
+    doFirst {
+        generatedLoggingSrcDir.mkdirs()
+    }
+    doLast {
+        aptDumpDir.delete()
+    }
+}
+
+sourceSets.main {
+    java.srcDir generatedLoggingSrcDir
+}
+
+// for the time being eat the annoying output from running the annotation processors
+generateMainLoggingClasses.logging.captureStandardError(LogLevel.INFO)
+
+compileJava.dependsOn generateMainLoggingClasses
+compileJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
+compileTestJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
+
+// Configure test task ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+test {
+    systemProperties['hibernate.test.validatefailureexpected'] = true
+    systemProperties += System.properties.findAll { it.key.startsWith( "hibernate.") }
+    maxHeapSize = "1024m"
+}
+
+// Set up jar manifest information ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+manifest.mainAttributes(
+        provider: 'gradle',
+        'Implementation-Url': 'http://hibernate.org',
+        'Implementation-Version': version,
+        'Implementation-Vendor': 'Hibernate.org',
+        'Implementation-Vendor-Id': 'org.hibernate'
+)
+
+// Prepare upload and install tasks (including POM information) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+task sourcesJar(type: Jar, dependsOn: compileJava) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+uploadArchives.dependsOn sourcesJar
+
+def pomConfig = {
+    name 'Hibernate Shards'
+    description 'Horizontal partitioning for Hibernate O/RM'
+    url 'http://hibernate.org'
+    organization {
+        name 'Hibernate.org'
+        url 'http://hibernate.org'
+    }
+    issueManagement {
+        system 'jira'
+        url 'https://hibernate.onjira.com/browse/HSHARDS'
+    }
+    scm {
+        url "http://github.com/hibernate/hibernate-shards"
+        connection "scm:git:http://github.com/hibernate/hibernate-shards.git"
+        developerConnection "scm:git:git@github.com:hibernate/hibernate-shards.git"
+    }
+    licenses {
+        license {
+            name 'GNU Lesser General Public License'
+            url 'http://www.gnu.org/licenses/lgpl-2.1.html'
+            comments 'See discussion at http://hibernate.org/license for more details.'
+            distribution 'repo'
+        }
+    }
+    developers {
+        developer {
+            id 'hibernate-team'
+            name 'The Hibernate Development Team'
+            organization 'Hibernate.org'
+            organizationUrl 'http://hibernate.org'
+        }
+    }
+}
+
+configure(install.repositories.mavenInstaller) {
+    pom.project pomConfig
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        name = 'jbossDeployer'
+        configuration = configurations.deployerJars
+        pom.project pomConfig
+        repository(id: "jboss-releases-repository", url: "https://repository.jboss.org/nexus/service/local/staging/deploy/maven2/")
+        snapshotRepository(id: "jboss-snapshots-repository", url: "https://repository.jboss.org/nexus/content/repositories/snapshots")
+    }
+}
+
+
+// Configure gradlew generation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.1'
+}

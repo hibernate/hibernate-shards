@@ -1,9 +1,5 @@
 Hibernate Shards
 ================
-Version: 3.0.0.Beta2, 02.08.2007
-
-Description
------------
 
 You can't always put all your relational data in a single relational database.
 Sometimes you simply have too much data. Sometimes you have a distributed deployment architecture
@@ -14,37 +10,16 @@ the development of your application. Hibernate Shards is a framework that is des
 reduce this complexity by adding support for horizontal partitioning on top of Hibernate Core. Simply put, 
 we aim to provide a unified view of multiple databases via Hibernate.
 
-Instructions
-------------
-
-Unzip to installation directory, read doc/reference
-
-
-Contact
-------------
-
-Latest Documentation:
-
-   http://hibernate.org
-   http://shards.hibernate.org
-
-Bug Reports:
-
-   Hibernate JIRA (preferred)
-
-Discussion:
-
-  hibernate-shards-dev@googlegroups.com
-
-Free Technical Support:
-
-   http://forum.hibernate.org
-
-
-Notes
------------
-
-If you want to contribute, go to http://www.hibernate.org/
+## License
 
 This software and its documentation are distributed under the terms of the
 FSF Lesser Gnu Public License (see lgpl.txt).
+
+## Building Instructions
+
+This build is in flux from Ant which was used originally to now use Gradle.  Specifically, tests are known to
+be broken currently because the tests use Ant-specific hooks.  This will be addressed moving forward.
+
+## Report issues
+
+Report issues (bugs, enhancement requests, etc) to the [Hibernate Jira](https://hibernate.onjira.com/browse/HSHARDS)
