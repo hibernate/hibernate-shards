@@ -87,7 +87,7 @@ public class DbAccessPermutedIntegrationTest extends BaseShardingIntegrationTest
         assertEquals(1, session.createSQLQuery("DELETE from sample_table where id = 0").executeUpdate());
     }
 
-    @Parameterized.Parameters(name = "{index}: Permutation[{0}]")
+    @Parameterized.Parameters(name = "{index}: [{0}]")
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

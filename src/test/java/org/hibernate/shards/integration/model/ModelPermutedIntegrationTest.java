@@ -1108,7 +1108,7 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
         go[0] = false;
     }
 
-    @Parameterized.Parameters(name = "{index}: Permutation[{0}]")
+    @Parameterized.Parameters(name = "{index}: [{0}]")
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

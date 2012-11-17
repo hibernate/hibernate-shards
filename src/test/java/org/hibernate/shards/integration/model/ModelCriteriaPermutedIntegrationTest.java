@@ -344,7 +344,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
         crit.addOrder(Order.asc("number")).setFirstResult(2).setMaxResults(3).setProjection(Projections.sum("number"));
         List<Integer> l = list(crit);
         Assert.assertEquals(1, l.size());
-        Assert.assertEquals(new BigDecimal(204), l.get(0));
+        Assert.assertEquals(BigDecimal.valueOf(204), l.get(0));
     }
 
     @Test
@@ -357,7 +357,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
         Assert.assertTrue(answer.equals(listResult));
     }
 
-    @Parameterized.Parameters(name = "{index}: Permutation[{0}]")
+    @Parameterized.Parameters(name = "{index}: [{0}]")
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

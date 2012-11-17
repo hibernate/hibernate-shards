@@ -24,22 +24,23 @@ package org.hibernate.shards.model;
  * @author maxr@google.com (Max Ross)
  */
 public class IdIsBaseType {
-  private long idIsBaseTypeId;
-  private String value;
 
-  public long getIdIsBaseTypeId() {
-    return idIsBaseTypeId;
-  }
+    private long idIsBaseTypeId;
+    private String value;
 
-  public void setIdIsBaseTypeId(long hasLongId) {
-    this.idIsBaseTypeId = hasLongId;
-  }
+    public long getIdIsBaseTypeId() {
+        return idIsBaseTypeId;
+    }
 
-  public String getValue() {
-    return value;
-  }
+    public void setIdIsBaseTypeId(long hasLongId) {
+        this.idIsBaseTypeId = hasLongId;
+    }
 
-  public void setValue(String value) {
-    this.value = value;
-  }
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
 }

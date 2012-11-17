@@ -40,7 +40,7 @@ public class ConfigPermutedIntegrationTest extends BaseShardingIntegrationTestCa
         Assert.assertTrue(((ShardedSessionImpl) session).getCheckAllAssociatedObjectsForDifferentShards());
     }
 
-    @Parameterized.Parameters(name = "{index}: Permutation[{0}]")
+    @Parameterized.Parameters(name = "{index}: [{0}]")
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

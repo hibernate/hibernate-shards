@@ -95,7 +95,7 @@ public class ModelIntegrationTest extends BaseShardingIntegrationTestCase {
         assertEquals(b.getShardId(), bReloaded.getShardId());
     }
 
-    @Parameterized.Parameters(name = "{index}: Permutation[{0}]")
+    @Parameterized.Parameters(name = "{index}: [{0}]")
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

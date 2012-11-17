@@ -163,7 +163,7 @@ public class InterceptorBehaviorPermutedIntegrationTest extends BaseShardingInte
         }
     }
 
-    @Parameterized.Parameters(name = "{index}: Permutation[{0}]")
+    @Parameterized.Parameters(name = "{index}: [{0}]")
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

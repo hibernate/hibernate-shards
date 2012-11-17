@@ -753,8 +753,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
     return getSessionFactory().getClassMetadata(clazz);
   }
 
-  public Serializable save(Object object)
-      throws HibernateException {
+  public Serializable save(Object object) throws HibernateException {
     return save(null, object);
   }
 

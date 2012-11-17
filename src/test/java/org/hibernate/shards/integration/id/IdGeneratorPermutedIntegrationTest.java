@@ -74,7 +74,7 @@ public class IdGeneratorPermutedIntegrationTest extends BaseShardingIntegrationT
         }
     }
 
-    @Parameterized.Parameters(name = "{index}: Permutation[{0}]")
+    @Parameterized.Parameters(name = "{index}: [{0}]")
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }
