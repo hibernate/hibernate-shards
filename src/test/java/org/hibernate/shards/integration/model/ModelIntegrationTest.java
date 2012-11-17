@@ -17,64 +17,86 @@
  */
 package org.hibernate.shards.integration.model;
 
+import static org.junit.Assert.*;
+
 import org.hibernate.HibernateException;
+import org.hibernate.shards.PermutationHelper;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
-import static org.hibernate.shards.integration.model.ModelDataFactory.building;
+import org.hibernate.shards.integration.Permutation;
 import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.IdIsBaseType;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import static org.hibernate.shards.integration.model.ModelDataFactory.building;
 
 /**
  * @author maxr@google.com (Max Ross)
  */
+@RunWith(Parameterized.class)
 public class ModelIntegrationTest extends BaseShardingIntegrationTestCase {
 
-  public void testSaveIdIsBaseType() {
-    IdIsBaseType hli = new IdIsBaseType();
-    session.beginTransaction();
-    hli.setValue("yamma");
-    session.save(hli);
-    commitAndResetSession();
-    hli = reload(hli);
-    assertNotNull(hli);
-  }
-
-  public void testSaveOrUpdateIdIsBasetype() {
-    IdIsBaseType hli = new IdIsBaseType();
-    session.beginTransaction();
-    hli.setValue("yamma");
-    session.saveOrUpdate(hli);
-    commitAndResetSession();
-    hli = reload(hli);
-    assertNotNull(hli);
-  }
-
-  public void testUpdateIdIsBasetype() {
-    IdIsBaseType hli = new IdIsBaseType();
-    session.beginTransaction();
-    hli.setValue("yamma");
-    session.update(hli);
-    try {
-      session.getTransaction().commit();
-      fail("expected he");
-    } catch (HibernateException he) {
-      // good
+    public ModelIntegrationTest(final Permutation perm) {
+        super(perm);
     }
-    resetSession();
-    session.beginTransaction();
-    session.saveOrUpdate(hli);
-    commitAndResetSession();
-    hli = reload(hli);
-    assertNotNull(hli);
-  }
 
-  public void testShardAware() {
-    Building b = building("yam");
-    assertNull(b.getShardId());
-    session.beginTransaction();
-    session.save(b);
-    assertNotNull(b.getShardId());
-    commitAndResetSession();
-    Building bReloaded = reload(b);
-    assertEquals(b.getShardId(), bReloaded.getShardId());
-  }
+    @Test
+    public void testSaveIdIsBaseType() {
+        IdIsBaseType hli = new IdIsBaseType();
+        session.beginTransaction();
+        hli.setValue("yamma");
+        session.save(hli);
+        commitAndResetSession();
+        hli = reload(hli);
+        assertNotNull(hli);
+    }
+
+    @Test
+    public void testSaveOrUpdateIdIsBasetype() {
+        IdIsBaseType hli = new IdIsBaseType();
+        session.beginTransaction();
+        hli.setValue("yamma");
+        session.saveOrUpdate(hli);
+        commitAndResetSession();
+        hli = reload(hli);
+        assertNotNull(hli);
+    }
+
+    @Test
+    public void testUpdateIdIsBasetype() {
+        IdIsBaseType hli = new IdIsBaseType();
+        session.beginTransaction();
+        hli.setValue("yamma");
+        session.update(hli);
+        try {
+            session.getTransaction().commit();
+            fail("expected he");
+        } catch (HibernateException he) {
+            // good
+        }
+        resetSession();
+        session.beginTransaction();
+        session.saveOrUpdate(hli);
+        commitAndResetSession();
+        hli = reload(hli);
+        assertNotNull(hli);
+    }
+
+    @Test
+    public void testShardAware() {
+        Building b = building("yam");
+        assertNull(b.getShardId());
+        session.beginTransaction();
+        session.save(b);
+        assertNotNull(b.getShardId());
+        commitAndResetSession();
+        Building bReloaded = reload(b);
+        assertEquals(b.getShardId(), bReloaded.getShardId());
+    }
+
+    @Parameterized.Parameters(name = "{index}: Permutation[{0}]")
+    public static Iterable<Object[]> data() {
+        return PermutationHelper.data();
+    }
 }

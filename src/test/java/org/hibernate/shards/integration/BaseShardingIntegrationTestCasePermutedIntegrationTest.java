@@ -18,6 +18,11 @@
 
 package org.hibernate.shards.integration;
 
+import org.hibernate.shards.PermutationHelper;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 /**
  * This test only exists to test the db setup/teardown functionality in the
  * base class.  Since we have multiple tests, a successful run here proves
@@ -27,11 +32,23 @@ package org.hibernate.shards.integration;
  *
  * @author maxr@google.com (Max Ross)
  */
+@RunWith(Parameterized.class)
 public class BaseShardingIntegrationTestCasePermutedIntegrationTest extends BaseShardingIntegrationTestCase {
 
-  public void testThatThing() {
-  }
+    public BaseShardingIntegrationTestCasePermutedIntegrationTest(final Permutation perm) {
+        super(perm);
+    }
 
-  public void testThatOtherThing() {
-  }
+    @Test
+    public void testThatThing() {
+    }
+
+    @Test
+    public void testThatOtherThing() {
+    }
+
+    @Parameterized.Parameters(name = "{index}: Permutation[{0}]")
+    public static Iterable<Object[]> data() {
+        return PermutationHelper.data();
+    }
 }

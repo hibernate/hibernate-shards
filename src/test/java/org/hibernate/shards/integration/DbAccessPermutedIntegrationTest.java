@@ -18,10 +18,16 @@
 
 package org.hibernate.shards.integration;
 
+import static org.junit.Assert.*;
+
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.shards.PermutationHelper;
 import org.hibernate.shards.engine.ShardedSessionFactoryImplementor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.math.BigDecimal;
 import java.sql.SQLException;
@@ -31,47 +37,58 @@ import java.util.Set;
 /**
  * @author maxr@google.com (Max Ross)
  */
+@RunWith(Parameterized.class)
 public class DbAccessPermutedIntegrationTest extends BaseShardingIntegrationTestCase {
 
-  public void testAccess() throws SQLException {
-    Set<? extends SessionFactory> sfSet = ((ShardedSessionFactoryImplementor)sf).getSessionFactoryShardIdMap().keySet();
-    for(SessionFactory sf : sfSet) {
-      testShard(sf);
-      testShard(sf);
-      testShard(sf);
+    public DbAccessPermutedIntegrationTest(final Permutation perm) {
+        super(perm);
     }
-  }
 
-  private void testShard(SessionFactory sf) throws SQLException {
-    Session session = sf.openSession();
-    try {
-      insertRecord(session);
-      updateRecord(session);
-      selectRecord(session);
-      deleteRecord(session);
-    } finally {
-      session.close();
+    @Test
+    public void testAccess() throws SQLException {
+        final Set<? extends SessionFactory> sfSet = ((ShardedSessionFactoryImplementor) sf).getSessionFactoryShardIdMap().keySet();
+        for (final SessionFactory sf : sfSet) {
+            testShard(sf);
+            testShard(sf);
+            testShard(sf);
+        }
     }
-  }
 
-  private void insertRecord(Session session) throws SQLException {
-    assertEquals(1, session.createSQLQuery("INSERT INTO sample_table(id, str_col) values (0, 'yam')").executeUpdate());
-  }
+    private void testShard(SessionFactory sf) throws SQLException {
+        Session session = sf.openSession();
+        try {
+            insertRecord(session);
+            updateRecord(session);
+            selectRecord(session);
+            deleteRecord(session);
+        } finally {
+            session.close();
+        }
+    }
 
-  private void updateRecord(Session session) throws SQLException {
-    assertEquals(1, session.createSQLQuery("UPDATE sample_table set str_col = 'max' where id = 0").executeUpdate());
-  }
+    private void insertRecord(Session session) throws SQLException {
+        assertEquals(1, session.createSQLQuery("INSERT INTO sample_table(id, str_col) values (0, 'yam')").executeUpdate());
+    }
 
-  private void selectRecord(Session session) throws SQLException {
-    SQLQuery query = session.createSQLQuery("select id, str_col from sample_table where id = 0");
-    List results = query.list();
-    assertEquals(1, results.size());
-    Object[] result = (Object[]) results.get(0);
-    assertEquals(new BigDecimal(0), result[0]);
-    assertEquals("max", result[1]);
-  }
+    private void updateRecord(Session session) throws SQLException {
+        assertEquals(1, session.createSQLQuery("UPDATE sample_table set str_col = 'max' where id = 0").executeUpdate());
+    }
 
-  private void deleteRecord(Session session) throws SQLException {
-    assertEquals(1, session.createSQLQuery("DELETE from sample_table where id = 0").executeUpdate());
-  }
+    private void selectRecord(Session session) throws SQLException {
+        SQLQuery query = session.createSQLQuery("select id, str_col from sample_table where id = 0");
+        List results = query.list();
+        assertEquals(1, results.size());
+        Object[] result = (Object[]) results.get(0);
+        assertEquals(new BigDecimal(0), result[0]);
+        assertEquals("max", result[1]);
+    }
+
+    private void deleteRecord(Session session) throws SQLException {
+        assertEquals(1, session.createSQLQuery("DELETE from sample_table where id = 0").executeUpdate());
+    }
+
+    @Parameterized.Parameters(name = "{index}: Permutation[{0}]")
+    public static Iterable<Object[]> data() {
+        return PermutationHelper.data();
+    }
 }
