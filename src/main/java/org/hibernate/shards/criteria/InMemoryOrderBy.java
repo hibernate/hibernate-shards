@@ -26,50 +26,49 @@ import org.hibernate.criterion.Order;
  */
 public class InMemoryOrderBy {
 
-  // This is the full path to the property we're sorting by.
-  // For example, if the criteria is on Building and we're sorting by numFloors
-  // the expression is just 'numFloors.'  However, if the criteria is on Building
-  // and we're sorting by floor number (Building has 0 to n Floors and each Floor
-  // has a 'number' member) then the expression is 'floors.number'
-  private final String expression;
-  private final boolean isAscending;
+    // This is the full path to the property we're sorting by.
+    // For example, if the criteria is on Building and we're sorting by numFloors
+    // the expression is just 'numFloors.'  However, if the criteria is on Building
+    // and we're sorting by floor number (Building has 0 to n Floors and each Floor
+    // has a 'number' member) then the expression is 'floors.number'
+    private final String expression;
+    private final boolean isAscending;
 
-  /**
-   * Constructs an InMemoryOrderBy instance
-   * @param associationPath The association path leading to the object to which
-   * the provided {@link Order} parameter applies.  Null if the {@link Order}
-   * parameter applies to the top level object
-   * @param order A standard Hibernate {@link Order} object.
-   */
-  public InMemoryOrderBy(String associationPath, Order order) {
-    this.expression = getAssociationPrefix(associationPath) + getSortingProperty(order);
-    this.isAscending = isAscending(order);
-  }
-
-  private static String getAssociationPrefix(String associationPath) {
-    return associationPath == null ? "" : associationPath + ".";
-  }
-
-  private static boolean isAscending(Order order) {
-    return order.toString().toUpperCase().endsWith("ASC");
-  }
-
-  public String getExpression() {
-    return expression;
-  }
-
-  public boolean isAscending() {
-    return isAscending;
-  }
-
-  private static String getSortingProperty(Order order) {
     /**
-     * This method relies on the format that Order is using:
-     * propertyName + ' ' + (ascending?"asc":"desc")
+     * Constructs an InMemoryOrderBy instance
+     *
+     * @param associationPath The association path leading to the object to which
+     *                        the provided {@link Order} parameter applies.  Null if the {@link Order}
+     *                        parameter applies to the top level object
+     * @param order           A standard Hibernate {@link Order} object.
      */
-    String str = order.toString();
-    return str.substring(0, str.indexOf(' '));
-  }
+    public InMemoryOrderBy(String associationPath, Order order) {
+        this.expression = getAssociationPrefix(associationPath) + getSortingProperty(order);
+        this.isAscending = isAscending(order);
+    }
 
+    private static String getAssociationPrefix(String associationPath) {
+        return associationPath == null ? "" : associationPath + ".";
+    }
 
+    private static boolean isAscending(Order order) {
+        return order.toString().toUpperCase().endsWith("ASC");
+    }
+
+    public String getExpression() {
+        return expression;
+    }
+
+    public boolean isAscending() {
+        return isAscending;
+    }
+
+    private static String getSortingProperty(Order order) {
+        /**
+         * This method relies on the format that Order is using:
+         * propertyName + ' ' + (ascending?"asc":"desc")
+         */
+        String str = order.toString();
+        return str.substring(0, str.indexOf(' '));
+    }
 }

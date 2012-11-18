@@ -85,13 +85,13 @@ public class ModelIntegrationTest extends BaseShardingIntegrationTestCase {
 
     @Test
     public void testShardAware() {
-        Building b = building("yam");
+        final Building b = building("yam");
         assertNull(b.getShardId());
         session.beginTransaction();
         session.save(b);
         assertNotNull(b.getShardId());
         commitAndResetSession();
-        Building bReloaded = reload(b);
+        final Building bReloaded = reload(b);
         assertEquals(b.getShardId(), bReloaded.getShardId());
     }
 

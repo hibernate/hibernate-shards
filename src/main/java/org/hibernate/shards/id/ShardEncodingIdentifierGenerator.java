@@ -28,5 +28,5 @@ import java.io.Serializable;
  */
 public interface ShardEncodingIdentifierGenerator extends IdentifierGenerator {
 
-  ShardId extractShardId(Serializable identifier);
+    ShardId extractShardId(Serializable identifier);
 }

@@ -18,12 +18,12 @@
 
 package org.hibernate.shards.strategy.access;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardOperation;
 import org.hibernate.shards.strategy.exit.ExitOperationsCollector;
 import org.hibernate.shards.strategy.exit.ExitStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -32,32 +32,35 @@ import java.util.List;
  */
 public class SequentialShardAccessStrategy implements ShardAccessStrategy {
 
-  private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
-  public <T> T apply(List<Shard> shards, ShardOperation<T> operation, ExitStrategy<T> exitStrategy, ExitOperationsCollector exitOperationsCollector) {
-    for(Shard shard : getNextOrderingOfShards(shards)) {
-      if(exitStrategy.addResult(operation.execute(shard), shard)) {
-        log.debug(
-            String.format(
-                "Short-circuiting operation %s after execution against shard %s",
-                operation.getOperationName(),
-                shard));
-        break;
-      }
+    public <T> T apply(final List<Shard> shards, final ShardOperation<T> operation, final ExitStrategy<T> exitStrategy,
+                       final ExitOperationsCollector exitOperationsCollector) {
+
+        for (final Shard shard : getNextOrderingOfShards(shards)) {
+            if (exitStrategy.addResult(operation.execute(shard), shard)) {
+                log.debug(
+                        String.format(
+                                "Short-circuiting operation %s after execution against shard %s",
+                                operation.getOperationName(),
+                                shard));
+                break;
+            }
+        }
+        return exitStrategy.compileResults(exitOperationsCollector);
     }
-    return exitStrategy.compileResults(exitOperationsCollector);
-  }
 
-  /**
-   * Override this method if you want to control the order in which the
-   * shards are operated on (this comes in handy when paired with exit
-   * strategies that allow early exit because it allows you to evenly
-   * distribute load).  Deafult implementation is to just iterate in the
-   * same order every time.
-   * @param shards The shards we might want to reorder
-   * @return Reordered view of the shards.
-   */
-  protected Iterable<Shard> getNextOrderingOfShards(List<Shard> shards) {
-    return shards;
-  }
+    /**
+     * Override this method if you want to control the order in which the
+     * shards are operated on (this comes in handy when paired with exit
+     * strategies that allow early exit because it allows you to evenly
+     * distribute load).  Deafult implementation is to just iterate in the
+     * same order every time.
+     *
+     * @param shards The shards we might want to reorder
+     * @return Reordered view of the shards.
+     */
+    protected Iterable<Shard> getNextOrderingOfShards(final List<Shard> shards) {
+        return shards;
+    }
 }

@@ -25,35 +25,38 @@ package org.hibernate.shards.util;
  */
 public class Preconditions {
 
-  private Preconditions() { }
-
-  /**
-   * @param expression the boolean to evaluate
-   * @throws IllegalArgumentException thrown if boolean is false
-   */
-  public static void checkArgument(boolean expression) {
-    if (!expression) {
-      throw new IllegalArgumentException();
+    private Preconditions() {
     }
-  }
 
-  /**
-   * @param expression the boolean to evaluate
-   * @throws IllegalStateException thrown if boolean is false
-   */
-  public static void checkState(boolean expression) {
-    if (!expression) {
-      throw new IllegalStateException();
+    /**
+     * @param expression the boolean to evaluate
+     * @throws IllegalArgumentException thrown if boolean is false
+     */
+    public static void checkArgument(final boolean expression) {
+        if (!expression) {
+            throw new IllegalArgumentException();
+        }
     }
-  }
 
-  /**
-   * @param reference the object to compare against null
-   * @throws NullPointerException thrown if object is null
-   */
-  public static void checkNotNull(Object reference) {
-    if (reference == null) {
-      throw new NullPointerException();
+    /**
+     * @param expression the boolean to evaluate
+     * @throws IllegalStateException thrown if boolean is false
+     */
+    public static void checkState(final boolean expression) {
+        if (!expression) {
+            throw new IllegalStateException();
+        }
     }
-  }
+
+    /**
+     * @param reference the object to compare against null
+     * @throws NullPointerException thrown if object is null
+     */
+    public static <T> T checkNotNull(final T reference) {
+        if (reference == null) {
+            throw new NullPointerException();
+        }
+
+        return reference;
+    }
 }

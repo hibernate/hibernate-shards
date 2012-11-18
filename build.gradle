@@ -3,6 +3,7 @@ apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'uploadAuth'
+apply from: "./libraries.gradle"
 
 group = 'org.hibernate'
 version = '4.0.0-SNAPSHOT'
@@ -35,16 +36,21 @@ configurations {
     deployerJars {
         description = 'Jars needed for doing deployment to JBoss Nexus repo'
     }
+    // for all imported dependencies, exclude xml-apis (which are jdk specific) from transitivity
+    all*.exclude group: 'xml-apis', module: 'xml-apis'
 }
 
 
 // declare dependencies ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 dependencies {
-    // the Hibernate 3.2 based dependencies
+    // the Hibernate 3.3 based dependencies
     compile( fileTree( 'lib' ) )
+    compile( 'org.slf4j:slf4j-api:1.5.8' )
 
-//    testCompile( 'org.hsqldb:hsqldb:1.8.0.2' )
-    testCompile( 'org.hsqldb:hsqldb:1.8.0.10' )
+    testCompile( libraries.junit )  // may already be a transitive dep from testing
+    testCompile( libraries.hsqldb )
+    testCompile( 'org.slf4j:slf4j-api:1.5.8' )
+    testRuntime( 'org.slf4j:slf4j-log4j12:1.5.8' )
 }
 
 // MacOS fun-ness ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

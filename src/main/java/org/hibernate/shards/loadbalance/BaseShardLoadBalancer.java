@@ -30,20 +30,21 @@ import java.util.List;
  */
 public abstract class BaseShardLoadBalancer extends BaseHasShardIdList implements ShardLoadBalancer {
 
-  /**
-   * Construct a BaseShardLoadBalancer
-   * @param shardIds the ShardIds that we're going to balance across
-   */
-  protected BaseShardLoadBalancer(List<ShardId> shardIds) {
-    super(shardIds);
-  }
+    /**
+     * Construct a BaseShardLoadBalancer
+     *
+     * @param shardIds the ShardIds that we're going to balance across
+     */
+    protected BaseShardLoadBalancer(final List<ShardId> shardIds) {
+        super(shardIds);
+    }
 
-  public ShardId getNextShardId() {
-    return shardIds.get(getNextIndex());
-  }
+    public ShardId getNextShardId() {
+        return shardIds.get(getNextIndex());
+    }
 
-  /**
-   * @return the index of the next ShardId we should return
-   */
-  protected abstract int getNextIndex();
+    /**
+     * @return the index of the next ShardId we should return
+     */
+    protected abstract int getNextIndex();
 }

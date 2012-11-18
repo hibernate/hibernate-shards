@@ -27,18 +27,17 @@ import java.util.List;
  * Defines the internal contract between the <tt>ShardedSession</tt> and other
  * parts of Hibernate Shards.
  *
+ * @author Tomislav Nad
  * @see ShardedSession the interface to the application
  * @see org.hibernate.shards.session.ShardedSessionImpl the actual implementation
- *
- * @author Tomislav Nad
  */
 public interface ShardedSessionImplementor {
 
-  /**
-   * Gets all the shards the ShardedSession is spanning.
-   *
-   * @return list of all shards the ShardedSession is associated with
-   */
-  List<Shard> getShards();
+    /**
+     * Gets all the shards the ShardedSession is spanning.
+     *
+     * @return list of all shards the ShardedSession is associated with
+     */
+    List<Shard> getShards();
 
 }

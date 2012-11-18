@@ -26,17 +26,14 @@ import org.hibernate.shards.loadbalance.ShardLoadBalancer;
  */
 public class LoadBalancedShardSelectionStrategy implements ShardSelectionStrategy {
 
-  private final ShardLoadBalancer shardLoadBalancer;
+    private final ShardLoadBalancer shardLoadBalancer;
 
-  public LoadBalancedShardSelectionStrategy(ShardLoadBalancer shardLoadBalancer) {
-    this.shardLoadBalancer = shardLoadBalancer;
-  }
+    public LoadBalancedShardSelectionStrategy(final ShardLoadBalancer shardLoadBalancer) {
+        this.shardLoadBalancer = shardLoadBalancer;
+    }
 
-  public ShardId selectShardIdForNewObject(Object obj) {
-    return shardLoadBalancer.getNextShardId();
-  }
-
-  ShardLoadBalancer getShardLoadBalancer() {
-    return shardLoadBalancer;
-  }
+    @Override
+    public ShardId selectShardIdForNewObject(Object obj) {
+        return shardLoadBalancer.getNextShardId();
+    }
 }

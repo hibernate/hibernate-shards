@@ -24,8 +24,8 @@ import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
-import org.hibernate.cache.Cache;
 import org.hibernate.cache.QueryCache;
+import org.hibernate.cache.Region;
 import org.hibernate.cache.UpdateTimestampsCache;
 import org.hibernate.cfg.Settings;
 import org.hibernate.classic.Session;
@@ -68,270 +68,314 @@ import java.util.Set;
  */
 public class ShardedSessionFactoryDefaultMock implements ShardedSessionFactoryImplementor {
 
-  public Map<SessionFactoryImplementor, Set<ShardId>> getSessionFactoryShardIdMap() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Map<SessionFactoryImplementor, Set<ShardId>> getSessionFactoryShardIdMap() {
+        throw new UnsupportedOperationException();
+    }
 
-  public Session openSession(Connection connection) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Session openSession(final Connection connection) {
+        throw new UnsupportedOperationException();
+    }
 
-  public ShardedSession openSession(Interceptor interceptor)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public ShardedSession openSession(final Interceptor interceptor) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Session openSession(Connection connection, Interceptor interceptor) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Session openSession(final Connection connection, final Interceptor interceptor) {
+        throw new UnsupportedOperationException();
+    }
 
-  public ShardedSession openSession() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public ShardedSession openSession() throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Session getCurrentSession() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Session getCurrentSession() throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public ClassMetadata getClassMetadata(Class persistentClass)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public ClassMetadata getClassMetadata(final Class persistentClass) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public ClassMetadata getClassMetadata(String entityName)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public ClassMetadata getClassMetadata(final String entityName) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public CollectionMetadata getCollectionMetadata(String roleName)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public CollectionMetadata getCollectionMetadata(final String roleName) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Map getAllClassMetadata() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Map getAllClassMetadata() throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Map getAllCollectionMetadata() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Map getAllCollectionMetadata() throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Statistics getStatistics() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Statistics getStatistics() {
+        throw new UnsupportedOperationException();
+    }
 
-  public void close() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public void close() throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public boolean isClosed() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public boolean isClosed() {
+        throw new UnsupportedOperationException();
+    }
 
-  public void evict(Class persistentClass) throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public void evict(final Class persistentClass) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public void evict(Class persistentClass, Serializable id)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public void evict(final Class persistentClass, final Serializable id) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public void evictEntity(String entityName) throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public void evictEntity(final String entityName) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public void evictEntity(String entityName, Serializable id)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public void evictEntity(final String entityName, final Serializable id) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public void evictCollection(String roleName) throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public void evictCollection(final String roleName) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public void evictCollection(String roleName, Serializable id)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public void evictCollection(final String roleName, final Serializable id) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public void evictQueries() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public void evictQueries() throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public void evictQueries(String cacheRegion) throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public void evictQueries(final String cacheRegion) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public StatelessSession openStatelessSession() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public StatelessSession openStatelessSession() {
+        throw new UnsupportedOperationException();
+    }
 
-  public StatelessSession openStatelessSession(Connection connection) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public StatelessSession openStatelessSession(final Connection connection) {
+        throw new UnsupportedOperationException();
+    }
 
-  public Set getDefinedFilterNames() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Set getDefinedFilterNames() {
+        throw new UnsupportedOperationException();
+    }
 
-  public FilterDefinition getFilterDefinition(String filterName)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public FilterDefinition getFilterDefinition(final String filterName) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Reference getReference() throws NamingException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Reference getReference() throws NamingException {
+        throw new UnsupportedOperationException();
+    }
 
-  public IdentifierGenerator getIdentifierGenerator(String rootEntityName) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public IdentifierGenerator getIdentifierGenerator(final String rootEntityName) {
+        throw new UnsupportedOperationException();
+    }
 
-  public SessionImplementor openControlSession() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public boolean containsFactory(SessionFactoryImplementor factory) {
+        throw new UnsupportedOperationException();
+    }
 
-  public boolean containsFactory(SessionFactoryImplementor factory) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public List<SessionFactory> getSessionFactories() {
+        throw new UnsupportedOperationException();
+    }
 
-  public List<SessionFactory> getSessionFactories() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public EntityPersister getEntityPersister(final String entityName) throws MappingException {
+        throw new UnsupportedOperationException();
+    }
 
-  public EntityPersister getEntityPersister(String entityName)
-      throws MappingException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public CollectionPersister getCollectionPersister(final String role) throws MappingException {
+        throw new UnsupportedOperationException();
+    }
 
-  public CollectionPersister getCollectionPersister(String role)
-      throws MappingException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Dialect getDialect() {
+        throw new UnsupportedOperationException();
+    }
 
-  public Dialect getDialect() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Interceptor getInterceptor() {
+        throw new UnsupportedOperationException();
+    }
 
-  public Interceptor getInterceptor() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public QueryPlanCache getQueryPlanCache() {
+        throw new UnsupportedOperationException();
+    }
 
-  public QueryPlanCache getQueryPlanCache() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Type[] getReturnTypes(final String queryString) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Type[] getReturnTypes(String queryString) throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public String[] getReturnAliases(final String queryString) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public String[] getReturnAliases(String queryString)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public ConnectionProvider getConnectionProvider() {
+        throw new UnsupportedOperationException();
+    }
 
-  public ConnectionProvider getConnectionProvider() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public String[] getImplementors(final String className) throws MappingException {
+        throw new UnsupportedOperationException();
+    }
 
-  public String[] getImplementors(String className) throws MappingException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public String getImportedClassName(final String name) {
+        throw new UnsupportedOperationException();
+    }
 
-  public String getImportedClassName(String name) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public TransactionManager getTransactionManager() {
+        throw new UnsupportedOperationException();
+    }
 
-  public TransactionManager getTransactionManager() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public QueryCache getQueryCache() {
+        throw new UnsupportedOperationException();
+    }
 
-  public QueryCache getQueryCache() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public QueryCache getQueryCache(final String regionName) throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public QueryCache getQueryCache(String regionName) throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public UpdateTimestampsCache getUpdateTimestampsCache() {
+        throw new UnsupportedOperationException();
+    }
 
-  public UpdateTimestampsCache getUpdateTimestampsCache() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public StatisticsImplementor getStatisticsImplementor() {
+        throw new UnsupportedOperationException();
+    }
 
-  public StatisticsImplementor getStatisticsImplementor() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public NamedQueryDefinition getNamedQuery(final String queryName) {
+        throw new UnsupportedOperationException();
+    }
 
-  public NamedQueryDefinition getNamedQuery(String queryName) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public NamedSQLQueryDefinition getNamedSQLQuery(final String queryName) {
+        throw new UnsupportedOperationException();
+    }
 
-  public NamedSQLQueryDefinition getNamedSQLQuery(String queryName) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public ResultSetMappingDefinition getResultSetMapping(final String name) {
+        throw new UnsupportedOperationException();
+    }
 
-  public ResultSetMappingDefinition getResultSetMapping(String name) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Region getSecondLevelCacheRegion(final String regionName) {
+        throw new UnsupportedOperationException();
+    }
 
-  public Cache getSecondLevelCacheRegion(String regionName) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Map getAllSecondLevelCacheRegions() {
+        throw new UnsupportedOperationException();
+    }
 
-  public Map getAllSecondLevelCacheRegions() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public SQLExceptionConverter getSQLExceptionConverter() {
+        throw new UnsupportedOperationException();
+    }
 
-  public SQLExceptionConverter getSQLExceptionConverter() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Settings getSettings() {
+        throw new UnsupportedOperationException();
+    }
 
-  public Settings getSettings() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Session openTemporarySession() throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Session openTemporarySession() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Session openSession(final Connection connection,
+                               final boolean flushBeforeCompletionEnabled,
+                               final boolean autoCloseSessionEnabled,
+                               final ConnectionReleaseMode connectionReleaseMode)
+            throws HibernateException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Session openSession(final Connection connection,
-      final boolean flushBeforeCompletionEnabled,
-      final boolean autoCloseSessionEnabled,
-      final ConnectionReleaseMode connectionReleaseMode)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Set getCollectionRolesByEntityParticipant(final String entityName) {
+        throw new UnsupportedOperationException();
+    }
 
-  public Set getCollectionRolesByEntityParticipant(String entityName) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Type getIdentifierType(final String className) throws MappingException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Type getIdentifierType(String className) throws MappingException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public String getIdentifierPropertyName(final String className) throws MappingException {
+        throw new UnsupportedOperationException();
+    }
 
-  public String getIdentifierPropertyName(String className)
-      throws MappingException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public Type getReferencedPropertyType(final String className, final String propertyName) throws MappingException {
+        throw new UnsupportedOperationException();
+    }
 
-  public Type getReferencedPropertyType(String className, String propertyName)
-      throws MappingException {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public EntityNotFoundDelegate getEntityNotFoundDelegate() {
+        throw new UnsupportedOperationException();
+    }
 
-  public EntityNotFoundDelegate getEntityNotFoundDelegate() {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public SQLFunctionRegistry getSqlFunctionRegistry() {
+        throw new UnsupportedOperationException();
+    }
 
-  public SQLFunctionRegistry getSqlFunctionRegistry() {
-    throw new UnsupportedOperationException();
-  }
-
-  public ShardedSessionFactory getSessionFactory(List<ShardId> shardIds,
-      ShardStrategyFactory shardStrategyFactory) {
-    throw new UnsupportedOperationException();
-  }
+    @Override
+    public ShardedSessionFactory getSessionFactory(final List<ShardId> shardIds,
+                                                   final ShardStrategyFactory shardStrategyFactory) {
+        throw new UnsupportedOperationException();
+    }
 }
 

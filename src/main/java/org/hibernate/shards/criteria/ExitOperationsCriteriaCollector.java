@@ -18,8 +18,6 @@
 
 package org.hibernate.shards.criteria;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.AggregateProjection;
 import org.hibernate.criterion.Distinct;
 import org.hibernate.criterion.Order;
@@ -34,6 +32,8 @@ import org.hibernate.shards.strategy.exit.MaxResultsExitOperation;
 import org.hibernate.shards.strategy.exit.OrderExitOperation;
 import org.hibernate.shards.strategy.exit.ProjectionExitOperationFactory;
 import org.hibernate.shards.util.Lists;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -69,7 +69,7 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
   private List<InMemoryOrderBy> orders = Lists.newArrayList();
 
   // Our friendly neighborhood logger
-  private final Log log = LogFactory.getLog(getClass());
+  private final Logger log = LoggerFactory.getLogger(getClass());
 
   /**
    * Sets the maximum number of results requested by the client

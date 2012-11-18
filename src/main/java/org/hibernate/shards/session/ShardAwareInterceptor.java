@@ -34,33 +34,38 @@ import java.io.Serializable;
  */
 public class ShardAwareInterceptor extends EmptyInterceptor {
 
-  private final ShardIdResolver shardIdResolver;
+    private final ShardIdResolver shardIdResolver;
 
-  public ShardAwareInterceptor(ShardIdResolver shardIdResolver) {
-    Preconditions.checkNotNull(shardIdResolver);
-    this.shardIdResolver = shardIdResolver;
-  }
-
-  public boolean onLoad(Object entity, Serializable id, Object[] state,
-      String[] propertyNames, Type[] types) throws CallbackException {
-    return setShardId(entity);
-  }
-
-
-  public boolean onSave(Object entity, Serializable id, Object[] state,
-      String[] propertyNames, Type[] types) {
-    return setShardId(entity);
-  }
-
-  boolean setShardId(Object entity) {
-    boolean result = false;
-    if(entity instanceof ShardAware) {
-      ShardAware shardAware = (ShardAware) entity;
-      if(shardAware.getShardId() == null) {
-        shardAware.setShardId(shardIdResolver.getShardIdForObject(entity));
-        result = true;
-      }
+    public ShardAwareInterceptor(final ShardIdResolver shardIdResolver) {
+        Preconditions.checkNotNull(shardIdResolver);
+        this.shardIdResolver = shardIdResolver;
     }
-    return result;
-  }
+
+    public boolean onLoad(final Object entity,
+                          final Serializable id,
+                          final Object[] state,
+                          final String[] propertyNames, Type[] types) throws CallbackException {
+
+        return setShardId(entity);
+    }
+
+    public boolean onSave(final Object entity,
+                          final Serializable id,
+                          final Object[] state,
+                          final String[] propertyNames, Type[] types) {
+
+        return setShardId(entity);
+    }
+
+    boolean setShardId(final Object entity) {
+        boolean result = false;
+        if (entity instanceof ShardAware) {
+            ShardAware shardAware = (ShardAware) entity;
+            if (shardAware.getShardId() == null) {
+                shardAware.setShardId(shardIdResolver.getShardIdForObject(entity));
+                result = true;
+            }
+        }
+        return result;
+    }
 }

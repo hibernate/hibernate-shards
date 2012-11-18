@@ -28,12 +28,13 @@ import java.util.List;
  */
 public class AllShardsShardResolutionStrategy extends BaseShardResolutionStrategy {
 
-  public AllShardsShardResolutionStrategy(List<ShardId> shardIds) {
-    super(shardIds);
-  }
+    public AllShardsShardResolutionStrategy(final List<ShardId> shardIds) {
+        super(shardIds);
+    }
 
-  public List<ShardId> selectShardIdsFromShardResolutionStrategyData(
-      ShardResolutionStrategyData shardResolutionStrategyData) {
-    return shardIds;
-  }
+    @Override
+    public List<ShardId> selectShardIdsFromShardResolutionStrategyData(
+            final ShardResolutionStrategyData shardResolutionStrategyData) {
+        return shardIds;
+    }
 }

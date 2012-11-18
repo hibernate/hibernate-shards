@@ -28,7 +28,7 @@ import java.util.List;
  */
 public abstract class BaseShardSelectionStrategy extends BaseHasShardIdList implements ShardSelectionStrategy {
 
-  protected BaseShardSelectionStrategy(List<ShardId> shardIds) {
-    super(shardIds);
-  }
+    protected BaseShardSelectionStrategy(final List<ShardId> shardIds) {
+        super(shardIds);
+    }
 }

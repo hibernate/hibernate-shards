@@ -43,10 +43,9 @@ import java.util.List;
 public class OrderExitOperationTest extends TestCase {
 
     private class MyInt {
+
         private final Integer i;
-
         private final String name;
-
         private final MyInt innerMyInt;
 
         public MyInt(int i, String name, MyInt inner) {
@@ -67,11 +66,10 @@ public class OrderExitOperationTest extends TestCase {
             return name;
         }
 
+        @Override
         public boolean equals(Object obj) {
             MyInt myInt = (MyInt) obj;
-            return
-                    this.getName().equals(myInt.getName()) &&
-                            this.getValue().equals(myInt.getValue());
+            return this.getName().equals(myInt.getName()) && this.getValue().equals(myInt.getValue());
         }
     }
 
@@ -105,6 +103,7 @@ public class OrderExitOperationTest extends TestCase {
         assertEquals(1, sortedList.get(4).getValue());
     }
 
+    @SuppressWarnings("unchecked")
     public void testApplySingleNestedOrdering() throws Exception {
         List<Object> data = Lists.newArrayList();
         data.add(new MyInt(3, "tomislav", new MyInt(3, "tomislav", null)));
@@ -134,6 +133,7 @@ public class OrderExitOperationTest extends TestCase {
         assertEquals(1, sortedList.get(4).getValue());
     }
 
+    @SuppressWarnings("unchecked")
     public void testApplyMultipleOrderings() {
         List<Object> data = Lists.newArrayList();
         data.add(new MyInt(2, "tomislav", null));
@@ -159,6 +159,7 @@ public class OrderExitOperationTest extends TestCase {
         assertEquals(27, sortedList.get(4).getValue());
     }
 
+    @SuppressWarnings("unchecked")
     public void testApplyMultipleNestedOrderings() {
         List<Object> data = Lists.newArrayList();
         data.add(new MyInt(2, "tomislav", new MyInt(2, "tomislav", null)));
@@ -184,6 +185,7 @@ public class OrderExitOperationTest extends TestCase {
         assertEquals(27, sortedList.get(4).getValue());
     }
 
+    @SuppressWarnings("unchecked")
     public void testApplyMultipleMixedOrderings() {
         List<Object> data = Lists.newArrayList();
         data.add(new MyInt(2, "tomislav", new MyInt(2, "tomislav", null)));
@@ -208,44 +210,4 @@ public class OrderExitOperationTest extends TestCase {
         assertEquals(5, sortedList.get(3).getValue());
         assertEquals(27, sortedList.get(4).getValue());
     }
-
-    static class SessionFactoryMock extends SessionFactoryDefaultMock {
-
-        public ClassMetadata getClassMetadata(Class persistentClass)
-                throws HibernateException {
-            return new ClassMetadataMock();
-        }
-
-        public EntityPersister getEntityPersister(String entityName)
-                throws MappingException {
-            return new EntityPersisterMock();
-        }
-    }
-
-    static class ClassMetadataMock extends ClassMetadataDefaultMock {
-
-        public String getEntityName() {
-            return "";
-        }
-    }
-
-    static class EntityPersisterMock extends EntityPersisterDefaultMock {
-
-        public Object getPropertyValue(Object object, String propertyName,
-                                       EntityMode entityMode) throws HibernateException {
-            Class clazz = object.getClass();
-            propertyName = StringUtil.capitalize(propertyName);
-            try {
-                Method m = clazz.getMethod("get" + propertyName);
-                return m.invoke(object);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
 }

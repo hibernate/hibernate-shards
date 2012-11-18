@@ -24,10 +24,9 @@ import org.hibernate.Session;
  * Interface describing an object that can have a Session set on it.  This
  * is designed to be used in conjunction with stateful interceptors.
  *
- * @see StatefulInterceptorFactory
- *
  * @author maxr@google.com (Max Ross)
+ * @see StatefulInterceptorFactory
  */
 public interface RequiresSession {
-  void setSession(Session session);
+    void setSession(Session session);
 }

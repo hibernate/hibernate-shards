@@ -23,39 +23,38 @@ package org.hibernate.shards.util;
  *
  * @author maxr@google.com (Max Ross)
  */
-public class Pair<A,B> {
-  public final A first;
+public class Pair<A, B> {
 
-  /** The second element of the pair. */
-  public final B second;
+    public final A first;
+    public final B second;
 
-  private Pair(/*@Nullable*/ A first, /*@Nullable*/ B second) {
-    this.first = first;
-    this.second = second;
-  }
-
-  public A getFirst() {
-    return first;
-  }
-
-  public B getSecond() {
-    return second;
-  }
-
-  public static <A,B> Pair<A,B> of(/*@Nullable*/ A first, /*@Nullable*/ B second) {
-    return new Pair<A,B>(first, second);
-  }
-
-  private static boolean eq(/*@Nullable*/ Object a, /*@Nullable*/ Object b) {
-    return a == b || (a != null && a.equals(b));
-  }
-
-  @Override
-  public boolean equals(/*@Nullable*/ Object object) {
-    if (object instanceof Pair<?,?>) {
-      Pair<?,?> other = (Pair<?,?>) object;
-      return eq(first, other.first) && eq(second, other.second);
+    private Pair(final /*@Nullable*/ A first, final /*@Nullable*/ B second) {
+        this.first = first;
+        this.second = second;
     }
-    return false;
-  }
+
+    public A getFirst() {
+        return first;
+    }
+
+    public B getSecond() {
+        return second;
+    }
+
+    public static <A, B> Pair<A, B> of(/*@Nullable*/ A first, /*@Nullable*/ B second) {
+        return new Pair<A, B>(first, second);
+    }
+
+    private static boolean eq(/*@Nullable*/ Object a, /*@Nullable*/ Object b) {
+        return a == b || (a != null && a.equals(b));
+    }
+
+    @Override
+    public boolean equals(/*@Nullable*/ Object object) {
+        if (object instanceof Pair<?, ?>) {
+            Pair<?, ?> other = (Pair<?, ?>) object;
+            return eq(first, other.first) && eq(second, other.second);
+        }
+        return false;
+    }
 }

@@ -7,6 +7,7 @@ ext {
     slf4jVersion = '1.6.1'
     junitVersion = '4.11'
     h2Version = '1.2.145'
+    hsqldbVersion = '1.8.0.10'
 
     libraries = [
             hibernate_orm:      "org.hibernate:hibernate-core:${hibernateOrmVersion}",
@@ -25,6 +26,7 @@ ext {
             junit:           "junit:junit:${junitVersion}",
 
             h2:              "com.h2database:h2:${h2Version}",
+            hsqldb:          "org.hsqldb:hsqldb:${hsqldbVersion}",
 
 
 

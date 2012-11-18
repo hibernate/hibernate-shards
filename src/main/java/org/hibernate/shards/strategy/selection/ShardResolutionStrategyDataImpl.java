@@ -24,51 +24,55 @@ import java.io.Serializable;
  * @author maxr@google.com (Max Ross)
  */
 public final class ShardResolutionStrategyDataImpl implements ShardResolutionStrategyData {
-  private final String entityName;
-  private final Serializable id;
 
-  public ShardResolutionStrategyDataImpl(Class<?> clazz, Serializable id) {
-    this(clazz.getName(), id);
-  }
+    private final String entityName;
+    private final Serializable id;
 
-  public ShardResolutionStrategyDataImpl(String entityName, Serializable id) {
-    this.entityName = entityName;
-    this.id = id;
-  }
-
-  public String getEntityName() {
-    return entityName;
-  }
-
-  public Serializable getId() {
-    return id;
-  }
-
-
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+    public ShardResolutionStrategyDataImpl(final Class<?> clazz, final Serializable id) {
+        this(clazz.getName(), id);
     }
 
-    ShardResolutionStrategyDataImpl that = (ShardResolutionStrategyDataImpl) o;
-
-    if (!entityName.equals(that.entityName)) {
-      return false;
-    }
-    if (!id.equals(that.id)) {
-      return false;
+    public ShardResolutionStrategyDataImpl(final String entityName, final Serializable id) {
+        this.entityName = entityName;
+        this.id = id;
     }
 
-    return true;
-  }
+    @Override
+    public String getEntityName() {
+        return entityName;
+    }
 
-  public int hashCode() {
-    int result;
-    result = entityName.hashCode();
-    result = 31 * result + id.hashCode();
-    return result;
-  }
+    @Override
+    public Serializable getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        ShardResolutionStrategyDataImpl that = (ShardResolutionStrategyDataImpl) o;
+
+        if (!entityName.equals(that.entityName)) {
+            return false;
+        }
+        if (!id.equals(that.id)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        result = entityName.hashCode();
+        result = 31 * result + id.hashCode();
+        return result;
+    }
 }

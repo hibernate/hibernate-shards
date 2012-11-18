@@ -47,7 +47,7 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncod
     private static enum IdType {STRING, INTEGER}
 
     private int getShardId() {
-        ShardId shardId = ShardedSessionImpl.getCurrentSubgraphShardId();
+        final ShardId shardId = ShardedSessionImpl.getCurrentSubgraphShardId();
         Preconditions.checkState(shardId != null);
         return shardId.getId();
     }
@@ -62,7 +62,15 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncod
                 return new ShardId(Integer.decode("0x" + hexId.substring(0, 4)));
 
             case INTEGER:
-                String strippedHexId = ((BigInteger) identifier).toString(16);
+                String strippedHexId;
+                if (identifier instanceof BigInteger) {
+                    strippedHexId = ((BigInteger) identifier).toString(16);
+                } else if (identifier instanceof Long) {
+                    strippedHexId = BigInteger.valueOf((Long) identifier).toString(16);
+                } else {
+                    throw new UnsupportedOperationException("Unable to extract shard id");
+                }
+
                 hexId = ZERO_STRING.substring(0, 32 - strippedHexId.length()) + strippedHexId;
                 return new ShardId(Integer.decode("0x" + hexId.substring(0, hexId.length() - 28)));
 
@@ -75,13 +83,12 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncod
     @Override
     public Serializable generate(final SessionImplementor session, final Object object) {
 
-        final String id = new StringBuilder(32).append(format((short) getShardId()))
-                .append(format(getIP()))
-                .append(format((short) (getJVM() >>> 16)))
-                .append(format(getHiTime()))
-                .append(format(getLoTime()))
-                .append(format(getCount()))
-                .toString();
+        final String id = format((short) getShardId()) +
+                format(getIP()) +
+                format((short) (getJVM() >>> 16)) +
+                format(getHiTime()) +
+                format(getLoTime()) +
+                format(getCount());
 
         switch (idType) {
             case STRING:

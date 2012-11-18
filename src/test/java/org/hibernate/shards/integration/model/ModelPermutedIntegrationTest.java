@@ -710,7 +710,8 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
         }
 
         // clean up memory for this new unrecorded session
-        MemoryLeakPlugger.plug((ShardedSessionImpl) sessionWithParticularShards);
+        // TODO (ammachado) How do this with Javassist?
+        //MemoryLeakPlugger.plug((ShardedSessionImpl) sessionWithParticularShards);
         sessionWithParticularShards.close();
     }
 

@@ -18,7 +18,6 @@
 
 package org.hibernate.shards.integration;
 
-import junit.framework.TestCase;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -50,12 +49,10 @@ import org.hibernate.shards.util.Maps;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.runners.Parameterized;
 
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -109,19 +106,21 @@ public abstract class BaseShardingIntegrationTestCase {
             DatabaseUtils.destroyDatabase(i, getIdGenType());
             DatabaseUtils.createDatabase(i, getIdGenType());
         }
-        Configuration prototypeConfig = buildPrototypeConfig();
-        List<ShardConfiguration> configurations = buildConfigurations();
+
+        final Configuration prototypeConfig = buildPrototypeConfig();
+        final List<ShardConfiguration> configurations = buildConfigurations();
+
         // now we use these configs to build our sharded config
-        ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
-        Map<Integer, Integer> virtualShardMap = buildVirtualShardToShardMap();
+        final ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
+        final Map<Integer, Integer> virtualShardMap = buildVirtualShardToShardMap();
+
         // we base the configuration off of the shard0 config with the expectation
         // that all other configs will be the same
-        ShardedConfiguration shardedConfig =
-                new ShardedConfiguration(
-                        prototypeConfig,
-                        configurations,
-                        shardStrategyFactory,
-                        virtualShardMap);
+        final ShardedConfiguration shardedConfig = new ShardedConfiguration(
+                prototypeConfig,
+                configurations,
+                shardStrategyFactory,
+                virtualShardMap);
         sf = shardedConfig.buildShardedSessionFactory();
         session = openSession();
     }
@@ -131,7 +130,7 @@ public abstract class BaseShardingIntegrationTestCase {
     }
 
     protected Map<Integer, Integer> buildVirtualShardToShardMap() {
-        Map<Integer, Integer> virtualShardToShardMap = Maps.newHashMap();
+        final Map<Integer, Integer> virtualShardToShardMap = Maps.newHashMap();
         if (isVirtualShardingEnabled()) {
             for (int i = 0; i < getNumShards(); ++i) {
                 virtualShardToShardMap.put(i, i % getNumDatabases());
@@ -141,11 +140,12 @@ public abstract class BaseShardingIntegrationTestCase {
     }
 
     private Configuration buildPrototypeConfig() {
-        DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-        String dbPlatformConfigDirectory = "platform/" + dbPlatform.getName().toLowerCase() + "/config/";
-        IdGenType idGenType = getIdGenType();
-        Configuration config = createPrototypeConfiguration();
-        config.configure(BaseShardingIntegrationTestCase.class.getResource(dbPlatformConfigDirectory + "shard0.hibernate.cfg.xml"));
+        final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
+        final String dbPlatformConfigDirectory = "platform/" + dbPlatform.getName().toLowerCase() + "/config/";
+        final String configurationFile = dbPlatformConfigDirectory + "shard0.hibernate.cfg.xml";
+        final IdGenType idGenType = getIdGenType();
+        final Configuration config = createPrototypeConfiguration();
+        config.configure(BaseShardingIntegrationTestCase.class.getResource(configurationFile));
         config.addURL(BaseShardingIntegrationTestCase.class.getResource(dbPlatformConfigDirectory + idGenType.getMappingFile()));
         return config;
     }
@@ -160,11 +160,11 @@ public abstract class BaseShardingIntegrationTestCase {
     }
 
     protected List<ShardConfiguration> buildConfigurations() {
-        DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-        String dbPlatformConfigDirectory = "platform/" + dbPlatform.getName().toLowerCase() + "/config/";
-        List<ShardConfiguration> configs = Lists.newArrayList();
+        final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
+        final String dbPlatformConfigDirectory = "platform/" + dbPlatform.getName().toLowerCase() + "/config/";
+        final List<ShardConfiguration> configs = Lists.newArrayList();
         for (int i = 0; i < getNumDatabases(); i++) {
-            Configuration config = new Configuration();
+            final Configuration config = new Configuration();
             config.configure(BaseShardingIntegrationTestCase.class.getResource(dbPlatformConfigDirectory + "shard" + i + ".hibernate.cfg.xml"));
             configs.add(new ConfigurationToShardConfigurationAdapter(config));
         }
@@ -174,10 +174,10 @@ public abstract class BaseShardingIntegrationTestCase {
     protected ShardStrategyFactory buildShardStrategyFactory() {
         return new ShardStrategyFactory() {
             public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
-                RoundRobinShardLoadBalancer loadBalancer = new RoundRobinShardLoadBalancer(shardIds);
-                ShardSelectionStrategy sss = new RoundRobinShardSelectionStrategy(loadBalancer);
-                ShardResolutionStrategy srs = new AllShardsShardResolutionStrategy(shardIds);
-                ShardAccessStrategy sas = getShardAccessStrategy();
+                final RoundRobinShardLoadBalancer loadBalancer = new RoundRobinShardLoadBalancer(shardIds);
+                final ShardSelectionStrategy sss = new RoundRobinShardSelectionStrategy(loadBalancer);
+                final ShardResolutionStrategy srs = new AllShardsShardResolutionStrategy(shardIds);
+                final ShardAccessStrategy sas = getShardAccessStrategy();
                 return new ShardStrategyImpl(sss, srs, sas);
             }
         };
@@ -190,7 +190,8 @@ public abstract class BaseShardingIntegrationTestCase {
     }
 
     protected void resetSession() {
-        MemoryLeakPlugger.plug((ShardedSessionImpl) session);
+        // TODO (ammachado) How do this with Javassist?
+        //MemoryLeakPlugger.plug((ShardedSessionImpl) session);
         session.close();
         session = openSession();
     }
@@ -208,7 +209,8 @@ public abstract class BaseShardingIntegrationTestCase {
 
         try {
             if (session != null) {
-                MemoryLeakPlugger.plug((ShardedSessionImpl) session);
+                // TODO (ammachado) How do this with Javassist?
+                //MemoryLeakPlugger.plug((ShardedSessionImpl) session);
                 session.close();
                 session = null;
             }
@@ -249,28 +251,28 @@ public abstract class BaseShardingIntegrationTestCase {
         return perm.getSast();
     }
 
-    protected <T> T reloadAssertNotNull(T reloadMe) {
-        T result = reload(reloadMe);
+    protected <T> T reloadAssertNotNull(final T reloadMe) {
+        final T result = reload(reloadMe);
         Assert.assertNotNull(result);
         return result;
     }
 
-    protected <T> T reload(T reloadMe) {
+    protected <T> T reload(final T reloadMe) {
         return reload(session, reloadMe);
     }
 
-    protected <T> T reloadAssertNotNull(Session session, T reloadMe) {
-        T result = reload(session, reloadMe);
+    protected <T> T reloadAssertNotNull(final Session session, final T reloadMe) {
+        final T result = reload(session, reloadMe);
         Assert.assertNotNull(result);
         return result;
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T reload(Session session, T reloadMe) {
-        Class<?> clazz = reloadMe.getClass();
-        String className = clazz.getSimpleName();
+    protected <T> T reload(final Session session, final T reloadMe) {
+        final Class<?> clazz = reloadMe.getClass();
+        final String className = clazz.getSimpleName();
         try {
-            Method m = clazz.getMethod("get" + className + "Id");
+            final Method m = clazz.getMethod("get" + className + "Id");
             return (T) get(session, clazz, (Serializable) m.invoke(reloadMe));
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
@@ -281,8 +283,8 @@ public abstract class BaseShardingIntegrationTestCase {
         }
     }
 
-    protected ShardId getShardIdForObject(Object obj) {
-        ShardId shardId = session.getShardIdForObject(obj);
+    protected ShardId getShardIdForObject(final Object obj) {
+        final ShardId shardId = session.getShardIdForObject(obj);
         if (obj instanceof ShardAware) {
             Assert.assertEquals(((ShardAware) obj).getShardId(), shardId);
         }
@@ -304,8 +306,9 @@ public abstract class BaseShardingIntegrationTestCase {
     private static final ThreadFactory FACTORY = new ThreadFactory() {
         private int nextThreadId = 0;
 
-        public Thread newThread(Runnable r) {
-            Thread t = Executors.defaultThreadFactory().newThread(r);
+        @Override
+        public Thread newThread(final Runnable r) {
+            final Thread t = Executors.defaultThreadFactory().newThread(r);
             t.setDaemon(true);
             t.setName("T" + (nextThreadId++));
             return t;
@@ -333,22 +336,22 @@ public abstract class BaseShardingIntegrationTestCase {
     */
 
     @SuppressWarnings("unchecked")
-    protected <T> List<T> list(Criteria crit) {
+    protected <T> List<T> list(final Criteria crit) {
         return crit.list();
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> List<T> list(Query query) {
+    protected <T> List<T> list(final Query query) {
         return query.list();
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T uniqueResult(Criteria crit) {
+    protected <T> T uniqueResult(final Criteria crit) {
         return (T) crit.uniqueResult();
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> T get(Session session, Class<?> clazz, Serializable id) {
+    protected <T> T get(final Session session, final Class<?> clazz, final Serializable id) {
         return (T) session.get(clazz, id);
     }
 }

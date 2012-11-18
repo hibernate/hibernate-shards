@@ -30,21 +30,22 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RoundRobinShardLoadBalancer extends BaseShardLoadBalancer {
 
-  // Can be shared by multiple threads so access to the counter
-  // needs to be threadsafe.
-  private final AtomicInteger nextIndex = new AtomicInteger();
+    // Can be shared by multiple threads so access to the counter
+    // needs to be threadsafe.
+    private final AtomicInteger nextIndex = new AtomicInteger();
 
-  /**
-   * Construct a RoundRobinShardLoadBalancer
-   * @param shardIds the ShardIds that we're balancing across
-   */
-  public RoundRobinShardLoadBalancer(List<ShardId> shardIds) {
-    super(shardIds);
-  }
+    /**
+     * Construct a RoundRobinShardLoadBalancer
+     *
+     * @param shardIds the ShardIds that we're balancing across
+     */
+    public RoundRobinShardLoadBalancer(final List<ShardId> shardIds) {
+        super(shardIds);
+    }
 
-  @Override
-  protected int getNextIndex() {
-    return nextIndex.getAndIncrement() % getShardIds().size();
-  }
+    @Override
+    protected int getNextIndex() {
+        return nextIndex.getAndIncrement() % getShardIds().size();
+    }
 }
 

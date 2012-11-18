@@ -26,5 +26,5 @@ import java.util.List;
  * @author maxr@google.com (Max Ross)
  */
 public interface ShardStrategyFactory {
-  ShardStrategy newShardStrategy(List<ShardId> shardIds);
+    ShardStrategy newShardStrategy(List<ShardId> shardIds);
 }

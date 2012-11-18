@@ -25,49 +25,47 @@ package org.hibernate.shards.util;
  */
 public class StringUtil {
 
-  /**
-   * Helper function for null, empty, and whitespace string testing.
-   *
-   * @return true if s == null or s.equals("") or s contains only whitespace
-   *         characters.
-   */
-  public static boolean isEmptyOrWhitespace(String s) {
-    s = makeSafe(s);
-    for (int i = 0, n = s.length(); i < n; i++) {
-      if (!Character.isWhitespace(s.charAt(i))) {
-        return false;
-      }
+    /**
+     * Helper function for null, empty, and whitespace string testing.
+     *
+     * @return true if s == null or s.equals("") or s contains only whitespace
+     *         characters.
+     */
+    public static boolean isEmptyOrWhitespace(String s) {
+        s = makeSafe(s);
+        for (int i = 0, n = s.length(); i < n; i++) {
+            if (!Character.isWhitespace(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
     }
-    return true;
-  }
 
-  /**
-   * @return true if s == null or s.equals("")
-   */
-  public static boolean isEmpty(String s) {
-    return makeSafe(s).length() == 0;
-  }
-
-  /**
-   * Helper function for making null strings safe for comparisons, etc.
-   *
-   * @return (s == null) ? "" : s;
-   */
-  public static String makeSafe(String s) {
-    return (s == null) ? "" : s;
-  }
-
-  /**
-   * @return the string provided with its first character capitalized
-   */
-  public static String capitalize(String s) {
-    if (s.length() == 0) {
-      return s;
+    /**
+     * @return true if s == null or s.equals("")
+     */
+    public static boolean isEmpty(final String s) {
+        return makeSafe(s).length() == 0;
     }
-    char first = s.charAt(0);
-    char capitalized = Character.toUpperCase(first);
-    return (first == capitalized)
-        ? s
-        : capitalized + s.substring(1);
-  }
+
+    /**
+     * Helper function for making null strings safe for comparisons, etc.
+     *
+     * @return (s == null) ? "" : s;
+     */
+    public static String makeSafe(String s) {
+        return (s == null) ? "" : s;
+    }
+
+    /**
+     * @return the string provided with its first character capitalized
+     */
+    public static String capitalize(String s) {
+        if (s.length() == 0) {
+            return s;
+        }
+        char first = s.charAt(0);
+        char capitalized = Character.toUpperCase(first);
+        return (first == capitalized) ? s : capitalized + s.substring(1);
+    }
 }

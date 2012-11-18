@@ -28,35 +28,35 @@ import org.hibernate.shards.ShardId;
  * multiple shards. It follows the contract set by Session API, and adds some
  * shard-related methods.
  *
+ * @author maxr@google.com (Max Ross)
  * @see ShardedSessionFactory
  * @see Session
- * @author maxr@google.com (Max Ross)
  */
 public interface ShardedSession extends Session {
 
-  /**
-   * Gets the non-sharded session with which the objects is associated.
-   *
-   * @param obj  the object for which we want the Session
-   * @return the Session with which this object is associated, or null if the
-   * object is not associated with a session belonging to this ShardedSession
-   */
-  Session getSessionForObject(Object obj);
+    /**
+     * Gets the non-sharded session with which the objects is associated.
+     *
+     * @param obj the object for which we want the Session
+     * @return the Session with which this object is associated, or null if the
+     *         object is not associated with a session belonging to this ShardedSession
+     */
+    Session getSessionForObject(Object obj);
 
-  /**
-   * Gets the ShardId of the shard with which the objects is associated.
-   *
-   * @param obj  the object for which we want the Session
-   * @return the ShardId of the Shard with which this object is associated, or
-   * null if the object is not associated with a shard belonging to this
-   * ShardedSession
-   */
-  ShardId getShardIdForObject(Object obj);
+    /**
+     * Gets the ShardId of the shard with which the objects is associated.
+     *
+     * @param obj the object for which we want the Session
+     * @return the ShardId of the Shard with which this object is associated, or
+     *         null if the object is not associated with a shard belonging to this
+     *         ShardedSession
+     */
+    ShardId getShardIdForObject(Object obj);
 
-  /**
-   * Place the session into a state where every create operation takes place
-   * on the same shard.  Once the shard is locked on a session it cannot
-   * be unlocked.
-   */
-  void lockShard();
+    /**
+     * Place the session into a state where every create operation takes place
+     * on the same shard.  Once the shard is locked on a session it cannot
+     * be unlocked.
+     */
+    void lockShard();
 }

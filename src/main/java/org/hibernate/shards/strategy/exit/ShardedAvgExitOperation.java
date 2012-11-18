@@ -18,11 +18,11 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.hibernate.criterion.Projection;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -32,23 +32,23 @@ import java.util.List;
  */
 public class ShardedAvgExitOperation implements ProjectionExitOperation {
 
-  private final Log log = LogFactory.getLog(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
-  public ShardedAvgExitOperation(Projection projection) {
-    log.error("not ready to use!");
-    throw new UnsupportedOperationException();
-  }
-
-  public List<Object> apply(List<Object> results) {
-    BigDecimal value = new BigDecimal(0.0);
-    BigDecimal count = new BigDecimal(0.0);
-    @SuppressWarnings("unchecked")
-    List<Pair<Double, Integer>> pairList = (List<Pair<Double, Integer>>) (List) results;
-    for(Pair<Double, Integer> pair : pairList) {
-      // we know the order of the pair (avg, count) by convention of ShardedAvgProjection
-      value = value.add(new BigDecimal(pair.first));
-      count = count.add(new BigDecimal(pair.second));
+    public ShardedAvgExitOperation(final Projection projection) {
+        log.error("not ready to use!");
+        throw new UnsupportedOperationException();
     }
-    return Lists.newArrayList((Object)value.divide(count));
-  }
+
+    public List<Object> apply(final List<Object> results) {
+        BigDecimal value = BigDecimal.ZERO;
+        BigDecimal count = BigDecimal.ZERO;
+        @SuppressWarnings("unchecked")
+        List<Pair<Double, Integer>> pairList = (List<Pair<Double, Integer>>) (List) results;
+        for (Pair<Double, Integer> pair : pairList) {
+            // we know the order of the pair (avg, count) by convention of ShardedAvgProjection
+            value = value.add(new BigDecimal(pair.first));
+            count = count.add(new BigDecimal(pair.second));
+        }
+        return Lists.newArrayList((Object) value.divide(count));
+    }
 }
