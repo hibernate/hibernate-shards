@@ -23,14 +23,13 @@ package org.hibernate.shards.integration.platform;
  */
 public abstract class BaseDatabasePlatform implements DatabasePlatform {
 
-  protected BaseDatabasePlatform() {
-    try {
-      Class.forName(getDriverClass());
-    } catch (ClassNotFoundException e) {
-      throw new RuntimeException(e);
+    protected BaseDatabasePlatform() {
+        try {
+            Class.forName(getDriverClass());
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
-  }
 
-  protected abstract String getDriverClass();
-
+    protected abstract String getDriverClass();
 }

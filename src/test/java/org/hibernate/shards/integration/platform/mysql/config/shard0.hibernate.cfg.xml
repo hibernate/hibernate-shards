@@ -17,18 +17,18 @@
 -->
 
 <!DOCTYPE hibernate-configuration PUBLIC
-	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
-	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
-  <session-factory name="HibernateSessionFactory0">
-    <property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
-    <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
-    <property name="connection.url">jdbc:mysql://localhost:3306/shard0</property>
-    <property name="connection.username">shard_user</property>
-    <property name="connection.password">shard</property>
-    <property name="hibernate.connection.shard_id">0</property>
-    <property name="hibernate.shard.enable_cross_shard_relationship_checks">true</property>
-  </session-factory>
+    <session-factory name="HibernateSessionFactory0">
+        <property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+        <property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/shard0</property>
+        <property name="connection.username">shard_user</property>
+        <property name="connection.password">shard</property>
+        <property name="hibernate.connection.shard_id">0</property>
+        <property name="hibernate.shard.enable_cross_shard_relationship_checks">true</property>
+    </session-factory>
 </hibernate-configuration>
 

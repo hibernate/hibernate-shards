@@ -30,20 +30,17 @@ import java.util.Set;
  */
 public class DistinctExitOperation implements ExitOperation {
 
-  private final Projection distinct;
+    private final Projection distinct;
 
-  public DistinctExitOperation(Projection distinct) {
-    this.distinct = distinct;
-    //TODO (maulik) Make Distinct Work
-    throw new UnsupportedOperationException();
-  }
+    public DistinctExitOperation(Projection distinct) {
+        this.distinct = distinct;
+        //TODO (maulik) Make Distinct Work
+        throw new UnsupportedOperationException();
+    }
 
-  public List<Object> apply(List<Object> results) {
-    Set<Object> uniqueSet = Sets.newHashSet();
-    uniqueSet.addAll(ExitOperationUtils.getNonNullList(results));
-
-    List<Object> uniqueList = Lists.newArrayList(uniqueSet);
-    
-    return uniqueList;
-  }
+    public List<Object> apply(List<Object> results) {
+        final Set<Object> uniqueSet = Sets.newHashSet();
+        uniqueSet.addAll(ExitOperationUtils.getNonNullList(results));
+        return Lists.newArrayList(uniqueSet);
+    }
 }

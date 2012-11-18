@@ -29,74 +29,75 @@ import java.util.List;
  * @author maxr@google.com (Max Ross)
  */
 public class MySQLDatabasePlatform extends BaseDatabasePlatform {
-  private static final String DRIVER_CLASS = "com.mysql.jdbc.Driver";
-  private static final String DB_URL_PREFIX = "jdbc:mysql://localhost:3306/shard";
-  private static final String DB_USER = "shard_user";
-  private static final String DB_PASSWORD = "shard";
 
-  protected static final DatabasePlatform PLATFORM = new MySQLDatabasePlatform();
+    private static final String DRIVER_CLASS = "com.mysql.jdbc.Driver";
+    private static final String DB_URL_PREFIX = "jdbc:mysql://localhost:3306/shard";
+    private static final String DB_USER = "shard_user";
+    private static final String DB_PASSWORD = "shard";
 
-  private static final Iterable<String> CREATE_TABLE_STATEMENTS = Lists.newArrayList(
-     "CREATE TABLE hibernate_unique_key (id DECIMAL(40,0) PRIMARY KEY, next_hi DECIMAL(40,0))"
-    ,"INSERT INTO hibernate_unique_key(id, next_hi) VALUES(1,1)"
-    ,"CREATE TABLE sample_table (id DECIMAL(40,0) PRIMARY KEY, str_col VARCHAR(256))"
-    ,"CREATE TABLE sample_table2 (id DECIMAL(40,0) PRIMARY KEY, str_col VARCHAR(256))"
-    ,"CREATE TABLE Elevator (elevatorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0))"
-    ,"CREATE TABLE Building (buildingId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50))"
-    ,"CREATE TABLE Floor (floorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0), upEscalatorId DECIMAL(40,0), downEscalatorId DECIMAL(40,0), number DECIMAL(40,0), squareFeet DECIMAL(40, 4))"
-    ,"CREATE TABLE Tenant (tenantId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50))"
-    ,"CREATE TABLE BuildingTenant (buildingId DECIMAL(40,0), tenantId DECIMAL(40,0), PRIMARY KEY(buildingId, tenantId))"
-    ,"CREATE TABLE Office (officeId DECIMAL(40,0) PRIMARY KEY, floorId DECIMAL(40,0), label VARCHAR(50), windowId DECIMAL(40,0))"
-    ,"CREATE TABLE FloorElevator (floorId DECIMAL(40,0), elevatorId DECIMAL(40,0), PRIMARY KEY(floorId, elevatorId))"
-    ,"CREATE TABLE Escalator (escalatorId DECIMAL(40,0) PRIMARY KEY, bottomFloorId DECIMAL(40,0), topFloorId DECIMAL(40,0))"
-    ,"CREATE TABLE Person (personId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50), tenantId DECIMAL(40,0), officeId DECIMAL(40,0))"
-  );
+    protected static final DatabasePlatform PLATFORM = new MySQLDatabasePlatform();
 
-  protected static final List<String> DROP_TABLE_STATEMENTS = Lists.newArrayList(
-      "DROP TABLE hibernate_unique_key",
-      "DROP TABLE sample_table",
-      "DROP TABLE sample_table2",
-      "DROP TABLE Elevator",
-      "DROP TABLE Building",
-      "DROP TABLE Floor",
-      "DROP TABLE Tenant",
-      "DROP TABLE BuildingTenant",
-      "DROP TABLE Office",
-      "DROP TABLE FloorElevator",
-      "DROP TABLE Escalator",
-      "DROP TABLE Person"
-  );
+    private static final Iterable<String> CREATE_TABLE_STATEMENTS = Lists.newArrayList(
+            "CREATE TABLE hibernate_unique_key (id DECIMAL(40,0) PRIMARY KEY, next_hi DECIMAL(40,0))"
+            , "INSERT INTO hibernate_unique_key(id, next_hi) VALUES(1,1)"
+            , "CREATE TABLE sample_table (id DECIMAL(40,0) PRIMARY KEY, str_col VARCHAR(256))"
+            , "CREATE TABLE sample_table2 (id DECIMAL(40,0) PRIMARY KEY, str_col VARCHAR(256))"
+            , "CREATE TABLE Elevator (elevatorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0))"
+            , "CREATE TABLE Building (buildingId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50))"
+            , "CREATE TABLE Floor (floorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0), upEscalatorId DECIMAL(40,0), downEscalatorId DECIMAL(40,0), number DECIMAL(40,0), squareFeet DECIMAL(40, 4))"
+            , "CREATE TABLE Tenant (tenantId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50))"
+            , "CREATE TABLE BuildingTenant (buildingId DECIMAL(40,0), tenantId DECIMAL(40,0), PRIMARY KEY(buildingId, tenantId))"
+            , "CREATE TABLE Office (officeId DECIMAL(40,0) PRIMARY KEY, floorId DECIMAL(40,0), label VARCHAR(50), windowId DECIMAL(40,0))"
+            , "CREATE TABLE FloorElevator (floorId DECIMAL(40,0), elevatorId DECIMAL(40,0), PRIMARY KEY(floorId, elevatorId))"
+            , "CREATE TABLE Escalator (escalatorId DECIMAL(40,0) PRIMARY KEY, bottomFloorId DECIMAL(40,0), topFloorId DECIMAL(40,0))"
+            , "CREATE TABLE Person (personId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50), tenantId DECIMAL(40,0), officeId DECIMAL(40,0))"
+    );
 
-  public Iterable<String> getCreateTableStatements(IdGenType idGenType) {
-    return CREATE_TABLE_STATEMENTS;
-  }
+    protected static final List<String> DROP_TABLE_STATEMENTS = Lists.newArrayList(
+            "DROP TABLE hibernate_unique_key",
+            "DROP TABLE sample_table",
+            "DROP TABLE sample_table2",
+            "DROP TABLE Elevator",
+            "DROP TABLE Building",
+            "DROP TABLE Floor",
+            "DROP TABLE Tenant",
+            "DROP TABLE BuildingTenant",
+            "DROP TABLE Office",
+            "DROP TABLE FloorElevator",
+            "DROP TABLE Escalator",
+            "DROP TABLE Person"
+    );
 
-  public Iterable<String> getDropTableStatements(IdGenType idGenType) {
-    return DROP_TABLE_STATEMENTS;
-  }
+    public Iterable<String> getCreateTableStatements(IdGenType idGenType) {
+        return CREATE_TABLE_STATEMENTS;
+    }
 
-  public static DatabasePlatform getInstance() {
-    return PLATFORM;
-  }
+    public Iterable<String> getDropTableStatements(IdGenType idGenType) {
+        return DROP_TABLE_STATEMENTS;
+    }
 
-  public String getUrl(int index) {
-    return DB_URL_PREFIX + index;
-  }
+    public static DatabasePlatform getInstance() {
+        return PLATFORM;
+    }
 
-  public String getUser() {
-    return DB_USER;
-  }
+    public String getUrl(int index) {
+        return DB_URL_PREFIX + index;
+    }
 
-  public String getPassword() {
-    return DB_PASSWORD;
-  }
+    public String getUser() {
+        return DB_USER;
+    }
 
-  public String getName() {
-    return "mysql";
-  }
+    public String getPassword() {
+        return DB_PASSWORD;
+    }
 
-  @Override
-  protected String getDriverClass() {
-    return DRIVER_CLASS;
-  }
+    public String getName() {
+        return "mysql";
+    }
+
+    @Override
+    protected String getDriverClass() {
+        return DRIVER_CLASS;
+    }
 }

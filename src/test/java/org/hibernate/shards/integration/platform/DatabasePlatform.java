@@ -24,10 +24,16 @@ import org.hibernate.shards.integration.IdGenType;
  * @author maxr@google.com (Max Ross)
  */
 public interface DatabasePlatform {
-  String getName();
-  Iterable<String> getCreateTableStatements(IdGenType idGenType);
-  Iterable<String> getDropTableStatements(IdGenType idGenType);
-  String getUrl(int index);
-  String getUser();
-  String getPassword();
+
+    String getName();
+
+    Iterable<String> getCreateTableStatements(IdGenType idGenType);
+
+    Iterable<String> getDropTableStatements(IdGenType idGenType);
+
+    String getUrl(int index);
+
+    String getUser();
+
+    String getPassword();
 }

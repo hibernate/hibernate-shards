@@ -265,6 +265,7 @@ public abstract class BaseShardingIntegrationTestCase {
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     protected <T> T reload(Session session, T reloadMe) {
         Class<?> clazz = reloadMe.getClass();
         String className = clazz.getSimpleName();

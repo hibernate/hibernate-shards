@@ -39,59 +39,65 @@ import java.util.Properties;
  */
 public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncodingIdentifierGenerator {
 
-  private IdType idType;
+    private IdType idType;
 
-  private static String ZERO_STRING = "00000000000000000000000000000000";
-  private static String ID_TYPE_PROPERTY = "sharded-uuid-type";
+    private static final String ZERO_STRING = "00000000000000000000000000000000";
+    private static final String ID_TYPE_PROPERTY = "sharded-uuid-type";
 
-  private static enum IdType { STRING, INTEGER }
+    private static enum IdType {STRING, INTEGER}
 
-  private int getShardId() {
-    ShardId shardId = ShardedSessionImpl.getCurrentSubgraphShardId();
-    Preconditions.checkState(shardId != null);
-    return shardId.getId();
-  }
-
-  public ShardId extractShardId(Serializable identifier) {
-    Preconditions.checkNotNull(identifier);
-    String hexId;
-    switch(idType) {
-      case STRING:
-        hexId = (String)identifier;
-        return new ShardId(Integer.decode("0x" + hexId.substring(0, 4)));
-      case INTEGER:
-        String strippedHexId = ((BigInteger)identifier).toString(16);
-        hexId = ZERO_STRING.substring(0, 32 - strippedHexId.length()) + strippedHexId;
-        return new ShardId(Integer.decode("0x" + hexId.substring(0, hexId.length()-28)));
-      default:
-        // should never get here
-        throw new IllegalStateException("ShardedUUIDGenerator was not configured properly");
+    private int getShardId() {
+        ShardId shardId = ShardedSessionImpl.getCurrentSubgraphShardId();
+        Preconditions.checkState(shardId != null);
+        return shardId.getId();
     }
-  }
 
-  @Override
-  public Serializable generate(SessionImplementor session, Object object) {
-    String id =  new StringBuilder(32).append(format((short)getShardId()))
-                                      .append(format(getIP()))
-                                      .append(format((short)(getJVM()>>>16)))
-                                      .append(format(getHiTime()))
-                                      .append(format(getLoTime()))
-                                      .append(format(getCount()))
-                                      .toString();
-    switch(idType) {
-      case STRING:
-        return id;
-      case INTEGER:
-        return new BigInteger(id, 16);
-      default:
-        // should never get here
-        throw new IllegalStateException("ShardedUUIDGenerator was not configured properly");
+    public ShardId extractShardId(final Serializable identifier) {
+        Preconditions.checkNotNull(identifier);
+        String hexId;
+
+        switch (idType) {
+            case STRING:
+                hexId = (String) identifier;
+                return new ShardId(Integer.decode("0x" + hexId.substring(0, 4)));
+
+            case INTEGER:
+                String strippedHexId = ((BigInteger) identifier).toString(16);
+                hexId = ZERO_STRING.substring(0, 32 - strippedHexId.length()) + strippedHexId;
+                return new ShardId(Integer.decode("0x" + hexId.substring(0, hexId.length() - 28)));
+
+            default:
+                // should never get here
+                throw new IllegalStateException("ShardedUUIDGenerator was not configured properly");
+        }
     }
-  }
 
-  @Override
-  public void configure(Type type, Properties params, Dialect d) {
-    this.idType = IdType.valueOf(PropertiesHelper.getString(ID_TYPE_PROPERTY, params, "INTEGER"));
-  }
+    @Override
+    public Serializable generate(final SessionImplementor session, final Object object) {
 
+        final String id = new StringBuilder(32).append(format((short) getShardId()))
+                .append(format(getIP()))
+                .append(format((short) (getJVM() >>> 16)))
+                .append(format(getHiTime()))
+                .append(format(getLoTime()))
+                .append(format(getCount()))
+                .toString();
+
+        switch (idType) {
+            case STRING:
+                return id;
+
+            case INTEGER:
+                return new BigInteger(id, 16);
+
+            default:
+                // should never get here
+                throw new IllegalStateException("ShardedUUIDGenerator was not configured properly");
+        }
+    }
+
+    @Override
+    public void configure(final Type type, final Properties params, final Dialect d) {
+        this.idType = IdType.valueOf(PropertiesHelper.getString(ID_TYPE_PROPERTY, params, "INTEGER"));
+    }
 }

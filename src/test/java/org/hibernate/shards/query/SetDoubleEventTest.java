@@ -25,33 +25,33 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetDoubleEventTest extends TestCase {
+public class SetDoubleEventTest extends TestCase {
 
-   public void testSetDoubleEventPositionVal() {
-     SetDoubleEvent event = new SetDoubleEvent(-1, new Double(-1.0));
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setDouble(int position, double val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+    public void testSetDoubleEventPositionVal() {
+        SetDoubleEvent event = new SetDoubleEvent(-1, -1.0);
+        final boolean[] called = {false};
+        Query query = new QueryDefaultMock() {
+            @Override
+            public Query setDouble(int position, double val) {
+                called[0] = true;
+                return null;
+            }
+        };
+        event.onEvent(query);
+        assertTrue(called[0]);
+    }
 
-   public void testSetDoubleEventNameVal() {
-     SetDoubleEvent event = new SetDoubleEvent(null, new Double(-1.0));
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setDouble(String name, double val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+    public void testSetDoubleEventNameVal() {
+        SetDoubleEvent event = new SetDoubleEvent(null, -1.0);
+        final boolean[] called = {false};
+        Query query = new QueryDefaultMock() {
+            @Override
+            public Query setDouble(String name, double val) {
+                called[0] = true;
+                return null;
+            }
+        };
+        event.onEvent(query);
+        assertTrue(called[0]);
+    }
 }

@@ -38,7 +38,7 @@ public class CountExitOperation implements ProjectionExitOperation {
   public CountExitOperation(Projection projection) {
     Preconditions.checkState(projection instanceof CountProjection);
 
-    distinct = projection.toString().indexOf("distinct") != -1;
+    distinct = projection.toString().contains("distinct");
 
     /**
      * TODO(maulik) we need to figure out how to work with distinct

@@ -25,33 +25,33 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetIntegerEventTest extends TestCase {
+public class SetIntegerEventTest extends TestCase {
 
-   public void testSetIntegerEventPositionVal() {
-     SetIntegerEvent event = new SetIntegerEvent(-1, new Integer(-1));
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setInteger(int position, int val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+    public void testSetIntegerEventPositionVal() {
+        SetIntegerEvent event = new SetIntegerEvent(-1, -1);
+        final boolean[] called = {false};
+        Query query = new QueryDefaultMock() {
+            @Override
+            public Query setInteger(int position, int val) {
+                called[0] = true;
+                return null;
+            }
+        };
+        event.onEvent(query);
+        assertTrue(called[0]);
+    }
 
-   public void testSetIntegerEventNameVal() {
-     SetIntegerEvent event = new SetIntegerEvent(null, new Integer(-1));
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setInteger(String name, int val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+    public void testSetIntegerEventNameVal() {
+        SetIntegerEvent event = new SetIntegerEvent(null, -1);
+        final boolean[] called = {false};
+        Query query = new QueryDefaultMock() {
+            @Override
+            public Query setInteger(String name, int val) {
+                called[0] = true;
+                return null;
+            }
+        };
+        event.onEvent(query);
+        assertTrue(called[0]);
+    }
 }
