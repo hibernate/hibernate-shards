@@ -23,27 +23,27 @@ import org.hibernate.criterion.Projection;
 
 /**
  * Event that allows the {@link Projection} of a {@link Criteria} to be set lazily.
- * @see Criteria#setProjection(Projection)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setProjection(Projection)
  */
 class SetProjectionEvent implements CriteriaEvent {
 
-  // the Projection we'll set on the Critiera when the event fires
-  private final Projection projection;
+    // the Projection we'll set on the {@link Criteria} when the event fires
+    private final Projection projection;
 
-  /**
-   * Constructs a SetProjectionEvent
-   *
-   * @param projection the projection we'll set on the {@link Criteria} when the
-   * event fires.
-   */
-  public SetProjectionEvent(Projection projection) {
-    this.projection = projection;
-  }
+    /**
+     * Constructs a SetProjectionEvent
+     *
+     * @param projection the projection we'll set on the {@link Criteria} when the
+     *                   event fires.
+     */
+    public SetProjectionEvent(final Projection projection) {
+        this.projection = projection;
+    }
 
-
-  public void onEvent(Criteria crit) {
-    crit.setProjection(projection);
-  }
+    @Override
+    public void onEvent(final Criteria criteria) {
+        criteria.setProjection(projection);
+    }
 }

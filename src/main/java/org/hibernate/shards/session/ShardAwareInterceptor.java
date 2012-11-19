@@ -41,6 +41,7 @@ public class ShardAwareInterceptor extends EmptyInterceptor {
         this.shardIdResolver = shardIdResolver;
     }
 
+    @Override
     public boolean onLoad(final Object entity,
                           final Serializable id,
                           final Object[] state,
@@ -49,6 +50,7 @@ public class ShardAwareInterceptor extends EmptyInterceptor {
         return setShardId(entity);
     }
 
+    @Override
     public boolean onSave(final Object entity,
                           final Serializable id,
                           final Object[] state,
@@ -60,7 +62,7 @@ public class ShardAwareInterceptor extends EmptyInterceptor {
     boolean setShardId(final Object entity) {
         boolean result = false;
         if (entity instanceof ShardAware) {
-            ShardAware shardAware = (ShardAware) entity;
+            final ShardAware shardAware = (ShardAware) entity;
             if (shardAware.getShardId() == null) {
                 shardAware.setShardId(shardIdResolver.getShardIdForObject(entity));
                 result = true;

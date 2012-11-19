@@ -49,383 +49,296 @@ import java.util.Map;
  */
 class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 
-  // all shards that we're aware of
-  final List<Shard> shards;
+    // all shards that we're aware of
+    final List<Shard> shards;
 
-  // our parent. As with CriteriaImpl, we pass-through certain operations
-  // to our parent
-  final ShardedCriteria parent;
+    // our parent. As with CriteriaImpl, we pass-through certain operations
+    // to our parent
+    final ShardedCriteria parent;
 
-  // maps shards to actual Criteria objects
-  private final Map<Shard, Criteria> shardToCriteriaMap = Maps.newHashMap();
+    // maps shards to actual Criteria objects
+    private final Map<Shard, Criteria> shardToCriteriaMap = Maps.newHashMap();
 
-  // maps shards to lists of criteria events that need to be applied
-  // when the actual Criteria objects are established
-  private final Map<Shard, List<CriteriaEvent>> shardToEventListMap = Maps.newHashMap();
+    // maps shards to lists of criteria events that need to be applied
+    // when the actual Criteria objects are established
+    private final Map<Shard, List<CriteriaEvent>> shardToEventListMap = Maps.newHashMap();
 
-  private final ExitOperationsCriteriaCollector criteriaCollector;
+    private final ExitOperationsCriteriaCollector criteriaCollector;
 
-  private final String associationPath;
+    private final String associationPath;
 
-  /**
-   * Construct a ShardedSubcriteriaImpl
-   *
-   * @param shards the shards that we're aware of
-   * @param parent our parent
-   * @param criteriaCollector the collector for extit operations
-   * @param associationPath the association path for the subcriteria
-   */
-  public ShardedSubcriteriaImpl(List<Shard> shards, ShardedCriteria parent,
-      ExitOperationsCriteriaCollector criteriaCollector, String associationPath) {
-    Preconditions.checkNotNull(shards);
-    Preconditions.checkNotNull(parent);
-    Preconditions.checkArgument(!shards.isEmpty());
-    Preconditions.checkNotNull(criteriaCollector);
-    Preconditions.checkNotNull(associationPath);
-    this.shards = shards;
-    this.parent = parent;
-    this.criteriaCollector = criteriaCollector;
-    this.associationPath = associationPath;
-    // let's set up our maps
-    for(Shard shard : shards) {
-      shardToCriteriaMap.put(shard, null);
-      shardToEventListMap.put(shard, Lists.<CriteriaEvent>newArrayList());
+    /**
+     * Construct a ShardedSubcriteriaImpl
+     *
+     * @param shards            the shards that we're aware of
+     * @param parent            our parent
+     * @param criteriaCollector the collector for extit operations
+     * @param associationPath   the association path for the subcriteria
+     */
+    public ShardedSubcriteriaImpl(final List<Shard> shards, 
+                                  final ShardedCriteria parent,
+                                  final ExitOperationsCriteriaCollector criteriaCollector, 
+								  final String associationPath) {
+
+        this.shards = Preconditions.checkNotNull(shards);
+        Preconditions.checkArgument(!shards.isEmpty());
+        this.parent = Preconditions.checkNotNull(parent);
+        this.criteriaCollector = Preconditions.checkNotNull(criteriaCollector);
+        this.associationPath = Preconditions.checkNotNull(associationPath);
+		
+        // let's set up our maps
+        for (final Shard shard : shards) {
+            shardToCriteriaMap.put(shard, null);
+            shardToEventListMap.put(shard, Lists.<CriteriaEvent>newArrayList());
+        }
     }
-  }
 
-  /**
-   * @return Returns an actual Criteria object, or null if none have been allocated.
-   */
-  private /*@Nullable*/ Criteria getSomeSubcriteria() {
-    for (Criteria crit : shardToCriteriaMap.values()) {
-      if (crit != null) {
-        return crit;
-      }
+    @Override
+    public String getAlias() {
+        return getOrEstablishSomeSubcriteria().getAlias();
     }
-    return null;
-  }
 
-  /**
-   * @return Returns an actual Criteria object.  If no actual Criteria object
-   * has been allocated, allocate one and return it.
-   */
-  private Criteria getOrEstablishSomeSubcriteria() {
-    Criteria crit = getSomeSubcriteria();
-    if(crit == null) {
-      Shard shard = shards.get(0);
-      // this should trigger the creation of all subcriteria for the parent
-      shard.establishCriteria(parent);
+    @Override
+    public Criteria setProjection(final Projection projection) {
+        return setSubcriteriaEvent(new SetProjectionEvent(projection));
     }
-    return getSomeSubcriteria();
-  }
 
-  public String getAlias() {
-    return getOrEstablishSomeSubcriteria().getAlias();
-  }
-
-  public Criteria setProjection(Projection projection) {
-    CriteriaEvent event = new SetProjectionEvent(projection);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setProjection(projection);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria add(final Criterion criterion) {
+        return setSubcriteriaEvent(new AddCriterionEvent(criterion));
     }
-    return this;
-  }
 
-  public Criteria add(Criterion criterion) {
-    CriteriaEvent event = new AddCriterionEvent(criterion);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).add(criterion);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria addOrder(final Order order) {
+        criteriaCollector.addOrder(associationPath, order);
+        return setSubcriteriaEvent(new AddOrderEvent(order));
     }
-    return this;
-  }
 
-  public Criteria addOrder(Order order) {
-    criteriaCollector.addOrder(associationPath, order);
-    CriteriaEvent event = new AddOrderEvent(order);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).addOrder(order);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setFetchMode(final String associationPath, final FetchMode mode) throws HibernateException {
+        return setSubcriteriaEvent(new SetFetchModeEvent(associationPath, mode));
     }
-    return this;
-  }
 
-  public Criteria setFetchMode(String associationPath, FetchMode mode)
-      throws HibernateException {
-    CriteriaEvent event = new SetFetchModeEvent(associationPath, mode);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setFetchMode(associationPath, mode);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setLockMode(final LockMode lockMode) {
+        return setSubcriteriaEvent(new SetLockModeEvent(lockMode));
     }
-    return this;
-  }
 
-  public Criteria setLockMode(LockMode lockMode) {
-    CriteriaEvent event = new SetLockModeEvent(lockMode);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setLockMode(lockMode);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setLockMode(final String alias, final LockMode lockMode) {
+        return setSubcriteriaEvent(new SetLockModeEvent(lockMode, alias));
     }
-    return this;
-  }
 
-  public Criteria setLockMode(String alias, LockMode lockMode) {
-    CriteriaEvent event = new SetLockModeEvent(lockMode, alias);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setLockMode(alias, lockMode);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria createAlias(final String associationPath, final String alias) throws HibernateException {
+        return setSubcriteriaEvent(new CreateAliasEvent(associationPath, alias));
     }
-    return this;
-  }
 
-  public Criteria createAlias(String associationPath, String alias)
-      throws HibernateException {
-    CriteriaEvent event = new CreateAliasEvent(associationPath, alias);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).createAlias(associationPath, alias);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria createAlias(final String associationPath, final String alias, final int joinType)
+            throws HibernateException {
+        return setSubcriteriaEvent(new CreateAliasEvent(associationPath, alias, joinType));
     }
-    return this;
-  }
 
-  public Criteria createAlias(String associationPath, String alias,
-      int joinType) throws HibernateException {
-    CriteriaEvent event = new CreateAliasEvent(associationPath, alias, joinType);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).createAlias(associationPath, alias, joinType);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setResultTransformer(final ResultTransformer resultTransformer) {
+        return setSubcriteriaEvent(new SetResultTransformerEvent(resultTransformer));
     }
-    return this;
-  }
 
-  public Criteria setResultTransformer(ResultTransformer resultTransformer) {
-    CriteriaEvent event = new SetResultTransformerEvent(resultTransformer);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setResultTransformer(resultTransformer);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    /**
+     * TODO(maxr)
+     * This clearly isn't what people want.  We should be building an
+     * exit strategy that returns once we've accumulated maxResults
+     * across _all_ shards, not each shard.
+     */
+    @Override
+    public Criteria setMaxResults(final int maxResults) {
+        parent.setMaxResults(maxResults);
+        return this;
     }
-    return this;
-  }
 
-  public Criteria setMaxResults(int maxResults) {
-    parent.setMaxResults(maxResults);
-    return this;
-  }
-
-  public Criteria setFirstResult(int firstResult) {
-    parent.setFirstResult(firstResult);
-    return this;
-  }
-
-  public Criteria setFetchSize(int fetchSize) {
-    CriteriaEvent event = new SetFetchSizeEvent(fetchSize);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setFetchSize(fetchSize);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setFirstResult(final int firstResult) {
+        parent.setFirstResult(firstResult);
+        return this;
     }
-    return this;
-  }
 
-  public Criteria setTimeout(int timeout) {
-    CriteriaEvent event = new SetTimeoutEvent(timeout);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setTimeout(timeout);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setFetchSize(final int fetchSize) {
+        return setSubcriteriaEvent(new SetFetchSizeEvent(fetchSize));
     }
-    return this;
-  }
 
-  public Criteria setCacheable(boolean cacheable) {
-    CriteriaEvent event = new SetCacheableEvent(cacheable);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setCacheable(cacheable);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setTimeout(final int timeout) {
+        return setSubcriteriaEvent(new SetTimeoutEvent(timeout));
     }
-    return this;
-  }
 
-  public Criteria setCacheRegion(String cacheRegion) {
-    CriteriaEvent event = new SetCacheRegionEvent(cacheRegion);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setCacheRegion(cacheRegion);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setCacheable(final boolean cacheable) {
+        return setSubcriteriaEvent(new SetCacheableEvent(cacheable));
     }
-    return this;
-  }
 
-  public Criteria setComment(String comment) {
-    CriteriaEvent event = new SetCommentEvent(comment);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setComment(comment);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setCacheRegion(final String cacheRegion) {
+        return setSubcriteriaEvent(new SetCacheRegionEvent(cacheRegion));
     }
-    return this;
-  }
 
-  public Criteria setFlushMode(FlushMode flushMode) {
-    CriteriaEvent event = new SetFlushModeEvent(flushMode);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setFlushMode(flushMode);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setComment(final String comment) {
+        return setSubcriteriaEvent(new SetCommentEvent(comment));
     }
-    return this;
-  }
 
-  public Criteria setCacheMode(CacheMode cacheMode) {
-    CriteriaEvent event = new SetCacheModeEvent(cacheMode);
-    for (Shard shard : shards) {
-      if (shardToCriteriaMap.get(shard) != null) {
-        shardToCriteriaMap.get(shard).setCacheMode(cacheMode);
-      } else {
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setFlushMode(final FlushMode flushMode) {
+        return setSubcriteriaEvent(new SetFlushModeEvent(flushMode));
     }
-    return this;
-  }
 
-  public List list() throws HibernateException {
-    // pass through to the parent
-    return getParentCriteria().list();
-  }
-
-  public ScrollableResults scroll() throws HibernateException {
-    // pass through to the parent
-    return getParentCriteria().scroll();
-  }
-
-  public ScrollableResults scroll(ScrollMode scrollMode)
-      throws HibernateException {
-    // pass through to the parent
-    return getParentCriteria().scroll(scrollMode);
-  }
-
-  public Object uniqueResult() throws HibernateException {
-    // pass through to the parent
-    return getParentCriteria().uniqueResult();
-  }
-
-  private ShardedSubcriteriaImpl createSubcriteria(SubcriteriaFactory factory,
-      String newAssociationPath) {
-    String fullAssociationPath = associationPath + "." + newAssociationPath;
-    // first build our sharded subcrit
-    ShardedSubcriteriaImpl subcrit =
-        new ShardedSubcriteriaImpl(shards, parent, criteriaCollector, fullAssociationPath);
-    for (Shard shard : shards) {
-      // see if we already have a concreate Criteria object for each shard
-      if (shardToCriteriaMap.get(shard) != null) {
-        // we already have a concreate Criteria for this shard, so create
-        // a subcrit for it using the provided factory
-        factory.createSubcriteria(this, shardToEventListMap.get(shard));
-      } else {
-        // we do not yet have a concrete Criteria object for this shard
-        // so register an event that will create a proper subcrit when we do
-        CreateSubcriteriaEvent event = new CreateSubcriteriaEvent(factory, subcrit.getSubcriteriaRegistrar(shard));
-        shardToEventListMap.get(shard).add(event);
-      }
+    @Override
+    public Criteria setCacheMode(final CacheMode cacheMode) {
+        return setSubcriteriaEvent(new SetCacheModeEvent(cacheMode));
     }
-    return subcrit;
-  }
 
-  SubcriteriaRegistrar getSubcriteriaRegistrar(final Shard shard) {
-    return new SubcriteriaRegistrar() {
+    @Override
+    public List list() throws HibernateException {
+        // pass through to the parent
+        return getParentCriteria().list();
+    }
 
-      public void establishSubcriteria(Criteria parentCriteria, SubcriteriaFactory subcriteriaFactory) {
-        List<CriteriaEvent> criteriaEvents = shardToEventListMap.get(shard);
-        // create the subcrit with the proper list of events
-        Criteria newCrit = subcriteriaFactory.createSubcriteria(parentCriteria, criteriaEvents);
-        // clear the list of events
-        criteriaEvents.clear();
-        // add it to our map
-        shardToCriteriaMap.put(shard, newCrit);
-      }
-    };
-  }
+    @Override
+    public ScrollableResults scroll() throws HibernateException {
+        // pass through to the parent
+        return getParentCriteria().scroll();
+    }
 
-  public Criteria createCriteria(String associationPath)
-      throws HibernateException {
-    SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath);
-    return createSubcriteria(factory, associationPath);
-  }
+    @Override
+    public ScrollableResults scroll(final ScrollMode scrollMode) throws HibernateException {
+        // pass through to the parent
+        return getParentCriteria().scroll(scrollMode);
+    }
 
-  public Criteria createCriteria(String associationPath, int joinType)
-      throws HibernateException {
-    SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, joinType);
-    return createSubcriteria(factory, associationPath);
-  }
+    @Override
+    public Object uniqueResult() throws HibernateException {
+        // pass through to the parent
+        return getParentCriteria().uniqueResult();
+    }
 
-  public Criteria createCriteria(String associationPath, String alias)
-      throws HibernateException {
-    SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias);
-    return createSubcriteria(factory, associationPath);
-  }
+    /**
+     * @return Returns an actual Criteria object, or null if none have been allocated.
+     */
+    private /*@Nullable*/ Criteria getSomeSubcriteria() {
+        for (final Criteria crit : shardToCriteriaMap.values()) {
+            if (crit != null) {
+                return crit;
+            }
+        }
+        return null;
+    }
 
-  public Criteria createCriteria(String associationPath, String alias,
-      int joinType) throws HibernateException {
-    SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias, joinType);
-    return createSubcriteria(factory, associationPath);
-  }
+    /**
+     * @return Returns an actual Criteria object.  If no actual Criteria object
+     *         has been allocated, allocate one and return it.
+     */
+    private Criteria getOrEstablishSomeSubcriteria() {
+        final Criteria crit = getSomeSubcriteria();
+        if (crit == null) {
+            Shard shard = shards.get(0);
+            // this should trigger the creation of all subcriteria for the parent
+            shard.establishCriteria(parent);
+        }
+        return getSomeSubcriteria();
+    }
 
-  public ShardedCriteria getParentCriteria() {
-    return parent;
-  }
+    private ShardedSubcriteriaImpl createSubcriteria(final SubcriteriaFactory factory,
+                                                     final String newAssociationPath) {
 
-  Map<Shard, Criteria> getShardToCriteriaMap() {
-    return shardToCriteriaMap;
-  }
+        final String fullAssociationPath = associationPath + "." + newAssociationPath;
 
-  Map<Shard, List<CriteriaEvent>> getShardToEventListMap() {
-    return shardToEventListMap;
-  }
+        // first build our sharded subcrit
+        final ShardedSubcriteriaImpl subcrit =
+                new ShardedSubcriteriaImpl(shards, parent, criteriaCollector, fullAssociationPath);
 
-  interface SubcriteriaRegistrar {
+        for (final Shard shard : shards) {
+            // see if we already have a concreate Criteria object for each shard
+            if (shardToCriteriaMap.get(shard) != null) {
+                // we already have a concreate Criteria for this shard, so create
+                // a subcrit for it using the provided factory
+                factory.createSubcriteria(this, shardToEventListMap.get(shard));
+            } else {
+                // we do not yet have a concrete Criteria object for this shard
+                // so register an event that will create a proper subcrit when we do
+                CreateSubcriteriaEvent event = new CreateSubcriteriaEvent(factory, subcrit.getSubcriteriaRegistrar(shard));
+                shardToEventListMap.get(shard).add(event);
+            }
+        }
+        return subcrit;
+    }
 
-    void establishSubcriteria(Criteria parentCriteria, SubcriteriaFactory subcriteriaFactory);
+    @Override
+    public Criteria createCriteria(final String associationPath) throws HibernateException {
+        final SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath);
+        return createSubcriteria(factory, associationPath);
+    }
 
-  }
+    @Override
+    public Criteria createCriteria(final String associationPath, final int joinType) throws HibernateException {
+        final SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, joinType);
+        return createSubcriteria(factory, associationPath);
+    }
+
+    @Override
+    public Criteria createCriteria(final String associationPath, final String alias) throws HibernateException {
+        final SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias);
+        return createSubcriteria(factory, associationPath);
+    }
+
+    @Override
+    public Criteria createCriteria(final String associationPath, final String alias, final int joinType)
+            throws HibernateException {
+        final SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias, joinType);
+        return createSubcriteria(factory, associationPath);
+    }
+
+    @Override
+    public ShardedCriteria getParentCriteria() {
+        return parent;
+    }
+
+    private ShardedSubcriteriaImpl setSubcriteriaEvent(final CriteriaEvent event) {
+        for (final Shard shard : shards) {
+            if (shardToCriteriaMap.get(shard) != null) {
+                event.onEvent(shardToCriteriaMap.get(shard));
+            } else {
+                shardToEventListMap.get(shard).add(event);
+            }
+        }
+        return this;
+    }
+
+    SubcriteriaRegistrar getSubcriteriaRegistrar(final Shard shard) {
+        return new SubcriteriaRegistrar() {
+
+            @Override
+            public void establishSubcriteria(final Criteria parentCriteria, final SubcriteriaFactory subcriteriaFactory) {
+                List<CriteriaEvent> criteriaEvents = shardToEventListMap.get(shard);
+                // create the subcrit with the proper list of events
+                Criteria newCrit = subcriteriaFactory.createSubcriteria(parentCriteria, criteriaEvents);
+                // clear the list of events
+                criteriaEvents.clear();
+                // add it to our map
+                shardToCriteriaMap.put(shard, newCrit);
+            }
+        };
+    }
+
+    Map<Shard, Criteria> getShardToCriteriaMap() {
+        return shardToCriteriaMap;
+    }
+
+    Map<Shard, List<CriteriaEvent>> getShardToEventListMap() {
+        return shardToEventListMap;
+    }
+
+    interface SubcriteriaRegistrar {
+        void establishSubcriteria(Criteria parentCriteria, SubcriteriaFactory subcriteriaFactory);
+    }
 }

@@ -26,8 +26,8 @@ import org.hibernate.shards.ShardId;
  * @author maxr@google.com (Max Ross)
  */
 public interface ShardAware {
-  
-  void setShardId(ShardId shardId);
 
-  ShardId getShardId();
+    void setShardId(ShardId shardId);
+
+    ShardId getShardId();
 }

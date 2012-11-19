@@ -22,30 +22,31 @@ import org.hibernate.Criteria;
 
 /**
  * Event that allows the maxResults of a {@link Criteria} to be set lazily.
- * @see Criteria#setMaxResults(int)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setMaxResults(int)
  */
 class SetMaxResultsEvent implements CriteriaEvent {
 
-  // the maxResults we'll set when the event fires
-  private final int maxResults;
+    // the maxResults we'll set when the event fires
+    private final int maxResults;
 
-  /**
-   * Constructs a SetMaxResultsEvent
-   *
-   * @param maxResults the maxResults we'll set on the {@link Criteria} when
-   * the event fires.
-   */
-  public SetMaxResultsEvent(int maxResults) {
-    this.maxResults = maxResults;
-  }
+    /**
+     * Constructs a SetMaxResultsEvent
+     *
+     * @param maxResults the maxResults we'll set on the {@link Criteria} when
+     *                   the event fires.
+     */
+    public SetMaxResultsEvent(final int maxResults) {
+        this.maxResults = maxResults;
+    }
 
-  public void onEvent(Criteria crit) {
-    crit.setMaxResults(maxResults);
-  }
+    @Override
+    public void onEvent(final Criteria criteria) {
+        criteria.setMaxResults(maxResults);
+    }
 
-  public int getMaxResults() {
-    return maxResults;
-  }
+    public int getMaxResults() {
+        return maxResults;
+    }
 }

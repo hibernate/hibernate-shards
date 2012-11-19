@@ -45,25 +45,24 @@ public class AggregateExitOperation implements ProjectionExitOperation {
 
         private final String aggregate;
 
-        private SupportedAggregations(String s) {
+        private SupportedAggregations(final String s) {
             this.aggregate = s;
         }
 
         public String getAggregate() {
             return aggregate;
         }
-
     }
 
-    public AggregateExitOperation(AggregateProjection projection) {
+    public AggregateExitOperation(final AggregateProjection projection) {
         /**
          * an aggregateProjection's toString returns
          * min( ..., max( ..., sum( ..., or avg( ...
          * we just care about the name of the function
          * which happens to be before the first left parenthesis
          */
-        String projectionAsString = projection.toString();
-        String aggregateName = projectionAsString.substring(0, projectionAsString.indexOf("("));
+        final String projectionAsString = projection.toString();
+        final String aggregateName = projectionAsString.substring(0, projectionAsString.indexOf("("));
         this.fieldName = projectionAsString.substring(projectionAsString.indexOf("(") + 1, projectionAsString.indexOf(")"));
         try {
             this.aggregate = SupportedAggregations.valueOf(aggregateName.toUpperCase());
@@ -73,9 +72,10 @@ public class AggregateExitOperation implements ProjectionExitOperation {
         }
     }
 
-    public List<Object> apply(List<Object> results) {
+    @Override
+    public List<Object> apply(final List<Object> results) {
 
-        List<Object> nonNullResults = ExitOperationUtils.getNonNullList(results);
+        final List<Object> nonNullResults = ExitOperationUtils.getNonNullList(results);
 
         switch (aggregate) {
             case MAX:
@@ -90,17 +90,21 @@ public class AggregateExitOperation implements ProjectionExitOperation {
         }
     }
 
-    private BigDecimal getSum(List<Object> results, String fieldName) {
-        BigDecimal sum = new BigDecimal(0.0);
-        for (Object obj : results) {
-            Number num = getNumber(obj, fieldName);
-            sum = sum.add(new BigDecimal(num.toString()));
+    private BigDecimal getSum(final List<Object> results, final String fieldName) {
+        BigDecimal sum = BigDecimal.ZERO;
+        for (final Object obj : results) {
+            if (obj instanceof Number) {
+                final Number num = (Number)obj;
+                sum = sum.add(new BigDecimal(num.toString()));
+            } else {
+                final Number num = getNumber(obj, fieldName);
+                sum = sum.add(new BigDecimal(num.toString()));
+            }
         }
         return sum;
     }
 
-    private Number getNumber(Object obj, String fieldName) {
+    private Number getNumber(final Object obj, final String fieldName) {
         return (Number) ExitOperationUtils.getPropertyValue(obj, fieldName);
     }
-
 }

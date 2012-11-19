@@ -18,43 +18,45 @@
 
 package org.hibernate.shards.criteria;
 
-import junit.framework.TestCase;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author maxr@google.com (Max Ross)
  */
-public class CreateAliasEventTest extends TestCase {
+public class CreateAliasEventTest {
 
-  public void testOnOpenSession() {
-    CreateAliasEvent event = new CreateAliasEvent(null, null);
-    final boolean[] called = {false};
-    Criteria crit = new CriteriaDefaultMock() {
-      @Override
-      public Criteria createAlias(String associationPath, String alias)
-          throws HibernateException {
-        called[0] = true;
-        return null;
-      }
-    };
-    event.onEvent(crit);
-    assertTrue(called[0]);
-  }
+    @Test
+    public void testOnOpenSession() {
+        final CreateAliasEvent event = new CreateAliasEvent(null, null);
+        final boolean[] called = {false};
+        final Criteria crit = new CriteriaDefaultMock() {
+            @Override
+            public Criteria createAlias(String associationPath, String alias) throws HibernateException {
+                called[0] = true;
+                return null;
+            }
+        };
+        event.onEvent(crit);
+        Assert.assertTrue(called[0]);
+    }
 
-  public void testOnOpenSessionWithJoinType() {
-    CreateAliasEvent event = new CreateAliasEvent(null, null, 0);
-    final boolean[] called = {false};
-    Criteria crit = new CriteriaDefaultMock() {
-      @Override
-      public Criteria createAlias(String associationPath, String alias,
-          int joinType) throws HibernateException {
-        called[0] = true;
-        return null;
-      }
-    };
-    event.onEvent(crit);
-    assertTrue(called[0]);
-  }
+    @Test
+    public void testOnOpenSessionWithJoinType() {
+        final CreateAliasEvent event = new CreateAliasEvent(null, null, 0);
+        final boolean[] called = {false};
+        final Criteria crit = new CriteriaDefaultMock() {
+            @Override
+            public Criteria createAlias(final String associationPath, final String alias,
+                                        final int joinType) throws HibernateException {
+                called[0] = true;
+                return null;
+            }
+        };
+        event.onEvent(crit);
+        Assert.assertTrue(called[0]);
+    }
 }

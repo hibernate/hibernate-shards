@@ -148,7 +148,7 @@ public class InterceptorBehaviorPermutedIntegrationTest extends BaseShardingInte
         // this is how we know we were getting different interceptors
         // for each shard
         Assert.assertEquals(getNumDatabases(), calls[0]);
-        for (Interceptor interceptor : interceptors) {
+        for (final Interceptor interceptor : interceptors) {
             Assert.assertTrue(((MyInterceptor) interceptor).wasCalled[0]);
         }
     }

@@ -18,7 +18,6 @@
 package org.hibernate.shards.criteria;
 
 import junit.framework.TestCase;
-
 import org.hibernate.Criteria;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.shards.Shard;
@@ -34,115 +33,120 @@ import java.util.List;
  */
 public class ShardedCriteriaImplTest extends TestCase {
 
-  public void testSetFirstResultAfterMaxResult() {
-    CriteriaId id = new CriteriaId(0);
-    final List<CriteriaEvent> events = Lists.newArrayList();
-    Shard shard = new ShardDefaultMock() {
-      @Override
-      public SessionFactoryImplementor getSessionFactoryImplementor() {
-        return null;
-      }
-      @Override
-      public Criteria getCriteriaById(CriteriaId id) {
-        return null;
-      }
-      public void addCriteriaEvent(CriteriaId id, CriteriaEvent event) {
-        events.add(event);
-      }
-    };
-    List<Shard> shards = Lists.newArrayList(shard);
-    CriteriaFactory cf = new CriteriaFactoryDefaultMock();
-    ShardAccessStrategy sas = new ShardAccessStrategyDefaultMock();
-    ShardedCriteriaImpl crit = new ShardedCriteriaImpl(id, shards, cf, sas);
-    crit.setMaxResults(2);
-    assertEquals(2, crit.criteriaCollector.getMaxResults().intValue());
-    assertNull(crit.criteriaCollector.getFirstResult());
-    assertEquals(1, events.size());
-    assertEquals(2, ((SetMaxResultsEvent)events.get(0)).getMaxResults());
+    public void testSetFirstResultAfterMaxResult() {
+        CriteriaId id = new CriteriaId(0);
+        final List<CriteriaEvent> events = Lists.newArrayList();
+        Shard shard = new ShardDefaultMock() {
+            @Override
+            public SessionFactoryImplementor getSessionFactoryImplementor() {
+                return null;
+            }
 
-    crit.setMaxResults(5);
-    assertEquals(5, crit.criteriaCollector.getMaxResults().intValue());
-    assertNull(crit.criteriaCollector.getFirstResult());
-    assertEquals(2, events.size());
-    assertEquals(2, ((SetMaxResultsEvent)events.get(0)).getMaxResults());
-    assertEquals(5, ((SetMaxResultsEvent)events.get(1)).getMaxResults());
+            @Override
+            public Criteria getCriteriaById(CriteriaId id) {
+                return null;
+            }
 
-    crit.setFirstResult(2);
-    assertEquals(5, crit.criteriaCollector.getMaxResults().intValue());
-    assertEquals(2, crit.criteriaCollector.getFirstResult().intValue());
-    assertEquals(3, events.size());
-    assertEquals(2, ((SetMaxResultsEvent)events.get(0)).getMaxResults());
-    assertEquals(5, ((SetMaxResultsEvent)events.get(1)).getMaxResults());
-    assertEquals(7, ((SetMaxResultsEvent)events.get(2)).getMaxResults());
+            public void addCriteriaEvent(CriteriaId id, CriteriaEvent event) {
+                events.add(event);
+            }
+        };
 
-    crit.setFirstResult(2);
-    assertEquals(5, crit.criteriaCollector.getMaxResults().intValue());
-    assertEquals(2, crit.criteriaCollector.getFirstResult().intValue());
-    assertEquals(4, events.size());
-    assertEquals(2, ((SetMaxResultsEvent)events.get(0)).getMaxResults());
-    assertEquals(5, ((SetMaxResultsEvent)events.get(1)).getMaxResults());
-    assertEquals(7, ((SetMaxResultsEvent)events.get(2)).getMaxResults());
-    assertEquals(7, ((SetMaxResultsEvent)events.get(3)).getMaxResults());
+        final List<Shard> shards = Lists.newArrayList(shard);
+        final CriteriaFactory cf = new CriteriaFactoryDefaultMock();
+        final ShardAccessStrategy sas = new ShardAccessStrategyDefaultMock();
+        final ShardedCriteriaImpl crit = new ShardedCriteriaImpl(id, shards, cf, sas);
+        crit.setMaxResults(2);
+        assertEquals(2, crit.getCriteriaCollector().getMaxResults().intValue());
+        assertNull(crit.getCriteriaCollector().getFirstResult());
+        assertEquals(1, events.size());
+        assertEquals(2, ((SetMaxResultsEvent) events.get(0)).getMaxResults());
 
-    crit.setFirstResult(1);
-    assertEquals(5, crit.criteriaCollector.getMaxResults().intValue());
-    assertEquals(1, crit.criteriaCollector.getFirstResult().intValue());
-    assertEquals(5, events.size());
-    assertEquals(2, ((SetMaxResultsEvent)events.get(0)).getMaxResults());
-    assertEquals(5, ((SetMaxResultsEvent)events.get(1)).getMaxResults());
-    assertEquals(7, ((SetMaxResultsEvent)events.get(2)).getMaxResults());
-    assertEquals(7, ((SetMaxResultsEvent)events.get(3)).getMaxResults());
-    assertEquals(6, ((SetMaxResultsEvent)events.get(4)).getMaxResults());
+        crit.setMaxResults(5);
+        assertEquals(5, crit.getCriteriaCollector().getMaxResults().intValue());
+        assertNull(crit.getCriteriaCollector().getFirstResult());
+        assertEquals(2, events.size());
+        assertEquals(2, ((SetMaxResultsEvent) events.get(0)).getMaxResults());
+        assertEquals(5, ((SetMaxResultsEvent) events.get(1)).getMaxResults());
 
-    crit.setFirstResult(0);
-    assertEquals(5, crit.criteriaCollector.getMaxResults().intValue());
-    assertEquals(0, crit.criteriaCollector.getFirstResult().intValue());
-    assertEquals(6, events.size());
-    assertEquals(2, ((SetMaxResultsEvent)events.get(0)).getMaxResults());
-    assertEquals(5, ((SetMaxResultsEvent)events.get(1)).getMaxResults());
-    assertEquals(7, ((SetMaxResultsEvent)events.get(2)).getMaxResults());
-    assertEquals(7, ((SetMaxResultsEvent)events.get(3)).getMaxResults());
-    assertEquals(6, ((SetMaxResultsEvent)events.get(4)).getMaxResults());
-    assertEquals(5, ((SetMaxResultsEvent)events.get(5)).getMaxResults());
-  }
+        crit.setFirstResult(2);
+        assertEquals(5, crit.getCriteriaCollector().getMaxResults().intValue());
+        assertEquals(2, crit.getCriteriaCollector().getFirstResult().intValue());
+        assertEquals(3, events.size());
+        assertEquals(2, ((SetMaxResultsEvent) events.get(0)).getMaxResults());
+        assertEquals(5, ((SetMaxResultsEvent) events.get(1)).getMaxResults());
+        assertEquals(7, ((SetMaxResultsEvent) events.get(2)).getMaxResults());
 
-  public void testSetMaxResultAfterFirstResult() {
-    CriteriaId id = new CriteriaId(0);
-    final List<CriteriaEvent> events = Lists.newArrayList();
-    Shard shard = new ShardDefaultMock() {
-      @Override
-      public SessionFactoryImplementor getSessionFactoryImplementor() {
-        return null;
-      }
-      @Override
-      public Criteria getCriteriaById(CriteriaId id) {
-        return null;
-      }
-      public void addCriteriaEvent(CriteriaId id, CriteriaEvent event) {
-        events.add(event);
-      }
-    };
-    List<Shard> shards = Lists.newArrayList(shard);
-    CriteriaFactory cf = new CriteriaFactoryDefaultMock();
-    ShardAccessStrategy sas = new ShardAccessStrategyDefaultMock();
-    ShardedCriteriaImpl crit = new ShardedCriteriaImpl(id, shards, cf, sas);
+        crit.setFirstResult(2);
+        assertEquals(5, crit.getCriteriaCollector().getMaxResults().intValue());
+        assertEquals(2, crit.getCriteriaCollector().getFirstResult().intValue());
+        assertEquals(4, events.size());
+        assertEquals(2, ((SetMaxResultsEvent) events.get(0)).getMaxResults());
+        assertEquals(5, ((SetMaxResultsEvent) events.get(1)).getMaxResults());
+        assertEquals(7, ((SetMaxResultsEvent) events.get(2)).getMaxResults());
+        assertEquals(7, ((SetMaxResultsEvent) events.get(3)).getMaxResults());
 
-    crit.setFirstResult(3);
-    assertEquals(3, crit.criteriaCollector.getFirstResult().intValue());
-    assertNull(crit.criteriaCollector.getMaxResults());
-    assertEquals(0, events.size());
+        crit.setFirstResult(1);
+        assertEquals(5, crit.getCriteriaCollector().getMaxResults().intValue());
+        assertEquals(1, crit.getCriteriaCollector().getFirstResult().intValue());
+        assertEquals(5, events.size());
+        assertEquals(2, ((SetMaxResultsEvent) events.get(0)).getMaxResults());
+        assertEquals(5, ((SetMaxResultsEvent) events.get(1)).getMaxResults());
+        assertEquals(7, ((SetMaxResultsEvent) events.get(2)).getMaxResults());
+        assertEquals(7, ((SetMaxResultsEvent) events.get(3)).getMaxResults());
+        assertEquals(6, ((SetMaxResultsEvent) events.get(4)).getMaxResults());
 
-    crit.setFirstResult(5);
-    assertEquals(5, crit.criteriaCollector.getFirstResult().intValue());
-    assertNull(crit.criteriaCollector.getMaxResults());
-    assertEquals(0, events.size());
+        crit.setFirstResult(0);
+        assertEquals(5, crit.getCriteriaCollector().getMaxResults().intValue());
+        assertEquals(0, crit.getCriteriaCollector().getFirstResult().intValue());
+        assertEquals(6, events.size());
+        assertEquals(2, ((SetMaxResultsEvent) events.get(0)).getMaxResults());
+        assertEquals(5, ((SetMaxResultsEvent) events.get(1)).getMaxResults());
+        assertEquals(7, ((SetMaxResultsEvent) events.get(2)).getMaxResults());
+        assertEquals(7, ((SetMaxResultsEvent) events.get(3)).getMaxResults());
+        assertEquals(6, ((SetMaxResultsEvent) events.get(4)).getMaxResults());
+        assertEquals(5, ((SetMaxResultsEvent) events.get(5)).getMaxResults());
+    }
 
-    crit.setMaxResults(2);
-    crit.setMaxResults(3);
-    assertEquals(5, crit.criteriaCollector.getFirstResult().intValue());
-    assertEquals(3, crit.criteriaCollector.getMaxResults().intValue());
-    assertEquals(2, events.size());
-    assertEquals(7, ((SetMaxResultsEvent)events.get(0)).getMaxResults());
-    assertEquals(8, ((SetMaxResultsEvent)events.get(1)).getMaxResults());
-  }
+    public void testSetMaxResultAfterFirstResult() {
+        CriteriaId id = new CriteriaId(0);
+        final List<CriteriaEvent> events = Lists.newArrayList();
+        Shard shard = new ShardDefaultMock() {
+            @Override
+            public SessionFactoryImplementor getSessionFactoryImplementor() {
+                return null;
+            }
+
+            @Override
+            public Criteria getCriteriaById(CriteriaId id) {
+                return null;
+            }
+
+            public void addCriteriaEvent(CriteriaId id, CriteriaEvent event) {
+                events.add(event);
+            }
+        };
+        List<Shard> shards = Lists.newArrayList(shard);
+        CriteriaFactory cf = new CriteriaFactoryDefaultMock();
+        ShardAccessStrategy sas = new ShardAccessStrategyDefaultMock();
+        ShardedCriteriaImpl crit = new ShardedCriteriaImpl(id, shards, cf, sas);
+
+        crit.setFirstResult(3);
+        assertEquals(3, crit.getCriteriaCollector().getFirstResult().intValue());
+        assertNull(crit.getCriteriaCollector().getMaxResults());
+        assertEquals(0, events.size());
+
+        crit.setFirstResult(5);
+        assertEquals(5, crit.getCriteriaCollector().getFirstResult().intValue());
+        assertNull(crit.getCriteriaCollector().getMaxResults());
+        assertEquals(0, events.size());
+
+        crit.setMaxResults(2);
+        crit.setMaxResults(3);
+        assertEquals(5, crit.getCriteriaCollector().getFirstResult().intValue());
+        assertEquals(3, crit.getCriteriaCollector().getMaxResults().intValue());
+        assertEquals(2, events.size());
+        assertEquals(7, ((SetMaxResultsEvent) events.get(0)).getMaxResults());
+        assertEquals(8, ((SetMaxResultsEvent) events.get(1)).getMaxResults());
+    }
 }

@@ -42,16 +42,16 @@ public class InMemoryOrderBy {
      *                        parameter applies to the top level object
      * @param order           A standard Hibernate {@link Order} object.
      */
-    public InMemoryOrderBy(String associationPath, Order order) {
+    public InMemoryOrderBy(final String associationPath, final Order order) {
         this.expression = getAssociationPrefix(associationPath) + getSortingProperty(order);
         this.isAscending = isAscending(order);
     }
 
-    private static String getAssociationPrefix(String associationPath) {
+    private static String getAssociationPrefix(final String associationPath) {
         return associationPath == null ? "" : associationPath + ".";
     }
 
-    private static boolean isAscending(Order order) {
+    private static boolean isAscending(final Order order) {
         return order.toString().toUpperCase().endsWith("ASC");
     }
 
@@ -63,12 +63,12 @@ public class InMemoryOrderBy {
         return isAscending;
     }
 
-    private static String getSortingProperty(Order order) {
+    private static String getSortingProperty(final Order order) {
         /**
          * This method relies on the format that Order is using:
          * propertyName + ' ' + (ascending?"asc":"desc")
          */
-        String str = order.toString();
+        final String str = order.toString();
         return str.substring(0, str.indexOf(' '));
     }
 }

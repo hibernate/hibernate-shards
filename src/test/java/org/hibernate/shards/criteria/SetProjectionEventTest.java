@@ -18,28 +18,29 @@
 
 package org.hibernate.shards.criteria;
 
-import junit.framework.TestCase;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Projection;
 import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * @author maxr@google.com (Max Ross)
  */
-public class SetProjectionEventTest extends TestCase {
+public class SetProjectionEventTest {
 
-  public void testOnOpenSession() {
-    SetProjectionEvent event = new SetProjectionEvent(null);
-    final boolean[] called = {false};
-    Criteria crit = new CriteriaDefaultMock() {
-      @Override
-      public Criteria setProjection(Projection projection) {
-        called[0] = true;
-        return null;
-      }
-    };
-    event.onEvent(crit);
-    assertTrue(called[0]);
-  }
-
+    @Test
+    public void testOnOpenSession() {
+        SetProjectionEvent event = new SetProjectionEvent(null);
+        final boolean[] called = {false};
+        Criteria crit = new CriteriaDefaultMock() {
+            @Override
+            public Criteria setProjection(Projection projection) {
+                called[0] = true;
+                return null;
+            }
+        };
+        event.onEvent(crit);
+        Assert.assertTrue(called[0]);
+    }
 }

@@ -30,9 +30,9 @@ import java.util.List;
  */
 public class ExitOperationUtils {
 
-    public static List<Object> getNonNullList(List<Object> list) {
-        List<Object> nonNullList = Lists.newArrayList();
-        for (Object obj : list) {
+    public static List<Object> getNonNullList(final List<Object> list) {
+        final List<Object> nonNullList = Lists.newArrayList();
+        for (final Object obj : list) {
             if (obj != null) {
                 nonNullList.add(obj);
             }
@@ -41,12 +41,12 @@ public class ExitOperationUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static List<Comparable<Object>> getComparableList(List<Object> results) {
+    public static List<Comparable<Object>> getComparableList(final List<Object> results) {
         return (List<Comparable<Object>>) (List) results;
     }
 
     @SuppressWarnings("unchecked")
-    public static Comparable<Object> getPropertyValue(Object obj, String propertyName) {
+    public static Comparable<Object> getPropertyValue(final Object obj, final String propertyName) {
         /**
          * TODO(maulik) respect the client's choice in how Hibernate accesses
          * property values.  Also need to implement some caching - this gets called
@@ -61,21 +61,21 @@ public class ExitOperationUtils {
          * i.e. as they are specified in the mappings. Hence, we cannot use
          * Hibernate's EntityPersister.
          */
-
         try {
-            StringBuilder propertyPath = new StringBuilder();
+            final StringBuilder propertyPath = new StringBuilder();
             for (int i = 0; i < propertyName.length(); i++) {
-                String s = propertyName.substring(i, i + 1);
+                final String s = propertyName.substring(i, i + 1);
                 if (i == 0 || propertyName.charAt(i - 1) == '.') {
                     propertyPath.append(StringUtil.capitalize(s));
                 } else {
                     propertyPath.append(s);
                 }
             }
-            String[] methods = ("get" + propertyPath.toString().replaceAll("\\.", ".get")).split("\\.");
+
+            final String[] methods = ("get" + propertyPath.toString().replaceAll("\\.", ".get")).split("\\.");
             Object root = obj;
-            for (String method : methods) {
-                Method m = findPotentiallyPrivateMethod(root.getClass(), method);
+            for (final String method : methods) {
+                final Method m = findPotentiallyPrivateMethod(root.getClass(), method);
                 m.setAccessible(true);
                 root = m.invoke(root);
                 if (root == null) {

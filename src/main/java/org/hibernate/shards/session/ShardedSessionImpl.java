@@ -57,6 +57,7 @@ import org.hibernate.shards.query.ExitOperationsQueryCollector;
 import org.hibernate.shards.query.NamedQueryFactoryImpl;
 import org.hibernate.shards.query.QueryId;
 import org.hibernate.shards.query.ShardedQueryImpl;
+import org.hibernate.shards.query.ShardedSQLQueryImpl;
 import org.hibernate.shards.stat.ShardedSessionStatistics;
 import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.exit.FirstNonNullResultExitStrategy;
@@ -1237,8 +1238,11 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
      * Unsupported.  This is a scope decision, not a technical decision.
      */
     @Override
-    public SQLQuery createSQLQuery(String queryString) throws HibernateException {
-        throw new UnsupportedOperationException();
+    public SQLQuery createSQLQuery(final String queryString) throws HibernateException {
+        return new ShardedSQLQueryImpl(new QueryId(nextQueryId++),
+                shards,
+                new AdHocQueryFactoryImpl(queryString),
+                shardStrategy.getShardAccessStrategy());
     }
 
     /**
@@ -1250,7 +1254,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
      * we can just delegate this operation to that shard.
      */
     @Override
-    public Query createFilter(Object collection, String queryString) throws HibernateException {
+    public Query createFilter(final Object collection, final String queryString) throws HibernateException {
         final Shard shard = getShardForCollection(collection, shards);
         Session session;
         if (shard == null) {
@@ -1322,7 +1326,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
         // all session have same filters
         for (final Shard shard : shards) {
             if (shard.getSession() != null) {
-                Filter filter = shard.getSession().getEnabledFilter(filterName);
+                final Filter filter = shard.getSession().getEnabledFilter(filterName);
                 if (filter != null) {
                     return filter;
                 }
@@ -1677,15 +1681,14 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
             if (idGenerator instanceof ShardEncodingIdentifierGenerator) {
                 return ((ShardEncodingIdentifierGenerator) idGenerator).extractShardId(getIdentifier(obj));
             } else {
-                /*
                 // HSHARDS-64
                 final ShardResolutionStrategyData srsd = new ShardResolutionStrategyDataImpl(obj.getClass(), getIdentifier(obj));
                 final List<ShardId> shardIds = selectShardIdsFromShardResolutionStrategyData(srsd);
-                if (shardIds != null && shardIds.size() > 0) {
+                if (shardIds != null && shardIds.size() == 1) {
                     return shardIds.get(0);
                 }
                 // HSHARDS-64
-                */
+
                 // ========================
                 // TODO(tomislav): also use shard resolution strategy if it returns only 1 shard; throw this error in config instead of here
                 throw new HibernateException("Can not use virtual sharding with non-shard resolving id gen");

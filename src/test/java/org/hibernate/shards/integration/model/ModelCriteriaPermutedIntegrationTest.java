@@ -18,8 +18,6 @@
 
 package org.hibernate.shards.integration.model;
 
-import static org.junit.Assert.*;
-
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -109,8 +107,8 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 
     @Test
     public void testLoadAllBuildings() {
-        Criteria crit = session.createCriteria(Building.class);
-        List<Building> buildings = list(crit);
+        final Criteria criteria = session.createCriteria(Building.class);
+        final List<Building> buildings = list(criteria);
         Assert.assertEquals(2, buildings.size());
         Assert.assertTrue(buildings.contains(b1));
         Assert.assertTrue(buildings.contains(b2));
@@ -118,10 +116,10 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 
     @Test
     public void testLoadAllBuildingsAfterForcingEarlyInit() {
-        Criteria crit = session.createCriteria(Building.class);
+        final Criteria criteria = session.createCriteria(Building.class);
         // forces us to initialize an actual Criteria object
-        crit.getAlias();
-        List<Building> buildings = list(crit);
+        criteria.getAlias();
+        final List<Building> buildings = list(criteria);
         Assert.assertEquals(2, buildings.size());
         Assert.assertTrue(buildings.contains(b1));
         Assert.assertTrue(buildings.contains(b2));
@@ -129,27 +127,26 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 
     @Test
     public void testLoadBuildingByName() {
-        Criteria crit = session.createCriteria(Building.class);
-        crit.add(Restrictions.eq("name", "b2"));
-        Building b2Reloaded = uniqueResult(crit);
+        final Criteria criteria = session.createCriteria(Building.class);
+        criteria.add(Restrictions.eq("name", "b2"));
+        final Building b2Reloaded = uniqueResult(criteria);
         Assert.assertEquals(b2.getBuildingId(), b2Reloaded.getBuildingId());
     }
 
     @Test
     public void testLoadBuildingByNameAfterForcingEarlyInit() {
-        Criteria crit = session.createCriteria(Building.class);
-        crit.add(Restrictions.eq("name", "b2"));
+        final Criteria criteria = session.createCriteria(Building.class).add(Restrictions.eq("name", "b2"));
         // forces us to initialize an actual Criteria object
-        crit.getAlias();
-        Building b2Reloaded = uniqueResult(crit);
+        criteria.getAlias();
+        Building b2Reloaded = uniqueResult(criteria);
         Assert.assertEquals(b2.getBuildingId(), b2Reloaded.getBuildingId());
     }
 
     @Test
     public void testLoadBuildingsByLikeName() {
-        Criteria crit = session.createCriteria(Building.class);
-        crit.add(Restrictions.in("name", Lists.newArrayList("b1", "b2")));
-        List<Building> buildings = list(crit);
+        final Criteria criteria = session.createCriteria(Building.class);
+        criteria.add(Restrictions.in("name", Lists.newArrayList("b1", "b2")));
+        final List<Building> buildings = list(criteria);
         Assert.assertEquals(2, buildings.size());
         Assert.assertTrue(buildings.contains(b1));
         Assert.assertTrue(buildings.contains(b2));
@@ -157,108 +154,108 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 
     @Test
     public void testLoadHighFloors() {
-        Criteria crit = session.createCriteria(Floor.class);
-        crit.add(Restrictions.ge("number", 3));
-        List<Floor> floors = list(crit);
+        final Criteria criteria = session.createCriteria(Floor.class);
+        criteria.add(Restrictions.ge("number", 3));
+        final List<Floor> floors = list(criteria);
         Assert.assertEquals(1, floors.size());
         Assert.assertTrue(floors.contains(b1f3));
     }
 
     @Test
     public void testLoadBuildingsWithHighFloorsViaTopLevelCriteria() {
-        Criteria crit = session.createCriteria(Building.class);
-        Criteria floorCrit = crit.createCriteria("floors");
-        floorCrit.add(Restrictions.ge("number", 3));
-        List<Building> l = list(crit);
+        final Criteria criteria = session.createCriteria(Building.class);
+        final Criteria floorCriteria = criteria.createCriteria("floors");
+        floorCriteria.add(Restrictions.ge("number", 3));
+        final List<Building> l = list(criteria);
         Assert.assertEquals(1, l.size());
     }
 
     @Test
     public void testLoadBuildingsWithHighFloorsViaTopLevelCriteriaAfterForcingEarlyInitOnTopLevelCriteria() {
-        Criteria crit = session.createCriteria(Building.class);
-        Criteria floorCrit = crit.createCriteria("floors");
-        floorCrit.add(Restrictions.ge("number", 3));
+        final Criteria criteria = session.createCriteria(Building.class);
+        final Criteria floorCriteria = criteria.createCriteria("floors");
+        floorCriteria.add(Restrictions.ge("number", 3));
         // forces us to initialize an actual Criteria object
-        crit.getAlias();
-        List<Building> l = list(crit);
+        criteria.getAlias();
+        final List<Building> l = list(criteria);
         Assert.assertEquals(1, l.size());
     }
 
     @Test
     public void testLoadBuildingsWithHighFloorsViaTopLevelCriteriaAfterForcingEarlyInitOnSubcriteria() {
-        Criteria crit = session.createCriteria(Building.class);
-        Criteria floorCrit = crit.createCriteria("floors");
-        floorCrit.add(Restrictions.ge("number", 3));
+        final Criteria criteria = session.createCriteria(Building.class);
+        final Criteria floorCriteria = criteria.createCriteria("floors");
+        floorCriteria.add(Restrictions.ge("number", 3));
         // forces us to initialize an actual Criteria object
-        floorCrit.getAlias();
-        List<Building> l = list(crit);
+        floorCriteria.getAlias();
+        final List<Building> l = list(criteria);
         Assert.assertEquals(1, l.size());
     }
 
     @Test
     public void testLoadBuildingsWithHighFloorsViaSubcriteriaAfterForcingEarlyInitOnSubcriteria() {
-        Criteria crit = session.createCriteria(Building.class);
-        Criteria floorCrit = crit.createCriteria("floors");
-        floorCrit.add(Restrictions.ge("number", 3));
+        final Criteria criteria = session.createCriteria(Building.class);
+        final Criteria floorCriteria = criteria.createCriteria("floors");
+        floorCriteria.add(Restrictions.ge("number", 3));
         // forces us to initialize an actual Criteria object
-        floorCrit.getAlias();
-        List<Building> l = list(floorCrit);
+        floorCriteria.getAlias();
+        final List<Building> l = list(floorCriteria);
         Assert.assertEquals(1, l.size());
     }
 
     @Test
     public void testLoadBuildingsWithHighFloorsViaSubcriteriaAfterForcingEarlyInitOnTopLevelCriteria() {
-        Criteria crit = session.createCriteria(Building.class);
-        Criteria floorCrit = crit.createCriteria("floors");
-        floorCrit.add(Restrictions.ge("number", 3));
+        final Criteria criteria = session.createCriteria(Building.class);
+        final Criteria floorCriteria = criteria.createCriteria("floors");
+        floorCriteria.add(Restrictions.ge("number", 3));
         // forces us to initialize an actual Criteria object
-        crit.getAlias();
-        List<Building> l = list(floorCrit);
+        criteria.getAlias();
+        final List<Building> l = list(floorCriteria);
         Assert.assertEquals(1, l.size());
     }
 
     @Test
     public void testLoadBuildingsWithHighFloorsViaSubcriteria() {
-        Criteria crit = session.createCriteria(Building.class);
-        Criteria floorCrit = crit.createCriteria("floors");
-        floorCrit.add(Restrictions.ge("number", 3));
-        // note how we execute the query via the floorCrit
-        List<Building> l = list(floorCrit);
+        final Criteria criteria = session.createCriteria(Building.class);
+        final Criteria floorCriteria = criteria.createCriteria("floors");
+        floorCriteria.add(Restrictions.ge("number", 3));
+        // note how we execute the query via the floorCriteria
+        final List<Building> l = list(floorCriteria);
         Assert.assertEquals(1, l.size());
     }
 
     @Test
     public void testLoadBuildingsWithLargeOfficesViaTopLevelCriteria() {
-        Criteria crit = session.createCriteria(Building.class);
-        Criteria floorCrit = crit.createCriteria("floors");
-        Criteria officeCrit = floorCrit.createCriteria("offices");
-        officeCrit.add(Restrictions.eq("label", "LAHGE"));
-        List<Building> l = list(crit);
+        final Criteria criteria = session.createCriteria(Building.class);
+        final Criteria floorCriteria = criteria.createCriteria("floors");
+        final Criteria officeCriteria = floorCriteria.createCriteria("offices");
+        officeCriteria.add(Restrictions.eq("label", "LAHGE"));
+        final List<Building> l = list(criteria);
         Assert.assertEquals(2, l.size());
     }
 
     @Test
     public void testLoadBuildingsWithLargeOfficesViaSubcriteria() {
-        Criteria crit = session.createCriteria(Building.class);
-        Criteria floorCrit = crit.createCriteria("floors");
-        Criteria officeCrit = floorCrit.createCriteria("offices");
-        officeCrit.add(Restrictions.eq("label", "LAHGE"));
+        final Criteria criteria = session.createCriteria(Building.class);
+        final Criteria floorCriteria = criteria.createCriteria("floors");
+        Criteria officeCriteria = floorCriteria.createCriteria("offices");
+        officeCriteria.add(Restrictions.eq("label", "LAHGE"));
         // now how we execute the query via the floorcrit
-        List<Building> l = list(officeCrit);
+        final List<Building> l = list(officeCriteria);
         Assert.assertEquals(2, l.size());
     }
 
     @Test
     public void testRowCountProjection() {
-        Criteria crit = session.createCriteria(Building.class).setProjection(Projections.rowCount());
-        Criteria floorCrit = crit.createCriteria("floors");
-        Criteria officeCrit = floorCrit.createCriteria("offices");
-        officeCrit.add(Restrictions.eq("label", "LAHGE"));
+        final Criteria criteria = session.createCriteria(Building.class).setProjection(Projections.rowCount());
+        final Criteria floorCriteria = criteria.createCriteria("floors");
+        final Criteria officeCriteria = floorCriteria.createCriteria("offices");
+        officeCriteria.add(Restrictions.eq("label", "LAHGE"));
         // now how we execute the query via the floorcrit
-        List<Integer> result = list(officeCrit);
+        final List<Integer> result = list(officeCriteria);
         Assert.assertEquals(1, result.size());
         int total = 0;
-        for (int shardTotal : result) {
+        for (final int shardTotal : result) {
             total += shardTotal;
         }
         Assert.assertEquals(2, total);
@@ -266,16 +263,16 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 
     @Test
     public void testAvgProjection() {
-        Criteria crit = session.createCriteria(Floor.class).setProjection(Projections.avg("squareFeet"));
-        List<Double> result = list(crit);
+        final Criteria criteria = session.createCriteria(Floor.class).setProjection(Projections.avg("squareFeet"));
+        final List<Double> result = list(criteria);
         Assert.assertEquals(1, result.size());
         Assert.assertEquals(Double.valueOf(20.0), result.get(0));
     }
 
     @Test
     public void testMaxResults() throws Exception {
-        Criteria crit = session.createCriteria(Building.class).setMaxResults(1);
-        Assert.assertEquals(1, list(crit).size());
+        final Criteria criteria = session.createCriteria(Building.class).setMaxResults(1);
+        Assert.assertEquals(1, list(criteria).size());
     }
 
     @Test
@@ -289,10 +286,12 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
         session.save(b4);
         commitAndResetSession();
 
-        Criteria crit =
-                session.createCriteria(Building.class).addOrder(Order.desc("name")).
-                        setFirstResult(2).setMaxResults(2);
-        List<Building> buildings = list(crit);
+        final Criteria criteria = session.createCriteria(Building.class)
+                .addOrder(Order.desc("name"))
+                .setFirstResult(2)
+                .setMaxResults(2);
+
+        final List<Building> buildings = list(criteria);
         Assert.assertEquals(2, buildings.size());
         Assert.assertEquals(b3, buildings.get(0));
         Assert.assertEquals(b2, buildings.get(1));
@@ -312,11 +311,14 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
         session.save(b4);
         commitAndResetSession();
 
-        Criteria crit =
-                session.createCriteria(Building.class).addOrder(Order.desc("name")).
-                        createCriteria("floors").add(Restrictions.eq("number", 1)).
-                        setFirstResult(2).setMaxResults(2);
-        List<Building> buildings = list(crit);
+        final Criteria criteria = session.createCriteria(Building.class)
+                .addOrder(Order.desc("name"))
+                .createCriteria("floors")
+                .add(Restrictions.eq("number", 1))
+                .setFirstResult(2)
+                .setMaxResults(2);
+
+        final List<Building> buildings = list(criteria);
         Assert.assertEquals(2, buildings.size());
         Assert.assertEquals(b3, buildings.get(0));
         Assert.assertEquals(b2, buildings.get(1));
@@ -324,36 +326,43 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 
     @Test
     public void testAggregateProjection() throws Exception {
-        Criteria crit = session.createCriteria(Floor.class).setProjection(Projections.sum("number"));
-        List<Integer> l = list(crit);
+        final Criteria criteria = session.createCriteria(Floor.class).setProjection(Projections.sum("number"));
+        final List<BigDecimal> l = list(criteria);
         Assert.assertEquals(1, l.size());
-        Assert.assertEquals(new BigDecimal(7), l.get(0));
+        Assert.assertEquals(BigDecimal.valueOf(7), l.get(0));
     }
 
     @Test
     public void testMultiExitOperations() throws Exception {
         session.beginTransaction();
-        Building b = ModelDataFactory.building("Only Has Floors from 199-210");
+        final Building b = ModelDataFactory.building("Only Has Floors from 199-210");
         ModelDataFactory.floor(b, 199);
         ModelDataFactory.floor(b, 200);
         ModelDataFactory.floor(b, 201);
         session.save(b);
         session.getTransaction().commit();
         resetSession();
-        Criteria crit = session.createCriteria(Floor.class);
-        crit.addOrder(Order.asc("number")).setFirstResult(2).setMaxResults(3).setProjection(Projections.sum("number"));
-        List<Integer> l = list(crit);
-        Assert.assertEquals(1, l.size());
-        Assert.assertEquals(BigDecimal.valueOf(204), l.get(0));
+
+        final Criteria criteria = session.createCriteria(Floor.class)
+                .addOrder(Order.asc("number"))
+                .setFirstResult(2)
+                .setMaxResults(3)
+                .setProjection(Projections.sum("number"));
+        final List<BigDecimal> results = list(criteria);
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(BigDecimal.valueOf(204), results.get(0));
     }
 
     @Test
     public void testMultiOrdering() throws Exception {
-        Criteria crit = session.createCriteria(Office.class);
-        crit.addOrder(Order.asc("label")).createCriteria("floor").
-                createCriteria("building").addOrder(Order.desc("name"));
-        List<Office> listResult = list(crit);
-        List<Office> answer = Lists.newArrayList(b2f1o1, b1f3o2, b1f3o1);
+
+        final Criteria criteria = session.createCriteria(Office.class)
+                .addOrder(Order.asc("label"))
+                .createCriteria("floor")
+                .createCriteria("building")
+                .addOrder(Order.desc("name"));
+        final List<Office> listResult = list(criteria);
+        final List<Office> answer = Lists.newArrayList(b2f1o1, b1f3o2, b1f3o1);
         Assert.assertTrue(answer.equals(listResult));
     }
 

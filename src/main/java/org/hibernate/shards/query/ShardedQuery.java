@@ -24,14 +24,13 @@ import org.hibernate.Query;
  * ShardedQuery extends the Query interface to provide the ability to query
  * across shards.
  *
- * @see org.hibernate.Query
- *
  * @author Maulik Shah
+ * @see org.hibernate.Query
  */
 
 public interface ShardedQuery extends Query {
 
-  QueryId getQueryId();
+    QueryId getQueryId();
 
-  QueryFactory getQueryFactory();
+    QueryFactory getQueryFactory();
 }

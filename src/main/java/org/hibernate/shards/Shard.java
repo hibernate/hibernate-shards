@@ -128,6 +128,11 @@ public interface Shard {
     List<Object> list(QueryId queryId);
 
     /**
+     *
+     */
+    int executeUpdate(QueryId queryId);
+
+    /**
      * @see Query#uniqueResult()
      */
     Object uniqueResult(QueryId queryId);

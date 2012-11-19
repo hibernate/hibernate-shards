@@ -29,6 +29,7 @@ import org.hibernate.shards.criteria.ShardedCriteria;
 import org.hibernate.shards.query.QueryEvent;
 import org.hibernate.shards.query.QueryId;
 import org.hibernate.shards.query.ShardedQuery;
+import org.hibernate.shards.query.ShardedSQLQuery;
 import org.hibernate.shards.session.OpenSessionEvent;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Maps;
@@ -123,19 +124,23 @@ public class ShardImpl implements Shard {
         this.interceptor = interceptor;
     }
 
+    @Override
     public SessionFactoryImplementor getSessionFactoryImplementor() {
         return sessionFactory;
     }
 
+    @Override
     public Session getSession() {
         return session;
     }
 
+    @Override
     public void addOpenSessionEvent(final OpenSessionEvent event) {
         Preconditions.checkNotNull(event);
         openSessionEvents.addLast(event);
     }
 
+    @Override
     public Session establishSession() {
         // if we already have a session we just return it
         if (session == null) {
@@ -158,14 +163,17 @@ public class ShardImpl implements Shard {
         return session;
     }
 
+    @Override
     public Criteria getCriteriaById(final CriteriaId id) {
         return criteriaMap.get(id);
     }
 
+    @Override
     public void addCriteriaEvent(final CriteriaId id, final CriteriaEvent event) {
         addEventToMap(criteriaEventMap, id, event);
     }
 
+    @Override
     public Criteria establishCriteria(final ShardedCriteria shardedCriteria) {
         final CriteriaId critId = shardedCriteria.getCriteriaId();
         Criteria crit = criteriaMap.get(critId);
@@ -189,27 +197,34 @@ public class ShardImpl implements Shard {
         return crit;
     }
 
+    @Override
     public Query getQueryById(final QueryId id) {
         return queryMap.get(id);
     }
 
+    @Override
     public void addQueryEvent(final QueryId id, final QueryEvent event) {
         addEventToMap(queryEventMap, id, event);
     }
 
+    @Override
     public Query establishQuery(final ShardedQuery shardedQuery) {
         final QueryId queryId = shardedQuery.getQueryId();
         Query query = queryMap.get(queryId);
         if (query == null) {
             // Criteria does not yet exist so need to create it
-            query = shardedQuery.getQueryFactory().createQuery(establishSession());
+            if (shardedQuery instanceof ShardedSQLQuery) {
+                query = shardedQuery.getQueryFactory().createSQLQuery(establishSession());
+            } else {
+                query = shardedQuery.getQueryFactory().createQuery(establishSession());
+            }
             // add it to the map right away in case some of our events require it
             queryMap.put(queryId, query);
             // see if we have events that we need to apply to the Query
             final List<QueryEvent> events = queryEventMap.get(queryId);
             if (events != null) {
                 // we've got events, fire away
-                for (QueryEvent event : events) {
+                for (final QueryEvent event : events) {
                     event.onEvent(query);
                 }
                 // clear the list so they can't get fired again
@@ -238,7 +253,6 @@ public class ShardImpl implements Shard {
             return false;
         }
         return false;
-
     }
 
     @Override
@@ -252,19 +266,28 @@ public class ShardImpl implements Shard {
         return criteriaMap.get(criteriaId).list();
     }
 
+    @Override
     public Object uniqueResult(final CriteriaId criteriaId) {
         return criteriaMap.get(criteriaId).uniqueResult();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Object> list(final QueryId queryId) {
         return queryMap.get(queryId).list();
     }
 
+    @Override
+    public int executeUpdate(final QueryId queryId) {
+        return queryMap.get(queryId).executeUpdate();
+    }
+
+    @Override
     public Object uniqueResult(final QueryId queryId) {
         return queryMap.get(queryId).uniqueResult();
     }
 
+    @Override
     public Set<ShardId> getShardIds() {
         return shardIds;
     }

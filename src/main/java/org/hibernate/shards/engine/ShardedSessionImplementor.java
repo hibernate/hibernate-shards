@@ -39,5 +39,4 @@ public interface ShardedSessionImplementor {
      * @return list of all shards the ShardedSession is associated with
      */
     List<Shard> getShards();
-
 }
