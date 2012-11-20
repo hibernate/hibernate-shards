@@ -95,7 +95,7 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
         this.criteriaFactory = criteriaFactory;
         this.shardAccessStrategy = shardAccessStrategy;
         this.criteriaCollector = new ExitOperationsCriteriaCollector();
-        criteriaCollector.setSessionFactory(shards.get(0).getSessionFactoryImplementor());
+        this.criteriaCollector.setSessionFactory(shards.get(0).getSessionFactoryImplementor());
     }
 
     @Override
@@ -163,6 +163,13 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
     }
 
     @Override
+    public Criteria createAlias(final String associationPath, final String alias, final int joinType,
+                                final Criterion withClause) throws HibernateException {
+        final SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias, joinType, withClause);
+        return createSubcriteria(factory, associationPath);
+    }
+
+    @Override
     public Criteria createCriteria(final String associationPath) throws HibernateException {
         final SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath);
         return createSubcriteria(factory, associationPath);
@@ -184,6 +191,13 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
     public Criteria createCriteria(final String associationPath, final String alias, final int joinType)
             throws HibernateException {
         final SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias, joinType);
+        return createSubcriteria(factory, associationPath);
+    }
+
+    @Override
+    public Criteria createCriteria(final String associationPath, final String alias, final int joinType, final Criterion withClause)
+            throws HibernateException {
+        final SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias, joinType, withClause);
         return createSubcriteria(factory, associationPath);
     }
 
@@ -221,6 +235,38 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
             setMaxResults(maxResults);
         }
         return this;
+    }
+
+    @Override
+    public boolean isReadOnlyInitialized() {
+        for (final Shard shard : shards) {
+            if (shard.getCriteriaById(criteriaId) != null) {
+                if (!shard.getCriteriaById(criteriaId).isReadOnlyInitialized() ) {
+                    // any one shard is not read only, we return false as a whole
+                    return false;
+                }
+             } 
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        for (final Shard shard : shards) {
+		    final Criteria criteria = shard.getCriteriaById(criteriaId);
+            if (criteria != null) {
+                if (criteria.isReadOnlyInitialized() && !criteria.isReadOnly()) {
+                    // any one shard is not read only, we return false as a whole
+                    return false;
+                }
+             } 
+        }
+        return true;
+    }
+
+    @Override
+    public Criteria setReadOnly(final boolean readOnly) {
+        return setCriteriaEvent(new SetReadOnlyEvent(readOnly));
     }
 
     @Override

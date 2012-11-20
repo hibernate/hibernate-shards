@@ -18,7 +18,6 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import junit.framework.TestCase;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -28,28 +27,27 @@ import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.shards.defaultmock.EntityPersisterDefaultMock;
 import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
 import org.hibernate.shards.util.StringUtil;
+import org.junit.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Maulik Shah
  */
-public class ProjectionExitOperationFactoryTest extends TestCase {
+public class ProjectionExitOperationFactoryTest {
 
+    @Test(expected = IllegalArgumentException.class)
     public void testReturnedOperations() throws Exception {
-        ProjectionExitOperationFactory factory = ProjectionExitOperationFactory.getFactory();
+        final ProjectionExitOperationFactory factory = ProjectionExitOperationFactory.getFactory();
 
         assertTrue(factory.getProjectionExitOperation(Projections.rowCount(), new SessionFactoryMock()) instanceof RowCountExitOperation);
         assertTrue(factory.getProjectionExitOperation(Projections.max("foo"), new SessionFactoryMock()) instanceof AggregateExitOperation);
         assertTrue(factory.getProjectionExitOperation(Projections.min("foo"), new SessionFactoryMock()) instanceof AggregateExitOperation);
         assertTrue(factory.getProjectionExitOperation(Projections.sum("foo"), new SessionFactoryMock()) instanceof AggregateExitOperation);
-        try {
-            factory.getProjectionExitOperation(Projections.avg("foo"), new SessionFactoryMock());
-            fail("example of one that we don't yet support");
-        } catch (IllegalArgumentException e) {
-            // good
-        }
+        factory.getProjectionExitOperation(Projections.avg("foo"), new SessionFactoryMock());
     }
 
     static class SessionFactoryMock extends SessionFactoryDefaultMock {

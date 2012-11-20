@@ -41,7 +41,7 @@ class SetFetchSizeEvent implements CriteriaEvent {
     this.fetchSize = fetchSize;
   }
 
-  public void onEvent(Criteria crit) {
-    crit.setFetchSize(fetchSize);
+  public void onEvent(Criteria criteria) {
+    criteria.setFetchSize(fetchSize);
   }
 }

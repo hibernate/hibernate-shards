@@ -41,7 +41,7 @@ class SetCacheRegionEvent implements CriteriaEvent {
     this.cacheRegion = cacheRegion;
   }
 
-  public void onEvent(Criteria crit) {
-    crit.setCacheRegion(cacheRegion);
+  public void onEvent(Criteria criteria) {
+    criteria.setCacheRegion(cacheRegion);
   }
 }

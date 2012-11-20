@@ -131,7 +131,7 @@ public class SubcriteriaFactoryImplTest {
     private static final class MyCriteriaEvent implements CriteriaEvent {
         private int numOnEventCalls;
 
-        public void onEvent(Criteria crit) {
+        public void onEvent(Criteria criteria) {
             numOnEventCalls++;
         }
     }

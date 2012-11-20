@@ -80,10 +80,10 @@ public class ShardedConfiguration {
      *                               will be used to create the {@link SessionFactory} objects
      *                               that are internal to the {@link ShardedSessionFactory}.
      *                               Every {@link org.hibernate.SessionFactory} within the
-     *                               {@link org.hibernate.shards.session.ShardedSessionFactory} objects created by the ShardedConfiguration
-     *                               will look the same, except for properties that we consider to be "variable" (they can
-     *                               vary from shard to shard).  The variable properties are defined by the
-     *                               {@link ShardedConfiguration} interface.
+     *                               {@link org.hibernate.shards.session.ShardedSessionFactory} objects created by the
+     *                               {@link ShardedConfiguration} will look the same, except for properties that we
+     *                               consider to be "variable" (they can vary from shard to shard).
+     *                               The variable properties are defined by the {@link ShardedConfiguration} interface.
      * @param shardConfigs           Shard-specific configuration data for each shard.
      * @param shardStrategyFactory   factory that knows how to create the right type of shard strategy
      */
@@ -98,13 +98,13 @@ public class ShardedConfiguration {
      * Constructs a ShardedConfiguration.
      *
      * @param prototypeConfiguration The prototype for all shardConfigs that
-     *                               will be used to create the {@link org.hibernate.SessionFactory} objects
-     *                               that are internal to the {@link org.hibernate.shards.session.ShardedSessionFactory}.
+     *                               will be used to create the {@link SessionFactory} objects
+     *                               that are internal to the {@link ShardedSessionFactory}.
      *                               Every {@link org.hibernate.SessionFactory} within the
-     *                               {@link org.hibernate.shards.session.ShardedSessionFactory} objects created by the ShardedConfiguration
-     *                               will look the same, except for properties that we consider to be "variable" (they can
-     *                               vary from shard to shard).  The variable properties are defined by the
-     *                               {@link ShardedConfiguration} interface.
+     *                               {@link org.hibernate.shards.session.ShardedSessionFactory} objects created by the
+     *                               {@link ShardedConfiguration} will look the same, except for properties that we
+     *                               consider to be "variable" (they can vary from shard to shard).
+     *                               The variable properties are defined by the {@link ShardedConfiguration} interface.
      * @param shardConfigs           Shard-specific configuration data for each shard.
      * @param shardStrategyFactory   factory that knows how to create the right kind of shard strategy
      * @param virtualShardToShardMap A map that maps virtual shard ids to real
@@ -114,16 +114,12 @@ public class ShardedConfiguration {
                                 final ShardStrategyFactory shardStrategyFactory,
                                 final Map<Integer, Integer> virtualShardToShardMap) {
 
-        Preconditions.checkNotNull(prototypeConfiguration);
-        Preconditions.checkNotNull(shardConfigs);
+        this.prototypeConfiguration = Preconditions.checkNotNull(prototypeConfiguration);
+        this.shardConfigs = Preconditions.checkNotNull(shardConfigs);
         Preconditions.checkArgument(!shardConfigs.isEmpty());
-        Preconditions.checkNotNull(shardStrategyFactory);
-        Preconditions.checkNotNull(virtualShardToShardMap);
+        this.shardStrategyFactory = Preconditions.checkNotNull(shardStrategyFactory);
+        this.virtualShardToShardMap = Preconditions.checkNotNull(virtualShardToShardMap);
 
-        this.prototypeConfiguration = prototypeConfiguration;
-        this.shardConfigs = shardConfigs;
-        this.shardStrategyFactory = shardStrategyFactory;
-        this.virtualShardToShardMap = virtualShardToShardMap;
         if (!virtualShardToShardMap.isEmpty()) {
             // build the map from shard to set of virtual shards
             shardToVirtualShardIdMap = Maps.newHashMap();
@@ -140,6 +136,9 @@ public class ShardedConfiguration {
         } else {
             shardToVirtualShardIdMap = Maps.newHashMap();
         }
+
+        // Initializes the mapping configuration.
+        this.prototypeConfiguration.buildMappings();
     }
 
     /**
@@ -193,13 +192,13 @@ public class ShardedConfiguration {
      * @return the Set of mapped classes that don't support top level saves
      */
     @SuppressWarnings("unchecked")
-    private Set<Class<?>> determineClassesWithoutTopLevelSaveSupport(final Configuration config) {
+    private Set<Class<?>> determineClassesWithoutTopLevelSaveSupport(final Configuration prototypeConfig) {
         final Set<Class<?>> classesWithoutTopLevelSaveSupport = Sets.newHashSet();
-        for (final Iterator<PersistentClass> pcIter = config.getClassMappings(); pcIter.hasNext(); ) {
+        for (final Iterator<PersistentClass> pcIter = prototypeConfig.getClassMappings(); pcIter.hasNext(); ) {
             final PersistentClass pc = pcIter.next();
             for (final Iterator<Property> propIter = pc.getPropertyIterator(); propIter.hasNext(); ) {
                 if (doesNotSupportTopLevelSave(propIter.next())) {
-                    Class<?> mappedClass = pc.getMappedClass();
+                    final Class<?> mappedClass = pc.getMappedClass();
                     log.info(String.format("Class %s does not support top-level saves.", mappedClass.getName()));
                     classesWithoutTopLevelSaveSupport.add(mappedClass);
                     break;

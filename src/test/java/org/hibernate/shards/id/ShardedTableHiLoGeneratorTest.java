@@ -27,6 +27,8 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.Transaction;
 import org.hibernate.collection.PersistentCollection;
 import org.hibernate.engine.EntityKey;
+import org.hibernate.engine.LoadQueryInfluencers;
+import org.hibernate.engine.NonFlushedChanges;
 import org.hibernate.engine.PersistenceContext;
 import org.hibernate.engine.QueryParameters;
 import org.hibernate.engine.SessionFactoryImplementor;
@@ -54,220 +56,271 @@ import java.util.Map;
  */
 public class ShardedTableHiLoGeneratorTest extends TestCase {
 
-  public void testGenerate() {
-    final SessionImplementor controlSessionToReturn = new MySession();
-    ControlSessionProvider provider = new ControlSessionProvider() {
-      public SessionImplementor openControlSession() {
-        return controlSessionToReturn;
-      }
-    };
-    final SessionImplementor session = new SessionImplementorDefaultMock();
-    ShardedTableHiLoGenerator gen = new ShardedTableHiLoGenerator() {
-      @Override
-      Serializable superGenerate(SessionImplementor controlSession, Object obj) {
-        assertSame(controlSessionToReturn, controlSession);
-        return 33;
-      }
-    };
-    gen.setControlSessionProvider(provider);
-    assertEquals(33, gen.generate(session, null));
-  }
-
-  private static final class MySession extends SessionDefaultMock implements SessionImplementor {
-
-    @Override
-    public Connection close() throws HibernateException {
-      return null;
+    public void testGenerate() {
+        final SessionImplementor controlSessionToReturn = new MySession();
+        ControlSessionProvider provider = new ControlSessionProvider() {
+            public SessionImplementor openControlSession() {
+                return controlSessionToReturn;
+            }
+        };
+        final SessionImplementor session = new SessionImplementorDefaultMock();
+        ShardedTableHiLoGenerator gen = new ShardedTableHiLoGenerator() {
+            @Override
+            Serializable superGenerate(SessionImplementor controlSession, Object obj) {
+                assertSame(controlSessionToReturn, controlSession);
+                return 33;
+            }
+        };
+        gen.setControlSessionProvider(provider);
+        assertEquals(33, gen.generate(session, null));
     }
 
-    public Interceptor getInterceptor() {
-      throw new UnsupportedOperationException();
-    }
+    private static final class MySession extends SessionDefaultMock implements SessionImplementor {
 
-    public void setAutoClear(boolean enabled) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Connection close() throws HibernateException {
+            return null;
+        }
 
-    public boolean isTransactionInProgress() {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Interceptor getInterceptor() {
+            throw new UnsupportedOperationException();
+        }
 
-    public void initializeCollection(PersistentCollection collection,
-        boolean writing) throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public void setAutoClear(boolean enabled) {
+            throw new UnsupportedOperationException();
+        }
 
-    public Object internalLoad(String entityName, Serializable id, boolean eager,
-        boolean nullable) throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public boolean isTransactionInProgress() {
+            throw new UnsupportedOperationException();
+        }
 
-    public Object immediateLoad(String entityName, Serializable id)
-        throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public void initializeCollection(PersistentCollection collection,
+                                         boolean writing) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public long getTimestamp() {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Object internalLoad(String entityName, Serializable id, boolean eager,
+                                   boolean nullable) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public SessionFactoryImplementor getFactory() {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Object immediateLoad(String entityName, Serializable id) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public Batcher getBatcher() {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public long getTimestamp() {
+            throw new UnsupportedOperationException();
+        }
 
-    public List list(String query, QueryParameters queryParameters)
-        throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public SessionFactoryImplementor getFactory() {
+            throw new UnsupportedOperationException();
+        }
 
-    public Iterator iterate(String query, QueryParameters queryParameters)
-        throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Batcher getBatcher() {
+            throw new UnsupportedOperationException();
+        }
 
-    public ScrollableResults scroll(String query, QueryParameters queryParameters)
-        throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public List list(String query, QueryParameters queryParameters) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public ScrollableResults scroll(CriteriaImpl criteria,
-        ScrollMode scrollMode) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Iterator iterate(String query, QueryParameters queryParameters) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public List list(CriteriaImpl criteria) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public ScrollableResults scroll(String query, QueryParameters queryParameters) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public List listFilter(Object collection, String filter,
-        QueryParameters queryParameters) throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public ScrollableResults scroll(CriteriaImpl criteria, ScrollMode scrollMode) {
+            throw new UnsupportedOperationException();
+        }
 
-    public Iterator iterateFilter(Object collection, String filter,
-        QueryParameters queryParameters) throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public List list(CriteriaImpl criteria) {
+            throw new UnsupportedOperationException();
+        }
 
-    public EntityPersister getEntityPersister(String entityName, Object object)
-        throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public List listFilter(Object collection, String filter, QueryParameters queryParameters) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public Object getEntityUsingInterceptor(EntityKey key)
-        throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Iterator iterateFilter(Object collection, String filter,
+                                      QueryParameters queryParameters) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public void afterTransactionCompletion(boolean successful, Transaction tx) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public EntityPersister getEntityPersister(String entityName, Object object) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public void beforeTransactionCompletion(Transaction tx) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Object getEntityUsingInterceptor(EntityKey key) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public Serializable getContextEntityIdentifier(Object object) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public void afterTransactionCompletion(boolean successful, Transaction tx) {
+            throw new UnsupportedOperationException();
+        }
 
-    public String bestGuessEntityName(Object object) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public void beforeTransactionCompletion(Transaction tx) {
+            throw new UnsupportedOperationException();
+        }
 
-    public String guessEntityName(Object entity) throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Serializable getContextEntityIdentifier(Object object) {
+            throw new UnsupportedOperationException();
+        }
 
-    public Object instantiate(String entityName, Serializable id)
-        throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public String bestGuessEntityName(Object object) {
+            throw new UnsupportedOperationException();
+        }
 
-    public List listCustomQuery(CustomQuery customQuery,
-        QueryParameters queryParameters) throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public String guessEntityName(Object entity) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public ScrollableResults scrollCustomQuery(CustomQuery customQuery,
-        QueryParameters queryParameters) throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Object instantiate(String entityName, Serializable id) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public List list(NativeSQLQuerySpecification spec,
-        QueryParameters queryParameters) throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public List listCustomQuery(CustomQuery customQuery, QueryParameters queryParameters) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public ScrollableResults scroll(NativeSQLQuerySpecification spec,
-        QueryParameters queryParameters) throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public ScrollableResults scrollCustomQuery(CustomQuery customQuery, QueryParameters queryParameters)
+                throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public Object getFilterParameterValue(String filterParameterName) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public List list(NativeSQLQuerySpecification spec, QueryParameters queryParameters) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public Type getFilterParameterType(String filterParameterName) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public ScrollableResults scroll(NativeSQLQuerySpecification spec,
+                                        QueryParameters queryParameters) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public Map getEnabledFilters() {
-      throw new UnsupportedOperationException();
-    }
+        @Deprecated
+        @Override
+        public Object getFilterParameterValue(String filterParameterName) {
+            throw new UnsupportedOperationException();
+        }
 
-    public int getDontFlushFromFind() {
-      throw new UnsupportedOperationException();
-    }
+        @Deprecated
+        @Override
+        public Type getFilterParameterType(String filterParameterName) {
+            throw new UnsupportedOperationException();
+        }
 
-    public EventListeners getListeners() {
-      throw new UnsupportedOperationException();
-    }
+        @Deprecated
+        @Override
+        public Map getEnabledFilters() {
+            throw new UnsupportedOperationException();
+        }
 
-    public PersistenceContext getPersistenceContext() {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public int getDontFlushFromFind() {
+            throw new UnsupportedOperationException();
+        }
 
-    public int executeUpdate(String query, QueryParameters queryParameters)
-        throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public EventListeners getListeners() {
+            throw new UnsupportedOperationException();
+        }
 
-    public int executeNativeUpdate(NativeSQLQuerySpecification specification,
-        QueryParameters queryParameters) throws HibernateException {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public PersistenceContext getPersistenceContext() {
+            throw new UnsupportedOperationException();
+        }
 
-    public Query getNamedSQLQuery(String name) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public int executeUpdate(String query, QueryParameters queryParameters) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public boolean isEventSource() {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public int executeNativeUpdate(NativeSQLQuerySpecification specification,
+                                       QueryParameters queryParameters) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public void afterScrollOperation() {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public NonFlushedChanges getNonFlushedChanges() throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public void setFetchProfile(String name) {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public void applyNonFlushedChanges(NonFlushedChanges nonFlushedChanges) throws HibernateException {
+            throw new UnsupportedOperationException();
+        }
 
-    public String getFetchProfile() {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public Query getNamedSQLQuery(String name) {
+            throw new UnsupportedOperationException();
+        }
 
-    public JDBCContext getJDBCContext() {
-      throw new UnsupportedOperationException();
-    }
+        @Override
+        public boolean isEventSource() {
+            throw new UnsupportedOperationException();
+        }
 
-    public boolean isClosed() {
-      throw new UnsupportedOperationException();
+        @Override
+        public void afterScrollOperation() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Deprecated
+        @Override
+        public void setFetchProfile(String name) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Deprecated
+        @Override
+        public String getFetchProfile() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public JDBCContext getJDBCContext() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public boolean isClosed() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public LoadQueryInfluencers getLoadQueryInfluencers() {
+            throw new UnsupportedOperationException();
+        }
     }
-  }
 }

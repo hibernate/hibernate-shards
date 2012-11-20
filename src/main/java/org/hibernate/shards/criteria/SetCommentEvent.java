@@ -41,7 +41,7 @@ class SetCommentEvent implements CriteriaEvent {
     this.comment = comment;
   }
 
-  public void onEvent(Criteria crit) {
-    crit.setComment(comment);
+  public void onEvent(Criteria criteria) {
+    criteria.setComment(comment);
   }
 }

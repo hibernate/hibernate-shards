@@ -50,7 +50,17 @@ public class ShardedSQLQueryImpl extends ShardedQueryImpl implements ShardedSQLQ
     }
 
     @Override
+    public FetchReturn addFetch(final String tableAlias, final String ownerTableAlias, final String joinPropertyName) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public SQLQuery addJoin(final String alias, final String path) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SQLQuery addJoin(final String tableAlias, final String ownerTableAlias, final String joinPropertyName) {
         throw new UnsupportedOperationException();
     }
 
@@ -66,6 +76,16 @@ public class ShardedSQLQueryImpl extends ShardedQueryImpl implements ShardedSQLQ
 
     @Override
     public SQLQuery addScalar(final String columnAlias, final Type type) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RootReturn addRoot(final String tableAlias, final String entityName) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RootReturn addRoot(final String tableAlias, final Class entityType) {
         throw new UnsupportedOperationException();
     }
 

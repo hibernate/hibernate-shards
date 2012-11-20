@@ -24,7 +24,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.engine.StatefulPersistenceContext;
 import org.hibernate.impl.SessionImpl;
 import org.hibernate.shards.integration.IdGenType;
-import org.hibernate.shards.integration.MemoryLeakPlugger;
 import org.hibernate.shards.integration.platform.DatabasePlatform;
 import org.hibernate.shards.integration.platform.DatabasePlatformFactory;
 import org.hibernate.shards.model.Person;
@@ -106,8 +105,6 @@ public class MemoryLeakTest {
     @After
     public void tearDown() throws Exception {
         try {
-            // TODO (ammachado) How do this with Javassist?
-            //MemoryLeakPlugger.plug((SessionImpl) session);
             session.close();
         } finally {
             sf.close();
@@ -115,7 +112,7 @@ public class MemoryLeakTest {
     }
 
     @Test
-    @Ignore
+    @Ignore("Discover a way to do memory leak test with hibernate.")
     public void testLeak() throws SQLException, ClassNotFoundException, NoSuchFieldException, IllegalAccessException,
             NoSuchMethodException, InvocationTargetException {
 
@@ -141,8 +138,5 @@ public class MemoryLeakTest {
         } finally {
             f.setAccessible(isAccessible);
         }
-
-        // TODO (ammachado) How do this with Javassist?
-        //MemoryLeakPlugger.plug((SessionImpl) session);
     }
 }

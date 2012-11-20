@@ -42,7 +42,7 @@ class SetResultTransformerEvent implements CriteriaEvent {
     this.resultTransformer = resultTransformer;
   }
 
-  public void onEvent(Criteria crit) {
-    crit.setResultTransformer(resultTransformer);
+  public void onEvent(Criteria criteria) {
+    criteria.setResultTransformer(resultTransformer);
   }
 }

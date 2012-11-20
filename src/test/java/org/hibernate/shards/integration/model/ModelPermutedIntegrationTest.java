@@ -18,10 +18,9 @@
 
 package org.hibernate.shards.integration.model;
 
-import static org.junit.Assert.*;
-
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.ReplicationMode;
 import org.hibernate.SessionFactory;
 import org.hibernate.TransactionException;
@@ -31,7 +30,6 @@ import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.shards.PermutationHelper;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
-import org.hibernate.shards.integration.MemoryLeakPlugger;
 import org.hibernate.shards.integration.Permutation;
 import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.Escalator;
@@ -41,7 +39,6 @@ import org.hibernate.shards.model.Person;
 import org.hibernate.shards.model.Tenant;
 import org.hibernate.shards.model.Window;
 import org.hibernate.shards.session.ShardedSessionFactory;
-import org.hibernate.shards.session.ShardedSessionImpl;
 import org.hibernate.shards.session.SubsetShardedSessionFactoryImpl;
 import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.ShardStrategyFactory;
@@ -69,6 +66,11 @@ import static org.hibernate.shards.integration.model.ModelDataFactory.office;
 import static org.hibernate.shards.integration.model.ModelDataFactory.person;
 import static org.hibernate.shards.integration.model.ModelDataFactory.tenant;
 import static org.hibernate.shards.integration.model.ModelDataFactory.window;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -266,7 +268,8 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
         Escalator esc = escalator(null, null);
         try {
             session.save(esc);
-            Assert.fail("expected he");
+            session.getTransaction().commit();
+            Assert.fail("expected HibernateException");
         } catch (HibernateException he) {
             // good;
         }
@@ -710,8 +713,6 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
         }
 
         // clean up memory for this new unrecorded session
-        // TODO (ammachado) How do this with Javassist?
-        //MemoryLeakPlugger.plug((ShardedSessionImpl) sessionWithParticularShards);
         sessionWithParticularShards.close();
     }
 
@@ -1052,7 +1053,7 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
     @Test
     public void testGetCurrentLockMode() {
         session.beginTransaction();
-        Building b = building("b1");
+        final Building b = building("b1");
         try {
             session.getCurrentLockMode(b);
             Assert.fail("expected he");
@@ -1068,7 +1069,7 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
         session.beginTransaction();
         Building b = building("b1");
         try {
-            session.lock(b, LockMode.READ);
+            session.buildLockRequest(LockOptions.READ).lock(b);
             Assert.fail("expected he");
         } catch (HibernateException he) {
             // good
@@ -1076,7 +1077,7 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
         session.save(b);
         commitAndResetSession();
         b = reload(b);
-        session.lock(b, LockMode.UPGRADE);
+        session.buildLockRequest(LockOptions.UPGRADE).lock(b);
         Assert.assertEquals(LockMode.UPGRADE, session.getCurrentLockMode(b));
     }
 
@@ -1114,17 +1115,17 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
         return PermutationHelper.data();
     }
 
-    private void saveBuilding(String name) {
+    private void saveBuilding(final String name) {
         session.beginTransaction();
-        Building bForShard0 = building(name);
+        final Building bForShard0 = building(name);
         session.save(bForShard0);
         session.getTransaction().commit();
         resetSession();
     }
 
-    private MyShardStrategyFactory getMyMockStrategyFactory(List<ShardId> shardIds) {
-        ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
-        MyShardStrategyFactory strategyFactoryMock = new MyShardStrategyFactory();
+    private MyShardStrategyFactory getMyMockStrategyFactory(final List<ShardId> shardIds) {
+        final ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
+        final MyShardStrategyFactory strategyFactoryMock = new MyShardStrategyFactory();
         strategyFactoryMock.shardStrategyToReturn = shardStrategyFactory.newShardStrategy(shardIds);
         return strategyFactoryMock;
     }
@@ -1135,23 +1136,22 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
         ShardStrategy shardStrategyToReturn = null;
 
         @Override
-
-        public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
+        public ShardStrategy newShardStrategy(final List<ShardId> shardIds) {
             this.shardIds = shardIds;
             return shardStrategyToReturn;
         }
     }
 
-    private void assertOnSameShard(Object... objs) {
+    private void assertOnSameShard(final Object... objs) {
         for (int i = 0; i < objs.length - 1; i++) {
             assertEquals(getShardIdForObject(objs[i]), getShardIdForObject(objs[i + 1]));
         }
     }
 
-    private void assertBuildingSubObjectsOnSameShard(Building b) {
-        List<Object> subObjects = Lists.<Object>newArrayList(b);
+    private void assertBuildingSubObjectsOnSameShard(final Building b) {
+        final List<Object> subObjects = Lists.<Object>newArrayList(b);
         subObjects.addAll(b.getFloors());
-        for (Floor f : b.getFloors()) {
+        for (final Floor f : b.getFloors()) {
             addIfNotNull(subObjects, f.getGoingUp());
             addIfNotNull(subObjects, f.getGoingDown());
             subObjects.addAll(f.getOffices());
@@ -1159,13 +1159,13 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
         subObjects.addAll(b.getElevators());
         subObjects.addAll(b.getTenants());
         subObjects.addAll(b.getTenants());
-        for (Tenant t : b.getTenants()) {
+        for (final Tenant t : b.getTenants()) {
             subObjects.addAll(t.getEmployees());
         }
         assertOnSameShard(subObjects);
     }
 
-    private void addIfNotNull(List<Object> subObjects, Object obj) {
+    private void addIfNotNull(final List<Object> subObjects, final Object obj) {
         if (obj != null) {
             subObjects.add(obj);
         }

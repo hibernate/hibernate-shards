@@ -16,26 +16,25 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
-package org.hibernate.shards.criteria;
+package org.hibernate.shards.session;
 
-import org.hibernate.Criteria;
+import org.hibernate.Session;
 
 /**
- * Event that allows a Subcriteria to be lazily added to a Criteria.
+ * OpenSessionEvent which sets specified entity's readOnly flag.
  *
  * @author maxr@google.com (Max Ross)
  */
-public class CreateSubcriteriaEvent implements CriteriaEvent {
+class SetDefaultReadOnlyOpenSessionEvent implements OpenSessionEvent {
 
-  private final SubcriteriaFactory subcriteriaFactory;
-  private final ShardedSubcriteriaImpl.SubcriteriaRegistrar subcriteriaRegistrar;
+    private final boolean readOnly;
 
-  public CreateSubcriteriaEvent(SubcriteriaFactory subcriteriaFactory, ShardedSubcriteriaImpl.SubcriteriaRegistrar subcriteriaRegistrar) {
-    this.subcriteriaFactory = subcriteriaFactory;
-    this.subcriteriaRegistrar = subcriteriaRegistrar;
-  }
+    public SetDefaultReadOnlyOpenSessionEvent(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
 
-  public void onEvent(Criteria criteria) {
-    subcriteriaRegistrar.establishSubcriteria(criteria, subcriteriaFactory);
-  }
+    @Override
+    public void onOpenSession(Session session) {
+        session.setDefaultReadOnly(readOnly);
+    }
 }

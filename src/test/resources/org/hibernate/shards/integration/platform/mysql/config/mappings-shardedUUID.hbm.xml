@@ -55,8 +55,8 @@
         <id name="escalatorId" type="big_integer">
             <generator class="org.hibernate.shards.id.ShardedUUIDGenerator"/>
         </id>
-        <one-to-one name="bottomFloor" property-ref="goingUp"/>
-        <one-to-one name="topFloor" property-ref="goingUp"/>
+        <one-to-one name="bottomFloor"/>
+        <one-to-one name="topFloor"/>
     </class>
 
     <class name="Tenant">
@@ -125,7 +125,7 @@
     </class>
 
     <class name="IdIsBaseType" table="IdIsBaseType">
-        <id name="idIsBaseTypeId" type="long">
+        <id name="idIsBaseTypeId" type="big_integer">
             <generator class="org.hibernate.shards.id.ShardedUUIDGenerator"/>
         </id>
         <property name="value" not-null="true"/>

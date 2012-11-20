@@ -37,7 +37,7 @@ class AddCriterionEvent implements CriteriaEvent {
   }
 
 
-  public void onEvent(Criteria crit) {
-    crit.add(criterion);
+  public void onEvent(Criteria criteria) {
+    criteria.add(criterion);
   }
 }

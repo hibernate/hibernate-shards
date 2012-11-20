@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
- * Implements the ExitOperationsCollector interface for Critierias
+ * Implements the ExitOperationsCollector interface for {@link org.hibernate.Criteria}s
  *
  * @author Maulik Shah
  */
@@ -56,7 +56,7 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
     // Average Projection operation applied to the Criteria
     private AggregateProjection avgProjection = null;
 
-    // Aggregate Projecton operation applied to the Criteria
+    // Aggregate Projection operation applied to the Criteria
     private AggregateProjection aggregateProjection = null;
 
     // Row Count Projection operation applied to the Criteria
@@ -134,6 +134,7 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
         return this;
     }
 
+    @Override
     public List<Object> apply(List<Object> result) {
         /**
          * Herein lies the glory
@@ -141,7 +142,7 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
          * hibernate has done as much as it can, we're going to have to deal with
          * the rest in memory.
          *
-         * The heirarchy of operations is this so far:
+         * The hierarchy of operations is this so far:
          * Distinct
          * Order
          * FirstResult
@@ -159,8 +160,7 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
         // not clear to me why we need to create an OrderExitOperation
         // are we even taking advantage of the fact that it implements the
         // ExitOperation interface?
-        final OrderExitOperation op = new OrderExitOperation(orders);
-        result = op.apply(result);
+        result = new OrderExitOperation(orders).apply(result);
 
         if (firstResult != null) {
             result = new FirstResultExitOperation(firstResult).apply(result);

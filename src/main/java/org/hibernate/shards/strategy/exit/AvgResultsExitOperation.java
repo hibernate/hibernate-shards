@@ -43,26 +43,43 @@ public class AvgResultsExitOperation implements ExitOperation {
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     public List<Object> apply(List<Object> results) {
-        List<Object> nonNullResults = ExitOperationUtils.getNonNullList(results);
+
+        final List<Object> nonNullResults = ExitOperationUtils.getNonNullList(results);
         Double total = null;
         int numResults = 0;
-        for (Object result : nonNullResults) {
+        Boolean shardAvgIsDouble = null;
+
+        for (final Object result : nonNullResults) {
+
+            // TODO: (ammachado) there must be a better way to discover the results type from the avg operation.
             /**
              * We expect all entries to be Object arrays.
-             * the first entry in the array is the average (a double)
+             * the first entry in the array is the average and
              * the second entry in the array is the number of rows that were examined
              * to arrive at the average.
+             *
+             * for properties mapped as Long, Short, Integer, or primitive integer types, a Long value is returned;
+             * for properties mapped as Float, Double, or primitive floating point types, a Double value is returned.
              */
-            Pair<Double, Integer> pair = getResultPair(result);
-            Double shardAvg = pair.first;
+            final Pair<Object, Object> pair = getResultPair(result);
+            final String shardAvgStringValue = String.valueOf(pair.first);
+            final String shardResultsStringValue = String.valueOf(pair.second);
+            final boolean shardAvgStringValueIsNull = "null".equals(shardAvgStringValue);
+
+            if (!shardAvgStringValueIsNull && shardAvgIsDouble == null) {
+                shardAvgIsDouble = pair.first instanceof Double;
+            }
+
+            final Double shardAvg = shardAvgStringValueIsNull ? null : Double.valueOf(shardAvgStringValue);
             if (shardAvg == null) {
                 // if there's no result from this shard it doesn't go into the
                 // calculation.  This is consistent with how avg is implemented
                 // in the database
                 continue;
             }
-            int shardResults = pair.second;
-            Double shardTotal = shardAvg * shardResults;
+
+            final Long shardResults = Long.valueOf(shardResultsStringValue);
+            final Double shardTotal = shardAvg * shardResults;
             if (total == null) {
                 total = shardTotal;
             } else {
@@ -70,28 +87,33 @@ public class AvgResultsExitOperation implements ExitOperation {
             }
             numResults += shardResults;
         }
+
         if (numResults == 0 || total == null) {
             return Collections.singletonList(null);
         }
-        return Collections.<Object>singletonList(total / numResults);
+
+        final Object result = shardAvgIsDouble ? Double.valueOf(String.valueOf(total / numResults))
+                : Long.valueOf(String.valueOf(total / numResults));
+
+        return Collections.singletonList(result);
     }
 
-    private Pair<Double, Integer> getResultPair(Object result) {
+    private Pair<Object, Object> getResultPair(final Object result) {
+
         if (!(result instanceof Object[])) {
-            final String msg =
-                    "Wrong type in result list.  Expected " + Object[].class +
-                            " but found " + result.getClass();
+            final String msg = "Wrong type in result list.  Expected " + Object[].class +
+                    " but found " + result.getClass();
             log.error(msg);
             throw new IllegalStateException(msg);
         }
-        Object[] resultArr = (Object[]) result;
+
+        final Object[] resultArr = (Object[]) result;
         if (resultArr.length != 2) {
-            final String msg =
-                    "Result array is wrong size.  Expected 2 " +
-                            " but found " + resultArr.length;
+            final String msg = "Result array is wrong size.  Expected 2 but found " + resultArr.length;
             log.error(msg);
             throw new IllegalStateException(msg);
         }
-        return Pair.of((Double) resultArr[0], (Integer) resultArr[1]);
+
+        return Pair.of(resultArr[0], resultArr[1]);
     }
 }

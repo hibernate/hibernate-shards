@@ -17,6 +17,8 @@
  */
 package org.hibernate.shards.model;
 
+import java.math.BigInteger;
+
 /**
  * Test class used for tests that illustrate we can handle objects with
  * ids that are base types.
@@ -25,14 +27,14 @@ package org.hibernate.shards.model;
  */
 public class IdIsBaseType {
 
-    private long idIsBaseTypeId;
+    private BigInteger idIsBaseTypeId;
     private String value;
 
-    public long getIdIsBaseTypeId() {
+    public BigInteger getIdIsBaseTypeId() {
         return idIsBaseTypeId;
     }
 
-    public void setIdIsBaseTypeId(long hasLongId) {
+    public void setIdIsBaseTypeId(BigInteger hasLongId) {
         this.idIsBaseTypeId = hasLongId;
     }
 

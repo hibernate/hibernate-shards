@@ -42,7 +42,7 @@ class SetFlushModeEvent implements CriteriaEvent {
     this.flushMode = flushMode;
   }
 
-  public void onEvent(Criteria crit) {
-    crit.setFlushMode(flushMode);
+  public void onEvent(Criteria criteria) {
+    criteria.setFlushMode(flushMode);
   }
 }

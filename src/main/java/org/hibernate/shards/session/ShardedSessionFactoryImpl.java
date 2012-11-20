@@ -18,12 +18,15 @@
 
 package org.hibernate.shards.session;
 
+import org.hibernate.Cache;
 import org.hibernate.ConnectionReleaseMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
 import org.hibernate.SessionFactory;
+import org.hibernate.SessionFactoryObserver;
 import org.hibernate.StatelessSession;
+import org.hibernate.TypeHelper;
 import org.hibernate.cache.QueryCache;
 import org.hibernate.cache.Region;
 import org.hibernate.cache.UpdateTimestampsCache;
@@ -38,9 +41,11 @@ import org.hibernate.engine.NamedSQLQueryDefinition;
 import org.hibernate.engine.ResultSetMappingDefinition;
 import org.hibernate.engine.SessionFactoryImplementor;
 import org.hibernate.engine.SessionImplementor;
+import org.hibernate.engine.profile.FetchProfile;
 import org.hibernate.engine.query.QueryPlanCache;
 import org.hibernate.exception.SQLExceptionConverter;
 import org.hibernate.id.IdentifierGenerator;
+import org.hibernate.id.factory.IdentifierGeneratorFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
@@ -57,9 +62,10 @@ import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.shards.util.Sets;
 import org.hibernate.stat.Statistics;
-import org.hibernate.stat.StatisticsImpl;
+import org.hibernate.stat.ConcurrentStatisticsImpl;
 import org.hibernate.stat.StatisticsImplementor;
 import org.hibernate.type.Type;
+import org.hibernate.type.TypeResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +77,7 @@ import java.sql.Connection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -107,7 +114,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
     private final boolean checkAllAssociatedObjectsForDifferentShards;
 
     // Statistics aggregated across all contained SessionFactories
-    private final Statistics statistics = new StatisticsImpl(this);
+    private final Statistics statistics = new ConcurrentStatisticsImpl(this);
 
     // our lovely logger
     private final Logger log = LoggerFactory.getLogger(getClass());
@@ -130,12 +137,12 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
      *                                 Flag that controls
      *                                 whether or not we do full cross-shard relationshp checking (very slow)
      */
-    public ShardedSessionFactoryImpl(
-            List<ShardId> shardIds,
-            Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
-            ShardStrategyFactory shardStrategyFactory,
-            Set<Class<?>> classesWithoutTopLevelSaveSupport,
-            boolean checkAllAssociatedObjectsForDifferentShards) {
+    public ShardedSessionFactoryImpl(final List<ShardId> shardIds,
+                                     final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
+                                     final ShardStrategyFactory shardStrategyFactory,
+                                     final Set<Class<?>> classesWithoutTopLevelSaveSupport,
+                                     final boolean checkAllAssociatedObjectsForDifferentShards) {
+
         Preconditions.checkNotNull(sessionFactoryShardIdMap);
         Preconditions.checkArgument(!sessionFactoryShardIdMap.isEmpty());
         Preconditions.checkNotNull(shardStrategyFactory);
@@ -146,15 +153,16 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
         this.fullSessionFactoryShardIdMap = sessionFactoryShardIdMap;
         this.classesWithoutTopLevelSaveSupport = Sets.newHashSet(classesWithoutTopLevelSaveSupport);
         this.checkAllAssociatedObjectsForDifferentShards = checkAllAssociatedObjectsForDifferentShards;
-        Set<ShardId> uniqueShardIds = Sets.newHashSet();
+
+        final Set<ShardId> uniqueShardIds = Sets.newHashSet();
         SessionFactoryImplementor controlSessionFactoryToSet = null;
-        for (Map.Entry<SessionFactoryImplementor, Set<ShardId>> entry : sessionFactoryShardIdMap.entrySet()) {
-            SessionFactoryImplementor implementor = entry.getKey();
+        for (final Map.Entry<SessionFactoryImplementor, Set<ShardId>> entry : sessionFactoryShardIdMap.entrySet()) {
+            final SessionFactoryImplementor implementor = entry.getKey();
             Preconditions.checkNotNull(implementor);
-            Set<ShardId> shardIdSet = entry.getValue();
+            final Set<ShardId> shardIdSet = entry.getValue();
             Preconditions.checkNotNull(shardIdSet);
             Preconditions.checkArgument(!shardIdSet.isEmpty());
-            for (ShardId shardId : shardIdSet) {
+            for (final ShardId shardId : shardIdSet) {
                 // TODO(tomislav): we should change it so we specify control shard in configuration
                 if (shardId.getId() == CONTROL_SHARD_ID) {
                     controlSessionFactoryToSet = implementor;
@@ -322,7 +330,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
     }
 
     @Override
-    public Map getAllClassMetadata() throws HibernateException {
+    public Map<String, ClassMetadata> getAllClassMetadata() throws HibernateException {
         // assumption is that all session factories are configured the same way,
         // so it doesn't matter which session factory answers this question
         return getAnyFactory().getAllClassMetadata();
@@ -373,58 +381,73 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
     }
 
     @Override
+    public Cache getCache() {
+        // assumption is that all session factories are configured the same way,
+        // so it doesn't matter which session factory answers this question
+        return getAnyFactory().getCache();
+    }
+
+    @Override
+    @Deprecated
     public void evict(final Class persistentClass) throws HibernateException {
         for (final SessionFactory sf : sessionFactories) {
-            sf.evict(persistentClass);
+            sf.getCache().evictEntityRegion(persistentClass);
         }
     }
 
     @Override
+    @Deprecated
     public void evict(final Class persistentClass, final Serializable id) throws HibernateException {
         for (final SessionFactory sf : sessionFactories) {
-            sf.evict(persistentClass, id);
+            sf.getCache().evictEntity(persistentClass, id);
         }
     }
 
     @Override
+    @Deprecated
     public void evictEntity(final String entityName) throws HibernateException {
         for (final SessionFactory sf : sessionFactories) {
-            sf.evictEntity(entityName);
+            sf.getCache().evictEntityRegion(entityName);
         }
     }
 
     @Override
+    @Deprecated
     public void evictEntity(final String entityName, final Serializable id) throws HibernateException {
         for (final SessionFactory sf : sessionFactories) {
-            sf.evictEntity(entityName, id);
+            sf.getCache().evictEntity(entityName, id);
         }
     }
 
     @Override
+    @Deprecated
     public void evictCollection(final String roleName) throws HibernateException {
         for (final SessionFactory sf : sessionFactories) {
-            sf.evictCollection(roleName);
+            sf.getCache().evictCollectionRegion(roleName);
         }
     }
 
     @Override
+    @Deprecated
     public void evictCollection(final String roleName, final Serializable id) throws HibernateException {
         for (final SessionFactory sf : sessionFactories) {
-            sf.evictCollection(roleName, id);
+            sf.getCache().evictCollection(roleName, id);
         }
     }
 
     @Override
+    @Deprecated
     public void evictQueries() throws HibernateException {
         for (final SessionFactory sf : sessionFactories) {
-            sf.evictQueries();
+            sf.getCache().evictQueryRegions();
         }
     }
 
     @Override
+    @Deprecated
     public void evictQueries(final String cacheRegion) throws HibernateException {
         for (final SessionFactory sf : sessionFactories) {
-            sf.evictQueries(cacheRegion);
+            sf.getCache().evictQueryRegion(cacheRegion);
         }
     }
 
@@ -440,6 +463,23 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
         // assumption is that all session factories are configured the same way,
         // so it doesn't matter which session factory answers this question
         return getAnyFactory().getFilterDefinition(filterName);
+    }
+
+    @Override
+    public boolean containsFetchProfileDefinition(final String name) {
+        for (final SessionFactory sf : sessionFactories) {
+            if (sf.containsFetchProfileDefinition(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public TypeHelper getTypeHelper() {
+        // assumption is that all session factories are configured the same way,
+        // so it doesn't matter which session factory answers this question
+        return getAnyFactory().getTypeHelper();
     }
 
     /**
@@ -514,6 +554,20 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
         } finally {
             super.finalize();
         }
+    }
+
+    @Override
+    public TypeResolver getTypeResolver() {
+        // assumption is that all session factories are configured the same way,
+        // so it doesn't matter which session factory answers this question
+        return getAnyFactory().getTypeResolver();
+    }
+
+    @Override
+    public Properties getProperties() {
+        // assumption is that all session factories are configured the same way,
+        // so it doesn't matter which session factory answers this question
+        return getAnyFactory().getProperties();
     }
 
     @Override
@@ -683,16 +737,23 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
     public Session openSession(final Connection connection,
                                final boolean flushBeforeCompletionEnabled,
                                final boolean autoCloseSessionEnabled,
-                               final ConnectionReleaseMode connectionReleaseMode)
-            throws HibernateException {
+                               final ConnectionReleaseMode connectionReleaseMode) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Set getCollectionRolesByEntityParticipant(final String entityName) {
+    public Set<String> getCollectionRolesByEntityParticipant(final String entityName) {
         // assumption is that all session factories are configured the same way,
         // so it doesn't matter which session factory answers this question
         return getAnyFactory().getCollectionRolesByEntityParticipant(entityName);
+    }
+
+    @Override
+    @Deprecated
+    public IdentifierGeneratorFactory getIdentifierGeneratorFactory() {
+        // assumption is that all session factories are configured the same way,
+        // so it doesn't matter which session factory answers this question
+        return getAnyFactory().getIdentifierGeneratorFactory();
     }
 
     @Override
@@ -728,6 +789,20 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
         // assumption is that all session factories are configured the same way,
         // so it doesn't matter which session factory answers this question
         return getAnyFactory().getSqlFunctionRegistry();
+    }
+
+    @Override
+    public FetchProfile getFetchProfile(String name) {
+        // assumption is that all session factories are configured the same way,
+        // so it doesn't matter which session factory answers this question
+        return getAnyFactory().getFetchProfile(name);
+    }
+
+    @Override
+    public SessionFactoryObserver getFactoryObserver() {
+        // assumption is that all session factories are configured the same way,
+        // so it doesn't matter which session factory answers this question
+        return getAnyFactory().getFactoryObserver();
     }
 }
 

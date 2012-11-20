@@ -42,7 +42,7 @@ class SetCacheableEvent implements CriteriaEvent {
     this.cacheable = cacheable;
   }
 
-  public void onEvent(Criteria crit) {
-    crit.setCacheable(cacheable);
+  public void onEvent(Criteria criteria) {
+    criteria.setCacheable(cacheable);
   }
 }

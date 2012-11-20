@@ -18,11 +18,14 @@
 
 package org.hibernate.shards.defaultmock;
 
+import org.hibernate.Cache;
 import org.hibernate.ConnectionReleaseMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
+import org.hibernate.SessionFactoryObserver;
 import org.hibernate.StatelessSession;
+import org.hibernate.TypeHelper;
 import org.hibernate.cache.QueryCache;
 import org.hibernate.cache.Region;
 import org.hibernate.cache.UpdateTimestampsCache;
@@ -36,9 +39,11 @@ import org.hibernate.engine.NamedQueryDefinition;
 import org.hibernate.engine.NamedSQLQueryDefinition;
 import org.hibernate.engine.ResultSetMappingDefinition;
 import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.profile.FetchProfile;
 import org.hibernate.engine.query.QueryPlanCache;
 import org.hibernate.exception.SQLExceptionConverter;
 import org.hibernate.id.IdentifierGenerator;
+import org.hibernate.id.factory.IdentifierGeneratorFactory;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
@@ -47,6 +52,7 @@ import org.hibernate.proxy.EntityNotFoundDelegate;
 import org.hibernate.stat.Statistics;
 import org.hibernate.stat.StatisticsImplementor;
 import org.hibernate.type.Type;
+import org.hibernate.type.TypeResolver;
 
 import javax.naming.NamingException;
 import javax.naming.Reference;
@@ -54,6 +60,7 @@ import javax.transaction.TransactionManager;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -102,7 +109,7 @@ public class SessionFactoryDefaultMock implements SessionFactoryImplementor {
     }
 
     @Override
-    public Map getAllClassMetadata() throws HibernateException {
+    public Map<String, ClassMetadata> getAllClassMetadata() throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
@@ -127,40 +134,53 @@ public class SessionFactoryDefaultMock implements SessionFactoryImplementor {
     }
 
     @Override
+    public Cache getCache() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    @Override
     public void evict(final Class persistentClass) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     @Override
     public void evict(final Class persistentClass, final Serializable id) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     @Override
     public void evictEntity(final String entityName) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     @Override
     public void evictEntity(final String entityName, final Serializable id) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     @Override
     public void evictCollection(final String roleName) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     @Override
     public void evictCollection(final String roleName, final Serializable id) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     @Override
     public void evictQueries() throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     @Override
     public void evictQueries(final String cacheRegion) throws HibernateException {
         throw new UnsupportedOperationException();
@@ -187,7 +207,27 @@ public class SessionFactoryDefaultMock implements SessionFactoryImplementor {
     }
 
     @Override
+    public boolean containsFetchProfileDefinition(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TypeHelper getTypeHelper() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Reference getReference() throws NamingException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TypeResolver getTypeResolver() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Properties getProperties() {
         throw new UnsupportedOperationException();
     }
 
@@ -320,7 +360,13 @@ public class SessionFactoryDefaultMock implements SessionFactoryImplementor {
     }
 
     @Override
-    public Set getCollectionRolesByEntityParticipant(final String entityName) {
+    public Set<String> getCollectionRolesByEntityParticipant(final String entityName) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Deprecated
+    @Override
+    public IdentifierGeneratorFactory getIdentifierGeneratorFactory() {
         throw new UnsupportedOperationException();
     }
 
@@ -346,6 +392,16 @@ public class SessionFactoryDefaultMock implements SessionFactoryImplementor {
 
     @Override
     public SQLFunctionRegistry getSqlFunctionRegistry() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public FetchProfile getFetchProfile(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SessionFactoryObserver getFactoryObserver() {
         throw new UnsupportedOperationException();
     }
 }

@@ -22,6 +22,7 @@ import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
@@ -178,6 +179,7 @@ public class ShardedQueryImpl implements ShardedQuery {
     /**
      * The implementation executes the query on each shard and concatenates the
      * results.
+     *
      * @return a list containing the concatenated results of executing the
      *         query on all shards
      * @throws HibernateException
@@ -291,6 +293,19 @@ public class ShardedQueryImpl implements ShardedQuery {
     }
 
     @Override
+    public boolean isReadOnly() {
+        for (final Shard shard : shards) {
+            if (shard.getQueryById(queryId) != null) {
+                if (!shard.getQueryById(queryId).isReadOnly()) {
+                    //any one shard is not read only, we return false as a whole
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
     public Query setReadOnly(final boolean readOnly) {
         return setQueryEvent(new SetReadOnlyEvent(readOnly));
     }
@@ -313,6 +328,11 @@ public class ShardedQueryImpl implements ShardedQuery {
     @Override
     public Query setFetchSize(final int fetchSize) {
         return setQueryEvent(new SetFetchSizeEvent(fetchSize));
+    }
+
+    @Override
+    public Query setLockOptions(final LockOptions lockOptions) {
+        return setQueryEvent(new SetLockOptionsEvent(lockOptions));
     }
 
     @Override
@@ -496,7 +516,7 @@ public class ShardedQueryImpl implements ShardedQuery {
         return setQueryEvent(new SetCharacterEvent(name, val));
     }
 
-	@Override
+    @Override
     public Query setBoolean(final String name, final boolean val) {
         return setQueryEvent(new SetBooleanEvent(name, val));
     }

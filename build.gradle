@@ -3,7 +3,7 @@ apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'uploadAuth'
-apply from: "./libraries.gradle"
+apply from: './libraries.gradle'
 
 group = 'org.hibernate'
 version = '4.0.0-SNAPSHOT'
@@ -43,14 +43,15 @@ configurations {
 
 // declare dependencies ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 dependencies {
-    // the Hibernate 3.3 based dependencies
-    compile( fileTree( 'lib' ) )
-    compile( 'org.slf4j:slf4j-api:1.5.8' )
+    compile( libraries.slf4j_api )
+    compile( 'org.hibernate:hibernate-core:3.6.10.Final' )
 
     testCompile( libraries.junit )  // may already be a transitive dep from testing
     testCompile( libraries.hsqldb )
-    testCompile( 'org.slf4j:slf4j-api:1.5.8' )
-    testRuntime( 'org.slf4j:slf4j-log4j12:1.5.8' )
+    testCompile( libraries.slf4j_api )
+    testCompile( libraries.mockito )
+    testRuntime( libraries.slf4j_log4j12 )
+    testRuntime( libraries.javassist ) // may already be a transitive dep from orm
 }
 
 // MacOS fun-ness ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -142,4 +143,15 @@ uploadArchives {
 // Configure gradlew generation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 task wrapper(type: Wrapper) {
     gradleVersion = '1.1'
+}
+
+
+idea {
+    module {
+        //if you love browsing Javadoc
+        downloadJavadoc = true
+
+        //and hate reading sources :)
+        downloadSources = true
+    }
 }

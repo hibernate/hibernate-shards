@@ -141,6 +141,12 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
     }
 
     @Override
+    public Criteria createAlias(final String associationPath, final String alias, final int joinType,
+                                final Criterion withClause) throws HibernateException {
+        return setSubcriteriaEvent(new CreateAliasEvent(associationPath, alias, joinType, withClause));
+    }
+
+    @Override
     public Criteria setResultTransformer(final ResultTransformer resultTransformer) {
         return setSubcriteriaEvent(new SetResultTransformerEvent(resultTransformer));
     }
@@ -161,6 +167,38 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
     public Criteria setFirstResult(final int firstResult) {
         parent.setFirstResult(firstResult);
         return this;
+    }
+
+    @Override
+    public boolean isReadOnlyInitialized() {
+        for (final Shard shard : shards) {
+            if (shard.getCriteriaById(parent.getCriteriaId()) != null) {
+                if (!shard.getCriteriaById(parent.getCriteriaId()).isReadOnlyInitialized() ) {
+                    // any one shard is not read only, we return false as a whole
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public boolean isReadOnly() {
+        for (final Shard shard : shards) {
+            final Criteria criteria = shard.getCriteriaById(parent.getCriteriaId());
+            if (criteria != null) {
+                if (criteria.isReadOnlyInitialized() && !criteria.isReadOnly()) {
+                    // any one shard is not read only, we return false as a whole
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public Criteria setReadOnly(boolean readOnly) {
+        return setSubcriteriaEvent(new SetReadOnlyEvent(readOnly));
     }
 
     @Override
@@ -295,6 +333,13 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
     public Criteria createCriteria(final String associationPath, final String alias, final int joinType)
             throws HibernateException {
         final SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias, joinType);
+        return createSubcriteria(factory, associationPath);
+    }
+
+    @Override
+    public Criteria createCriteria(final String associationPath, final String alias, final int joinType,
+                                   final Criterion withClause) throws HibernateException {
+        final SubcriteriaFactory factory = new SubcriteriaFactoryImpl(associationPath, alias, joinType, withClause);
         return createSubcriteria(factory, associationPath);
     }
 

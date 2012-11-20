@@ -42,7 +42,7 @@ class SetCacheModeEvent implements CriteriaEvent {
     this.cacheMode = cacheMode;
   }
 
-  public void onEvent(Criteria crit) {
-    crit.setCacheMode(cacheMode);
+  public void onEvent(Criteria criteria) {
+    criteria.setCacheMode(cacheMode);
   }
 }

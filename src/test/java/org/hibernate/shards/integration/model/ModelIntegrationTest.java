@@ -68,13 +68,9 @@ public class ModelIntegrationTest extends BaseShardingIntegrationTestCase {
         IdIsBaseType hli = new IdIsBaseType();
         session.beginTransaction();
         hli.setValue("yamma");
-        session.update(hli);
-        try {
-            session.getTransaction().commit();
-            fail("expected he");
-        } catch (HibernateException he) {
-            // good
-        }
+        session.save(hli);
+        session.getTransaction().commit();
+        session.evict(hli);
         resetSession();
         session.beginTransaction();
         session.saveOrUpdate(hli);

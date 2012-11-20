@@ -122,6 +122,7 @@ public abstract class BaseShardingIntegrationTestCase {
                 shardStrategyFactory,
                 virtualShardMap);
         sf = shardedConfig.buildShardedSessionFactory();
+
         session = openSession();
     }
 
@@ -190,8 +191,6 @@ public abstract class BaseShardingIntegrationTestCase {
     }
 
     protected void resetSession() {
-        // TODO (ammachado) How do this with Javassist?
-        //MemoryLeakPlugger.plug((ShardedSessionImpl) session);
         session.close();
         session = openSession();
     }
@@ -209,8 +208,6 @@ public abstract class BaseShardingIntegrationTestCase {
 
         try {
             if (session != null) {
-                // TODO (ammachado) How do this with Javassist?
-                //MemoryLeakPlugger.plug((ShardedSessionImpl) session);
                 session.close();
                 session = null;
             }
