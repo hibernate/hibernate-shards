@@ -290,7 +290,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
     }
 
     /**
-     * Unsupported.  This is a technical decision.  See {@link ShardedSessionFactoryImpl#openSession(Connection)}
+     * Unsupported.  This is a technical decision.  See {@code ShardedSessionFactoryImpl#openSession(Connection)}
      * for an explanation.
      */
     @Override
@@ -726,7 +726,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
     }
 
     /**
-     * Unsupported.  This is a technical decision.  See {@link ShardedSessionFactoryImpl#openSession(Connection)}
+     * Unsupported.  This is a technical decision.  See {@code ShardedSessionFactoryImpl#openSession(Connection)}
      * for an explanation.
      */
 //    @Override
@@ -805,61 +805,62 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 
 	@Override
 	public void addObserver(SessionFactoryObserver observer) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public SessionBuilderImplementor withOptions() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Map<String, EntityPersister> getEntityPersisters() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Map<String, CollectionPersister> getCollectionPersisters() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public JdbcServices getJdbcServices() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Region getNaturalIdCacheRegion(String regionName) {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public SqlExceptionHelper getSQLExceptionHelper() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public ServiceRegistryImplementor getServiceRegistry() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public CustomEntityDirtinessStrategy getCustomEntityDirtinessStrategy() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public CurrentTenantIdentifierResolver getCurrentTenantIdentifierResolver() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public SessionFactoryOptions getSessionFactoryOptions() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public StatelessSessionBuilder withStatelessOptions() {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 }
 

@@ -73,7 +73,8 @@ configurations {
 dependencies {
     compile( libraries.hibernate_orm )
     testCompile( libraries.hibernate_testing )
-    testRuntime( libraries.h2 )
+    testCompile( libraries.hsqldb )
+    testCompile( libraries.mockito )
     testRuntime( libraries.slf4j_api )
     testRuntime( libraries.slf4j_log4j12 )
     testRuntime( libraries.jcl_slf4j )

@@ -7,6 +7,7 @@ ext {
     slf4jVersion = '1.6.1'
     junitVersion = '4.11'
     h2Version = '1.2.145'
+    hsqldbVersion = '1.8.0.10'
     pressgangVersion = '3.0.0'
 
     libraries = [
@@ -27,5 +28,7 @@ ext {
             jcl:                'commons-logging:commons-logging:99.0-does-not-exist',
             //default testing DB
             h2:              "com.h2database:h2:${h2Version}",
+            hsqldb:          "org.hsqldb:hsqldb:${hsqldbVersion}",
+            mockito:         'org.mockito:mockito-core:1.9.0'
         ]
 }

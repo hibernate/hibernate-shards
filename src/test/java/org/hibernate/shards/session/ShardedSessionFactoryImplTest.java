@@ -35,6 +35,8 @@ import org.hibernate.cfg.Environment;
 import org.hibernate.cfg.Settings;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.service.ServiceRegistry;
+import org.hibernate.service.ServiceRegistryBuilder;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
 import org.hibernate.shards.strategy.ShardStrategy;
@@ -60,7 +62,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
                 Properties prop = new Properties();
                 prop.setProperty(Environment.SESSION_FACTORY_NAME, "1");
                 prop.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect");
-                return config.buildSettings(prop);
+				return config.buildSettings(prop, getServiceRegistry());
             }
 
             @Override
@@ -192,7 +194,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
                 Properties prop = new Properties();
                 prop.setProperty(Environment.SESSION_FACTORY_NAME, "1");
                 prop.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect");
-                return config.buildSettings(prop);
+				return config.buildSettings(prop, getServiceRegistry());
             }
 
             @Override
@@ -230,7 +232,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
                 Properties prop = new Properties();
                 prop.setProperty(Environment.SESSION_FACTORY_NAME, "2");
                 prop.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect");
-                return config.buildSettings(prop);
+				return config.buildSettings(prop, getServiceRegistry());
             }
 
             @Override
@@ -360,7 +362,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
                 Properties prop = new Properties();
                 prop.setProperty(Environment.SESSION_FACTORY_NAME, "1");
                 prop.setProperty(Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect");
-                return config.buildSettings(prop);
+                return config.buildSettings(prop, getServiceRegistry());
             }
 
             @Override
@@ -382,4 +384,8 @@ public class ShardedSessionFactoryImplTest extends TestCase {
             // good
         }
     }
+
+	ServiceRegistry getServiceRegistry(){
+		return new ServiceRegistryBuilder(  ).buildServiceRegistry();
+	}
 }

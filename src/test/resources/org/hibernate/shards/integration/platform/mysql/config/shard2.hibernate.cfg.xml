@@ -27,6 +27,8 @@
         <property name="connection.url">jdbc:mysql://localhost:3306/shard2</property>
         <property name="connection.username">shard_user</property>
         <property name="connection.password">shard</property>
+        <property name="hibernate.session_factory_name_is_jndi">false</property>
+
         <property name="hibernate.connection.shard_id">2</property>
         <property name="hibernate.shard.enable_cross_shard_relationship_checks">true</property>
     </session-factory>

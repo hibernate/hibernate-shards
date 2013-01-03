@@ -61,8 +61,9 @@ public class ShardImpl implements Shard {
     // the Set of shardIds is immutable, so we calculate the hashcode once up
     // front and hole on to it as an optimization
     private final int hashCode;
-
-    // the actual Session!  Will be null until someone calls establishSession()
+	/**
+	 * the actual Session!  Will be null until someone calls {@code establishSession()}
+	 */
     private Session session;
 
     // events that need to fire when the Session is opened

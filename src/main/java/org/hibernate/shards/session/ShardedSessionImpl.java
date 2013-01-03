@@ -1656,53 +1656,6 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 //        throw new UnsupportedOperationException();
 //    }
 
-	//todo impl these methods
-
-
-	@Override
-	public IdentifierLoadAccess byId(Class entityClass) {
-		return null;
-	}
-	@Override
-	public SharedSessionBuilder sessionWithOptions() {
-		return null;
-	}
-	@Override
-	public void refresh(String entityName, Object object) {
-	}
-	@Override
-	public void refresh(String entityName, Object object, LockOptions lockOptions) {
-	}
-	@Override
-	public IdentifierLoadAccess byId(String entityName) {
-		return null;
-	}
-	@Override
-	public NaturalIdLoadAccess byNaturalId(String entityName) {
-		return null;
-	}
-	@Override
-	public NaturalIdLoadAccess byNaturalId(Class entityClass) {
-		return null;
-	}
-	@Override
-	public SimpleNaturalIdLoadAccess bySimpleNaturalId(String entityName) {
-		return null;
-	}
-	@Override
-	public SimpleNaturalIdLoadAccess bySimpleNaturalId(Class entityClass) {
-		return null;
-	}
-	@Override
-	public <T> T doReturningWork(ReturningWork<T> work) throws HibernateException {
-		return null;
-	}
-	@Override
-	public String getTenantIdentifier() {
-		return null;
-	}
-	// end todo
-
 	void errorIfClosed() {
         if (closed) {
             throw new SessionException("Session is closed!");
@@ -1949,4 +1902,51 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
             session.invokeOnShardWithObject(op, object);
         }
     }
+
+	//todo impl these methods
+
+
+	@Override
+	public IdentifierLoadAccess byId(Class entityClass) {
+		return null;
+	}
+	@Override
+	public SharedSessionBuilder sessionWithOptions() {
+		return null;
+	}
+	@Override
+	public void refresh(String entityName, Object object) {
+	}
+	@Override
+	public void refresh(String entityName, Object object, LockOptions lockOptions) {
+	}
+	@Override
+	public IdentifierLoadAccess byId(String entityName) {
+		return null;
+	}
+	@Override
+	public NaturalIdLoadAccess byNaturalId(String entityName) {
+		return null;
+	}
+	@Override
+	public NaturalIdLoadAccess byNaturalId(Class entityClass) {
+		return null;
+	}
+	@Override
+	public SimpleNaturalIdLoadAccess bySimpleNaturalId(String entityName) {
+		return null;
+	}
+	@Override
+	public SimpleNaturalIdLoadAccess bySimpleNaturalId(Class entityClass) {
+		return null;
+	}
+	@Override
+	public <T> T doReturningWork(ReturningWork<T> work) throws HibernateException {
+		return null;
+	}
+	@Override
+	public String getTenantIdentifier() {
+		return null;
+	}
+	// end todo
 }
