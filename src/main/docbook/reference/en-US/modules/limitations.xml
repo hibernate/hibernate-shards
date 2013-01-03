@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter id="shards-limitations">
+    <title>Limitations</title>
+    <section id="shards-limitations-api" revision="1">
+        <title>Incomplete Implementation of Hibernate API</title>
+        <para>
+            In order to speed-up the initial release of Hibernate Shards, some
+            parts of the Hibernate API that we rarely use were left unimplemented. Of course things that
+            we rarely used are probably critical for some applications, so if we've left you out in the cold
+            we apologize. We're committed to getting the rest of the API implemented quickly. For details on which
+            methods were not implemented, please see the Javadoc for <classname>ShardedSessionImpl</classname>,
+            <classname>ShardedCriteriaImpl</classname>, and <classname>ShardedQueryImpl</classname>.
+        </para>
+    </section>
+    <section id="shards-limitations-cross-shard" revision="2">
+        <title>Cross-Shard Object Graphs</title>
+        <para>
+            Hibernate Shards does not currently support cross-shard object graphs.
+        </para>
+        <para>
+            In other words, it is illegal to create an association between objects A and B when A and B
+            live on different shards. The workaround is to define a property on A which uniquely identifies an
+            object of type B, and to use that property to load object B (remember what life was like
+            before Hibernate? Yeah, just like that.)
+        </para>
+        <para>
+            For example:
+            <programlisting>
+                --need domain for examples--
+            </programlisting>
+        </para>
+        <para>
+            In some applications your model may be constructed in such a way that it is difficult to make this kind
+            of mistake, but in some applications it may be easier. The scary thing here is that if you make this
+            mistake, Hibernate will consider the "bad" object in the list to be a new object and, assuming you have
+            cascades enabled for this relationship, it will create a new version of this object on a different shard.
+            This is trouble. In order to help prevent this sort of thing from happening we have an interceptor
+            called <classname>CrossShardRelationshipDetectingInterceptor</classname> that checks for cross-shard
+            relationships on every object that is created or saved.
+        </para>
+        <para>
+            Unfortunately there is a cost associated with using the <classname>CrossShardRelationshipDetectingInterceptor</classname>.
+            In order to determine the shard on which an associated object resides we need to fetch the object from the
+            database, so if you have lazy-loaded associations the interceptor will resolve those associations as part
+            of its checks.  This is potentially quite expensive, and may not be suitable for a production system.
+            With this in mind, we've made it easy to configure whether or not this check is performed via the
+            "hibernate.shard.enable_cross_shard_relationship_checks" property we referenced in the chapter
+            on configuration.  If this property is set to "true" a <classname>CrossShardRelationshipDetectingInterceptor</classname>
+            will be registered with every <classname>ShardedSession</classname> that is established.  Don't worry,
+            you can still register your own interceptor as well.  Our expectation is that most applications will have
+            this check enabled in their dev and qa environments and disabled in their staging, load and performance,
+            and production environments.
+        </para>
+    </section>
+    <section id="shards-limitations-txns" revision="1">
+        <title>Distributed Transactions</title>
+        <para>
+            Hibernate Shards does not provide support for distributed transactions within
+            a non-managed environment.  If your application requires
+            distributed transactions you need to plug in a transaction management implementation that supports
+            distributed transactions.
+        </para>
+    </section>
+    <section id="shards-limitations-interceptors" revision="1">
+        <title>Stateful Interceptors</title>
+        <para>
+            We've done our best to make sure that, by and large, Hibernate Core code runs just fine when using Hibernate
+            Shards. There are, unfortunately, exceptions, and one of those exceptions is when your application needs
+            to use an
+            <classname>org.hibernate.Interceptor</classname>
+            that maintains state.
+        </para>
+        <para>
+            Stateful interceptors need special handling because, under the hood, we're instantiating one
+            <classname>org.hibernate.SessionImpl</classname> per shard. If we want an
+            <classname>Interceptor</classname> associated with the
+            <classname>Session</classname>, we need to pass in whatever
+            <classname>Interceptor</classname> was provided when the
+            <classname>ShardedSession</classname> was created. If that
+            <classname>Interceptor</classname> is stateful, the
+            <classname>Interceptor</classname> state for one
+            <classname>Session</classname> will be visible in all
+            <classname>Sessions</classname>. When you consider the sorts of things that are typically done in stateful
+            <classname>Interceptors</classname> (auditing for example), you can see how this can pose a problem.
+        </para>
+        <para>
+            Our solution is to require users to provide a
+            <classname>StatefulInterceptorFactory</classname> when they establish their
+            <classname>Session</classname> objects (which are really
+            <classname>ShardedSessions</classname>).  If the provided
+            <classname>Interceptor</classname> implements this interface, Hibernate Shards will ensure that a
+            fresh instance of the type of <classname>Interceptor</classname>
+            returned by <classname>StatefulInterceptorFactory.newInstance()</classname>
+            will be passed to each <classname>Session</classname>
+            that is established under the hood.  Here's an example:
+            <programlisting><![CDATA[
+public class MyStatefulInterceptorFactory extends BaseStatefulInterceptorFactory {
+    public Interceptor newInstance() {
+        return new MyInterceptor();
+    }
+}
+]]></programlisting>
+
+        </para>
+        <para>
+            Many <classname>Interceptor</classname> implementations require a reference to the
+            <classname>Session</classname> with which they're associated. In the case of a stateful
+            <classname>Interceptor</classname>, you want your <classname>Interceptor</classname>
+            to have a reference to the real (shard-specific) <classname>Session</classname>, not the shard-aware
+            <classname>Session</classname>. In order to facilitate this, you have the choice of having the type of
+            <classname>Interceptor</classname> that is constructed by the
+            <classname>StatefulInterceptorFactory</classname> implement the
+            <classname>RequiresSession</classname> interface. If the
+            <classname>Interceptor</classname> constructed by the
+            <classname>StatefulInterceptorFactory</classname> implements this interface, Hibernate Shards will provide the
+            <classname>Interceptor</classname> with a reference to the real (shard-specific)
+            <classname>Session</classname> once the factory constructs it. This way your
+            <classname>Interceptor</classname> can safely and accurately interact with a specific shard.  Here's an example:
+            <programlisting><![CDATA[
+public class MyStatefulInterceptor implements Interceptor, RequiresSession {
+    private Session session;
+
+    public void setSession(Session session) {
+        this.session = session;
+    }
+
+    ... // Interceptor interface impl
+}
+]]></programlisting>
+        </para>
+        <para>
+            Due to the basic nature of the problem we don't expect this to change anytime soon.
+        </para>
+    </section>
+    <section id="shards-limitations-replicated-data" revision="1">
+        <title>Replicated Data</title>
+        <para>
+            Even though this is a framework for horizontal partitioning, there is almost always
+            read-only (or at least slow changing) data that lives on every shard. If you're just
+            reading these entities we don't have a problem, but if you want to associate these
+            entities with sharded entities we run into trouble. Suppose you have a Country table
+            on every shard with the exact same data, and suppose WeatherReport has a Country member.
+            How do we guarantee that the Country you associate with that WeatherReport is associated
+            with the same shard as the WeatherReport? If we get it wrong we'll end up with a cross-shard
+            relationship, and that's bad.
+        </para>
+        <para>We have a number
+            of ideas about how to make this easy to deal with but we have not yet implemented any of them.
+            In the short term, we think your best bet is to either not create object relationships between
+            sharded entities and replicated entities. In other words, just model the relationship like
+            you would if you weren't using an OR Mapping tool. We know this is clunky and annoying.
+            We'll take care of it soon.
+        </para>
+    </section>
+</chapter>

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<chapter id="shards-querying">
+    <title>Querying</title>
+    <section id="shards-querying-overview" revision="1">
+        <title>Overview</title>
+        <para>
+            Executing queries across shards can be hard.  In this chapter we'll discuss what works,
+            what doesn't, and what you can do to stay out of trouble.
+        </para>
+    </section>
+    <section id="shards-querying-criteria" revision="1">
+        <title>Criteria</title>
+        <para>
+            As we discuss in the chapter on Limitations, we do not yet have a complete implementation of the
+            Hibernate Core API.  This limitation applies to <classname>ShardedCriteriaImpl</classname>,
+            which is a shard-aware implementation of the <classname>Criteria</classname> interface.
+            In this chapter we won't go into the details of specific things that haven't been implemented.
+            Rather, we're going to discuss the types of <classname>Criteria</classname> queries that are
+            problematic in a sharded environment.
+        </para>
+        <para>
+            Simply put, queries that do sorting are trouble.  Why?  Because we can't return a properly
+            sorted list without the ability to compare any value in the list to any other value in the list,
+            and the entire list isn't available until the results of the individual queries have been
+            collected in the application tier.  The sorting needs to take place inside Hibernate Shards, and
+            in order for this to happen we require that all objects returned by a <classname>Criteria</classname>
+            query with an order-by clause implement the <classname>Comparable</classname> interface.
+            If the type of the objects you return do not implement this interface you'll receive an
+            exception.
+        </para>
+        <para>
+            Distinct clauses are trouble as well.  So much trouble, in fact, that at the moment we don't
+            even support them.  Sorry about that.
+        </para>
+        <para>
+            On the other hand, while distinct and order-by are trouble, aggregation works just fine.
+            Consider the following example:
+            <programlisting><![CDATA[
+        // fetch the average of all temperatures recorded since last thursday
+        Criteria crit = session.createCriteria(WeatherReport.class);
+        crit.add(Restrictions.gt("timestamp", lastThursday));
+        crit.setProjection(Projections.avg("temperature"));
+        return crit.list();
+            ]]></programlisting>
+            In a single-shard environment this query can be easily answered, but in a multi-shard
+            environment it's a little bit trickier.  Why?  Because just getting the average from each
+            shard isn't enough to calculate the average across all shards.  In order to calculate this
+            piece of information we need not just the average but the number of records from each shard.
+            This is exactly what we do, and the performance hit (doing an extra count as part of
+            each query) is probably negligible.
+            Now, if we wanted the median
+            we'd be in trouble (just adding the count to the query would not provide enough information
+            to perform the calculation), but at the moment <classname>Criteria</classname> doesn't expose
+            a median function so we'll deal with that if and when it becomes and issue.
+        </para>
+    </section>
+    <section id="shards-querying-hql" revision="1">
+        <title>HQL</title>
+        <para>
+            Our support for HQL is, at this point, not nearly as good as the support we have for <classname>Criteria</classname>
+            queries.  We have not yet implemented any extensions to the query parser, so we don't support
+            distinct, order-by, or aggregations.  This means you can only use HQL for very simple queries.  You're
+            probably better off staying clear of HQL in this release if you can help it.
+        </para>
+    </section>
+    <section id="shards-querying-strategy" revision="1">
+        <title>Use of Shard Strategy When Querying</title>
+        <para>
+            The only component of your shard strategy that is consulted when executing a query (<classname>Criteria</classname>
+            or HQL) is the <classname>ShardAccessStrategy</classname>.  <classname>ShardSelectionStrategy</classname>
+            is ignored because executing a query doesn't create any new records in the database.  <classname>ShardResolutionStrategy</classname>
+            is ignored because we currently assume that you always want your query executed on all shards.  If this
+            isn't the case, the best thing to do is just downcast your <classname>Session</classname> to a <classname>ShardedSession</classname>
+            and dig out the shard-specific <classname>Session</classname>s you need.  Clunky, but it works.  We'll
+            come up with a better solution for this in later releases.
+        </para>
+    </section>
+</chapter>

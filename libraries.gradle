@@ -7,11 +7,18 @@ ext {
     slf4jVersion = '1.6.1'
     junitVersion = '4.11'
     h2Version = '1.2.145'
+    pressgangVersion = '3.0.0'
 
     libraries = [
             hibernate_orm:      "org.hibernate:hibernate-core:${hibernateOrmVersion}",
-            hibernate_testing:  "org.hibernate:hibernate-testing:${hibernateOrmVersion}",
+            //logging util
             logging_processor:  'org.jboss.logging:jboss-logging-processor:1.0.0.Final',
+            //jdocbook
+            pressgang_xslt:    "org.jboss.pressgang:pressgang-xslt-ns:${pressgangVersion}",
+            pressgang_fonts:   "org.jboss.pressgang:pressgang-fonts:${pressgangVersion}",
+            pressgang_style:   "org.jboss.pressgang:pressgang-jdocbook-style:${pressgangVersion}",
+            //testing
+            hibernate_testing:  "org.hibernate:hibernate-testing:${hibernateOrmVersion}",
             //logging impl for testing
             slf4j_api:          "org.slf4j:slf4j-api:${slf4jVersion}",
             slf4j_log4j12:      "org.slf4j:slf4j-log4j12:${slf4jVersion}",

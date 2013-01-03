@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE book SYSTEM "http://docbook.org/xml/5.0/dtd/docbook.dtd" [
+        <!ENTITY % BOOK_ENTITIES SYSTEM "master.ent">
+        %BOOK_ENTITIES;
+        ]>
+<book lang="en">
+    <info>
+        <title>Hibernate Shards</title>
+        <releaseinfo>&version;</releaseinfo>
+        <productname>Hibernate Shards</productname>
+        <productnumber>&version;</productnumber>
+        <pubdate>&today;</pubdate>
+
+        <mediaobject>
+            <imageobject>
+                <imagedata fileref="images/hibernate_logo_a.png" format="PNG"/>
+            </imageobject>
+        </mediaobject>
+        <copyright>
+            <year>&copyrightYear;</year>
+            <holder>&copyrightHolder;</holder>
+        </copyright>
+        <authorgroup xmlns:xl="http://www.w3.org/1999/xlink">
+            <author>
+                <orgname><link xl:href="http://hibernate.org">The Hibernate Team</link></orgname>
+            </author>
+            <othercredit>
+                <orgname><link xl:href="http://design.jboss.org/">The JBoss Visual Design Team</link></orgname>
+            </othercredit>
+        </authorgroup>
+    </info>
+    <toc/>
+    <preface id="preface">
+        <title>Preface</title>
+        <para>
+            You can't always put all your relational data in a single relational database.
+            Sometimes you simply have too much data. Sometimes you have a distributed deployment architecture
+            (network latency between California and India might be too high to have a single database). There might
+            even be non-technical reasons (a potential customer simply won't do the deal unless her company's data lives in its
+            own db instance). Whatever your reasons, talking to multiple relational databases inevitably complicates
+            the development of your application. Hibernate Shards is a framework that is designed to encapsulate and
+            minimize this complexity by adding support for
+            <link xml:href="http://en.wikipedia.org/w/index.php?title=Partition_%28database%29&amp;oldid=99996308">
+                horizontal partitioning
+            </link>
+            on top of Hibernate Core. Simply put, we aim to provide a unified view of multiple databases via Hibernate.
+        </para>
+        <para>
+            So what's a shard? Good question. "Shard" is just another word for "segment" or "partition," but
+            it's the term of choice within Google. Hibernate Shards was originally the
+            <link xml:href="http://www.google.com/support/jobs/bin/static.py?page=about.html">20 percent project</link>
+            of a small team of Google engineers, so the project nomenclature revolved around shards from the beginning.
+            We're open sourcing what we have so far because we want the Hibernate
+            community to be able to benefit from our efforts as soon as possible, but also with the hope and expectation
+            that this community will be able to help us reach a GA release much faster than if we kept this
+            under wraps. We fully expect to find glitches in both our design and implementation, and we appreciate your
+            patience as we work through them.
+        </para>
+    </preface>
+    <xi:include href="modules/architecture.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="modules/configuration.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="modules/shardstrategy.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="modules/resharding.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="modules/querying.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+    <xi:include href="modules/limitations.xml" xmlns:xi="http://www.w3.org/2001/XInclude"/>
+
+</book>

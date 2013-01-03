@@ -24,7 +24,7 @@ on the Jira HSHARDS-123 : `git checkout -b HSHARDS-123 master`
 
 
 ## Code
-Do yo thang!
+Do yo thing!
 
 ## Commit
 

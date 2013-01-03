@@ -3,11 +3,12 @@ apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'uploadAuth'
+apply plugin: 'jdocbook'
 apply from: "./libraries.gradle"
 
 group = 'org.hibernate'
 version = '4.0.0-SNAPSHOT'
-
+buildDir = "target"
 targetCompatibility = "1.6"
 sourceCompatibility = "1.6"
 
@@ -27,6 +28,7 @@ buildscript {
     }
     dependencies {
         classpath 'org.hibernate.build.gradle:gradle-upload-auth-plugin:1.1.1'
+        classpath "org.jboss.jdocbook:gradle-jdocbook:1.2.1"
     }
 }
 
@@ -78,9 +80,44 @@ dependencies {
     testRuntime( libraries.jcl_api )
     testRuntime( libraries.jcl )
 
+    jdocbookXsl( libraries.pressgang_xslt )
+    jdocbookXsl( libraries.pressgang_fonts )
+    jdocbookStyles( libraries.pressgang_style )
+
     jbossLoggingTool( libraries.logging_processor )
 
     deployerJars( 'org.apache.maven.wagon:wagon-http:1.0' )
+}
+
+jdocbook {
+    // apply shared formatting config ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    format('html_single') {
+        finalName = "index.html"
+        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml-single.xsl"
+    }
+    format('html') {
+        finalName = "index.html"
+        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
+    }
+    reference {
+        masterSourceDocumentName = 'master.xml'
+        useRelativeImageUris = false
+    }
+}
+
+stageStyles_reference.doLast {
+    logger.lifecycle( "Staging style resources")
+    copy {
+        into project.file( "${project.buildDir}/docbook/stage/reference/images" )
+        from project.file( 'src/main/docbook/reference/en-US' )
+        include '**/images/*.png'
+        includeEmptyDirs = false
+    }
+    copy {
+        into project.file( "${project.buildDir}/docbook/stage/reference" )
+        from project.file( 'src/main/docbook/style' )
+        includeEmptyDirs = false
+    }
 }
 
 // MacOS fun-ness ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
