@@ -34,8 +34,8 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
  */
 public interface ExitOperationsCollector {
 
-  List<Object> apply(List<Object> result);
+	List<Object> apply(List<Object> result);
 
-  void setSessionFactory(SessionFactoryImplementor sessionFactoryImplementor);
+	void setSessionFactory(SessionFactoryImplementor sessionFactoryImplementor);
 
 }

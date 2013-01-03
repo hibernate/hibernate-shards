@@ -28,42 +28,43 @@ import org.hibernate.shards.session.ShardedSessionException;
  */
 public class SetBigIntegerEvent implements QueryEvent {
 
-   private static enum CtorType {
-    POSITION_VAL,
-    NAME_VAL
-  }
+	private static enum CtorType {
+		POSITION_VAL,
+		NAME_VAL
+	}
 
-  private final CtorType ctorType;
-  private final int position;
-  private final BigInteger val;
-  private final String name;
+	private final CtorType ctorType;
+	private final int position;
+	private final BigInteger val;
+	private final String name;
 
-  private SetBigIntegerEvent(CtorType ctorType, int position, BigInteger val, String name) {
-    this.ctorType = ctorType;
-    this.position = position;
-    this.val = val;
-    this.name = name;
-  }
+	private SetBigIntegerEvent(CtorType ctorType, int position, BigInteger val, String name) {
+		this.ctorType = ctorType;
+		this.position = position;
+		this.val = val;
+		this.name = name;
+	}
 
-  public SetBigIntegerEvent(int position, BigInteger val) {
-    this(CtorType.POSITION_VAL, position, val, null);
-  }
+	public SetBigIntegerEvent(int position, BigInteger val) {
+		this( CtorType.POSITION_VAL, position, val, null );
+	}
 
-  public SetBigIntegerEvent(String name, BigInteger val) {
-    this(CtorType.NAME_VAL, -1, val, name);
-  }
+	public SetBigIntegerEvent(String name, BigInteger val) {
+		this( CtorType.NAME_VAL, -1, val, name );
+	}
 
-  public void onEvent(Query query) {
-    switch(ctorType) {
-      case POSITION_VAL:
-        query.setBigInteger(position, val);
-        break;
-      case NAME_VAL:
-        query.setBigInteger(name, val);
-        break;
-      default:
-        throw new ShardedSessionException(
-            "Unknown ctor type in SetEvent: " + ctorType);
-    }
-  }
+	public void onEvent(Query query) {
+		switch ( ctorType ) {
+			case POSITION_VAL:
+				query.setBigInteger( position, val );
+				break;
+			case NAME_VAL:
+				query.setBigInteger( name, val );
+				break;
+			default:
+				throw new ShardedSessionException(
+						"Unknown ctor type in SetEvent: " + ctorType
+				);
+		}
+	}
 }

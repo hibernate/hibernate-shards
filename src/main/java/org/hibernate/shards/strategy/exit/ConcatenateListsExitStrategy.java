@@ -30,14 +30,14 @@ import org.hibernate.shards.util.Lists;
  */
 public class ConcatenateListsExitStrategy implements ExitStrategy<List<Object>> {
 
-  private final List<Object> result = Lists.newArrayList();
+	private final List<Object> result = Lists.newArrayList();
 
-  public synchronized boolean addResult(List<Object> oneResult, Shard shard) {
-    result.addAll(oneResult);
-    return false;
-  }
+	public synchronized boolean addResult(List<Object> oneResult, Shard shard) {
+		result.addAll( oneResult );
+		return false;
+	}
 
-  public List<Object> compileResults(ExitOperationsCollector exitOperationsCollector) {
-    return exitOperationsCollector.apply(result);
-  }
+	public List<Object> compileResults(ExitOperationsCollector exitOperationsCollector) {
+		return exitOperationsCollector.apply( result );
+	}
 }

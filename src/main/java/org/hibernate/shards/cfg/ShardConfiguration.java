@@ -25,44 +25,49 @@ package org.hibernate.shards.cfg;
  */
 public interface ShardConfiguration {
 
-    /**
-     * @return the url of the shard.
-     * @see org.hibernate.cfg.Environment#URL
-     */
-    String getShardUrl();
+	/**
+	 * @return the url of the shard.
+	 *
+	 * @see org.hibernate.cfg.Environment#URL
+	 */
+	String getShardUrl();
 
-    /**
-     * @return the user that will be sent to the shard for authentication
-     * @see org.hibernate.cfg.Environment#USER
-     */
-    String getShardUser();
+	/**
+	 * @return the user that will be sent to the shard for authentication
+	 *
+	 * @see org.hibernate.cfg.Environment#USER
+	 */
+	String getShardUser();
 
-    /**
-     * @return the password that will be sent to the shard for authentication
-     * @see org.hibernate.cfg.Environment#PASS
-     */
-    String getShardPassword();
+	/**
+	 * @return the password that will be sent to the shard for authentication
+	 *
+	 * @see org.hibernate.cfg.Environment#PASS
+	 */
+	String getShardPassword();
 
-    /**
-     * @return the name that the {@link org.hibernate.SessionFactory} created from
-     *         this config will have
-     */
-    String getShardSessionFactoryName();
+	/**
+	 * @return the name that the {@link org.hibernate.SessionFactory} created from
+	 *         this config will have
+	 */
+	String getShardSessionFactoryName();
 
-    /**
-     * @return unique id of the shard
-     */
-    Integer getShardId();
+	/**
+	 * @return unique id of the shard
+	 */
+	Integer getShardId();
 
-    /**
-     * @return the datasource for the shard
-     * @see org.hibernate.cfg.Environment#DATASOURCE
-     */
-    String getShardDatasource();
+	/**
+	 * @return the datasource for the shard
+	 *
+	 * @see org.hibernate.cfg.Environment#DATASOURCE
+	 */
+	String getShardDatasource();
 
-    /**
-     * @return the cache region prefix for the shard
-     * @see org.hibernate.cfg.Environment#CACHE_REGION_PREFIX
-     */
-    String getShardCacheRegionPrefix();
+	/**
+	 * @return the cache region prefix for the shard
+	 *
+	 * @see org.hibernate.cfg.Environment#CACHE_REGION_PREFIX
+	 */
+	String getShardCacheRegionPrefix();
 }

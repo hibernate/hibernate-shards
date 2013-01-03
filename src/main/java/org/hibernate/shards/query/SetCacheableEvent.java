@@ -19,19 +19,20 @@
 package org.hibernate.shards.query;
 
 import org.hibernate.Query;
+
 /**
  * @author Maulik Shah
  */
 public class SetCacheableEvent implements QueryEvent {
 
-  private final boolean cacheable;
+	private final boolean cacheable;
 
-  public SetCacheableEvent(boolean cacheable) {
-    this.cacheable = cacheable;
-  }
+	public SetCacheableEvent(boolean cacheable) {
+		this.cacheable = cacheable;
+	}
 
-  public void onEvent(Query query) {
-    query.setCacheable(cacheable);
-  }
+	public void onEvent(Query query) {
+		query.setCacheable( cacheable );
+	}
 
 }

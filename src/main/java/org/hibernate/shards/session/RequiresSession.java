@@ -28,5 +28,5 @@ import org.hibernate.Session;
  * @see StatefulInterceptorFactory
  */
 public interface RequiresSession {
-    void setSession(Session session);
+	void setSession(Session session);
 }

@@ -28,11 +28,12 @@ import org.hibernate.Session;
  */
 public interface CriteriaFactory {
 
-  /**
-   * Create a {@link Criteria} for the given {@link Session}
-   *
-   * @param session the {@link Session}  to be used when creating the {@link Criteria}
-   * @return a {@link Criteria} associated with the given {@link Session}
-   */
-  Criteria createCriteria(Session session);
+	/**
+	 * Create a {@link Criteria} for the given {@link Session}
+	 *
+	 * @param session the {@link Session}  to be used when creating the {@link Criteria}
+	 *
+	 * @return a {@link Criteria} associated with the given {@link Session}
+	 */
+	Criteria createCriteria(Session session);
 }

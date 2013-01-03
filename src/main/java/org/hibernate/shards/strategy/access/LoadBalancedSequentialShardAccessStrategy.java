@@ -40,14 +40,14 @@ import org.hibernate.shards.util.Iterables;
  */
 public class LoadBalancedSequentialShardAccessStrategy extends SequentialShardAccessStrategy {
 
-    private final Random rand;
+	private final Random rand;
 
-    public LoadBalancedSequentialShardAccessStrategy() {
-        this.rand = new Random(System.currentTimeMillis());
-    }
+	public LoadBalancedSequentialShardAccessStrategy() {
+		this.rand = new Random( System.currentTimeMillis() );
+	}
 
-    @Override
-    protected Iterable<Shard> getNextOrderingOfShards(final List<Shard> shards) {
-        return Iterables.rotate(shards, rand.nextInt() % shards.size());
-    }
+	@Override
+	protected Iterable<Shard> getNextOrderingOfShards(final List<Shard> shards) {
+		return Iterables.rotate( shards, rand.nextInt() % shards.size() );
+	}
 }

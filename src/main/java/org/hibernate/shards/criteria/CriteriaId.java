@@ -19,51 +19,51 @@
 package org.hibernate.shards.criteria;
 
 /**
- * Uniquely identifies a {@link ShardedCriteria} 
+ * Uniquely identifies a {@link ShardedCriteria}
  *
  * @author maxr@google.com (Max Ross)
  */
 public class CriteriaId {
 
-  // the actual id
-  private final int id;
+	// the actual id
+	private final int id;
 
-  /**
-   * Construct a CriteriaId
-   *
-   * @param id the int representation of the id
-   */
-  public CriteriaId(int id) {
-    this.id = id;
-  }
+	/**
+	 * Construct a CriteriaId
+	 *
+	 * @param id the int representation of the id
+	 */
+	public CriteriaId(int id) {
+		this.id = id;
+	}
 
-  /**
-   * @return the int representation
-   */
-  public int getId() {
-    return id;
-  }
+	/**
+	 * @return the int representation
+	 */
+	public int getId() {
+		return id;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof CriteriaId)) {
-      return false;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( !( o instanceof CriteriaId ) ) {
+			return false;
+		}
 
-    final CriteriaId criteriaId = (CriteriaId)o;
+		final CriteriaId criteriaId = (CriteriaId) o;
 
-    if (id != criteriaId.id) {
-      return false;
-    }
+		if ( id != criteriaId.id ) {
+			return false;
+		}
 
-    return true;
-  }
+		return true;
+	}
 
-  @Override
-  public int hashCode() {
-    return id;
-  }
+	@Override
+	public int hashCode() {
+		return id;
+	}
 }

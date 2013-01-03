@@ -19,19 +19,20 @@
 package org.hibernate.shards.query;
 
 import org.hibernate.Query;
+
 /**
  * @author Maulik Shah
  */
 public class SetCacheRegionEvent implements QueryEvent {
 
-  private final String cacheRegion;
+	private final String cacheRegion;
 
-  public SetCacheRegionEvent(String cacheRegion) {
-    this.cacheRegion = cacheRegion;
-  }
+	public SetCacheRegionEvent(String cacheRegion) {
+		this.cacheRegion = cacheRegion;
+	}
 
-  public void onEvent(Query query) {
-    query.setCacheRegion(cacheRegion);
-  }
+	public void onEvent(Query query) {
+		query.setCacheRegion( cacheRegion );
+	}
 
 }

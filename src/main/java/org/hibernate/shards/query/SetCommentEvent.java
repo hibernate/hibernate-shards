@@ -19,19 +19,20 @@
 package org.hibernate.shards.query;
 
 import org.hibernate.Query;
+
 /**
  * @author Maulik Shah
  */
 public class SetCommentEvent implements QueryEvent {
 
-  private final String comment;
+	private final String comment;
 
-  public SetCommentEvent(String comment) {
-    this.comment = comment;
-  }
+	public SetCommentEvent(String comment) {
+		this.comment = comment;
+	}
 
-  public void onEvent(Query query) {
-    query.setComment(comment);
-  }
+	public void onEvent(Query query) {
+		query.setComment( comment );
+	}
 
 }

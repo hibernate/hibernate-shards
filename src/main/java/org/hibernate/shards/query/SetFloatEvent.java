@@ -26,43 +26,44 @@ import org.hibernate.shards.session.ShardedSessionException;
  */
 public class SetFloatEvent implements QueryEvent {
 
-   private static enum CtorType {
-    POSITION_VAL,
-    NAME_VAL
-  }
+	private static enum CtorType {
+		POSITION_VAL,
+		NAME_VAL
+	}
 
-  private final CtorType ctorType;
-  private final int position;
-  private final float val;
-  private final String name;
+	private final CtorType ctorType;
+	private final int position;
+	private final float val;
+	private final String name;
 
-  private SetFloatEvent(CtorType ctorType, int position, float val, String name) {
-    this.ctorType = ctorType;
-    this.position = position;
-    this.val = val;
-    this.name = name;
-  }
+	private SetFloatEvent(CtorType ctorType, int position, float val, String name) {
+		this.ctorType = ctorType;
+		this.position = position;
+		this.val = val;
+		this.name = name;
+	}
 
-  public SetFloatEvent(int position, float val) {
-    this(CtorType.POSITION_VAL, position, val, null);
-  }
+	public SetFloatEvent(int position, float val) {
+		this( CtorType.POSITION_VAL, position, val, null );
+	}
 
-  public SetFloatEvent(String name, float val) {
-    this(CtorType.NAME_VAL, -1, val, name);
-  }
+	public SetFloatEvent(String name, float val) {
+		this( CtorType.NAME_VAL, -1, val, name );
+	}
 
-  public void onEvent(Query query) {
-    switch(ctorType) {
-      case POSITION_VAL:
-        query.setFloat(position, val);
-        break;
-      case NAME_VAL:
-        query.setFloat(name, val);
-        break;
-      default:
-        throw new ShardedSessionException(
-            "Unknown ctor type in SetFloatEvent: " + ctorType);
-    }
-  }
+	public void onEvent(Query query) {
+		switch ( ctorType ) {
+			case POSITION_VAL:
+				query.setFloat( position, val );
+				break;
+			case NAME_VAL:
+				query.setFloat( name, val );
+				break;
+			default:
+				throw new ShardedSessionException(
+						"Unknown ctor type in SetFloatEvent: " + ctorType
+				);
+		}
+	}
 
 }

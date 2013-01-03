@@ -34,10 +34,10 @@ import org.hibernate.Query;
 
 public interface QueryEvent {
 
-    /**
-     * Apply the event
-     *
-     * @param query the Query to apply the event to
-     */
-    void onEvent(Query query);
+	/**
+	 * Apply the event
+	 *
+	 * @param query the Query to apply the event to
+	 */
+	void onEvent(Query query);
 }

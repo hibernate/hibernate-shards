@@ -26,13 +26,13 @@ import org.hibernate.shards.loadbalance.RoundRobinShardLoadBalancer;
  */
 public class RoundRobinShardSelectionStrategy implements ShardSelectionStrategy {
 
-    private final RoundRobinShardLoadBalancer loadBalancer;
+	private final RoundRobinShardLoadBalancer loadBalancer;
 
-    public RoundRobinShardSelectionStrategy(final RoundRobinShardLoadBalancer loadBalancer) {
-        this.loadBalancer = loadBalancer;
-    }
+	public RoundRobinShardSelectionStrategy(final RoundRobinShardLoadBalancer loadBalancer) {
+		this.loadBalancer = loadBalancer;
+	}
 
-    public ShardId selectShardIdForNewObject(final Object obj) {
-        return loadBalancer.getNextShardId();
-    }
+	public ShardId selectShardIdForNewObject(final Object obj) {
+		return loadBalancer.getNextShardId();
+	}
 }

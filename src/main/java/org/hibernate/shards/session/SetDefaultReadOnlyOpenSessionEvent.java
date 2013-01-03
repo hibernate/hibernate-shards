@@ -27,14 +27,14 @@ import org.hibernate.Session;
  */
 class SetDefaultReadOnlyOpenSessionEvent implements OpenSessionEvent {
 
-    private final boolean readOnly;
+	private final boolean readOnly;
 
-    public SetDefaultReadOnlyOpenSessionEvent(boolean readOnly) {
-        this.readOnly = readOnly;
-    }
+	public SetDefaultReadOnlyOpenSessionEvent(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
 
-    @Override
-    public void onOpenSession(Session session) {
-        session.setDefaultReadOnly(readOnly);
-    }
+	@Override
+	public void onOpenSession(Session session) {
+		session.setDefaultReadOnly( readOnly );
+	}
 }

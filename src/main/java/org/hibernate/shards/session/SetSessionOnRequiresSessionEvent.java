@@ -27,14 +27,14 @@ import org.hibernate.Session;
  */
 public class SetSessionOnRequiresSessionEvent implements OpenSessionEvent {
 
-  private final RequiresSession requiresSession;
+	private final RequiresSession requiresSession;
 
 
-  public SetSessionOnRequiresSessionEvent(RequiresSession requiresSession) {
-    this.requiresSession = requiresSession;
-  }
+	public SetSessionOnRequiresSessionEvent(RequiresSession requiresSession) {
+		this.requiresSession = requiresSession;
+	}
 
-  public void onOpenSession(Session session) {
-    requiresSession.setSession(session);
-  }
+	public void onOpenSession(Session session) {
+		requiresSession.setSession( session );
+	}
 }

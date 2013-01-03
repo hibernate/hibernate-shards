@@ -30,7 +30,7 @@ import org.hibernate.Query;
 
 public interface ShardedQuery extends Query {
 
-    QueryId getQueryId();
+	QueryId getQueryId();
 
-    QueryFactory getQueryFactory();
+	QueryFactory getQueryFactory();
 }

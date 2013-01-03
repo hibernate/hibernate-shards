@@ -28,13 +28,13 @@ import org.hibernate.shards.strategy.selection.ShardResolutionStrategyData;
  */
 public class AllShardsShardResolutionStrategy extends BaseShardResolutionStrategy {
 
-    public AllShardsShardResolutionStrategy(final List<ShardId> shardIds) {
-        super(shardIds);
-    }
+	public AllShardsShardResolutionStrategy(final List<ShardId> shardIds) {
+		super( shardIds );
+	}
 
-    @Override
-    public List<ShardId> selectShardIdsFromShardResolutionStrategyData(
-            final ShardResolutionStrategyData shardResolutionStrategyData) {
-        return shardIds;
-    }
+	@Override
+	public List<ShardId> selectShardIdsFromShardResolutionStrategyData(
+			final ShardResolutionStrategyData shardResolutionStrategyData) {
+		return shardIds;
+	}
 }

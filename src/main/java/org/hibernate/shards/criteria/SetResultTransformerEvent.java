@@ -23,26 +23,26 @@ import org.hibernate.transform.ResultTransformer;
 
 /**
  * Event that allows the {@link ResultTransformer} of a {@link Criteria} to be set lazily.
- * @see Criteria#setResultTransformer(ResultTransformer)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setResultTransformer(ResultTransformer)
  */
 class SetResultTransformerEvent implements CriteriaEvent {
 
-  // the resultTransformer we'll set on the Critieria when the event fires
-  private final ResultTransformer resultTransformer;
+	// the resultTransformer we'll set on the Critieria when the event fires
+	private final ResultTransformer resultTransformer;
 
-  /**
-   * Constructs a SetResultTransformerEvent
-   *
-   * @param resultTransformer the resultTransformer we'll set on the {@link Criteria} when
-   * the event fires.
-   */
-  public SetResultTransformerEvent(ResultTransformer resultTransformer) {
-    this.resultTransformer = resultTransformer;
-  }
+	/**
+	 * Constructs a SetResultTransformerEvent
+	 *
+	 * @param resultTransformer the resultTransformer we'll set on the {@link Criteria} when
+	 * the event fires.
+	 */
+	public SetResultTransformerEvent(ResultTransformer resultTransformer) {
+		this.resultTransformer = resultTransformer;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.setResultTransformer(resultTransformer);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.setResultTransformer( resultTransformer );
+	}
 }

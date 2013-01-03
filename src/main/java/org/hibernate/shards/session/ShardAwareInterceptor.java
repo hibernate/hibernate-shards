@@ -34,40 +34,40 @@ import org.hibernate.type.Type;
  */
 public class ShardAwareInterceptor extends EmptyInterceptor {
 
-    private final ShardIdResolver shardIdResolver;
+	private final ShardIdResolver shardIdResolver;
 
-    public ShardAwareInterceptor(final ShardIdResolver shardIdResolver) {
-        Preconditions.checkNotNull(shardIdResolver);
-        this.shardIdResolver = shardIdResolver;
-    }
+	public ShardAwareInterceptor(final ShardIdResolver shardIdResolver) {
+		Preconditions.checkNotNull( shardIdResolver );
+		this.shardIdResolver = shardIdResolver;
+	}
 
-    @Override
-    public boolean onLoad(final Object entity,
-                          final Serializable id,
-                          final Object[] state,
-                          final String[] propertyNames, Type[] types) throws CallbackException {
+	@Override
+	public boolean onLoad(final Object entity,
+						  final Serializable id,
+						  final Object[] state,
+						  final String[] propertyNames, Type[] types) throws CallbackException {
 
-        return setShardId(entity);
-    }
+		return setShardId( entity );
+	}
 
-    @Override
-    public boolean onSave(final Object entity,
-                          final Serializable id,
-                          final Object[] state,
-                          final String[] propertyNames, Type[] types) {
+	@Override
+	public boolean onSave(final Object entity,
+						  final Serializable id,
+						  final Object[] state,
+						  final String[] propertyNames, Type[] types) {
 
-        return setShardId(entity);
-    }
+		return setShardId( entity );
+	}
 
-    boolean setShardId(final Object entity) {
-        boolean result = false;
-        if (entity instanceof ShardAware) {
-            final ShardAware shardAware = (ShardAware) entity;
-            if (shardAware.getShardId() == null) {
-                shardAware.setShardId(shardIdResolver.getShardIdForObject(entity));
-                result = true;
-            }
-        }
-        return result;
-    }
+	boolean setShardId(final Object entity) {
+		boolean result = false;
+		if ( entity instanceof ShardAware ) {
+			final ShardAware shardAware = (ShardAware) entity;
+			if ( shardAware.getShardId() == null ) {
+				shardAware.setShardId( shardIdResolver.getShardIdForObject( entity ) );
+				result = true;
+			}
+		}
+		return result;
+	}
 }

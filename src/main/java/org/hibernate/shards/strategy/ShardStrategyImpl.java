@@ -28,28 +28,28 @@ import org.hibernate.shards.util.Preconditions;
  */
 public class ShardStrategyImpl implements ShardStrategy {
 
-    private final ShardSelectionStrategy shardSelectionStrategy;
-    private final ShardResolutionStrategy shardResolutionStrategy;
-    private final ShardAccessStrategy shardAccessStrategy;
+	private final ShardSelectionStrategy shardSelectionStrategy;
+	private final ShardResolutionStrategy shardResolutionStrategy;
+	private final ShardAccessStrategy shardAccessStrategy;
 
-    public ShardStrategyImpl(final ShardSelectionStrategy shardSelectionStrategy,
-                             final ShardResolutionStrategy shardResolutionStrategy,
-                             final ShardAccessStrategy shardAccessStrategy) {
+	public ShardStrategyImpl(final ShardSelectionStrategy shardSelectionStrategy,
+							 final ShardResolutionStrategy shardResolutionStrategy,
+							 final ShardAccessStrategy shardAccessStrategy) {
 
-        this.shardSelectionStrategy = Preconditions.checkNotNull(shardSelectionStrategy);
-        this.shardResolutionStrategy = Preconditions.checkNotNull(shardResolutionStrategy);
-        this.shardAccessStrategy = Preconditions.checkNotNull(shardAccessStrategy);
-    }
+		this.shardSelectionStrategy = Preconditions.checkNotNull( shardSelectionStrategy );
+		this.shardResolutionStrategy = Preconditions.checkNotNull( shardResolutionStrategy );
+		this.shardAccessStrategy = Preconditions.checkNotNull( shardAccessStrategy );
+	}
 
-    public ShardSelectionStrategy getShardSelectionStrategy() {
-        return shardSelectionStrategy;
-    }
+	public ShardSelectionStrategy getShardSelectionStrategy() {
+		return shardSelectionStrategy;
+	}
 
-    public ShardResolutionStrategy getShardResolutionStrategy() {
-        return shardResolutionStrategy;
-    }
+	public ShardResolutionStrategy getShardResolutionStrategy() {
+		return shardResolutionStrategy;
+	}
 
-    public ShardAccessStrategy getShardAccessStrategy() {
-        return shardAccessStrategy;
-    }
+	public ShardAccessStrategy getShardAccessStrategy() {
+		return shardAccessStrategy;
+	}
 }

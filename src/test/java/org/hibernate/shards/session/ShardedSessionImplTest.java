@@ -28,7 +28,6 @@ import java.util.Set;
 
 import junit.framework.TestCase;
 
-import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;

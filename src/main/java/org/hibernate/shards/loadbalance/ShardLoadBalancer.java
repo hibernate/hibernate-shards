@@ -28,8 +28,8 @@ import org.hibernate.shards.ShardId;
  */
 public interface ShardLoadBalancer {
 
-    /**
-     * @return the next ShardId
-     */
-    ShardId getNextShardId();
+	/**
+	 * @return the next ShardId
+	 */
+	ShardId getNextShardId();
 }

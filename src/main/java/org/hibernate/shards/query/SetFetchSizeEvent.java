@@ -19,19 +19,20 @@
 package org.hibernate.shards.query;
 
 import org.hibernate.Query;
+
 /**
  * @author Maulik Shah
  */
 public class SetFetchSizeEvent implements QueryEvent {
 
-  private final int fetchSize;
+	private final int fetchSize;
 
-  public SetFetchSizeEvent(int fetchSize) {
-    this.fetchSize = fetchSize;
-  }
+	public SetFetchSizeEvent(int fetchSize) {
+		this.fetchSize = fetchSize;
+	}
 
-  public void onEvent(Query query) {
-    query.setFetchSize(fetchSize);
-  }
+	public void onEvent(Query query) {
+		query.setFetchSize( fetchSize );
+	}
 
 }

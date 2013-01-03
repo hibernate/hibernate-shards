@@ -26,14 +26,14 @@ import org.hibernate.Query;
  */
 public class SetCacheModeEvent implements QueryEvent {
 
-  private final CacheMode cacheMode;
+	private final CacheMode cacheMode;
 
-  public SetCacheModeEvent(CacheMode cacheMode) {
-    this.cacheMode = cacheMode;
-  }
+	public SetCacheModeEvent(CacheMode cacheMode) {
+		this.cacheMode = cacheMode;
+	}
 
-  public void onEvent(Query query) {
-    query.setCacheMode(cacheMode);
-  }
+	public void onEvent(Query query) {
+		query.setCacheMode( cacheMode );
+	}
 
 }

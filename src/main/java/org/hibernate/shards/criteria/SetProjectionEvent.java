@@ -29,21 +29,21 @@ import org.hibernate.criterion.Projection;
  */
 class SetProjectionEvent implements CriteriaEvent {
 
-    // the Projection we'll set on the {@link Criteria} when the event fires
-    private final Projection projection;
+	// the Projection we'll set on the {@link Criteria} when the event fires
+	private final Projection projection;
 
-    /**
-     * Constructs a SetProjectionEvent
-     *
-     * @param projection the projection we'll set on the {@link Criteria} when the
-     *                   event fires.
-     */
-    public SetProjectionEvent(final Projection projection) {
-        this.projection = projection;
-    }
+	/**
+	 * Constructs a SetProjectionEvent
+	 *
+	 * @param projection the projection we'll set on the {@link Criteria} when the
+	 * event fires.
+	 */
+	public SetProjectionEvent(final Projection projection) {
+		this.projection = projection;
+	}
 
-    @Override
-    public void onEvent(final Criteria criteria) {
-        criteria.setProjection(projection);
-    }
+	@Override
+	public void onEvent(final Criteria criteria) {
+		criteria.setProjection( projection );
+	}
 }

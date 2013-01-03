@@ -23,21 +23,21 @@ import org.hibernate.criterion.Criterion;
 
 /**
  * Event that allows a Criterion to be lazily added to a Criteria.
- * @see Criteria#add(Criterion) 
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#add(Criterion)
  */
 class AddCriterionEvent implements CriteriaEvent {
 
-  // the Criterion we're going to add when the event fires
-  private final Criterion criterion;
+	// the Criterion we're going to add when the event fires
+	private final Criterion criterion;
 
-  public AddCriterionEvent(Criterion criterion) {
-    this.criterion = criterion;
-  }
+	public AddCriterionEvent(Criterion criterion) {
+		this.criterion = criterion;
+	}
 
 
-  public void onEvent(Criteria criteria) {
-    criteria.add(criterion);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.add( criterion );
+	}
 }

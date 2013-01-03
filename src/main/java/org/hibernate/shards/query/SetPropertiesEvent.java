@@ -28,40 +28,41 @@ import org.hibernate.shards.session.ShardedSessionException;
  */
 public class SetPropertiesEvent implements QueryEvent {
 
-  private enum MethodSig {
-    OBJECT, MAP
-  }
+	private enum MethodSig {
+		OBJECT, MAP
+	}
 
-  private final MethodSig sig;
-  private final Object bean;
-  private final Map map;
+	private final MethodSig sig;
+	private final Object bean;
+	private final Map map;
 
-  public SetPropertiesEvent(Object bean) {
-    this(MethodSig.OBJECT, bean, null);
-  }
+	public SetPropertiesEvent(Object bean) {
+		this( MethodSig.OBJECT, bean, null );
+	}
 
-  public SetPropertiesEvent(Map map) {
-    this(MethodSig.MAP, null, map);
-  }
+	public SetPropertiesEvent(Map map) {
+		this( MethodSig.MAP, null, map );
+	}
 
-  private SetPropertiesEvent(MethodSig sig, Object bean, Map map) {
-    this.sig = sig;
-    this.bean = bean;
-    this.map = map;
-  }
+	private SetPropertiesEvent(MethodSig sig, Object bean, Map map) {
+		this.sig = sig;
+		this.bean = bean;
+		this.map = map;
+	}
 
-  public void onEvent(Query query) {
-    switch (sig) {
-      case OBJECT:
-        query.setProperties(bean);
-        break;
-      case MAP:
-        query.setProperties(map);
-        break;
-      default:
-        throw new ShardedSessionException(
-            "Unknown sig in SetPropertiesEvent: " + sig);
-    }
-  }
+	public void onEvent(Query query) {
+		switch ( sig ) {
+			case OBJECT:
+				query.setProperties( bean );
+				break;
+			case MAP:
+				query.setProperties( map );
+				break;
+			default:
+				throw new ShardedSessionException(
+						"Unknown sig in SetPropertiesEvent: " + sig
+				);
+		}
+	}
 
 }

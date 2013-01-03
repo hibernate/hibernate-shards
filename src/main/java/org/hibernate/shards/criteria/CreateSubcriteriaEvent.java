@@ -27,15 +27,15 @@ import org.hibernate.Criteria;
  */
 public class CreateSubcriteriaEvent implements CriteriaEvent {
 
-  private final SubcriteriaFactory subcriteriaFactory;
-  private final ShardedSubcriteriaImpl.SubcriteriaRegistrar subcriteriaRegistrar;
+	private final SubcriteriaFactory subcriteriaFactory;
+	private final ShardedSubcriteriaImpl.SubcriteriaRegistrar subcriteriaRegistrar;
 
-  public CreateSubcriteriaEvent(SubcriteriaFactory subcriteriaFactory, ShardedSubcriteriaImpl.SubcriteriaRegistrar subcriteriaRegistrar) {
-    this.subcriteriaFactory = subcriteriaFactory;
-    this.subcriteriaRegistrar = subcriteriaRegistrar;
-  }
+	public CreateSubcriteriaEvent(SubcriteriaFactory subcriteriaFactory, ShardedSubcriteriaImpl.SubcriteriaRegistrar subcriteriaRegistrar) {
+		this.subcriteriaFactory = subcriteriaFactory;
+		this.subcriteriaRegistrar = subcriteriaRegistrar;
+	}
 
-  public void onEvent(Criteria criteria) {
-    subcriteriaRegistrar.establishSubcriteria(criteria, subcriteriaFactory);
-  }
+	public void onEvent(Criteria criteria) {
+		subcriteriaRegistrar.establishSubcriteria( criteria, subcriteriaFactory );
+	}
 }

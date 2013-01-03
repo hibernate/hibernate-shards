@@ -27,8 +27,8 @@ import java.util.List;
  */
 public interface HasShardIdList {
 
-    /**
-     * @return an unmodifiable list of {@link ShardId}s
-     */
-    List<ShardId> getShardIds();
+	/**
+	 * @return an unmodifiable list of {@link ShardId}s
+	 */
+	List<ShardId> getShardIds();
 }

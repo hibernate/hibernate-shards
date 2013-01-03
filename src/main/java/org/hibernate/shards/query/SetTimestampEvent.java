@@ -28,43 +28,44 @@ import org.hibernate.shards.session.ShardedSessionException;
  */
 public class SetTimestampEvent implements QueryEvent {
 
-   private static enum CtorType {
-    POSITION_VAL,
-    NAME_VAL
-  }
+	private static enum CtorType {
+		POSITION_VAL,
+		NAME_VAL
+	}
 
-  private final CtorType ctorType;
-  private final int position;
-  private final Date val;
-  private final String name;
+	private final CtorType ctorType;
+	private final int position;
+	private final Date val;
+	private final String name;
 
-  private SetTimestampEvent(CtorType ctorType, int position, Date val, String name) {
-    this.ctorType = ctorType;
-    this.position = position;
-    this.val = val;
-    this.name = name;
-  }
+	private SetTimestampEvent(CtorType ctorType, int position, Date val, String name) {
+		this.ctorType = ctorType;
+		this.position = position;
+		this.val = val;
+		this.name = name;
+	}
 
-  public SetTimestampEvent(int position, Date val) {
-    this(CtorType.POSITION_VAL, position, val, null);
-  }
+	public SetTimestampEvent(int position, Date val) {
+		this( CtorType.POSITION_VAL, position, val, null );
+	}
 
-  public SetTimestampEvent(String name, Date val) {
-    this(CtorType.NAME_VAL, -1, val, name);
-  }
+	public SetTimestampEvent(String name, Date val) {
+		this( CtorType.NAME_VAL, -1, val, name );
+	}
 
-  public void onEvent(Query query) {
-    switch(ctorType) {
-      case POSITION_VAL:
-        query.setTimestamp(position, val);
-        break;
-      case NAME_VAL:
-        query.setTimestamp(name, val);
-        break;
-      default:
-        throw new ShardedSessionException(
-            "Unknown ctor type in SetTimestampEvent: " + ctorType);
-    }
-  }
+	public void onEvent(Query query) {
+		switch ( ctorType ) {
+			case POSITION_VAL:
+				query.setTimestamp( position, val );
+				break;
+			case NAME_VAL:
+				query.setTimestamp( name, val );
+				break;
+			default:
+				throw new ShardedSessionException(
+						"Unknown ctor type in SetTimestampEvent: " + ctorType
+				);
+		}
+	}
 
 }

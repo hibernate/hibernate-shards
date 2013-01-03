@@ -26,43 +26,44 @@ import org.hibernate.shards.session.ShardedSessionException;
  */
 public class SetDoubleEvent implements QueryEvent {
 
-   private static enum CtorType {
-    POSITION_VAL,
-    NAME_VAL
-  }
+	private static enum CtorType {
+		POSITION_VAL,
+		NAME_VAL
+	}
 
-  private final CtorType ctorType;
-  private final int position;
-  private final double val;
-  private final String name;
+	private final CtorType ctorType;
+	private final int position;
+	private final double val;
+	private final String name;
 
-  private SetDoubleEvent(CtorType ctorType, int position, double val, String name) {
-    this.ctorType = ctorType;
-    this.position = position;
-    this.val = val;
-    this.name = name;
-  }
+	private SetDoubleEvent(CtorType ctorType, int position, double val, String name) {
+		this.ctorType = ctorType;
+		this.position = position;
+		this.val = val;
+		this.name = name;
+	}
 
-  public SetDoubleEvent(int position, double val) {
-    this(CtorType.POSITION_VAL, position, val, null);
-  }
+	public SetDoubleEvent(int position, double val) {
+		this( CtorType.POSITION_VAL, position, val, null );
+	}
 
-  public SetDoubleEvent(String name, double val) {
-    this(CtorType.NAME_VAL, -1, val, name);
-  }
+	public SetDoubleEvent(String name, double val) {
+		this( CtorType.NAME_VAL, -1, val, name );
+	}
 
-  public void onEvent(Query query) {
-    switch(ctorType) {
-      case POSITION_VAL:
-        query.setDouble(position, val);
-        break;
-      case NAME_VAL:
-        query.setDouble(name, val);
-        break;
-      default:
-        throw new ShardedSessionException(
-            "Unknown ctor type in SetDoubleEvent: " + ctorType);
-    }
-  }
+	public void onEvent(Query query) {
+		switch ( ctorType ) {
+			case POSITION_VAL:
+				query.setDouble( position, val );
+				break;
+			case NAME_VAL:
+				query.setDouble( name, val );
+				break;
+			default:
+				throw new ShardedSessionException(
+						"Unknown ctor type in SetDoubleEvent: " + ctorType
+				);
+		}
+	}
 
 }

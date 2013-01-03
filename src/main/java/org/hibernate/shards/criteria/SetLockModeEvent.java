@@ -30,69 +30,69 @@ import org.hibernate.shards.session.ShardedSessionException;
  */
 class SetLockModeEvent implements CriteriaEvent {
 
-    private enum MethodSig {
-        LOCK_MODE,
-        LOCK_MODE_AND_ALIAS
-    }
+	private enum MethodSig {
+		LOCK_MODE,
+		LOCK_MODE_AND_ALIAS
+	}
 
-    // tells us which overload of setLockMode to use
-    private final MethodSig methodSig;
+	// tells us which overload of setLockMode to use
+	private final MethodSig methodSig;
 
-    // the LockMode we'll set on the Criteria when the event fires
-    private final LockMode lockMode;
+	// the LockMode we'll set on the Criteria when the event fires
+	private final LockMode lockMode;
 
-    // the alias for which we'll set the lock mode on the Criteria when the event
-    // fires.  Can be null
-    private final String alias;
+	// the alias for which we'll set the lock mode on the Criteria when the event
+	// fires.  Can be null
+	private final String alias;
 
-    /**
-     * Construct a SetLockModeEvent
-     *
-     * @param methodSig tells us which overload of setLockMode to use
-     * @param lockMode  the lock mode we'll set when the event fires
-     * @param alias     the alias for which we'll set the lcok mode when the event
-     *                  fires.  Can be null.
-     */
-    private SetLockModeEvent(final MethodSig methodSig, final LockMode lockMode, final /*@Nullable*/ String alias) {
-        this.methodSig = methodSig;
-        this.lockMode = lockMode;
-        this.alias = alias;
-    }
+	/**
+	 * Construct a SetLockModeEvent
+	 *
+	 * @param methodSig tells us which overload of setLockMode to use
+	 * @param lockMode the lock mode we'll set when the event fires
+	 * @param alias the alias for which we'll set the lcok mode when the event
+	 * fires.  Can be null.
+	 */
+	private SetLockModeEvent(final MethodSig methodSig, final LockMode lockMode, final /*@Nullable*/ String alias) {
+		this.methodSig = methodSig;
+		this.lockMode = lockMode;
+		this.alias = alias;
+	}
 
-    /**
-     * Construct a SetLockModeEvent
-     *
-     * @param lockMode the lock mode we'll set when the event fires
-     */
-    public SetLockModeEvent(final LockMode lockMode) {
-        this(MethodSig.LOCK_MODE, lockMode, null);
-    }
+	/**
+	 * Construct a SetLockModeEvent
+	 *
+	 * @param lockMode the lock mode we'll set when the event fires
+	 */
+	public SetLockModeEvent(final LockMode lockMode) {
+		this( MethodSig.LOCK_MODE, lockMode, null );
+	}
 
-    /**
-     * Construct a SetLockModeEvent
-     *
-     * @param lockMode the lock mode we'll set when the event fires
-     * @param alias    the alias for which we'll set the lock mode
-     *                 when the event fires
-     */
-    public SetLockModeEvent(final LockMode lockMode, final String alias) {
-        this(MethodSig.LOCK_MODE_AND_ALIAS, lockMode, alias);
-    }
+	/**
+	 * Construct a SetLockModeEvent
+	 *
+	 * @param lockMode the lock mode we'll set when the event fires
+	 * @param alias the alias for which we'll set the lock mode
+	 * when the event fires
+	 */
+	public SetLockModeEvent(final LockMode lockMode, final String alias) {
+		this( MethodSig.LOCK_MODE_AND_ALIAS, lockMode, alias );
+	}
 
-    @Override
-    public void onEvent(final Criteria criteria) {
+	@Override
+	public void onEvent(final Criteria criteria) {
 
-        switch (methodSig) {
-            case LOCK_MODE:
-                criteria.setLockMode(lockMode);
-                break;
+		switch ( methodSig ) {
+			case LOCK_MODE:
+				criteria.setLockMode( lockMode );
+				break;
 
-            case LOCK_MODE_AND_ALIAS:
-                criteria.setLockMode(alias, lockMode);
-                break;
+			case LOCK_MODE_AND_ALIAS:
+				criteria.setLockMode( alias, lockMode );
+				break;
 
-            default:
-                throw new ShardedSessionException("Unknown constructor type for SetLockModeEvent: " + methodSig);
-        }
-    }
+			default:
+				throw new ShardedSessionException( "Unknown constructor type for SetLockModeEvent: " + methodSig );
+		}
+	}
 }

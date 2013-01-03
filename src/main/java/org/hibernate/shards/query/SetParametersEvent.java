@@ -26,16 +26,16 @@ import org.hibernate.type.Type;
  */
 public class SetParametersEvent implements QueryEvent {
 
-  private final Object[] values;
-  private final Type[] types;
+	private final Object[] values;
+	private final Type[] types;
 
-  public SetParametersEvent(Object[] values, Type[] types) {
-    this.values = values;
-    this.types = types;
-  }
+	public SetParametersEvent(Object[] values, Type[] types) {
+		this.values = values;
+		this.types = types;
+	}
 
-  public void onEvent(Query query) {
-    query.setParameters(values, types);
-  }
+	public void onEvent(Query query) {
+		query.setParameters( values, types );
+	}
 
 }

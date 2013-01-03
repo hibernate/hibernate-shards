@@ -25,6 +25,6 @@ import java.util.List;
  */
 public interface ExitOperation {
 
-  List<Object> apply(List<Object> results);
+	List<Object> apply(List<Object> results);
 
 }

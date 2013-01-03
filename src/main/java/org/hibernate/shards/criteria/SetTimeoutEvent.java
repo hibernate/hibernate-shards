@@ -22,26 +22,26 @@ import org.hibernate.Criteria;
 
 /**
  * Event that allows the timeout of a {@link Criteria} to be set lazily.
- * @see Criteria#setTimeout(int)   
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setTimeout(int)
  */
 class SetTimeoutEvent implements CriteriaEvent {
 
-  // the timeout we'll set on the Criteria when the event fires.
-  private final int timeout;
+	// the timeout we'll set on the Criteria when the event fires.
+	private final int timeout;
 
-  /**
-   * Constructs a SetTimeoutEvent
-   *
-   * @param timeout the timeout we'll set on the {@link Criteria} when the
-   * event fires.
-   */
-  public SetTimeoutEvent(int timeout) {
-    this.timeout = timeout;
-  }
+	/**
+	 * Constructs a SetTimeoutEvent
+	 *
+	 * @param timeout the timeout we'll set on the {@link Criteria} when the
+	 * event fires.
+	 */
+	public SetTimeoutEvent(int timeout) {
+		this.timeout = timeout;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.setTimeout(timeout);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.setTimeout( timeout );
+	}
 }

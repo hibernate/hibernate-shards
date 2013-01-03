@@ -23,6 +23,6 @@ import java.util.List;
 /**
  * @author Maulik Shah
  */
-public interface ProjectionExitOperation extends ExitOperation{
-  List<Object> apply(List<Object> results);
+public interface ProjectionExitOperation extends ExitOperation {
+	List<Object> apply(List<Object> results);
 }

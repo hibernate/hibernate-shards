@@ -14,98 +14,98 @@ import org.hibernate.type.Type;
  */
 public class ShardedSQLQueryImpl extends ShardedQueryImpl implements ShardedSQLQuery {
 
-    public ShardedSQLQueryImpl(final QueryId queryId, final List<Shard> shards,
-                               final QueryFactory queryFactory, final ShardAccessStrategy shardAccessStrategy) {
-        super(queryId, shards, queryFactory, shardAccessStrategy);
-    }
+	public ShardedSQLQueryImpl(final QueryId queryId, final List<Shard> shards,
+							   final QueryFactory queryFactory, final ShardAccessStrategy shardAccessStrategy) {
+		super( queryId, shards, queryFactory, shardAccessStrategy );
+	}
 
-    @Override
-    public SQLQuery addEntity(final String entityName) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addEntity(final String entityName) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addEntity(final Class entityClass) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addEntity(final Class entityClass) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addEntity(final String alias, final String entityName) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addEntity(final String alias, final String entityName) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addEntity(final String tableAlias, final String entityName, final LockMode lockMode) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addEntity(final String tableAlias, final String entityName, final LockMode lockMode) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addEntity(final String alias, final Class entityClass) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addEntity(final String alias, final Class entityClass) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addEntity(final String tableAlias, final Class entityName, final LockMode lockMode) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addEntity(final String tableAlias, final Class entityName, final LockMode lockMode) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public FetchReturn addFetch(final String tableAlias, final String ownerTableAlias, final String joinPropertyName) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public FetchReturn addFetch(final String tableAlias, final String ownerTableAlias, final String joinPropertyName) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addJoin(final String alias, final String path) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addJoin(final String alias, final String path) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addJoin(final String tableAlias, final String ownerTableAlias, final String joinPropertyName) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addJoin(final String tableAlias, final String ownerTableAlias, final String joinPropertyName) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addJoin(final String tableAlias, final String path, final LockMode lockMode) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addJoin(final String tableAlias, final String path, final LockMode lockMode) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addScalar(final String columnAlias) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addScalar(final String columnAlias) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addScalar(final String columnAlias, final Type type) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addScalar(final String columnAlias, final Type type) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public RootReturn addRoot(final String tableAlias, final String entityName) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public RootReturn addRoot(final String tableAlias, final String entityName) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public RootReturn addRoot(final String tableAlias, final Class entityType) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public RootReturn addRoot(final String tableAlias, final Class entityType) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addSynchronizedEntityClass(final Class entityClass) throws MappingException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addSynchronizedEntityClass(final Class entityClass) throws MappingException {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addSynchronizedEntityName(final String entityName) throws MappingException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addSynchronizedEntityName(final String entityName) throws MappingException {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery addSynchronizedQuerySpace(final String querySpace) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery addSynchronizedQuerySpace(final String querySpace) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery setResultSetMapping(final String name) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery setResultSetMapping(final String name) {
+		throw new UnsupportedOperationException();
+	}
 }

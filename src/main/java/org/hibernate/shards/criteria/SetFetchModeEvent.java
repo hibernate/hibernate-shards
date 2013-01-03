@@ -23,31 +23,31 @@ import org.hibernate.FetchMode;
 
 /**
  * Event that allows the {@link FetchMode} of a {@link Criteria} to be set lazily.
- * @see Criteria#setFetchMode(String, FetchMode)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setFetchMode(String, FetchMode)
  */
 class SetFetchModeEvent implements CriteriaEvent {
 
-  // the association path that will be set on the Criteria
-  private final String associationPath;
+	// the association path that will be set on the Criteria
+	private final String associationPath;
 
-  // the FetchMode that will be set on the Criteria
-  private final FetchMode mode;
+	// the FetchMode that will be set on the Criteria
+	private final FetchMode mode;
 
-  /**
-   * Construct a SetFetchModeEvent
-   *
-   * @param associationPath the association path of the fetch mode
-   * we'll set on the {@link Criteria} when the event fires.
-   * @param mode the mode we'll set on the {@link Criteria} when the event fires.
-   */
-  public SetFetchModeEvent(String associationPath, FetchMode mode) {
-    this.associationPath = associationPath;
-    this.mode = mode;
-  }
+	/**
+	 * Construct a SetFetchModeEvent
+	 *
+	 * @param associationPath the association path of the fetch mode
+	 * we'll set on the {@link Criteria} when the event fires.
+	 * @param mode the mode we'll set on the {@link Criteria} when the event fires.
+	 */
+	public SetFetchModeEvent(String associationPath, FetchMode mode) {
+		this.associationPath = associationPath;
+		this.mode = mode;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.setFetchMode(associationPath, mode);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.setFetchMode( associationPath, mode );
+	}
 }

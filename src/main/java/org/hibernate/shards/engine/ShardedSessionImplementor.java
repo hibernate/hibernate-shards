@@ -33,10 +33,10 @@ import org.hibernate.shards.session.ShardedSession;
  */
 public interface ShardedSessionImplementor {
 
-    /**
-     * Gets all the shards the ShardedSession is spanning.
-     *
-     * @return list of all shards the ShardedSession is associated with
-     */
-    List<Shard> getShards();
+	/**
+	 * Gets all the shards the ShardedSession is spanning.
+	 *
+	 * @return list of all shards the ShardedSession is associated with
+	 */
+	List<Shard> getShards();
 }

@@ -26,16 +26,16 @@ import org.hibernate.Query;
  */
 public class SetLockModeEvent implements QueryEvent {
 
-  private final String alias;
-  private final LockMode lockMode;
+	private final String alias;
+	private final LockMode lockMode;
 
-  public SetLockModeEvent(String alias, LockMode lockMode) {
-    this.alias = alias;
-    this.lockMode = lockMode;
-  }
+	public SetLockModeEvent(String alias, LockMode lockMode) {
+		this.alias = alias;
+		this.lockMode = lockMode;
+	}
 
-  public void onEvent(Query query) {
-    query.setLockMode(alias, lockMode);
-  }
+	public void onEvent(Query query) {
+		query.setLockMode( alias, lockMode );
+	}
 
 }

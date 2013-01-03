@@ -27,11 +27,12 @@ import org.hibernate.shards.ShardId;
  */
 interface ShardIdResolver {
 
-  /**
-   * Gets ShardId of the shard given object lives on.
-   *
-   * @param obj Object whose Shard should be resolved
-   * @return ShardId of the shard the object lives on; null if shard could not be resolved
-   */
+	/**
+	 * Gets ShardId of the shard given object lives on.
+	 *
+	 * @param obj Object whose Shard should be resolved
+	 *
+	 * @return ShardId of the shard the object lives on; null if shard could not be resolved
+	 */
   /*@Nullable*/ ShardId getShardIdForObject(Object obj);
 }

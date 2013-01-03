@@ -26,43 +26,44 @@ import org.hibernate.shards.session.ShardedSessionException;
  */
 public class SetBooleanEvent implements QueryEvent {
 
-   private static enum CtorType {
-    POSITION_VAL,
-    NAME_VAL
-  }
+	private static enum CtorType {
+		POSITION_VAL,
+		NAME_VAL
+	}
 
-  private final CtorType ctorType;
-  private final int position;
-  private final boolean val;
-  private final String name;
+	private final CtorType ctorType;
+	private final int position;
+	private final boolean val;
+	private final String name;
 
-  private SetBooleanEvent(CtorType ctorType, int position, boolean val, String name) {
-    this.ctorType = ctorType;
-    this.position = position;
-    this.val = val;
-    this.name = name;
-  }
+	private SetBooleanEvent(CtorType ctorType, int position, boolean val, String name) {
+		this.ctorType = ctorType;
+		this.position = position;
+		this.val = val;
+		this.name = name;
+	}
 
-  public SetBooleanEvent(int position, boolean val) {
-    this(CtorType.POSITION_VAL, position, val, null);
-  }
+	public SetBooleanEvent(int position, boolean val) {
+		this( CtorType.POSITION_VAL, position, val, null );
+	}
 
-  public SetBooleanEvent(String name, boolean val) {
-    this(CtorType.NAME_VAL, -1, val, name);
-  }
+	public SetBooleanEvent(String name, boolean val) {
+		this( CtorType.NAME_VAL, -1, val, name );
+	}
 
-  public void onEvent(Query query) {
-    switch(ctorType) {
-      case POSITION_VAL:
-        query.setBoolean(position, val);
-        break;
-      case NAME_VAL:
-        query.setBoolean(name, val);
-        break;
-      default:
-        throw new ShardedSessionException(
-            "Unknown ctor type in SetBooleanEvent: " + ctorType);
-    }
-  }
+	public void onEvent(Query query) {
+		switch ( ctorType ) {
+			case POSITION_VAL:
+				query.setBoolean( position, val );
+				break;
+			case NAME_VAL:
+				query.setBoolean( name, val );
+				break;
+			default:
+				throw new ShardedSessionException(
+						"Unknown ctor type in SetBooleanEvent: " + ctorType
+				);
+		}
+	}
 
 }

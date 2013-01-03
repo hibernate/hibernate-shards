@@ -47,73 +47,73 @@ import org.hibernate.type.Type;
  */
 class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
 
-    private final ShardIdResolver shardIdResolver;
+	private final ShardIdResolver shardIdResolver;
 
-    private final Logger log = Logger.getLogger(getClass());
+	private final Logger log = Logger.getLogger( getClass() );
 
-    public CrossShardRelationshipDetectingInterceptor(final ShardIdResolver shardIdResolver) {
-        Preconditions.checkNotNull(shardIdResolver);
-        this.shardIdResolver = shardIdResolver;
-    }
+	public CrossShardRelationshipDetectingInterceptor(final ShardIdResolver shardIdResolver) {
+		Preconditions.checkNotNull( shardIdResolver );
+		this.shardIdResolver = shardIdResolver;
+	}
 
-    @Override
-    public boolean onFlushDirty(final Object entity, final Serializable id,
-                                final Object[] currentState, final Object[] previousState,
-                                final String[] propertyNames, final Type[] types) throws CallbackException {
+	@Override
+	public boolean onFlushDirty(final Object entity, final Serializable id,
+								final Object[] currentState, final Object[] previousState,
+								final String[] propertyNames, final Type[] types) throws CallbackException {
 
-        final ShardId expectedShardId = getAndRefreshExpectedShardId(entity);
-        Preconditions.checkNotNull(expectedShardId);
+		final ShardId expectedShardId = getAndRefreshExpectedShardId( entity );
+		Preconditions.checkNotNull( expectedShardId );
 
-        List<Collection<Object>> collections = null;
-        for (final Pair<Type, Object> pair : buildListOfAssociations(types, currentState)) {
-            if (pair.getFirst().isCollectionType()) {
-                /**
-                 * collection types are more expensive to evaluate (might involve
-                 * lazy-loading the contents of the collection from the db), so
-                 * let's hold off until the end on the chance that we can fail
-                 * quickly.
-                 */
-                if (collections == null) {
-                    collections = Lists.newArrayList();
-                }
-                @SuppressWarnings("unchecked")
-                Collection<Object> objColl = (Collection<Object>) pair.getSecond();
-                collections.add(objColl);
-            } else {
-                checkForConflictingShardId(entity.getClass().getName(), expectedShardId, pair.getSecond());
-            }
-        }
-        if (collections != null) {
-            checkIterable(entity.getClass().getName(), expectedShardId, Iterables.concat(collections));
-        }
-        return false;
-    }
+		List<Collection<Object>> collections = null;
+		for ( final Pair<Type, Object> pair : buildListOfAssociations( types, currentState ) ) {
+			if ( pair.getFirst().isCollectionType() ) {
+				/**
+				 * collection types are more expensive to evaluate (might involve
+				 * lazy-loading the contents of the collection from the db), so
+				 * let's hold off until the end on the chance that we can fail
+				 * quickly.
+				 */
+				if ( collections == null ) {
+					collections = Lists.newArrayList();
+				}
+				@SuppressWarnings("unchecked")
+				Collection<Object> objColl = (Collection<Object>) pair.getSecond();
+				collections.add( objColl );
+			}
+			else {
+				checkForConflictingShardId( entity.getClass().getName(), expectedShardId, pair.getSecond() );
+			}
+		}
+		if ( collections != null ) {
+			checkIterable( entity.getClass().getName(), expectedShardId, Iterables.concat( collections ) );
+		}
+		return false;
+	}
 
-    static List<Pair<Type, Object>> buildListOfAssociations(final Type[] types, final Object[] currentState) {
-        // we assume types and current state are the same length
-        Preconditions.checkState(types.length == currentState.length);
-        final List<Pair<Type, Object>> associationList = Lists.newArrayList();
-        for (int i = 0; i < types.length; i++) {
-            if (types[i] != null && currentState[i] != null && types[i].isAssociationType()) {
-                associationList.add(Pair.of(types[i], currentState[i]));
-            }
-        }
-        return associationList;
-    }
+	static List<Pair<Type, Object>> buildListOfAssociations(final Type[] types, final Object[] currentState) {
+		// we assume types and current state are the same length
+		Preconditions.checkState( types.length == currentState.length );
+		final List<Pair<Type, Object>> associationList = Lists.newArrayList();
+		for ( int i = 0; i < types.length; i++ ) {
+			if ( types[i] != null && currentState[i] != null && types[i].isAssociationType() ) {
+				associationList.add( Pair.of( types[i], currentState[i] ) );
+			}
+		}
+		return associationList;
+	}
 
-    void checkIterable(final String classOfUpdatedObject, final ShardId expectedShardId,
-                       final Iterable<Object> iterable) {
+	void checkIterable(final String classOfUpdatedObject, final ShardId expectedShardId,
+					   final Iterable<Object> iterable) {
 
-        for (final Object obj : iterable) {
-            checkForConflictingShardId(classOfUpdatedObject, expectedShardId, obj);
-        }
-    }
+		for ( final Object obj : iterable ) {
+			checkForConflictingShardId( classOfUpdatedObject, expectedShardId, obj );
+		}
+	}
 
-    void checkForConflictingShardId(final String classOfUpdatedObject, final ShardId expectedShardId,
-                                    final Object associatedObject) {
+	void checkForConflictingShardId(final String classOfUpdatedObject, final ShardId expectedShardId,
+									final Object associatedObject) {
 
-        ShardId localShardId;
-    /*
+		ShardId localShardId;	/*
      * Here's something you wish you didn't need to know: If the associated
      * object is an unitialized proxy and the object is not on the same
      * shard as the shard with which the interceptor is associated, attempting
@@ -125,51 +125,55 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
      * If the associated object is a pojo or a proxy that has already been
      * initialized, the call to getShardIdForObject will succeed.
      */
-        if (associatedObject instanceof HibernateProxy) {
-            final HibernateProxy hp = (HibernateProxy) associatedObject;
-            try {
-                hp.getHibernateLazyInitializer().initialize();
-            } catch (ObjectNotFoundException e) {
-                final String msg = String.format(
-                        "Object of type %s is on shard %d but an associated object of type %s is on different shard.",
-                        classOfUpdatedObject,
-                        expectedShardId.getId(),
-                        hp.getHibernateLazyInitializer().getPersistentClass().getName());
-                log.error(msg);
-                throw new CrossShardAssociationException(msg);
-            }
-        }
-        localShardId = shardIdResolver.getShardIdForObject(associatedObject);
-        if (localShardId != null) {
-            if (!localShardId.equals(expectedShardId)) {
-                final String msg = String.format(
-                        "Object of type %s is on shard %d but an associated object of type %s is on shard %d.",
-                        classOfUpdatedObject,
-                        expectedShardId.getId(),
-                        associatedObject.getClass().getName(),
-                        localShardId.getId());
-                log.error(msg);
-                throw new CrossShardAssociationException(msg);
-            }
-        }
-    }
+		if ( associatedObject instanceof HibernateProxy ) {
+			final HibernateProxy hp = (HibernateProxy) associatedObject;
+			try {
+				hp.getHibernateLazyInitializer().initialize();
+			}
+			catch ( ObjectNotFoundException e ) {
+				final String msg = String.format(
+						"Object of type %s is on shard %d but an associated object of type %s is on different shard.",
+						classOfUpdatedObject,
+						expectedShardId.getId(),
+						hp.getHibernateLazyInitializer().getPersistentClass().getName()
+				);
+				log.error( msg );
+				throw new CrossShardAssociationException( msg );
+			}
+		}
+		localShardId = shardIdResolver.getShardIdForObject( associatedObject );
+		if ( localShardId != null ) {
+			if ( !localShardId.equals( expectedShardId ) ) {
+				final String msg = String.format(
+						"Object of type %s is on shard %d but an associated object of type %s is on shard %d.",
+						classOfUpdatedObject,
+						expectedShardId.getId(),
+						associatedObject.getClass().getName(),
+						localShardId.getId()
+				);
+				log.error( msg );
+				throw new CrossShardAssociationException( msg );
+			}
+		}
+	}
 
-    @Override
-    public void onCollectionUpdate(final Object collection, final Serializable key) throws CallbackException {
-        final ShardId expectedShardId = getAndRefreshExpectedShardId(((PersistentCollection) collection).getOwner());
-        Preconditions.checkNotNull(expectedShardId);
-        @SuppressWarnings("unchecked")
-        Iterable<Object> iterable = (Iterable<Object>) collection;
-        checkIterable("<Unknown>", expectedShardId, iterable);
-    }
+	@Override
+	public void onCollectionUpdate(final Object collection, final Serializable key) throws CallbackException {
+		final ShardId expectedShardId = getAndRefreshExpectedShardId( ( (PersistentCollection) collection ).getOwner() );
+		Preconditions.checkNotNull( expectedShardId );
+		@SuppressWarnings("unchecked")
+		Iterable<Object> iterable = (Iterable<Object>) collection;
+		checkIterable( "<Unknown>", expectedShardId, iterable );
+	}
 
-    private ShardId getAndRefreshExpectedShardId(final Object object) {
-        ShardId expectedShardId = shardIdResolver.getShardIdForObject(object);
-        if (expectedShardId == null) {
-            expectedShardId = ShardedSessionImpl.getCurrentSubgraphShardId();
-        } else {
-            ShardedSessionImpl.setCurrentSubgraphShardId(expectedShardId);
-        }
-        return expectedShardId;
-    }
+	private ShardId getAndRefreshExpectedShardId(final Object object) {
+		ShardId expectedShardId = shardIdResolver.getShardIdForObject( object );
+		if ( expectedShardId == null ) {
+			expectedShardId = ShardedSessionImpl.getCurrentSubgraphShardId();
+		}
+		else {
+			ShardedSessionImpl.setCurrentSubgraphShardId( expectedShardId );
+		}
+		return expectedShardId;
+	}
 }

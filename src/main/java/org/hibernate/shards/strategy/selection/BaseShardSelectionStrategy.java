@@ -28,7 +28,7 @@ import org.hibernate.shards.ShardId;
  */
 public abstract class BaseShardSelectionStrategy extends BaseHasShardIdList implements ShardSelectionStrategy {
 
-    protected BaseShardSelectionStrategy(final List<ShardId> shardIds) {
-        super(shardIds);
-    }
+	protected BaseShardSelectionStrategy(final List<ShardId> shardIds) {
+		super( shardIds );
+	}
 }

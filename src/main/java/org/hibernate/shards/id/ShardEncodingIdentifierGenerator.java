@@ -28,5 +28,5 @@ import org.hibernate.shards.ShardId;
  */
 public interface ShardEncodingIdentifierGenerator extends IdentifierGenerator {
 
-    ShardId extractShardId(Serializable identifier);
+	ShardId extractShardId(Serializable identifier);
 }

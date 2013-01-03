@@ -40,97 +40,126 @@ import org.hibernate.shards.strategy.exit.ExitStrategy;
  */
 class ParallelShardOperationCallable<T> implements Callable<Void> {
 
-    private static final boolean INTERRUPT_IF_RUNNING = false;
+	private static final boolean INTERRUPT_IF_RUNNING = false;
 
-    private final Logger log = Logger.getLogger(getClass());
+	private final Logger log = Logger.getLogger( getClass() );
 
-    private final CountDownLatch startSignal;
+	private final CountDownLatch startSignal;
 
-    private final CountDownLatch doneSignal;
+	private final CountDownLatch doneSignal;
 
-    private final ExitStrategy<T> exitStrategy;
+	private final ExitStrategy<T> exitStrategy;
 
-    private final ShardOperation<T> operation;
+	private final ShardOperation<T> operation;
 
-    private final Shard shard;
+	private final Shard shard;
 
-    private final List<StartAwareFutureTask> futureTasks;
+	private final List<StartAwareFutureTask> futureTasks;
 
-    public ParallelShardOperationCallable(final CountDownLatch startSignal,
-                                          final CountDownLatch doneSignal,
-                                          final ExitStrategy<T> exitStrategy,
-                                          final ShardOperation<T> operation,
-                                          final Shard shard,
-                                          final List<StartAwareFutureTask> futureTasks) {
+	public ParallelShardOperationCallable(final CountDownLatch startSignal,
+										  final CountDownLatch doneSignal,
+										  final ExitStrategy<T> exitStrategy,
+										  final ShardOperation<T> operation,
+										  final Shard shard,
+										  final List<StartAwareFutureTask> futureTasks) {
 
-        this.startSignal = startSignal;
-        this.doneSignal = doneSignal;
-        this.exitStrategy = exitStrategy;
-        this.operation = operation;
-        this.shard = shard;
-        this.futureTasks = futureTasks;
-    }
+		this.startSignal = startSignal;
+		this.doneSignal = doneSignal;
+		this.exitStrategy = exitStrategy;
+		this.operation = operation;
+		this.shard = shard;
+		this.futureTasks = futureTasks;
+	}
 
-    public Void call() throws Exception {
-        try {
-            waitForStartSignal();
-            log.debug(String.format("Starting execution of %s against shard %s", operation.getOperationName(), shard));
-            /**
-             * If addResult() returns true it means there is no more work to be
-             * performed.  Cancel all the outstanding tasks.
-             */
-            if (exitStrategy.addResult(operation.execute(shard), shard)) {
-                log.debug(
-                        String.format(
-                                "Short-circuiting execution of %s on other threads after execution against shard %s",
-                                operation.getOperationName(),
-                                shard));
-                /**
-                 * It's ok to cancel ourselves because StartAwareFutureTask.cancel()
-                 * will return false if a task has already started executing, and we're
-                 * already executing.
-                 */
+	public Void call() throws Exception {
+		try {
+			waitForStartSignal();
+			log.debug(
+					String.format(
+							"Starting execution of %s against shard %s",
+							operation.getOperationName(),
+							shard
+					)
+			);
+			/**
+			 * If addResult() returns true it means there is no more work to be
+			 * performed.  Cancel all the outstanding tasks.
+			 */
+			if ( exitStrategy.addResult( operation.execute( shard ), shard ) ) {
+				log.debug(
+						String.format(
+								"Short-circuiting execution of %s on other threads after execution against shard %s",
+								operation.getOperationName(),
+								shard
+						)
+				);
+				/**
+				 * It's ok to cancel ourselves because StartAwareFutureTask.cancel()
+				 * will return false if a task has already started executing, and we're
+				 * already executing.
+				 */
 
-                log.debug(String.format("Checking %d future tasks to see if they need to be cancelled.", futureTasks.size()));
-                for (final StartAwareFutureTask ft : futureTasks) {
-                    log.debug(String.format("Preparing to cancel future task %d.", ft.getId()));
-                    /**
-                     * If a task was successfully cancelled that means it had not yet
-                     * started running.  Since the task won't run, the task won't be
-                     * able to decrement the CountDownLatch.  We need to decrement
-                     * it on behalf of the cancelled task.
-                     */
-                    if (ft.cancel(INTERRUPT_IF_RUNNING)) {
-                        log.debug("Task cancel returned true, decrementing counter on its behalf.");
-                        doneSignal.countDown();
-                    } else {
-                        log.debug("Task cancel returned false, not decrementing counter on its behalf.");
-                    }
-                }
-            } else {
-                log.debug(
-                        String.format(
-                                "No need to short-cirtcuit execution of %s on other threads after execution against shard %s",
-                                operation.getOperationName(),
-                                shard));
-            }
-        } finally {
-            // counter must get decremented no matter what
-            log.debug(String.format("Decrementing counter for operation %s on shard %s", operation.getOperationName(), shard));
-            doneSignal.countDown();
-        }
-        return null;
-    }
+				log.debug(
+						String.format(
+								"Checking %d future tasks to see if they need to be cancelled.",
+								futureTasks.size()
+						)
+				);
+				for ( final StartAwareFutureTask ft : futureTasks ) {
+					log.debug( String.format( "Preparing to cancel future task %d.", ft.getId() ) );
+					/**
+					 * If a task was successfully cancelled that means it had not yet
+					 * started running.  Since the task won't run, the task won't be
+					 * able to decrement the CountDownLatch.  We need to decrement
+					 * it on behalf of the cancelled task.
+					 */
+					if ( ft.cancel( INTERRUPT_IF_RUNNING ) ) {
+						log.debug( "Task cancel returned true, decrementing counter on its behalf." );
+						doneSignal.countDown();
+					}
+					else {
+						log.debug( "Task cancel returned false, not decrementing counter on its behalf." );
+					}
+				}
+			}
+			else {
+				log.debug(
+						String.format(
+								"No need to short-cirtcuit execution of %s on other threads after execution against shard %s",
+								operation.getOperationName(),
+								shard
+						)
+				);
+			}
+		}
+		finally {
+			// counter must get decremented no matter what
+			log.debug(
+					String.format(
+							"Decrementing counter for operation %s on shard %s",
+							operation.getOperationName(),
+							shard
+					)
+			);
+			doneSignal.countDown();
+		}
+		return null;
+	}
 
-    private void waitForStartSignal() {
-        try {
-            startSignal.await();
-        } catch (InterruptedException e) {
-            // I see no reason why this should happen
-            final String msg = String.format("Received interrupt while waiting to begin execution of %s against shard %s", operation.getOperationName(), shard);
-            log.error(msg);
-            throw new HibernateException(msg);
-        }
-    }
+	private void waitForStartSignal() {
+		try {
+			startSignal.await();
+		}
+		catch ( InterruptedException e ) {
+			// I see no reason why this should happen
+			final String msg = String.format(
+					"Received interrupt while waiting to begin execution of %s against shard %s",
+					operation.getOperationName(),
+					shard
+			);
+			log.error( msg );
+			throw new HibernateException( msg );
+		}
+	}
 }
 

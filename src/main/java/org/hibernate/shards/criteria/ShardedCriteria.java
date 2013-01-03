@@ -22,20 +22,19 @@ import org.hibernate.Criteria;
 
 /**
  * Interface for a shard-aware {@link Criteria} implementation.
- * @see Criteria
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria
  */
 public interface ShardedCriteria extends Criteria {
 
-  /**
-   * @return the CriteriaId of this ShardedCriteria instance.
-   */
-  CriteriaId getCriteriaId();
+	/**
+	 * @return the CriteriaId of this ShardedCriteria instance.
+	 */
+	CriteriaId getCriteriaId();
 
-  /**
-   *
-   * @return the CriteriaFactory of this ShardedCriteria instance.
-   */
-  CriteriaFactory getCriteriaFactory();
+	/**
+	 * @return the CriteriaFactory of this ShardedCriteria instance.
+	 */
+	CriteriaFactory getCriteriaFactory();
 }

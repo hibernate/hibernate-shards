@@ -23,26 +23,26 @@ import org.hibernate.FlushMode;
 
 /**
  * Event that allows the {@link FlushMode} of a {@link Criteria} to be set lazily.
- * @see Criteria#setFlushMode(FlushMode)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setFlushMode(FlushMode)
  */
 class SetFlushModeEvent implements CriteriaEvent {
 
-  // the flushMode we'll set on the Critiera when the event fires
-  private final FlushMode flushMode;
+	// the flushMode we'll set on the Critiera when the event fires
+	private final FlushMode flushMode;
 
-  /**
-   * Construct a SetFlushModeEvent
-   *
-   * @param flushMode the flushMode that
-   * we'll set on the {@link Criteria} when the event fires.
-   */
-  public SetFlushModeEvent(FlushMode flushMode) {
-    this.flushMode = flushMode;
-  }
+	/**
+	 * Construct a SetFlushModeEvent
+	 *
+	 * @param flushMode the flushMode that
+	 * we'll set on the {@link Criteria} when the event fires.
+	 */
+	public SetFlushModeEvent(FlushMode flushMode) {
+		this.flushMode = flushMode;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.setFlushMode(flushMode);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.setFlushMode( flushMode );
+	}
 }

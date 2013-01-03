@@ -22,26 +22,26 @@ import org.hibernate.Criteria;
 
 /**
  * Event that allows the comment of a {@link Criteria} to be set lazily.
- * @see Criteria#setComment(String)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setComment(String)
  */
 class SetCommentEvent implements CriteriaEvent {
 
-  // the comment that we'll set on the Criteria when the event fires
-  private final String comment;
+	// the comment that we'll set on the Criteria when the event fires
+	private final String comment;
 
-  /**
-   * Construct a SetCommentEvent
-   *
-   * @param comment the comment we'll set on the {@link Criteria}
-   * when the event fires.
-   */
-  public SetCommentEvent(String comment) {
-    this.comment = comment;
-  }
+	/**
+	 * Construct a SetCommentEvent
+	 *
+	 * @param comment the comment we'll set on the {@link Criteria}
+	 * when the event fires.
+	 */
+	public SetCommentEvent(String comment) {
+		this.comment = comment;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.setComment(comment);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.setComment( comment );
+	}
 }

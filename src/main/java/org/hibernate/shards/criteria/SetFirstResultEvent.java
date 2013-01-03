@@ -22,26 +22,26 @@ import org.hibernate.Criteria;
 
 /**
  * Event that allows the firstResult of a {@link Criteria} to be set lazily.
- * @see Criteria#setFirstResult(int)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setFirstResult(int)
  */
 class SetFirstResultEvent implements CriteriaEvent {
 
-  // the firstResult that we'll set on the Criteria when the event fires
-  private final int firstResult;
+	// the firstResult that we'll set on the Criteria when the event fires
+	private final int firstResult;
 
-  /**
-   * Construct a SetFirstResultEvent
-   *
-   * @param firstResult the firstResult that
-   * we'll set on the {@link Criteria} when the event fires.
-   */
-  public SetFirstResultEvent(int firstResult) {
-    this.firstResult = firstResult;
-  }
+	/**
+	 * Construct a SetFirstResultEvent
+	 *
+	 * @param firstResult the firstResult that
+	 * we'll set on the {@link Criteria} when the event fires.
+	 */
+	public SetFirstResultEvent(int firstResult) {
+		this.firstResult = firstResult;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.setFirstResult(firstResult);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.setFirstResult( firstResult );
+	}
 }

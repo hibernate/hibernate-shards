@@ -32,10 +32,10 @@ import org.hibernate.Session;
  */
 public interface OpenSessionEvent {
 
-  /**
-   * Invokes any actions that have to occur when a session is opened.
-   *
-   * @param session Session which is being opened
-   */
-  void onOpenSession(Session session);
+	/**
+	 * Invokes any actions that have to occur when a session is opened.
+	 *
+	 * @param session Session which is being opened
+	 */
+	void onOpenSession(Session session);
 }

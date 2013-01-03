@@ -19,19 +19,20 @@
 package org.hibernate.shards.query;
 
 import org.hibernate.Query;
+
 /**
  * @author Maulik Shah
  */
 public class SetReadOnlyEvent implements QueryEvent {
 
-  private final boolean readOnly;
+	private final boolean readOnly;
 
-  public SetReadOnlyEvent(boolean readOnly) {
-    this.readOnly = readOnly;
-  }
+	public SetReadOnlyEvent(boolean readOnly) {
+		this.readOnly = readOnly;
+	}
 
-  public void onEvent(Query query) {
-    query.setReadOnly(readOnly);
-  }
+	public void onEvent(Query query) {
+		query.setReadOnly( readOnly );
+	}
 
 }

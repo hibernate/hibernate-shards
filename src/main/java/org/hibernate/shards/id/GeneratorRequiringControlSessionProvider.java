@@ -25,5 +25,5 @@ import org.hibernate.shards.session.ControlSessionProvider;
  */
 public interface GeneratorRequiringControlSessionProvider {
 
-    void setControlSessionProvider(ControlSessionProvider provider);
+	void setControlSessionProvider(ControlSessionProvider provider);
 }

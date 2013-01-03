@@ -26,42 +26,43 @@ import org.hibernate.shards.session.ShardedSessionException;
  */
 public class SetCharacterEvent implements QueryEvent {
 
-  private static enum CtorType {
-    POSITION_VAL,
-    NAME_VAL
-  }
+	private static enum CtorType {
+		POSITION_VAL,
+		NAME_VAL
+	}
 
-  private CtorType ctorType;
-  private final int position;
-  private final char val;
-  private final String name;
+	private CtorType ctorType;
+	private final int position;
+	private final char val;
+	private final String name;
 
-  private SetCharacterEvent(CtorType ctorType, int position, char val, String name) {
-    this.ctorType = ctorType;
-    this.position = position;
-    this.val = val;
-    this.name = name;
-  }
+	private SetCharacterEvent(CtorType ctorType, int position, char val, String name) {
+		this.ctorType = ctorType;
+		this.position = position;
+		this.val = val;
+		this.name = name;
+	}
 
-  public SetCharacterEvent(int position, char val) {
-    this(CtorType.POSITION_VAL, position, val, null);
-  }
+	public SetCharacterEvent(int position, char val) {
+		this( CtorType.POSITION_VAL, position, val, null );
+	}
 
-  public SetCharacterEvent(String name, char val) {
-    this(CtorType.NAME_VAL, -1, val, name);
-  }
+	public SetCharacterEvent(String name, char val) {
+		this( CtorType.NAME_VAL, -1, val, name );
+	}
 
-  public void onEvent(Query query) {
-    switch(ctorType) {
-      case POSITION_VAL:
-        query.setCharacter(position, val);
-        break;
-      case NAME_VAL:
-        query.setCharacter(name, val);
-        break;
-      default:
-        throw new ShardedSessionException(
-            "Unknown ctor type in SetCharacterEvent: " + ctorType);
-    }
-  }
+	public void onEvent(Query query) {
+		switch ( ctorType ) {
+			case POSITION_VAL:
+				query.setCharacter( position, val );
+				break;
+			case NAME_VAL:
+				query.setCharacter( name, val );
+				break;
+			default:
+				throw new ShardedSessionException(
+						"Unknown ctor type in SetCharacterEvent: " + ctorType
+				);
+		}
+	}
 }

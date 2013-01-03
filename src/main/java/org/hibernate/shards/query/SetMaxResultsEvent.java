@@ -25,13 +25,13 @@ import org.hibernate.Query;
  */
 
 public class SetMaxResultsEvent implements QueryEvent {
-  private final int maxResults;
+	private final int maxResults;
 
-  public SetMaxResultsEvent(int maxResults) {
-    this.maxResults = maxResults;
-  }
+	public SetMaxResultsEvent(int maxResults) {
+		this.maxResults = maxResults;
+	}
 
-  public void onEvent(Query query) {
-    query.setMaxResults(maxResults);
-  }
+	public void onEvent(Query query) {
+		query.setMaxResults( maxResults );
+	}
 }

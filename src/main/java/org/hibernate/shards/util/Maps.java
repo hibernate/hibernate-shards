@@ -29,22 +29,22 @@ import java.util.Map;
  */
 public class Maps {
 
-    private Maps() {
-    }
+	private Maps() {
+	}
 
-    /**
-     * Construct a new {@link HashMap}, taking advantage of type inference to
-     * avoid specifying the type on the rhs.
-     */
-    public static <K, V> HashMap<K, V> newHashMap() {
-        return new HashMap<K, V>();
-    }
+	/**
+	 * Construct a new {@link HashMap}, taking advantage of type inference to
+	 * avoid specifying the type on the rhs.
+	 */
+	public static <K, V> HashMap<K, V> newHashMap() {
+		return new HashMap<K, V>();
+	}
 
-    /**
-     * Construct a new {@link LinkedHashMap}, taking advantage of type inference to
-     * avoid specifying the type on the rhs.
-     */
-    public static <K, V> LinkedHashMap<K, V> newLinkedHashMap() {
-        return new LinkedHashMap<K, V>();
-    }
+	/**
+	 * Construct a new {@link LinkedHashMap}, taking advantage of type inference to
+	 * avoid specifying the type on the rhs.
+	 */
+	public static <K, V> LinkedHashMap<K, V> newLinkedHashMap() {
+		return new LinkedHashMap<K, V>();
+	}
 }

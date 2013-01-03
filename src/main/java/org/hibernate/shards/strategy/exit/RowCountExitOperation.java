@@ -30,12 +30,12 @@ import org.hibernate.shards.util.Preconditions;
  */
 public class RowCountExitOperation implements ProjectionExitOperation {
 
-  public RowCountExitOperation(Projection projection) {
-    Preconditions.checkState(projection instanceof RowCountProjection);
-  }
+	public RowCountExitOperation(Projection projection) {
+		Preconditions.checkState( projection instanceof RowCountProjection );
+	}
 
-  public List<Object> apply(List<Object> results) {
-    List<Object> nonNullResults = ExitOperationUtils.getNonNullList(results);
-    return Collections.singletonList((Object) nonNullResults.size());
-  }
+	public List<Object> apply(List<Object> results) {
+		List<Object> nonNullResults = ExitOperationUtils.getNonNullList( results );
+		return Collections.singletonList( (Object) nonNullResults.size() );
+	}
 }

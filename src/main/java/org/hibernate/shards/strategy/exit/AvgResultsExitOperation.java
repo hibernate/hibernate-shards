@@ -40,80 +40,81 @@ import org.hibernate.shards.util.Pair;
  */
 public class AvgResultsExitOperation implements ExitOperation {
 
-    private final Logger log = Logger.getLogger(getClass());
+	private final Logger log = Logger.getLogger( getClass() );
 
-    public List<Object> apply(List<Object> results) {
+	public List<Object> apply(List<Object> results) {
 
-        final List<Object> nonNullResults = ExitOperationUtils.getNonNullList(results);
-        Double total = null;
-        int numResults = 0;
-        Boolean shardAvgIsDouble = null;
+		final List<Object> nonNullResults = ExitOperationUtils.getNonNullList( results );
+		Double total = null;
+		int numResults = 0;
+		Boolean shardAvgIsDouble = null;
 
-        for (final Object result : nonNullResults) {
+		for ( final Object result : nonNullResults ) {
 
-            // TODO: (ammachado) there must be a better way to discover the results type from the avg operation.
-            /**
-             * We expect all entries to be Object arrays.
-             * the first entry in the array is the average and
-             * the second entry in the array is the number of rows that were examined
-             * to arrive at the average.
-             *
-             * for properties mapped as Long, Short, Integer, or primitive integer types, a Long value is returned;
-             * for properties mapped as Float, Double, or primitive floating point types, a Double value is returned.
-             */
-            final Pair<Object, Object> pair = getResultPair(result);
-            final String shardAvgStringValue = String.valueOf(pair.first);
-            final String shardResultsStringValue = String.valueOf(pair.second);
-            final boolean shardAvgStringValueIsNull = "null".equals(shardAvgStringValue);
+			// TODO: (ammachado) there must be a better way to discover the results type from the avg operation.
+			/**
+			 * We expect all entries to be Object arrays.
+			 * the first entry in the array is the average and
+			 * the second entry in the array is the number of rows that were examined
+			 * to arrive at the average.
+			 *
+			 * for properties mapped as Long, Short, Integer, or primitive integer types, a Long value is returned;
+			 * for properties mapped as Float, Double, or primitive floating point types, a Double value is returned.
+			 */
+			final Pair<Object, Object> pair = getResultPair( result );
+			final String shardAvgStringValue = String.valueOf( pair.first );
+			final String shardResultsStringValue = String.valueOf( pair.second );
+			final boolean shardAvgStringValueIsNull = "null".equals( shardAvgStringValue );
 
-            if (!shardAvgStringValueIsNull && shardAvgIsDouble == null) {
-                shardAvgIsDouble = pair.first instanceof Double;
-            }
+			if ( !shardAvgStringValueIsNull && shardAvgIsDouble == null ) {
+				shardAvgIsDouble = pair.first instanceof Double;
+			}
 
-            final Double shardAvg = shardAvgStringValueIsNull ? null : Double.valueOf(shardAvgStringValue);
-            if (shardAvg == null) {
-                // if there's no result from this shard it doesn't go into the
-                // calculation.  This is consistent with how avg is implemented
-                // in the database
-                continue;
-            }
+			final Double shardAvg = shardAvgStringValueIsNull ? null : Double.valueOf( shardAvgStringValue );
+			if ( shardAvg == null ) {
+				// if there's no result from this shard it doesn't go into the
+				// calculation.  This is consistent with how avg is implemented
+				// in the database
+				continue;
+			}
 
-            final Long shardResults = Long.valueOf(shardResultsStringValue);
-            final Double shardTotal = shardAvg * shardResults;
-            if (total == null) {
-                total = shardTotal;
-            } else {
-                total += shardTotal;
-            }
-            numResults += shardResults;
-        }
+			final Long shardResults = Long.valueOf( shardResultsStringValue );
+			final Double shardTotal = shardAvg * shardResults;
+			if ( total == null ) {
+				total = shardTotal;
+			}
+			else {
+				total += shardTotal;
+			}
+			numResults += shardResults;
+		}
 
-        if (numResults == 0 || total == null) {
-            return Collections.singletonList(null);
-        }
+		if ( numResults == 0 || total == null ) {
+			return Collections.singletonList( null );
+		}
 
-        final Object result = shardAvgIsDouble ? Double.valueOf(String.valueOf(total / numResults))
-                : Long.valueOf(String.valueOf(total / numResults));
+		final Object result = shardAvgIsDouble ? Double.valueOf( String.valueOf( total / numResults ) )
+				: Long.valueOf( String.valueOf( total / numResults ) );
 
-        return Collections.singletonList(result);
-    }
+		return Collections.singletonList( result );
+	}
 
-    private Pair<Object, Object> getResultPair(final Object result) {
+	private Pair<Object, Object> getResultPair(final Object result) {
 
-        if (!(result instanceof Object[])) {
-            final String msg = "Wrong type in result list.  Expected " + Object[].class +
-                    " but found " + result.getClass();
-            log.error(msg);
-            throw new IllegalStateException(msg);
-        }
+		if ( !( result instanceof Object[] ) ) {
+			final String msg = "Wrong type in result list.  Expected " + Object[].class +
+					" but found " + result.getClass();
+			log.error( msg );
+			throw new IllegalStateException( msg );
+		}
 
-        final Object[] resultArr = (Object[]) result;
-        if (resultArr.length != 2) {
-            final String msg = "Result array is wrong size.  Expected 2 but found " + resultArr.length;
-            log.error(msg);
-            throw new IllegalStateException(msg);
-        }
+		final Object[] resultArr = (Object[]) result;
+		if ( resultArr.length != 2 ) {
+			final String msg = "Result array is wrong size.  Expected 2 but found " + resultArr.length;
+			log.error( msg );
+			throw new IllegalStateException( msg );
+		}
 
-        return Pair.of(resultArr[0], resultArr[1]);
-    }
+		return Pair.of( resultArr[0], resultArr[1] );
+	}
 }

@@ -25,54 +25,54 @@ import java.io.Serializable;
  */
 public final class ShardResolutionStrategyDataImpl implements ShardResolutionStrategyData {
 
-    private final String entityName;
-    private final Serializable id;
+	private final String entityName;
+	private final Serializable id;
 
-    public ShardResolutionStrategyDataImpl(final Class<?> clazz, final Serializable id) {
-        this(clazz.getName(), id);
-    }
+	public ShardResolutionStrategyDataImpl(final Class<?> clazz, final Serializable id) {
+		this( clazz.getName(), id );
+	}
 
-    public ShardResolutionStrategyDataImpl(final String entityName, final Serializable id) {
-        this.entityName = entityName;
-        this.id = id;
-    }
+	public ShardResolutionStrategyDataImpl(final String entityName, final Serializable id) {
+		this.entityName = entityName;
+		this.id = id;
+	}
 
-    @Override
-    public String getEntityName() {
-        return entityName;
-    }
+	@Override
+	public String getEntityName() {
+		return entityName;
+	}
 
-    @Override
-    public Serializable getId() {
-        return id;
-    }
+	@Override
+	public Serializable getId() {
+		return id;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-        ShardResolutionStrategyDataImpl that = (ShardResolutionStrategyDataImpl) o;
+		ShardResolutionStrategyDataImpl that = (ShardResolutionStrategyDataImpl) o;
 
-        if (!entityName.equals(that.entityName)) {
-            return false;
-        }
-        if (!id.equals(that.id)) {
-            return false;
-        }
+		if ( !entityName.equals( that.entityName ) ) {
+			return false;
+		}
+		if ( !id.equals( that.id ) ) {
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        int result;
-        result = entityName.hashCode();
-        result = 31 * result + id.hashCode();
-        return result;
-    }
+	@Override
+	public int hashCode() {
+		int result;
+		result = entityName.hashCode();
+		result = 31 * result + id.hashCode();
+		return result;
+	}
 }

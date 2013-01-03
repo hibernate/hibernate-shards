@@ -30,8 +30,8 @@ import org.hibernate.Criteria;
  */
 interface ShardedSubcriteria extends Criteria {
 
-    /**
-     * @return the owning ShardedCriteria
-     */
-    ShardedCriteria getParentCriteria();
+	/**
+	 * @return the owning ShardedCriteria
+	 */
+	ShardedCriteria getParentCriteria();
 }

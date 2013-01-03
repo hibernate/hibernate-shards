@@ -27,37 +27,37 @@ import org.hibernate.cfg.Environment;
  */
 public class ConfigurationToShardConfigurationAdapter implements ShardConfiguration {
 
-    private final Configuration config;
+	private final Configuration config;
 
-    public ConfigurationToShardConfigurationAdapter(final Configuration config) {
-        this.config = config;
-    }
+	public ConfigurationToShardConfigurationAdapter(final Configuration config) {
+		this.config = config;
+	}
 
-    public String getShardUrl() {
-        return config.getProperty(Environment.URL);
-    }
+	public String getShardUrl() {
+		return config.getProperty( Environment.URL );
+	}
 
-    public String getShardUser() {
-        return config.getProperty(Environment.USER);
-    }
+	public String getShardUser() {
+		return config.getProperty( Environment.USER );
+	}
 
-    public String getShardPassword() {
-        return config.getProperty(Environment.PASS);
-    }
+	public String getShardPassword() {
+		return config.getProperty( Environment.PASS );
+	}
 
-    public String getShardSessionFactoryName() {
-        return config.getProperty(Environment.SESSION_FACTORY_NAME);
-    }
+	public String getShardSessionFactoryName() {
+		return config.getProperty( Environment.SESSION_FACTORY_NAME );
+	}
 
-    public Integer getShardId() {
-        return Integer.parseInt(config.getProperty(ShardedEnvironment.SHARD_ID_PROPERTY));
-    }
+	public Integer getShardId() {
+		return Integer.parseInt( config.getProperty( ShardedEnvironment.SHARD_ID_PROPERTY ) );
+	}
 
-    public String getShardDatasource() {
-        return config.getProperty(Environment.DATASOURCE);
-    }
+	public String getShardDatasource() {
+		return config.getProperty( Environment.DATASOURCE );
+	}
 
-    public String getShardCacheRegionPrefix() {
-        return config.getProperty(Environment.CACHE_REGION_PREFIX);
-    }
+	public String getShardCacheRegionPrefix() {
+		return config.getProperty( Environment.CACHE_REGION_PREFIX );
+	}
 }

@@ -29,28 +29,28 @@ import org.hibernate.shards.util.Preconditions;
  */
 public class FirstNonNullResultExitStrategy<T> implements ExitStrategy<T> {
 
-  private T nonNullResult;
-  private Shard shard;
+	private T nonNullResult;
+	private Shard shard;
 
-  /**
-   * Synchronized method guarantees that only the first thread to add a result
-   * will have its result reflected.
-   */
-  public final synchronized boolean addResult(T result, Shard shard) {
-    Preconditions.checkNotNull(shard);
-    if(result != null && nonNullResult == null) {
-      nonNullResult = result;
-      this.shard = shard;
-      return true;
-    }
-    return false;
-  }
+	/**
+	 * Synchronized method guarantees that only the first thread to add a result
+	 * will have its result reflected.
+	 */
+	public final synchronized boolean addResult(T result, Shard shard) {
+		Preconditions.checkNotNull( shard );
+		if ( result != null && nonNullResult == null ) {
+			nonNullResult = result;
+			this.shard = shard;
+			return true;
+		}
+		return false;
+	}
 
-  public T compileResults(ExitOperationsCollector exitOperationsCollector) {
-    return nonNullResult;
-  }
+	public T compileResults(ExitOperationsCollector exitOperationsCollector) {
+		return nonNullResult;
+	}
 
-  public Shard getShardOfResult() {
-    return shard;
-  }
+	public Shard getShardOfResult() {
+		return shard;
+	}
 }

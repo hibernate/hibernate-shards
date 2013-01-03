@@ -27,7 +27,7 @@ import org.hibernate.shards.ShardId;
  */
 public interface ShardAware {
 
-    void setShardId(ShardId shardId);
+	void setShardId(ShardId shardId);
 
-    ShardId getShardId();
+	ShardId getShardId();
 }

@@ -23,35 +23,35 @@ package org.hibernate.shards.query;
  */
 public class QueryId {
 
-  private final int id;
+	private final int id;
 
-  public QueryId(int id) {
-    this.id = id;
-  }
+	public QueryId(int id) {
+		this.id = id;
+	}
 
-  public int getId() {
-    return id;
-  }
+	public int getId() {
+		return id;
+	}
 
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (!(o instanceof QueryId)) {
-      return false;
-    }
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( !( o instanceof QueryId ) ) {
+			return false;
+		}
 
-    final QueryId queryId = (QueryId) o;
+		final QueryId queryId = (QueryId) o;
 
-    if (id != queryId.id) {
-      return false;
-    }
+		if ( id != queryId.id ) {
+			return false;
+		}
 
-    return true;
-  }
+		return true;
+	}
 
-  public int hashCode() {
-    return id;
-  }
+	public int hashCode() {
+		return id;
+	}
 
 }

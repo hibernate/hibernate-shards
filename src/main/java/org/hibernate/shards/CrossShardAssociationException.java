@@ -29,11 +29,11 @@ import org.hibernate.HibernateException;
  * Now suppose you did the following:
  *
  * {@code
-public void reassignLeastProfitableAccount(AccountManager mgr1, AccountManager mgr2) {
-  Account acct = mgr1.removeLeastProfitableAccount();
-  acct.setAccountManager(mgr2);
-  mgr2.addAccount(acct);
-}}
+ * public void reassignLeastProfitableAccount(AccountManager mgr1, AccountManager mgr2) {
+ * Account acct = mgr1.removeLeastProfitableAccount();
+ * acct.setAccountManager(mgr2);
+ * mgr2.addAccount(acct);
+ * }}
  * If the 2 managers happen to live on different shards and you were to then
  * attempt to save the second manager you would receive a
  * CrossShardAssociationException because the account lives on a different shard
@@ -60,15 +60,15 @@ public void reassignLeastProfitableAccount(AccountManager mgr1, AccountManager m
  */
 public class CrossShardAssociationException extends HibernateException {
 
-  public CrossShardAssociationException(Throwable root) {
-    super(root);
-  }
+	public CrossShardAssociationException(Throwable root) {
+		super( root );
+	}
 
-  public CrossShardAssociationException(String string, Throwable root) {
-    super(string, root);
-  }
+	public CrossShardAssociationException(String string, Throwable root) {
+		super( string, root );
+	}
 
-  public CrossShardAssociationException(String s) {
-    super(s);
-  }
+	public CrossShardAssociationException(String s) {
+		super( s );
+	}
 }

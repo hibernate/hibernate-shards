@@ -25,37 +25,37 @@ package org.hibernate.shards;
  */
 public class ShardId {
 
-    private final int shardId;
+	private final int shardId;
 
-    public ShardId(final int shardId) {
-        this.shardId = shardId;
-    }
+	public ShardId(final int shardId) {
+		this.shardId = shardId;
+	}
 
-    public int getId() {
-        return shardId;
-    }
+	public int getId() {
+		return shardId;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-        final ShardId shardId1 = (ShardId) o;
+		final ShardId shardId1 = (ShardId) o;
 
-        return shardId == shardId1.shardId;
-    }
+		return shardId == shardId1.shardId;
+	}
 
-    @Override
-    public int hashCode() {
-        return shardId;
-    }
+	@Override
+	public int hashCode() {
+		return shardId;
+	}
 
-    @Override
-    public String toString() {
-        return Integer.toString(shardId);
-    }
+	@Override
+	public String toString() {
+		return Integer.toString( shardId );
+	}
 }

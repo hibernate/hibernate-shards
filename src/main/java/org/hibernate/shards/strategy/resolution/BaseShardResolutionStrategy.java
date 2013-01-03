@@ -28,7 +28,7 @@ import org.hibernate.shards.ShardId;
  */
 public abstract class BaseShardResolutionStrategy extends BaseHasShardIdList implements ShardResolutionStrategy {
 
-    public BaseShardResolutionStrategy(final List<ShardId> shardIds) {
-        super(shardIds);
-    }
+	public BaseShardResolutionStrategy(final List<ShardId> shardIds) {
+		super( shardIds );
+	}
 }

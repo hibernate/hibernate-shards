@@ -8,14 +8,14 @@ import org.hibernate.Query;
  */
 public class SetLockOptionsEvent implements QueryEvent {
 
-    private final LockOptions lockOptions;
+	private final LockOptions lockOptions;
 
-    public SetLockOptionsEvent(final LockOptions lockOptions) {
-        this.lockOptions = lockOptions;
-    }
+	public SetLockOptionsEvent(final LockOptions lockOptions) {
+		this.lockOptions = lockOptions;
+	}
 
-    @Override
-    public void onEvent(final Query query) {
-        query.setLockOptions(lockOptions);
-    }
+	@Override
+	public void onEvent(final Query query) {
+		query.setLockOptions( lockOptions );
+	}
 }

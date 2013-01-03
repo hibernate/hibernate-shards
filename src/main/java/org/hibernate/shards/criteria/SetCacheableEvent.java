@@ -22,27 +22,27 @@ import org.hibernate.Criteria;
 
 /**
  * Event that allows the cacheability of a {@link Criteria} to be set lazily.
- * @see Criteria#setCacheable(boolean)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setCacheable(boolean)
  */
 class SetCacheableEvent implements CriteriaEvent {
 
-  // the value to which we're going to set the cacheability of the Criteria
-  // when the event fires
-  private boolean cacheable;
+	// the value to which we're going to set the cacheability of the Criteria
+	// when the event fires
+	private boolean cacheable;
 
-  /**
-   * Construct a SetCacheableEvent
-   *
-   * @param cacheable the value to which we'll set the cacheability when the event
-   * fires
-   */
-  public SetCacheableEvent(boolean cacheable) {
-    this.cacheable = cacheable;
-  }
+	/**
+	 * Construct a SetCacheableEvent
+	 *
+	 * @param cacheable the value to which we'll set the cacheability when the event
+	 * fires
+	 */
+	public SetCacheableEvent(boolean cacheable) {
+		this.cacheable = cacheable;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.setCacheable(cacheable);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.setCacheable( cacheable );
+	}
 }

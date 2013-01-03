@@ -35,133 +35,133 @@ import org.hibernate.type.Type;
  */
 public class InterceptorDecorator implements Interceptor {
 
-    protected final Interceptor delegate;
+	protected final Interceptor delegate;
 
-    public InterceptorDecorator(final Interceptor delegate) {
-        this.delegate = delegate;
-    }
+	public InterceptorDecorator(final Interceptor delegate) {
+		this.delegate = delegate;
+	}
 
-    @Override
-    public boolean onLoad(final Object entity,
-                          final Serializable id,
-                          final Object[] state,
-                          final String[] propertyNames,
-                          final Type[] types) throws CallbackException {
+	@Override
+	public boolean onLoad(final Object entity,
+						  final Serializable id,
+						  final Object[] state,
+						  final String[] propertyNames,
+						  final Type[] types) throws CallbackException {
 
-        return delegate.onLoad(entity, id, state, propertyNames, types);
-    }
+		return delegate.onLoad( entity, id, state, propertyNames, types );
+	}
 
-    @Override
-    public boolean onFlushDirty(final Object entity,
-                                final Serializable id,
-                                final Object[] currentState,
-                                final Object[] previousState,
-                                final String[] propertyNames,
-                                final Type[] types) throws CallbackException {
+	@Override
+	public boolean onFlushDirty(final Object entity,
+								final Serializable id,
+								final Object[] currentState,
+								final Object[] previousState,
+								final String[] propertyNames,
+								final Type[] types) throws CallbackException {
 
-        return delegate.onFlushDirty(entity, id, currentState, previousState, propertyNames, types);
-    }
+		return delegate.onFlushDirty( entity, id, currentState, previousState, propertyNames, types );
+	}
 
-    @Override
-    public boolean onSave(final Object entity,
-                          final Serializable id,
-                          final Object[] state,
-                          final String[] propertyNames,
-                          final Type[] types) throws CallbackException {
+	@Override
+	public boolean onSave(final Object entity,
+						  final Serializable id,
+						  final Object[] state,
+						  final String[] propertyNames,
+						  final Type[] types) throws CallbackException {
 
-        return delegate.onSave(entity, id, state, propertyNames, types);
-    }
+		return delegate.onSave( entity, id, state, propertyNames, types );
+	}
 
-    @Override
-    public void onDelete(final Object entity,
-                         final Serializable id,
-                         final Object[] state,
-                         final String[] propertyNames,
-                         final Type[] types) throws CallbackException {
+	@Override
+	public void onDelete(final Object entity,
+						 final Serializable id,
+						 final Object[] state,
+						 final String[] propertyNames,
+						 final Type[] types) throws CallbackException {
 
-        delegate.onDelete(entity, id, state, propertyNames, types);
-    }
+		delegate.onDelete( entity, id, state, propertyNames, types );
+	}
 
-    @Override
-    public void onCollectionRecreate(final Object collection, final Serializable key) throws CallbackException {
-        delegate.onCollectionRecreate(collection, key);
-    }
+	@Override
+	public void onCollectionRecreate(final Object collection, final Serializable key) throws CallbackException {
+		delegate.onCollectionRecreate( collection, key );
+	}
 
-    @Override
-    public void onCollectionRemove(final Object collection, final Serializable key) throws CallbackException {
-        delegate.onCollectionRemove(collection, key);
-    }
+	@Override
+	public void onCollectionRemove(final Object collection, final Serializable key) throws CallbackException {
+		delegate.onCollectionRemove( collection, key );
+	}
 
-    @Override
-    public void onCollectionUpdate(final Object collection, final Serializable key) throws CallbackException {
-        delegate.onCollectionUpdate(collection, key);
-    }
+	@Override
+	public void onCollectionUpdate(final Object collection, final Serializable key) throws CallbackException {
+		delegate.onCollectionUpdate( collection, key );
+	}
 
-    @Override
-    public void preFlush(final Iterator entities) throws CallbackException {
-        delegate.preFlush(entities);
-    }
+	@Override
+	public void preFlush(final Iterator entities) throws CallbackException {
+		delegate.preFlush( entities );
+	}
 
-    @Override
-    public void postFlush(final Iterator entities) throws CallbackException {
-        delegate.postFlush(entities);
-    }
+	@Override
+	public void postFlush(final Iterator entities) throws CallbackException {
+		delegate.postFlush( entities );
+	}
 
-    @Override
-    public Boolean isTransient(final Object entity) {
-        return delegate.isTransient(entity);
-    }
+	@Override
+	public Boolean isTransient(final Object entity) {
+		return delegate.isTransient( entity );
+	}
 
-    @Override
-    public int[] findDirty(final Object entity,
-                           final Serializable id,
-                           final Object[] currentState,
-                           final Object[] previousState,
-                           final String[] propertyNames,
-                           final Type[] types) {
+	@Override
+	public int[] findDirty(final Object entity,
+						   final Serializable id,
+						   final Object[] currentState,
+						   final Object[] previousState,
+						   final String[] propertyNames,
+						   final Type[] types) {
 
-        return delegate.findDirty(entity, id, currentState, previousState, propertyNames, types);
-    }
+		return delegate.findDirty( entity, id, currentState, previousState, propertyNames, types );
+	}
 
-    @Override
-    public Object instantiate(final String entityName,
-                              final EntityMode entityMode,
-                              final Serializable id) throws CallbackException {
+	@Override
+	public Object instantiate(final String entityName,
+							  final EntityMode entityMode,
+							  final Serializable id) throws CallbackException {
 
-        return delegate.instantiate(entityName, entityMode, id);
-    }
+		return delegate.instantiate( entityName, entityMode, id );
+	}
 
-    @Override
-    public String getEntityName(final Object object) throws CallbackException {
-        return delegate.getEntityName(object);
-    }
+	@Override
+	public String getEntityName(final Object object) throws CallbackException {
+		return delegate.getEntityName( object );
+	}
 
-    @Override
-    public Object getEntity(final String entityName, final Serializable id) throws CallbackException {
-        return delegate.getEntity(entityName, id);
-    }
+	@Override
+	public Object getEntity(final String entityName, final Serializable id) throws CallbackException {
+		return delegate.getEntity( entityName, id );
+	}
 
-    @Override
-    public void afterTransactionBegin(final Transaction tx) {
-        delegate.afterTransactionBegin(tx);
-    }
+	@Override
+	public void afterTransactionBegin(final Transaction tx) {
+		delegate.afterTransactionBegin( tx );
+	}
 
-    @Override
-    public void beforeTransactionCompletion(final Transaction tx) {
-        delegate.beforeTransactionCompletion(tx);
-    }
+	@Override
+	public void beforeTransactionCompletion(final Transaction tx) {
+		delegate.beforeTransactionCompletion( tx );
+	}
 
-    @Override
-    public void afterTransactionCompletion(final Transaction tx) {
-        delegate.afterTransactionCompletion(tx);
-    }
+	@Override
+	public void afterTransactionCompletion(final Transaction tx) {
+		delegate.afterTransactionCompletion( tx );
+	}
 
-    @Override
-    public String onPrepareStatement(final String sql) {
-        return delegate.onPrepareStatement(sql);
-    }
+	@Override
+	public String onPrepareStatement(final String sql) {
+		return delegate.onPrepareStatement( sql );
+	}
 
-    public Interceptor getDelegate() {
-        return delegate;
-    }
+	public Interceptor getDelegate() {
+		return delegate;
+	}
 }

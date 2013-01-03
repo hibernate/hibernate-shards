@@ -26,14 +26,14 @@ import org.hibernate.transform.ResultTransformer;
  */
 public class SetResultTransformerEvent implements QueryEvent {
 
-  private final ResultTransformer transformer;
+	private final ResultTransformer transformer;
 
-  public SetResultTransformerEvent(ResultTransformer transformer) {
-    this.transformer = transformer;
-  }
+	public SetResultTransformerEvent(ResultTransformer transformer) {
+		this.transformer = transformer;
+	}
 
-  public void onEvent(Query query) {
-    query.setResultTransformer(transformer);
-  }
+	public void onEvent(Query query) {
+		query.setResultTransformer( transformer );
+	}
 
 }

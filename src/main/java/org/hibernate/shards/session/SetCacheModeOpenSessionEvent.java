@@ -28,13 +28,13 @@ import org.hibernate.Session;
  */
 class SetCacheModeOpenSessionEvent implements OpenSessionEvent {
 
-  private final CacheMode cacheMode;
+	private final CacheMode cacheMode;
 
-  public SetCacheModeOpenSessionEvent(CacheMode cacheMode) {
-    this.cacheMode = cacheMode;
-  }
+	public SetCacheModeOpenSessionEvent(CacheMode cacheMode) {
+		this.cacheMode = cacheMode;
+	}
 
-  public void onOpenSession(Session session) {
-    session.setCacheMode(cacheMode);
-  }
+	public void onOpenSession(Session session) {
+		session.setCacheMode( cacheMode );
+	}
 }

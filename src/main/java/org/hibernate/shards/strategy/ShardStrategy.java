@@ -42,9 +42,9 @@ import org.hibernate.shards.strategy.selection.ShardSelectionStrategy;
  */
 public interface ShardStrategy {
 
-    ShardSelectionStrategy getShardSelectionStrategy();
+	ShardSelectionStrategy getShardSelectionStrategy();
 
-    ShardResolutionStrategy getShardResolutionStrategy();
+	ShardResolutionStrategy getShardResolutionStrategy();
 
-    ShardAccessStrategy getShardAccessStrategy();
+	ShardAccessStrategy getShardAccessStrategy();
 }

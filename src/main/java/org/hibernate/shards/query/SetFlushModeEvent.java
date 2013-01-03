@@ -26,14 +26,14 @@ import org.hibernate.Query;
  */
 public class SetFlushModeEvent implements QueryEvent {
 
-  private final FlushMode flushMode;
+	private final FlushMode flushMode;
 
-  public SetFlushModeEvent(FlushMode flushMode) {
-    this.flushMode = flushMode;
-  }
+	public SetFlushModeEvent(FlushMode flushMode) {
+		this.flushMode = flushMode;
+	}
 
-  public void onEvent(Query query) {
-    query.setFlushMode(flushMode);
-  }
+	public void onEvent(Query query) {
+		query.setFlushMode( flushMode );
+	}
 
 }

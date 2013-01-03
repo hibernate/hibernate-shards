@@ -23,25 +23,25 @@ import org.hibernate.criterion.Order;
 
 /**
  * Event that allows an Order to be lazily added to a Criteria.
- * @see Criteria#addOrder(Order)
- * 
+ *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#addOrder(Order)
  */
 class AddOrderEvent implements CriteriaEvent {
 
-  // the Order we're going to add when the event fires
-  private final Order order;
+	// the Order we're going to add when the event fires
+	private final Order order;
 
-  /**
-   * Construct an AddOrderEvent
-   *
-   * @param order the Order we'll add when the event fires
-   */
-  public AddOrderEvent(Order order) {
-    this.order = order;
-  }
+	/**
+	 * Construct an AddOrderEvent
+	 *
+	 * @param order the Order we'll add when the event fires
+	 */
+	public AddOrderEvent(Order order) {
+		this.order = order;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.addOrder(order);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.addOrder( order );
+	}
 }

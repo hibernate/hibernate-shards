@@ -27,14 +27,14 @@ import org.hibernate.Session;
  */
 class DisableFilterOpenSessionEvent implements OpenSessionEvent {
 
-    private final String filterName;
+	private final String filterName;
 
-    public DisableFilterOpenSessionEvent(final String filterName) {
-        this.filterName = filterName;
-    }
+	public DisableFilterOpenSessionEvent(final String filterName) {
+		this.filterName = filterName;
+	}
 
-    @Override
-    public void onOpenSession(final Session session) {
-        session.disableFilter(filterName);
-    }
+	@Override
+	public void onOpenSession(final Session session) {
+		session.disableFilter( filterName );
+	}
 }

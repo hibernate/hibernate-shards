@@ -33,5 +33,5 @@ import org.hibernate.Interceptor;
  * @author maxr@google.com (Max Ross)
  */
 public interface StatefulInterceptorFactory {
-  Interceptor newInstance();
+	Interceptor newInstance();
 }

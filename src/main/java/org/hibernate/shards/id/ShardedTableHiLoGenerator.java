@@ -34,28 +34,29 @@ import org.hibernate.shards.session.ControlSessionProvider;
  */
 public class ShardedTableHiLoGenerator extends TableHiLoGenerator implements GeneratorRequiringControlSessionProvider {
 
-    private ControlSessionProvider controlSessionProvider;
+	private ControlSessionProvider controlSessionProvider;
 
-    @Override
-    public Serializable generate(final SessionImplementor session, final Object obj) throws HibernateException {
-        Serializable id;
-        SessionImplementor controlSession = null;
-        try {
-            controlSession = controlSessionProvider.openControlSession();
-            id = superGenerate(controlSession, obj);
-        } finally {
-            if (controlSession != null) {
-                ((Session) controlSession).close();
-            }
-        }
-        return id;
-    }
+	@Override
+	public Serializable generate(final SessionImplementor session, final Object obj) throws HibernateException {
+		Serializable id;
+		SessionImplementor controlSession = null;
+		try {
+			controlSession = controlSessionProvider.openControlSession();
+			id = superGenerate( controlSession, obj );
+		}
+		finally {
+			if ( controlSession != null ) {
+				( (Session) controlSession ).close();
+			}
+		}
+		return id;
+	}
 
-    public void setControlSessionProvider(final ControlSessionProvider provider) {
-        this.controlSessionProvider = provider;
-    }
+	public void setControlSessionProvider(final ControlSessionProvider provider) {
+		this.controlSessionProvider = provider;
+	}
 
-    Serializable superGenerate(final SessionImplementor controlSession, final Object obj) {
-        return super.generate(controlSession, obj);
-    }
+	Serializable superGenerate(final SessionImplementor controlSession, final Object obj) {
+		return super.generate( controlSession, obj );
+	}
 }

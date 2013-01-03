@@ -38,35 +38,39 @@ import org.hibernate.shards.strategy.ShardStrategyFactory;
  */
 public class SubsetShardedSessionFactoryImpl extends ShardedSessionFactoryImpl {
 
-    public SubsetShardedSessionFactoryImpl(final List<ShardId> shardIds,
-                                           final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
-                                           final ShardStrategyFactory shardStrategyFactory,
-                                           final Set<Class<?>> classesWithoutTopLevelSaveSupport,
-                                           final boolean checkAllAssociatedObjectsForDifferentShards) {
+	public SubsetShardedSessionFactoryImpl(final List<ShardId> shardIds,
+										   final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
+										   final ShardStrategyFactory shardStrategyFactory,
+										   final Set<Class<?>> classesWithoutTopLevelSaveSupport,
+										   final boolean checkAllAssociatedObjectsForDifferentShards) {
 
-        super(shardIds, sessionFactoryShardIdMap, shardStrategyFactory, classesWithoutTopLevelSaveSupport,
-                checkAllAssociatedObjectsForDifferentShards);
-    }
+		super(
+				shardIds, sessionFactoryShardIdMap, shardStrategyFactory, classesWithoutTopLevelSaveSupport,
+				checkAllAssociatedObjectsForDifferentShards
+		);
+	}
 
-    protected SubsetShardedSessionFactoryImpl(
-            final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
-            final ShardStrategyFactory shardStrategyFactory,
-            final Set<Class<?>> classesWithoutTopLevelSaveSupport,
-            final boolean checkAllAssociatedObjectsForDifferentShards) {
+	protected SubsetShardedSessionFactoryImpl(
+			final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
+			final ShardStrategyFactory shardStrategyFactory,
+			final Set<Class<?>> classesWithoutTopLevelSaveSupport,
+			final boolean checkAllAssociatedObjectsForDifferentShards) {
 
-        super(sessionFactoryShardIdMap, shardStrategyFactory, classesWithoutTopLevelSaveSupport,
-                checkAllAssociatedObjectsForDifferentShards);
-    }
+		super(
+				sessionFactoryShardIdMap, shardStrategyFactory, classesWithoutTopLevelSaveSupport,
+				checkAllAssociatedObjectsForDifferentShards
+		);
+	}
 
-    /**
-     * This method is a NO-OP. As a ShardedSessionFactoryImpl that represents
-     * a subset of the application's shards, it will not close any shard's
-     * sessionFactory.
-     *
-     * @throws HibernateException
-     */
-    @Override
-    public void close() throws HibernateException {
-        // no-op: this class should never close session factories
-    }
+	/**
+	 * This method is a NO-OP. As a ShardedSessionFactoryImpl that represents
+	 * a subset of the application's shards, it will not close any shard's
+	 * sessionFactory.
+	 *
+	 * @throws HibernateException
+	 */
+	@Override
+	public void close() throws HibernateException {
+		// no-op: this class should never close session factories
+	}
 }

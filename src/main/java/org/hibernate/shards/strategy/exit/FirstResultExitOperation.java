@@ -26,17 +26,17 @@ import java.util.List;
  */
 public class FirstResultExitOperation implements ExitOperation {
 
-  private final int firstResult;
+	private final int firstResult;
 
-  public FirstResultExitOperation(int firstResult) {
-    this.firstResult = firstResult;
-  }
+	public FirstResultExitOperation(int firstResult) {
+		this.firstResult = firstResult;
+	}
 
-  public List<Object> apply(List<Object> results) {
-    List<Object> nonNullResults = ExitOperationUtils.getNonNullList(results);
-    if(nonNullResults.size() <= firstResult) {
-      return Collections.emptyList();
-    }
-    return nonNullResults.subList(firstResult, nonNullResults.size());
-  }
+	public List<Object> apply(List<Object> results) {
+		List<Object> nonNullResults = ExitOperationUtils.getNonNullList( results );
+		if ( nonNullResults.size() <= firstResult ) {
+			return Collections.emptyList();
+		}
+		return nonNullResults.subList( firstResult, nonNullResults.size() );
+	}
 }

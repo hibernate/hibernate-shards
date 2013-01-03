@@ -27,7 +27,7 @@ import org.hibernate.Session;
  */
 public interface QueryFactory {
 
-    Query createQuery(Session session);
+	Query createQuery(Session session);
 
-    SQLQuery createSQLQuery(Session session);
+	SQLQuery createSQLQuery(Session session);
 }

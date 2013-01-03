@@ -27,43 +27,44 @@ import org.hibernate.shards.session.ShardedSessionException;
  */
 public class SetEntityEvent implements QueryEvent {
 
-  private static enum CtorType {
-    POSITION_VAL,
-    NAME_VAL
-  }
+	private static enum CtorType {
+		POSITION_VAL,
+		NAME_VAL
+	}
 
-  private final CtorType ctorType;
-  private final int position;
-  private final Object val;
-  private final String name;
+	private final CtorType ctorType;
+	private final int position;
+	private final Object val;
+	private final String name;
 
-  private SetEntityEvent(CtorType ctorType, int position, Object val, String name) {
-    this.ctorType = ctorType;
-    this.position = position;
-    this.val = val;
-    this.name = name;
-  }
+	private SetEntityEvent(CtorType ctorType, int position, Object val, String name) {
+		this.ctorType = ctorType;
+		this.position = position;
+		this.val = val;
+		this.name = name;
+	}
 
-  public SetEntityEvent(int position, Object val) {
-    this(CtorType.POSITION_VAL, position, val, null);
-  }
+	public SetEntityEvent(int position, Object val) {
+		this( CtorType.POSITION_VAL, position, val, null );
+	}
 
-  public SetEntityEvent(String name, Object val) {
-    this(CtorType.NAME_VAL, -1, val, name);
-  }
+	public SetEntityEvent(String name, Object val) {
+		this( CtorType.NAME_VAL, -1, val, name );
+	}
 
-  public void onEvent(Query query) {
-    switch(ctorType) {
-      case POSITION_VAL:
-        query.setEntity(position, val);
-        break;
-      case NAME_VAL:
-        query.setEntity(name, val);
-        break;
-      default:
-        throw new ShardedSessionException(
-            "Unknown ctor type in SetEntityEvent: " + ctorType);
-    }
-  }
+	public void onEvent(Query query) {
+		switch ( ctorType ) {
+			case POSITION_VAL:
+				query.setEntity( position, val );
+				break;
+			case NAME_VAL:
+				query.setEntity( name, val );
+				break;
+			default:
+				throw new ShardedSessionException(
+						"Unknown ctor type in SetEntityEvent: " + ctorType
+				);
+		}
+	}
 
 }

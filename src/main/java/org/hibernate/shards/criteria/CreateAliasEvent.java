@@ -32,95 +32,95 @@ import org.hibernate.shards.session.ShardedSessionException;
  */
 class CreateAliasEvent implements CriteriaEvent {
 
-    private enum MethodSig {
-        ASSOC_PATH_AND_ALIAS,
-        ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE,
-        ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE_AND_CRITERION,
-    }
+	private enum MethodSig {
+		ASSOC_PATH_AND_ALIAS,
+		ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE,
+		ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE_AND_CRITERION,
+	}
 
-    // the signature of the createAlias method we're going to invoke when
-    // the event fires
-    private final MethodSig methodSig;
+	// the signature of the createAlias method we're going to invoke when
+	// the event fires
+	private final MethodSig methodSig;
 
-    // the association path
-    private final String associationPath;
+	// the association path
+	private final String associationPath;
 
-    // the name of the alias we're creating
-    private final String alias;
+	// the name of the alias we're creating
+	private final String alias;
 
-    // the join type - we look at method sig to see if we should use it
-    private final int joinType;
+	// the join type - we look at method sig to see if we should use it
+	private final int joinType;
 
-    // the criterion
-    private final Criterion criterion;
+	// the criterion
+	private final Criterion criterion;
 
-    /**
-     * Construct a CreateAliasEvent
-     *
-     * @param associationPath the association path of the alias we're creating.
-     * @param alias           the name of the alias we're creating.
-     */
-    public CreateAliasEvent(final String associationPath, final String alias) {
-        this(MethodSig.ASSOC_PATH_AND_ALIAS, associationPath, alias, 0, null);
-    }
+	/**
+	 * Construct a CreateAliasEvent
+	 *
+	 * @param associationPath the association path of the alias we're creating.
+	 * @param alias the name of the alias we're creating.
+	 */
+	public CreateAliasEvent(final String associationPath, final String alias) {
+		this( MethodSig.ASSOC_PATH_AND_ALIAS, associationPath, alias, 0, null );
+	}
 
-    /**
-     * Construct a CreateAliasEvent
-     *
-     * @param associationPath the association path of the alias we're creating.
-     * @param alias           the name of the alias we're creating.
-     * @param joinType        the join type of the alias we're creating.
-     */
-    public CreateAliasEvent(final String associationPath, final String alias, final int joinType) {
-        this(MethodSig.ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE, associationPath, alias, joinType, null);
-    }
+	/**
+	 * Construct a CreateAliasEvent
+	 *
+	 * @param associationPath the association path of the alias we're creating.
+	 * @param alias the name of the alias we're creating.
+	 * @param joinType the join type of the alias we're creating.
+	 */
+	public CreateAliasEvent(final String associationPath, final String alias, final int joinType) {
+		this( MethodSig.ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE, associationPath, alias, joinType, null );
+	}
 
-    /**
-     * Construct a CreateAliasEvent
-     *
-     * @param associationPath the association path of the alias we're creating.
-     * @param alias           the name of the alias we're creating.
-     * @param joinType        the join type of the alias we're creating.
-     */
-    public CreateAliasEvent(final String associationPath, final String alias, final int joinType, final Criterion criterion) {
-        this(MethodSig.ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE_AND_CRITERION, associationPath, alias, joinType, criterion);
-    }
+	/**
+	 * Construct a CreateAliasEvent
+	 *
+	 * @param associationPath the association path of the alias we're creating.
+	 * @param alias the name of the alias we're creating.
+	 * @param joinType the join type of the alias we're creating.
+	 */
+	public CreateAliasEvent(final String associationPath, final String alias, final int joinType, final Criterion criterion) {
+		this( MethodSig.ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE_AND_CRITERION, associationPath, alias, joinType, criterion );
+	}
 
-    /**
-     * Construct a CreateAliasEvent
-     *
-     * @param methodSig       the signature of the createAlias method we're going to invoke
-     *                        when the event fires
-     * @param associationPath the association path of the alias we're creating.
-     * @param alias           the name of the alias we're creating.
-     * @param joinType        the join type of the alias we're creating.  Can be null.
-     * @param criterion       the criterion.  Can be null.
-     */
-    private CreateAliasEvent(final MethodSig methodSig, final String associationPath, final String alias,
-                             final int joinType, final Criterion criterion) {
+	/**
+	 * Construct a CreateAliasEvent
+	 *
+	 * @param methodSig the signature of the createAlias method we're going to invoke
+	 * when the event fires
+	 * @param associationPath the association path of the alias we're creating.
+	 * @param alias the name of the alias we're creating.
+	 * @param joinType the join type of the alias we're creating.  Can be null.
+	 * @param criterion the criterion.  Can be null.
+	 */
+	private CreateAliasEvent(final MethodSig methodSig, final String associationPath, final String alias,
+							 final int joinType, final Criterion criterion) {
 
-        this.methodSig = methodSig;
-        this.associationPath = associationPath;
-        this.alias = alias;
-        this.joinType = joinType;
-        this.criterion = criterion;
-    }
+		this.methodSig = methodSig;
+		this.associationPath = associationPath;
+		this.alias = alias;
+		this.joinType = joinType;
+		this.criterion = criterion;
+	}
 
-    @Override
-    public void onEvent(final Criteria criteria) {
+	@Override
+	public void onEvent(final Criteria criteria) {
 
-        switch (methodSig) {
-            case ASSOC_PATH_AND_ALIAS:
-                criteria.createAlias(associationPath, alias);
-                break;
-            case ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE:
-                criteria.createAlias(associationPath, alias, joinType);
-                break;
-            case ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE_AND_CRITERION:
-                criteria.createAlias(associationPath, alias, joinType, criterion);
-                break;
-            default:
-                throw new ShardedSessionException("Unknown ctor type in CreateAliasEvent: " + methodSig);
-        }
-    }
+		switch ( methodSig ) {
+			case ASSOC_PATH_AND_ALIAS:
+				criteria.createAlias( associationPath, alias );
+				break;
+			case ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE:
+				criteria.createAlias( associationPath, alias, joinType );
+				break;
+			case ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE_AND_CRITERION:
+				criteria.createAlias( associationPath, alias, joinType, criterion );
+				break;
+			default:
+				throw new ShardedSessionException( "Unknown ctor type in CreateAliasEvent: " + methodSig );
+		}
+	}
 }

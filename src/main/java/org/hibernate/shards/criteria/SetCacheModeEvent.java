@@ -23,26 +23,26 @@ import org.hibernate.Criteria;
 
 /**
  * Event that allows the {@link CacheMode} of a {@link Criteria} to be set lazily.
- * @see Criteria#setCacheMode(CacheMode)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setCacheMode(CacheMode)
  */
 class SetCacheModeEvent implements CriteriaEvent {
 
-  // the CacheMode that we'll set on the Criteria when the event fires
-  private final CacheMode cacheMode;
+	// the CacheMode that we'll set on the Criteria when the event fires
+	private final CacheMode cacheMode;
 
-  /**
-   * Construct a CacheModeEvent
-   *
-   * @param cacheMode the {@link CacheMode} we'll set on the {@link Criteria}
-   * when the event fires.
-   */
-  public SetCacheModeEvent(CacheMode cacheMode) {
-    this.cacheMode = cacheMode;
-  }
+	/**
+	 * Construct a CacheModeEvent
+	 *
+	 * @param cacheMode the {@link CacheMode} we'll set on the {@link Criteria}
+	 * when the event fires.
+	 */
+	public SetCacheModeEvent(CacheMode cacheMode) {
+		this.cacheMode = cacheMode;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.setCacheMode(cacheMode);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.setCacheMode( cacheMode );
+	}
 }

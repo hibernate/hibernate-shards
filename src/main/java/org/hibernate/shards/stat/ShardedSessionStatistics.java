@@ -37,62 +37,63 @@ import org.hibernate.stat.SessionStatistics;
  */
 public class ShardedSessionStatistics implements SessionStatistics {
 
-    private final Set<SessionStatistics> sessionStatistics;
+	private final Set<SessionStatistics> sessionStatistics;
 
-    public ShardedSessionStatistics(final ShardedSessionImplementor session) {
-        sessionStatistics = Sets.newHashSet();
-        for (final Shard s : session.getShards()) {
-            if (s.getSession() != null) {
-                sessionStatistics.add(s.getSession().getStatistics());
-            } else {
-                final OpenSessionEvent ose = new OpenSessionEvent() {
-                    @Override
-                    public void onOpenSession(Session session) {
-                        sessionStatistics.add(session.getStatistics());
-                    }
-                };
-                s.addOpenSessionEvent(ose);
-            }
-        }
-    }
+	public ShardedSessionStatistics(final ShardedSessionImplementor session) {
+		sessionStatistics = Sets.newHashSet();
+		for ( final Shard s : session.getShards() ) {
+			if ( s.getSession() != null ) {
+				sessionStatistics.add( s.getSession().getStatistics() );
+			}
+			else {
+				final OpenSessionEvent ose = new OpenSessionEvent() {
+					@Override
+					public void onOpenSession(Session session) {
+						sessionStatistics.add( session.getStatistics() );
+					}
+				};
+				s.addOpenSessionEvent( ose );
+			}
+		}
+	}
 
-    @Override
-    public int getEntityCount() {
-        int count = 0;
-        for (final SessionStatistics s : sessionStatistics) {
-            count += s.getEntityCount();
-        }
-        return count;
-    }
+	@Override
+	public int getEntityCount() {
+		int count = 0;
+		for ( final SessionStatistics s : sessionStatistics ) {
+			count += s.getEntityCount();
+		}
+		return count;
+	}
 
-    @Override
-    public int getCollectionCount() {
-        int count = 0;
-        for (final SessionStatistics s : sessionStatistics) {
-            count += s.getCollectionCount();
-        }
-        return count;
-    }
+	@Override
+	public int getCollectionCount() {
+		int count = 0;
+		for ( final SessionStatistics s : sessionStatistics ) {
+			count += s.getCollectionCount();
+		}
+		return count;
+	}
 
-    @Override
-    public Set<EntityKey> getEntityKeys() {
-        final Set<EntityKey> entityKeys = Sets.newHashSet();
-        for (SessionStatistics s : sessionStatistics) {
-            @SuppressWarnings("unchecked")
-            final Set<EntityKey> shardEntityKeys = (Set<EntityKey>) s.getEntityKeys();
-            entityKeys.addAll(shardEntityKeys);
-        }
-        return entityKeys;
-    }
+	@Override
+	public Set<EntityKey> getEntityKeys() {
+		final Set<EntityKey> entityKeys = Sets.newHashSet();
+		for ( SessionStatistics s : sessionStatistics ) {
+			@SuppressWarnings("unchecked")
+			final Set<EntityKey> shardEntityKeys = (Set<EntityKey>) s.getEntityKeys();
+			entityKeys.addAll( shardEntityKeys );
+		}
+		return entityKeys;
+	}
 
-    @Override
-    public Set<CollectionKey> getCollectionKeys() {
-        final Set<CollectionKey> collectionKeys = Sets.newHashSet();
-        for (final SessionStatistics s : sessionStatistics) {
-            @SuppressWarnings("unchecked")
-            final Set<CollectionKey> shardCollectionKeys = (Set<CollectionKey>) s.getCollectionKeys();
-            collectionKeys.addAll(shardCollectionKeys);
-        }
-        return collectionKeys;
-    }
+	@Override
+	public Set<CollectionKey> getCollectionKeys() {
+		final Set<CollectionKey> collectionKeys = Sets.newHashSet();
+		for ( final SessionStatistics s : sessionStatistics ) {
+			@SuppressWarnings("unchecked")
+			final Set<CollectionKey> shardCollectionKeys = (Set<CollectionKey>) s.getCollectionKeys();
+			collectionKeys.addAll( shardCollectionKeys );
+		}
+		return collectionKeys;
+	}
 }

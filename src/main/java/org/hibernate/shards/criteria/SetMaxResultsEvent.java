@@ -28,25 +28,25 @@ import org.hibernate.Criteria;
  */
 class SetMaxResultsEvent implements CriteriaEvent {
 
-    // the maxResults we'll set when the event fires
-    private final int maxResults;
+	// the maxResults we'll set when the event fires
+	private final int maxResults;
 
-    /**
-     * Constructs a SetMaxResultsEvent
-     *
-     * @param maxResults the maxResults we'll set on the {@link Criteria} when
-     *                   the event fires.
-     */
-    public SetMaxResultsEvent(final int maxResults) {
-        this.maxResults = maxResults;
-    }
+	/**
+	 * Constructs a SetMaxResultsEvent
+	 *
+	 * @param maxResults the maxResults we'll set on the {@link Criteria} when
+	 * the event fires.
+	 */
+	public SetMaxResultsEvent(final int maxResults) {
+		this.maxResults = maxResults;
+	}
 
-    @Override
-    public void onEvent(final Criteria criteria) {
-        criteria.setMaxResults(maxResults);
-    }
+	@Override
+	public void onEvent(final Criteria criteria) {
+		criteria.setMaxResults( maxResults );
+	}
 
-    public int getMaxResults() {
-        return maxResults;
-    }
+	public int getMaxResults() {
+		return maxResults;
+	}
 }

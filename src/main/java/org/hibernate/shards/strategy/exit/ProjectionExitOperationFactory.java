@@ -28,40 +28,42 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
  */
 public class ProjectionExitOperationFactory {
 
-  private final static ProjectionExitOperationFactory projectionExitOperationFactory
-      = new ProjectionExitOperationFactory();
+	private final static ProjectionExitOperationFactory projectionExitOperationFactory
+			= new ProjectionExitOperationFactory();
 
-  private ProjectionExitOperationFactory() {}
+	private ProjectionExitOperationFactory() {
+	}
 
-  public static ProjectionExitOperationFactory getFactory() {
-    return projectionExitOperationFactory;
-  }
+	public static ProjectionExitOperationFactory getFactory() {
+		return projectionExitOperationFactory;
+	}
 
-  public ProjectionExitOperation getProjectionExitOperation(Projection projection, SessionFactoryImplementor sessionFactoryImplementor) {
-    if (projection instanceof RowCountProjection) {
-      return new RowCountExitOperation(projection);
-    }
-    if (projection instanceof AggregateProjection) {
-      return new AggregateExitOperation((AggregateProjection) projection);
-    }
+	public ProjectionExitOperation getProjectionExitOperation(Projection projection, SessionFactoryImplementor sessionFactoryImplementor) {
+		if ( projection instanceof RowCountProjection ) {
+			return new RowCountExitOperation( projection );
+		}
+		if ( projection instanceof AggregateProjection ) {
+			return new AggregateExitOperation( (AggregateProjection) projection );
+		}
 
 
-    // TODO(maulik) support these projections, hopefully not by creating ShardedProjections
-    // Projection rowCount() {
-    // AggregateProjection avg(String propertyName) {
-    // CountProjection count(String propertyName) {
-    // Projection distinct(Projection proj) {
-    // ProjectionList projectionList() {
-    // CountProjection countDistinct(String propertyName) {
-    // Projection sqlProjection(String sql, String[] columnAliases, Type[] types) {
-    // Projection sqlGroupProjection(String sql, String groupBy, String[] columnAliases, Type[] types) {
-    // PropertyProjection groupProperty(String propertyName) {
-    // PropertyProjection property(String propertyName) {
-    // IdentifierProjection id() {
-    // Projection alias(Projection projection, String alias) {
+		// TODO(maulik) support these projections, hopefully not by creating ShardedProjections
+		// Projection rowCount() {
+		// AggregateProjection avg(String propertyName) {
+		// CountProjection count(String propertyName) {
+		// Projection distinct(Projection proj) {
+		// ProjectionList projectionList() {
+		// CountProjection countDistinct(String propertyName) {
+		// Projection sqlProjection(String sql, String[] columnAliases, Type[] types) {
+		// Projection sqlGroupProjection(String sql, String groupBy, String[] columnAliases, Type[] types) {
+		// PropertyProjection groupProperty(String propertyName) {
+		// PropertyProjection property(String propertyName) {
+		// IdentifierProjection id() {
+		// Projection alias(Projection projection, String alias) {
 
-    throw new UnsupportedOperationException(
-        "This projection is unsupported: " + projection.getClass());
-  }
+		throw new UnsupportedOperationException(
+				"This projection is unsupported: " + projection.getClass()
+		);
+	}
 
 }

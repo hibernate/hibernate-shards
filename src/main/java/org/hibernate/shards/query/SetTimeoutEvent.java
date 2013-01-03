@@ -19,19 +19,20 @@
 package org.hibernate.shards.query;
 
 import org.hibernate.Query;
+
 /**
  * @author Maulik Shah
  */
 public class SetTimeoutEvent implements QueryEvent {
 
-  private final int timeout;
+	private final int timeout;
 
-  public SetTimeoutEvent(int timeout) {
-    this.timeout = timeout;
-  }
+	public SetTimeoutEvent(int timeout) {
+		this.timeout = timeout;
+	}
 
-  public void onEvent(Query query) {
-    query.setTimeout(timeout);
-  }
+	public void onEvent(Query query) {
+		query.setTimeout( timeout );
+	}
 
 }

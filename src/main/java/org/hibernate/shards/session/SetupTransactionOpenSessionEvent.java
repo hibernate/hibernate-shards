@@ -29,13 +29,13 @@ import org.hibernate.shards.ShardedTransaction;
  */
 public class SetupTransactionOpenSessionEvent implements OpenSessionEvent {
 
-  private final ShardedTransaction shardedTransaction;
+	private final ShardedTransaction shardedTransaction;
 
-  public SetupTransactionOpenSessionEvent(ShardedTransaction shardedTtransaction) {
-    this.shardedTransaction = shardedTtransaction;
-  }
+	public SetupTransactionOpenSessionEvent(ShardedTransaction shardedTtransaction) {
+		this.shardedTransaction = shardedTtransaction;
+	}
 
-  public void onOpenSession(Session session) {
-    shardedTransaction.setupTransaction(session);
-  }
+	public void onOpenSession(Session session) {
+		shardedTransaction.setupTransaction( session );
+	}
 }

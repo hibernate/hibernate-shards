@@ -22,26 +22,26 @@ import org.hibernate.Criteria;
 
 /**
  * Event that allows the cache region of a {@link Criteria} to be set lazily.
- * @see Criteria#setCacheRegion(String)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setCacheRegion(String)
  */
 class SetCacheRegionEvent implements CriteriaEvent {
 
-  // the cache region that we'll set on the Criteria when the event fires
-  private final String cacheRegion;
+	// the cache region that we'll set on the Criteria when the event fires
+	private final String cacheRegion;
 
-  /**
-   * Construct a CacheRegionEvent
-   *
-   * @param cacheRegion the cache region we'll set on the {@link Criteria}
-   * when the event fires.
-   */
-  public SetCacheRegionEvent(String cacheRegion) {
-    this.cacheRegion = cacheRegion;
-  }
+	/**
+	 * Construct a CacheRegionEvent
+	 *
+	 * @param cacheRegion the cache region we'll set on the {@link Criteria}
+	 * when the event fires.
+	 */
+	public SetCacheRegionEvent(String cacheRegion) {
+		this.cacheRegion = cacheRegion;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.setCacheRegion(cacheRegion);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.setCacheRegion( cacheRegion );
+	}
 }

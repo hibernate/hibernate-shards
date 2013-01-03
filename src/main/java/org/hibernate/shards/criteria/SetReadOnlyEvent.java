@@ -4,14 +4,14 @@ import org.hibernate.Criteria;
 
 class SetReadOnlyEvent implements CriteriaEvent {
 
-    private final boolean readOnly;
+	private final boolean readOnly;
 
-    public SetReadOnlyEvent(final boolean readOnly) {
-        this.readOnly = readOnly;
-    }
+	public SetReadOnlyEvent(final boolean readOnly) {
+		this.readOnly = readOnly;
+	}
 
-    @Override
-    public void onEvent(final Criteria criteria) {
-        criteria.setReadOnly(readOnly);
-    }
+	@Override
+	public void onEvent(final Criteria criteria) {
+		criteria.setReadOnly( readOnly );
+	}
 }

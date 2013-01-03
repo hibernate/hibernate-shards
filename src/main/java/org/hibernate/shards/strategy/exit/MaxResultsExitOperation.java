@@ -25,14 +25,14 @@ import java.util.List;
  */
 public class MaxResultsExitOperation implements ExitOperation {
 
-  private final int maxResults;
+	private final int maxResults;
 
-  public MaxResultsExitOperation(int maxResults) {
-    this.maxResults = maxResults;
-  }
+	public MaxResultsExitOperation(int maxResults) {
+		this.maxResults = maxResults;
+	}
 
-  public List<Object> apply(List<Object> results) {
-    List<Object> nonNullResults = ExitOperationUtils.getNonNullList(results);
-    return nonNullResults.subList(0, Math.min(nonNullResults.size(), maxResults));
-  }
+	public List<Object> apply(List<Object> results) {
+		List<Object> nonNullResults = ExitOperationUtils.getNonNullList( results );
+		return nonNullResults.subList( 0, Math.min( nonNullResults.size(), maxResults ) );
+	}
 }

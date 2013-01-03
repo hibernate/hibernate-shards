@@ -22,26 +22,26 @@ import org.hibernate.Criteria;
 
 /**
  * Event that allows the fetch size of a {@link Criteria} to be set lazily.
- * @see Criteria#setFetchSize(int)
  *
  * @author maxr@google.com (Max Ross)
+ * @see Criteria#setFetchSize(int)
  */
 class SetFetchSizeEvent implements CriteriaEvent {
 
-  // the fetchSize we'll set on the Criteria when the event fires.
-  private final int fetchSize;
+	// the fetchSize we'll set on the Criteria when the event fires.
+	private final int fetchSize;
 
-  /**
-   * Construct a SetFetchSizeEvent
-   *
-   * @param fetchSize the fetchSize that
-   * we'll set on the {@link Criteria} when the event fires.
-   */
-  public SetFetchSizeEvent(int fetchSize) {
-    this.fetchSize = fetchSize;
-  }
+	/**
+	 * Construct a SetFetchSizeEvent
+	 *
+	 * @param fetchSize the fetchSize that
+	 * we'll set on the {@link Criteria} when the event fires.
+	 */
+	public SetFetchSizeEvent(int fetchSize) {
+		this.fetchSize = fetchSize;
+	}
 
-  public void onEvent(Criteria criteria) {
-    criteria.setFetchSize(fetchSize);
-  }
+	public void onEvent(Criteria criteria) {
+		criteria.setFetchSize( fetchSize );
+	}
 }

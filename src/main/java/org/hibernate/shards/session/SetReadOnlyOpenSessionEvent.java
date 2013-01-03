@@ -27,16 +27,16 @@ import org.hibernate.Session;
  */
 class SetReadOnlyOpenSessionEvent implements OpenSessionEvent {
 
-  private final Object entity;
+	private final Object entity;
 
-  private final boolean readOnly;
+	private final boolean readOnly;
 
-  public SetReadOnlyOpenSessionEvent(Object entity, boolean readOnly) {
-    this.entity = entity;
-    this.readOnly = readOnly;
-  }
+	public SetReadOnlyOpenSessionEvent(Object entity, boolean readOnly) {
+		this.entity = entity;
+		this.readOnly = readOnly;
+	}
 
-  public void onOpenSession(Session session) {
-    session.setReadOnly(entity, readOnly);
-  }
+	public void onOpenSession(Session session) {
+		session.setReadOnly( entity, readOnly );
+	}
 }

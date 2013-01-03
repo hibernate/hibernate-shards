@@ -27,13 +27,14 @@ import org.hibernate.Criteria;
  */
 public interface SubcriteriaFactory {
 
-  /**
-   * Create a sub {@link Criteria} with the given parent and events
-   *
-   * @param parent the parent
-   * @param events the events to apply
-   * @return a criteria with the given parent and events
-   */
-  Criteria createSubcriteria(Criteria parent, Iterable<CriteriaEvent> events);
+	/**
+	 * Create a sub {@link Criteria} with the given parent and events
+	 *
+	 * @param parent the parent
+	 * @param events the events to apply
+	 *
+	 * @return a criteria with the given parent and events
+	 */
+	Criteria createSubcriteria(Criteria parent, Iterable<CriteriaEvent> events);
 
 }

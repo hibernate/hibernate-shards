@@ -28,12 +28,12 @@ import org.hibernate.Transaction;
  */
 public interface ShardedTransaction extends Transaction {
 
-    /**
-     * If a new Session is opened while ShardedTransaction exists, this method is
-     * called with the Session as argument. Implementations should set up a
-     * transaction for this session and sync it with ShardedTransaction
-     *
-     * @param session the Session on which the Transaction should be setup
-     */
-    void setupTransaction(Session session);
+	/**
+	 * If a new Session is opened while ShardedTransaction exists, this method is
+	 * called with the Session as argument. Implementations should set up a
+	 * transaction for this session and sync it with ShardedTransaction
+	 *
+	 * @param session the Session on which the Transaction should be setup
+	 */
+	void setupTransaction(Session session);
 }

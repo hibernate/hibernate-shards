@@ -29,19 +29,19 @@ import org.hibernate.Session;
  */
 public class NamedQueryFactoryImpl implements QueryFactory {
 
-    private final String queryName;
+	private final String queryName;
 
-    public NamedQueryFactoryImpl(final String queryName) {
-        this.queryName = queryName;
-    }
+	public NamedQueryFactoryImpl(final String queryName) {
+		this.queryName = queryName;
+	}
 
-    @Override
-    public Query createQuery(final Session session) {
-        return session.getNamedQuery(queryName);
-    }
+	@Override
+	public Query createQuery(final Session session) {
+		return session.getNamedQuery( queryName );
+	}
 
-    @Override
-    public SQLQuery createSQLQuery(final Session session) {
-        throw new UnsupportedOperationException("no such thing as named SQLQuery");
-    }
+	@Override
+	public SQLQuery createSQLQuery(final Session session) {
+		throw new UnsupportedOperationException( "no such thing as named SQLQuery" );
+	}
 }

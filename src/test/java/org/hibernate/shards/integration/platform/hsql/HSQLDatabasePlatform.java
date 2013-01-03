@@ -19,9 +19,8 @@
 package org.hibernate.shards.integration.platform.hsql;
 
 import java.util.List;
+
 import org.hsqldb.jdbcDriver;
-
-
 
 import org.hibernate.shards.integration.IdGenType;
 import org.hibernate.shards.integration.platform.BaseDatabasePlatform;

@@ -19,19 +19,20 @@
 package org.hibernate.shards.query;
 
 import org.hibernate.Query;
+
 /**
  * @author Maulik Shah
  */
 public class SetFirstResultEvent implements QueryEvent {
 
-  private final int firstResult;
+	private final int firstResult;
 
-  public SetFirstResultEvent(int firstResult) {
-    this.firstResult = firstResult;
-  }
+	public SetFirstResultEvent(int firstResult) {
+		this.firstResult = firstResult;
+	}
 
-  public void onEvent(Query query) {
-    query.setFirstResult(firstResult);
-  }
+	public void onEvent(Query query) {
+		query.setFirstResult( firstResult );
+	}
 
 }

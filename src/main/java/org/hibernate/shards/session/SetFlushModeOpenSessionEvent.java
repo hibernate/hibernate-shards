@@ -28,13 +28,13 @@ import org.hibernate.Session;
  */
 class SetFlushModeOpenSessionEvent implements OpenSessionEvent {
 
-  private final FlushMode flushMode;
+	private final FlushMode flushMode;
 
-  public SetFlushModeOpenSessionEvent(FlushMode flushMode) {
-    this.flushMode = flushMode;
-  }
+	public SetFlushModeOpenSessionEvent(FlushMode flushMode) {
+		this.flushMode = flushMode;
+	}
 
-  public void onOpenSession(Session session) {
-    session.setFlushMode(flushMode);
-  }
+	public void onOpenSession(Session session) {
+		session.setFlushMode( flushMode );
+	}
 }

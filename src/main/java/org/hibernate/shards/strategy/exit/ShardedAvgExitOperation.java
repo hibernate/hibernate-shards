@@ -32,23 +32,23 @@ import org.hibernate.shards.util.Pair;
  */
 public class ShardedAvgExitOperation implements ProjectionExitOperation {
 
-    private final Logger log = Logger.getLogger(getClass());
+	private final Logger log = Logger.getLogger( getClass() );
 
-    public ShardedAvgExitOperation(final Projection projection) {
-        log.error("not ready to use!");
-        throw new UnsupportedOperationException();
-    }
+	public ShardedAvgExitOperation(final Projection projection) {
+		log.error( "not ready to use!" );
+		throw new UnsupportedOperationException();
+	}
 
-    public List<Object> apply(final List<Object> results) {
-        BigDecimal value = BigDecimal.ZERO;
-        BigDecimal count = BigDecimal.ZERO;
-        @SuppressWarnings("unchecked")
-        List<Pair<Double, Integer>> pairList = (List<Pair<Double, Integer>>) (List) results;
-        for (Pair<Double, Integer> pair : pairList) {
-            // we know the order of the pair (avg, count) by convention of ShardedAvgProjection
-            value = value.add(new BigDecimal(pair.first));
-            count = count.add(new BigDecimal(pair.second));
-        }
-        return Lists.newArrayList((Object) value.divide(count));
-    }
+	public List<Object> apply(final List<Object> results) {
+		BigDecimal value = BigDecimal.ZERO;
+		BigDecimal count = BigDecimal.ZERO;
+		@SuppressWarnings("unchecked")
+		List<Pair<Double, Integer>> pairList = (List<Pair<Double, Integer>>) (List) results;
+		for ( Pair<Double, Integer> pair : pairList ) {
+			// we know the order of the pair (avg, count) by convention of ShardedAvgProjection
+			value = value.add( new BigDecimal( pair.first ) );
+			count = count.add( new BigDecimal( pair.second ) );
+		}
+		return Lists.newArrayList( (Object) value.divide( count ) );
+	}
 }

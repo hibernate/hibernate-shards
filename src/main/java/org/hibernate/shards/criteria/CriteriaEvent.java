@@ -33,10 +33,10 @@ import org.hibernate.Criteria;
  */
 public interface CriteriaEvent {
 
-    /**
-     * Apply the event
-     *
-     * @param criteria the Criteria to apply the event to
-     */
-    void onEvent(Criteria criteria);
+	/**
+	 * Apply the event
+	 *
+	 * @param criteria the Criteria to apply the event to
+	 */
+	void onEvent(Criteria criteria);
 }

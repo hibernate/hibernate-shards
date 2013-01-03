@@ -25,18 +25,18 @@ package org.hibernate.shards.session;
  */
 public class ShardedSessionException extends RuntimeException {
 
-  public ShardedSessionException() {
-  }
+	public ShardedSessionException() {
+	}
 
-  public ShardedSessionException(String message) {
-    super(message);
-  }
+	public ShardedSessionException(String message) {
+		super( message );
+	}
 
-  public ShardedSessionException(String message, Throwable cause) {
-    super(message, cause);
-  }
+	public ShardedSessionException(String message, Throwable cause) {
+		super( message, cause );
+	}
 
-  public ShardedSessionException(Throwable cause) {
-    super(cause);
-  }
+	public ShardedSessionException(Throwable cause) {
+		super( cause );
+	}
 }
