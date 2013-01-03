@@ -18,24 +18,28 @@
 
 package org.hibernate.shards.integration.model;
 
-import static org.junit.Assert.*;
+import java.util.Collection;
+import java.util.List;
 
-import org.hibernate.Query;
-import org.hibernate.QueryException;
-import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
-import org.hibernate.shards.integration.Permutation;
-import org.hibernate.shards.PermutationHelper;
-import org.hibernate.shards.model.Building;
-import org.hibernate.shards.model.Floor;
-import org.hibernate.shards.model.Office;
-import org.hibernate.shards.util.Lists;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.Collection;
-import java.util.List;
+import org.hibernate.Query;
+import org.hibernate.QueryException;
+import org.hibernate.shards.PermutationHelper;
+import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
+import org.hibernate.shards.integration.Permutation;
+import org.hibernate.shards.model.Building;
+import org.hibernate.shards.model.Floor;
+import org.hibernate.shards.model.Office;
+import org.hibernate.shards.util.Lists;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Maulik Shah
@@ -228,7 +232,7 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
         }
     }
 
-    @Parameterized.Parameters(name = "{index}: [{0}]")
+    @Parameterized.Parameters()
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

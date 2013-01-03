@@ -18,9 +18,9 @@
 
 package org.hibernate.shards.strategy.resolution;
 
-import org.hibernate.shards.strategy.selection.ShardResolutionStrategyData;
-
 import java.io.Serializable;
+
+import org.hibernate.shards.strategy.selection.ShardResolutionStrategyData;
 
 /**
  * @author maxr@google.com (Max Ross)

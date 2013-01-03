@@ -18,6 +18,12 @@
 
 package org.hibernate.shards.criteria;
 
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.ScrollMode;
@@ -28,11 +34,6 @@ import org.hibernate.shards.ShardId;
 import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Sets;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * @author maxr@google.com (Max Ross)

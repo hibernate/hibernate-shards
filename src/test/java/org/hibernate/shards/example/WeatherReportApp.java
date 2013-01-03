@@ -17,6 +17,13 @@
  */
 package org.hibernate.shards.example;
 
+import java.math.BigDecimal;
+import java.net.URL;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -38,13 +45,6 @@ import org.hibernate.shards.strategy.resolution.ShardResolutionStrategy;
 import org.hibernate.shards.strategy.selection.RoundRobinShardSelectionStrategy;
 import org.hibernate.shards.strategy.selection.ShardSelectionStrategy;
 import org.hibernate.shards.util.DatabaseUtils;
-
-import java.math.BigDecimal;
-import java.net.URL;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * This is the sample app we use in the documentation.

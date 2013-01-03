@@ -18,6 +18,14 @@
 
 package org.hibernate.shards.integration.model;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
@@ -29,13 +37,6 @@ import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.Floor;
 import org.hibernate.shards.model.Office;
 import org.hibernate.shards.util.Lists;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -366,7 +367,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
         Assert.assertTrue(answer.equals(listResult));
     }
 
-    @Parameterized.Parameters(name = "{index}: [{0}]")
+    @Parameterized.Parameters()
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

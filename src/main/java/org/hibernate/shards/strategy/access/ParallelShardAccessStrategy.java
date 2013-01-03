@@ -18,18 +18,18 @@
 
 package org.hibernate.shards.strategy.access;
 
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ThreadPoolExecutor;
+
+import org.jboss.logging.Logger;
+
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardOperation;
 import org.hibernate.shards.strategy.exit.ExitOperationsCollector;
 import org.hibernate.shards.strategy.exit.ExitStrategy;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Preconditions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * Invokes the given operation on the given shards in parallel.
@@ -41,7 +41,7 @@ public class ParallelShardAccessStrategy implements ShardAccessStrategy {
 
     private final ThreadPoolExecutor executor;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     public ParallelShardAccessStrategy(ThreadPoolExecutor executor) {
         Preconditions.checkNotNull(executor);

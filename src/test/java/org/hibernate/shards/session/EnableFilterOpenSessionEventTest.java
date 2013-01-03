@@ -19,6 +19,7 @@
 package org.hibernate.shards.session;
 
 import junit.framework.TestCase;
+
 import org.hibernate.Filter;
 import org.hibernate.Session;
 import org.hibernate.shards.defaultmock.SessionDefaultMock;

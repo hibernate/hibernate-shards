@@ -17,12 +17,12 @@
  */
 package org.hibernate.shards.strategy.exit;
 
-import org.hibernate.shards.util.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Collections;
 import java.util.List;
+
+import org.jboss.logging.Logger;
+
+import org.hibernate.shards.util.Pair;
 
 /**
  * Performs post-processing on a result set that has had an average projection
@@ -40,7 +40,7 @@ import java.util.List;
  */
 public class AvgResultsExitOperation implements ExitOperation {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     public List<Object> apply(List<Object> results) {
 

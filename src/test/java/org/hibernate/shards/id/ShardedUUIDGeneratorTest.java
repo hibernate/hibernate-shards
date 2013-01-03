@@ -18,12 +18,13 @@
 
 package org.hibernate.shards.id;
 
-import junit.framework.TestCase;
-import org.hibernate.shards.ShardId;
-import org.hibernate.shards.session.ShardedSessionImpl;
-
 import java.io.Serializable;
 import java.util.Properties;
+
+import junit.framework.TestCase;
+
+import org.hibernate.shards.ShardId;
+import org.hibernate.shards.session.ShardedSessionImpl;
 
 /**
  * @author Tomislav Nad

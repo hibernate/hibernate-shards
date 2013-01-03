@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.query;
 
+import java.util.Locale;
+
 import org.hibernate.Query;
 import org.hibernate.shards.session.ShardedSessionException;
-
-import java.util.Locale;
 
 /**
  * @author Maulik Shah

@@ -18,12 +18,12 @@
 
 package org.hibernate.shards.strategy.access;
 
+import java.util.List;
+
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardOperation;
 import org.hibernate.shards.strategy.exit.ExitOperationsCollector;
 import org.hibernate.shards.strategy.exit.ExitStrategy;
-
-import java.util.List;
 
 public interface ShardAccessStrategy {
     <T> T apply(List<Shard> shards, ShardOperation<T> operation, ExitStrategy<T> exitStrategy, ExitOperationsCollector exitOperationsCollector);

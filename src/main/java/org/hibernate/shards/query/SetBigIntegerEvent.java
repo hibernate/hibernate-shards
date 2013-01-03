@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.query;
 
+import java.math.BigInteger;
+
 import org.hibernate.Query;
 import org.hibernate.shards.session.ShardedSessionException;
-
-import java.math.BigInteger;
 
 /**
  * @author Maulik Shah

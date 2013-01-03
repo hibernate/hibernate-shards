@@ -18,12 +18,12 @@
 
 package org.hibernate.shards.strategy.exit;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.RowCountProjection;
 import org.hibernate.shards.util.Preconditions;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Maulik Shah

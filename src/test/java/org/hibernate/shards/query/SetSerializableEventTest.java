@@ -18,11 +18,12 @@
 
 package org.hibernate.shards.query;
 
+import java.io.Serializable;
+
 import junit.framework.TestCase;
+
 import org.hibernate.Query;
 import org.hibernate.shards.defaultmock.QueryDefaultMock;
-
-import java.io.Serializable;
 
 /**
  * @author Maulik Shah

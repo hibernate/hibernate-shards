@@ -18,16 +18,16 @@
 
 package org.hibernate.shards.stat;
 
+import java.util.Set;
+
 import org.hibernate.Session;
-import org.hibernate.engine.CollectionKey;
-import org.hibernate.engine.EntityKey;
+import org.hibernate.engine.spi.CollectionKey;
+import org.hibernate.engine.spi.EntityKey;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.engine.ShardedSessionImplementor;
 import org.hibernate.shards.session.OpenSessionEvent;
 import org.hibernate.shards.util.Sets;
 import org.hibernate.stat.SessionStatistics;
-
-import java.util.Set;
 
 /**
  * Sharded implementation of the SessionStatistics that aggregates the

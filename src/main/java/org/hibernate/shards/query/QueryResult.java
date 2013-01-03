@@ -18,13 +18,13 @@
 
 package org.hibernate.shards.query;
 
-import org.hibernate.shards.Shard;
-import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Maps;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import org.hibernate.shards.Shard;
+import org.hibernate.shards.util.Lists;
+import org.hibernate.shards.util.Maps;
 
 /**
  * @author Maulik Shah

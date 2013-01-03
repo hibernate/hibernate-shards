@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.id;
 
+import java.io.Serializable;
+
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.shards.ShardId;
-
-import java.io.Serializable;
 
 /**
  * @author Tomislav Nad

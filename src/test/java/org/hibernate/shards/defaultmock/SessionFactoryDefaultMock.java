@@ -18,30 +18,45 @@
 
 package org.hibernate.shards.defaultmock;
 
+import java.io.Serializable;
+import java.sql.Connection;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import javax.naming.NamingException;
+import javax.naming.Reference;
+import javax.transaction.TransactionManager;
+
 import org.hibernate.Cache;
 import org.hibernate.ConnectionReleaseMode;
+import org.hibernate.CustomEntityDirtinessStrategy;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.SessionFactoryObserver;
 import org.hibernate.StatelessSession;
+import org.hibernate.StatelessSessionBuilder;
 import org.hibernate.TypeHelper;
-import org.hibernate.cache.QueryCache;
-import org.hibernate.cache.Region;
-import org.hibernate.cache.UpdateTimestampsCache;
+import org.hibernate.cache.spi.QueryCache;
+import org.hibernate.cache.spi.Region;
+import org.hibernate.cache.spi.UpdateTimestampsCache;
 import org.hibernate.cfg.Settings;
-import org.hibernate.classic.Session;
-import org.hibernate.connection.ConnectionProvider;
+import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.SQLFunctionRegistry;
-import org.hibernate.engine.FilterDefinition;
-import org.hibernate.engine.NamedQueryDefinition;
-import org.hibernate.engine.NamedSQLQueryDefinition;
 import org.hibernate.engine.ResultSetMappingDefinition;
-import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.jdbc.spi.JdbcServices;
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.engine.profile.FetchProfile;
-import org.hibernate.engine.query.QueryPlanCache;
-import org.hibernate.exception.SQLExceptionConverter;
+import org.hibernate.engine.query.spi.QueryPlanCache;
+import org.hibernate.engine.spi.FilterDefinition;
+import org.hibernate.engine.spi.NamedQueryDefinition;
+import org.hibernate.engine.spi.NamedSQLQueryDefinition;
+import org.hibernate.engine.spi.SessionBuilderImplementor;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.exception.spi.SQLExceptionConverter;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.factory.IdentifierGeneratorFactory;
 import org.hibernate.metadata.ClassMetadata;
@@ -49,39 +64,17 @@ import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.EntityNotFoundDelegate;
+import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
+import org.hibernate.service.spi.ServiceRegistryImplementor;
 import org.hibernate.stat.Statistics;
-import org.hibernate.stat.StatisticsImplementor;
+import org.hibernate.stat.spi.StatisticsImplementor;
 import org.hibernate.type.Type;
 import org.hibernate.type.TypeResolver;
-
-import javax.naming.NamingException;
-import javax.naming.Reference;
-import javax.transaction.TransactionManager;
-import java.io.Serializable;
-import java.sql.Connection;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * @author maxr@google.com (Max Ross)
  */
 public class SessionFactoryDefaultMock implements SessionFactoryImplementor {
-
-    @Override
-    public Session openSession(Connection connection) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Session openSession(Interceptor interceptor) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Session openSession(Connection connection, Interceptor interceptor) {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public Session openSession() throws HibernateException {
@@ -282,11 +275,6 @@ public class SessionFactoryDefaultMock implements SessionFactoryImplementor {
     }
 
     @Override
-    public TransactionManager getTransactionManager() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public QueryCache getQueryCache() {
         throw new UnsupportedOperationException();
     }
@@ -352,14 +340,6 @@ public class SessionFactoryDefaultMock implements SessionFactoryImplementor {
     }
 
     @Override
-    public Session openSession(final Connection connection,
-                               final boolean flushBeforeCompletionEnabled,
-                               final boolean autoCloseSessionEnabled,
-                               final ConnectionReleaseMode connectionReleaseMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Set<String> getCollectionRolesByEntityParticipant(final String entityName) {
         throw new UnsupportedOperationException();
     }
@@ -400,8 +380,63 @@ public class SessionFactoryDefaultMock implements SessionFactoryImplementor {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public SessionFactoryObserver getFactoryObserver() {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void addObserver(SessionFactoryObserver observer) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public SessionBuilderImplementor withOptions() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Map<String, EntityPersister> getEntityPersisters() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Map<String, CollectionPersister> getCollectionPersisters() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public JdbcServices getJdbcServices() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Region getNaturalIdCacheRegion(String regionName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public SqlExceptionHelper getSQLExceptionHelper() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ServiceRegistryImplementor getServiceRegistry() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public CustomEntityDirtinessStrategy getCustomEntityDirtinessStrategy() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public CurrentTenantIdentifierResolver getCurrentTenantIdentifierResolver() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public SessionFactoryOptions getSessionFactoryOptions() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public StatelessSessionBuilder withStatelessOptions() {
+		throw new UnsupportedOperationException();
+	}
 }

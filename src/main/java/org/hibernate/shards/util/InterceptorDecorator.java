@@ -18,14 +18,14 @@
 
 package org.hibernate.shards.util;
 
+import java.io.Serializable;
+import java.util.Iterator;
+
 import org.hibernate.CallbackException;
 import org.hibernate.EntityMode;
 import org.hibernate.Interceptor;
 import org.hibernate.Transaction;
 import org.hibernate.type.Type;
-
-import java.io.Serializable;
-import java.util.Iterator;
 
 /**
  * {@link Interceptor} implementation that delegates all calls to an inner

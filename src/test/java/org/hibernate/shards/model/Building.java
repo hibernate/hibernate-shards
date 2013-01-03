@@ -18,12 +18,12 @@
 
 package org.hibernate.shards.model;
 
+import java.io.Serializable;
+import java.util.List;
+
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.session.ShardAware;
 import org.hibernate.shards.util.Lists;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)

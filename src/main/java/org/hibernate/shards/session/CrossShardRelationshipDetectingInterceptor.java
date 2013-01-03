@@ -18,10 +18,16 @@
 
 package org.hibernate.shards.session;
 
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.List;
+
+import org.jboss.logging.Logger;
+
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.ObjectNotFoundException;
-import org.hibernate.collection.PersistentCollection;
+import org.hibernate.collection.spi.PersistentCollection;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.shards.CrossShardAssociationException;
 import org.hibernate.shards.ShardId;
@@ -30,12 +36,6 @@ import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Pair;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.type.Type;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Interceptor that looks at all associated objects and verifies that those
@@ -49,7 +49,7 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
 
     private final ShardIdResolver shardIdResolver;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     public CrossShardRelationshipDetectingInterceptor(final ShardIdResolver shardIdResolver) {
         Preconditions.checkNotNull(shardIdResolver);

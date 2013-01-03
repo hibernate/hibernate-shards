@@ -18,31 +18,32 @@
 
 package org.hibernate.shards.transaction;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import javax.transaction.Status;
+import javax.transaction.Synchronization;
+
+import org.jboss.logging.Logger;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.TransactionException;
+import org.hibernate.engine.transaction.spi.LocalStatus;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardedTransaction;
 import org.hibernate.shards.engine.ShardedSessionImplementor;
 import org.hibernate.shards.session.OpenSessionEvent;
 import org.hibernate.shards.session.SetupTransactionOpenSessionEvent;
 import org.hibernate.shards.util.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.transaction.Status;
-import javax.transaction.Synchronization;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author Tomislav Nad
  */
 public class ShardedTransactionImpl implements ShardedTransaction {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     private final List<Transaction> transactions;
 
@@ -230,4 +231,24 @@ public class ShardedTransactionImpl implements ShardedTransaction {
             }
         }
     }
+	//todo impl these methods
+	@Override
+	public LocalStatus getLocalStatus() {
+		return null;
+	}
+
+	@Override
+	public boolean isInitiator() {
+		return false;
+	}
+
+	@Override
+	public boolean isParticipating() {
+		return false;
+	}
+
+	@Override
+	public int getTimeout() {
+		return 0;
+	}
 }

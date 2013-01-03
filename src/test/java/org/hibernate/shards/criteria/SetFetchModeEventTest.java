@@ -18,12 +18,13 @@
 
 package org.hibernate.shards.criteria;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.HibernateException;
 import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
-import org.junit.Assert;
-import org.junit.Test;
 
 /**
  * @author maxr@google.com (Max Ross)

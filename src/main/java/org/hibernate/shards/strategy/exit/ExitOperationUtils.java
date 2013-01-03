@@ -18,12 +18,12 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.StringUtil;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+
+import org.hibernate.shards.util.Lists;
+import org.hibernate.shards.util.StringUtil;
 
 /**
  * @author Maulik Shah

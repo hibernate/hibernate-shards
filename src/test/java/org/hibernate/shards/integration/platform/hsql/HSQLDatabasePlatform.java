@@ -18,21 +18,23 @@
 
 package org.hibernate.shards.integration.platform.hsql;
 
+import java.util.List;
+
+
+import org.h2.Driver;
+
 import org.hibernate.shards.integration.IdGenType;
 import org.hibernate.shards.integration.platform.BaseDatabasePlatform;
 import org.hibernate.shards.integration.platform.DatabasePlatform;
 import org.hibernate.shards.util.Lists;
-import org.hsqldb.jdbcDriver;
-
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)
  */
 public class HSQLDatabasePlatform extends BaseDatabasePlatform {
 
-    private static final String DRIVER_CLASS = jdbcDriver.class.getName();
-    private static final String IN_MEMORY_DB_URL_PREFIX = "jdbc:hsqldb:mem:";
+    private static final String DRIVER_CLASS = Driver.class.getName();
+    private static final String IN_MEMORY_DB_URL_PREFIX = "jdbc:h2:mem:";
     private static final String IN_MEMORY_DB_USER = "sa";
     private static final String IN_MEMORY_DB_PASSWORD = "";
 
@@ -89,7 +91,7 @@ public class HSQLDatabasePlatform extends BaseDatabasePlatform {
     }
 
     public String getName() {
-        return "hsql";
+        return "h2";
     }
 
     @Override

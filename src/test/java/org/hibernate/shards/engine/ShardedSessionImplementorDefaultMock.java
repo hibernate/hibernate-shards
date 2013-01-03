@@ -18,6 +18,12 @@
 
 package org.hibernate.shards.engine;
 
+import java.io.Serializable;
+import java.sql.Connection;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.EntityMode;
@@ -28,19 +34,13 @@ import org.hibernate.LockMode;
 import org.hibernate.Query;
 import org.hibernate.ReplicationMode;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import org.hibernate.classic.Session;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardId;
 import org.hibernate.stat.SessionStatistics;
 import org.hibernate.type.Type;
-
-import java.io.Serializable;
-import java.sql.Connection;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author Tomislav Nad

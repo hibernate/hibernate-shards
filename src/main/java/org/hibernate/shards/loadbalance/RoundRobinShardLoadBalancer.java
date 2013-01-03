@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.loadbalance;
 
-import org.hibernate.shards.ShardId;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.hibernate.shards.ShardId;
 
 /**
  * Round robin load balancing algorithm.

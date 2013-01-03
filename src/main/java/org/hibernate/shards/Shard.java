@@ -18,10 +18,13 @@
 
 package org.hibernate.shards;
 
+import java.util.List;
+import java.util.Set;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.classic.Session;
-import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.Session;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.shards.criteria.CriteriaEvent;
 import org.hibernate.shards.criteria.CriteriaId;
 import org.hibernate.shards.criteria.ShardedCriteria;
@@ -29,9 +32,6 @@ import org.hibernate.shards.query.QueryEvent;
 import org.hibernate.shards.query.QueryId;
 import org.hibernate.shards.query.ShardedQuery;
 import org.hibernate.shards.session.OpenSessionEvent;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Interface representing a Shard.  A shard is a physical partition (as opposed

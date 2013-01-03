@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.id;
 
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.id.UUIDHexGenerator;
-
 import java.math.BigInteger;
+
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.id.UUIDHexGenerator;
 
 /**
  * @author maxr@google.com (Max Ross)

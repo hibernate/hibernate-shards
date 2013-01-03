@@ -17,11 +17,12 @@
  */
 package org.hibernate.shards.strategy.exit;
 
-import org.hibernate.shards.util.Lists;
-import org.junit.Test;
-
 import java.util.Collections;
 import java.util.List;
+
+import org.junit.Test;
+
+import org.hibernate.shards.util.Lists;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

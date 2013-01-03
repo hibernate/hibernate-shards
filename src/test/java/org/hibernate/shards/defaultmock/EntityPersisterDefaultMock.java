@@ -18,27 +18,31 @@
 
 package org.hibernate.shards.defaultmock;
 
+import java.io.Serializable;
+import java.util.Comparator;
+import java.util.Map;
+
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.MappingException;
-import org.hibernate.cache.access.EntityRegionAccessStrategy;
-import org.hibernate.cache.entry.CacheEntryStructure;
-import org.hibernate.engine.CascadeStyle;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.engine.ValueInclusion;
+import org.hibernate.bytecode.spi.EntityInstrumentationMetadata;
+import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
+import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
+import org.hibernate.cache.spi.entry.CacheEntryStructure;
+import org.hibernate.engine.spi.CascadeStyle;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.ValueInclusion;
 import org.hibernate.id.IdentifierGenerator;
+import org.hibernate.internal.FilterAliasGenerator;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.tuple.entity.EntityMetamodel;
+import org.hibernate.tuple.entity.EntityTuplizer;
 import org.hibernate.type.Type;
 import org.hibernate.type.VersionType;
-
-import java.io.Serializable;
-import java.util.Comparator;
-import java.util.Map;
 
 /**
  * @author Maulik Shah
@@ -368,16 +372,6 @@ public class EntityPersisterDefaultMock implements EntityPersister {
     }
 
     @Override
-    public EntityMode guessEntityMode(final Object object) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isInstrumented(final EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean hasInsertGeneratedProperties() {
         throw new UnsupportedOperationException();
     }
@@ -438,75 +432,7 @@ public class EntityPersisterDefaultMock implements EntityPersister {
     }
 
     @Override
-    public Class getMappedClass(final EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean implementsLifecycle(final EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean implementsValidatable(final EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Class getConcreteProxyClass(final EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setPropertyValues(final Object object,
-                                  final Object[] values,
-                                  final EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setPropertyValue(final Object object,
-                                 final int i,
-                                 final Object value,
-                                 final EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object[] getPropertyValues(final Object object, final EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getPropertyValue(final Object object,
-                                   final int i,
-                                   final EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getPropertyValue(final Object object,
-                                   final String propertyName,
-                                   final EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    @Override
-    public Serializable getIdentifier(final Object object, final EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Serializable getIdentifier(Object entity, SessionImplementor session) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    @Override
-    public void setIdentifier(final Object object,
-                              final Serializable id,
-                              final EntityMode entityMode) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
@@ -516,49 +442,12 @@ public class EntityPersisterDefaultMock implements EntityPersister {
     }
 
     @Override
-    public Object getVersion(final Object object, final EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    @Override
-    public Object instantiate(final Serializable id, final EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Object instantiate(Serializable id, SessionImplementor session) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean isInstance(final Object object, final EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean hasUninitializedLazyProperties(final Object object, final EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    @Override
-    public void resetIdentifier(final Object entity,
-                                final Serializable currentId,
-                                final Object currentVersion,
-                                final EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void resetIdentifier(Object entity, Serializable currentId, Object currentVersion, SessionImplementor session) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public EntityPersister getSubclassEntityPersister(final Object instance,
-                                                      final SessionFactoryImplementor factory,
-                                                      final EntityMode entityMode) {
         throw new UnsupportedOperationException();
     }
 
@@ -576,4 +465,114 @@ public class EntityPersisterDefaultMock implements EntityPersister {
     public ValueInclusion[] getPropertyUpdateGenerationInclusions() {
         throw new UnsupportedOperationException();
     }
+
+	@Override
+	public Class getConcreteProxyClass() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Serializable loadEntityIdByNaturalId(Object[] naturalIdValues, LockOptions lockOptions, SessionImplementor session) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean hasNaturalIdCache() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public NaturalIdRegionAccessStrategy getNaturalIdCacheAccessStrategy() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Serializable getIdByUniqueKey(Serializable key, String uniquePropertyName, SessionImplementor session) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isInstrumented() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Class getMappedClass() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean implementsLifecycle() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setPropertyValues(Object object, Object[] values) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setPropertyValue(Object object, int i, Object value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object[] getPropertyValues(Object object) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object getPropertyValue(Object object, int i) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object getPropertyValue(Object object, String propertyName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Serializable getIdentifier(Object object) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object getVersion(Object object) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isInstance(Object object) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean hasUninitializedLazyProperties(Object object) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityPersister getSubclassEntityPersister(Object instance, SessionFactoryImplementor factory) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityMode getEntityMode() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityTuplizer getEntityTuplizer() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityInstrumentationMetadata getInstrumentationMetadata() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public FilterAliasGenerator getFilterAliasGenerator(String rootAlias) {
+		throw new UnsupportedOperationException();
+	}
 }

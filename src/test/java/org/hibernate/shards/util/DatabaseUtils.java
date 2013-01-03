@@ -17,13 +17,13 @@
  */
 package org.hibernate.shards.util;
 
-import org.hibernate.shards.integration.IdGenType;
-import org.hibernate.shards.integration.platform.DatabasePlatform;
-import org.hibernate.shards.integration.platform.DatabasePlatformFactory;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import org.hibernate.shards.integration.IdGenType;
+import org.hibernate.shards.integration.platform.DatabasePlatform;
+import org.hibernate.shards.integration.platform.DatabasePlatformFactory;
 
 /**
  * @author maxr@google.com (Max Ross)

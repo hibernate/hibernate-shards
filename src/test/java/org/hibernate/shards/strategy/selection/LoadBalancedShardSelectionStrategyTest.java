@@ -18,12 +18,13 @@
 
 package org.hibernate.shards.strategy.selection;
 
-import junit.framework.TestCase;
-import org.hibernate.shards.ShardId;
-import org.hibernate.shards.loadbalance.ShardLoadBalancer;
-
 import java.util.Collections;
 import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.hibernate.shards.ShardId;
+import org.hibernate.shards.loadbalance.ShardLoadBalancer;
 
 /**
  * @author maxr@google.com (Max Ross)

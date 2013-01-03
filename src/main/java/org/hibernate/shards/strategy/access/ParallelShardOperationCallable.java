@@ -18,16 +18,16 @@
 
 package org.hibernate.shards.strategy.access;
 
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CountDownLatch;
+
+import org.jboss.logging.Logger;
+
 import org.hibernate.HibernateException;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardOperation;
 import org.hibernate.shards.strategy.exit.ExitStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Runs a single operation on a single shard, collecting the result of the
@@ -42,7 +42,7 @@ class ParallelShardOperationCallable<T> implements Callable<Void> {
 
     private static final boolean INTERRUPT_IF_RUNNING = false;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     private final CountDownLatch startSignal;
 

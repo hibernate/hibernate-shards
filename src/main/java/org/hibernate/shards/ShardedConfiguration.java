@@ -18,10 +18,19 @@
 
 package org.hibernate.shards;
 
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.jboss.logging.Logger;
+
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
-import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.internal.util.config.ConfigurationHelper;
 import org.hibernate.mapping.OneToOne;
 import org.hibernate.mapping.PersistentClass;
 import org.hibernate.mapping.Property;
@@ -33,15 +42,6 @@ import org.hibernate.shards.strategy.ShardStrategyFactory;
 import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.shards.util.Sets;
-import org.hibernate.util.PropertiesHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Like regular Hibernate's Configuration, this class helps construct your
@@ -71,7 +71,7 @@ public class ShardedConfiguration {
     private final Map<Integer, Set<ShardId>> shardToVirtualShardIdMap;
 
     // our lovely logger
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     /**
      * Constructs a ShardedConfiguration.
@@ -176,10 +176,11 @@ public class ShardedConfiguration {
         }
 
         final boolean doFullCrossShardRelationshipChecking =
-                PropertiesHelper.getBoolean(
-                        ShardedEnvironment.CHECK_ALL_ASSOCIATED_OBJECTS_FOR_DIFFERENT_SHARDS,
-                        prototypeConfiguration.getProperties(),
-                        true);
+                ConfigurationHelper.getBoolean(
+						ShardedEnvironment.CHECK_ALL_ASSOCIATED_OBJECTS_FOR_DIFFERENT_SHARDS,
+						prototypeConfiguration.getProperties(),
+						true
+				);
 
         return new ShardedSessionFactoryImpl(
                 sessionFactories,

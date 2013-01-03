@@ -19,6 +19,7 @@
 package org.hibernate.shards;
 
 import junit.framework.TestCase;
+
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
@@ -430,17 +431,17 @@ public class ShardImplTest extends TestCase {
     private int numOpenSessionWithInterceptorCalls;
 
     @Override
-    public org.hibernate.classic.Session openSession() throws HibernateException {
+    public org.hibernate.Session openSession() throws HibernateException {
       numOpenSessionCalls++;
       return new SessionDefaultMock();
     }
 
-    @Override
-    public org.hibernate.classic.Session openSession(Interceptor interceptor)
-        throws HibernateException {
-      numOpenSessionWithInterceptorCalls++;
-      return new SessionDefaultMock();
-    }
+//    @Override
+//    public org.hibernate.Session openSession(Interceptor interceptor)
+//        throws HibernateException {
+//      numOpenSessionWithInterceptorCalls++;
+//      return new SessionDefaultMock();
+//    }
   }
 
   private static final class MyShardedCriteria extends ShardedCriteriaDefaultMock {

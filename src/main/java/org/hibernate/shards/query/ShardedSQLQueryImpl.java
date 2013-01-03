@@ -1,13 +1,13 @@
 package org.hibernate.shards.query;
 
+import java.util.List;
+
 import org.hibernate.LockMode;
 import org.hibernate.MappingException;
 import org.hibernate.SQLQuery;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.strategy.access.ShardAccessStrategy;
 import org.hibernate.type.Type;
-
-import java.util.List;
 
 /**
  * @author aviadl@sentrigo.com (Aviad Lichtenstadt)

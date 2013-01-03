@@ -18,17 +18,18 @@
 
 package org.hibernate.shards.integration.id;
 
-import org.hibernate.shards.PermutationHelper;
-import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
-import org.hibernate.shards.integration.Permutation;
-import org.hibernate.shards.model.Building;
-import org.hibernate.shards.util.Lists;
+import java.util.List;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import java.util.List;
+import org.hibernate.shards.PermutationHelper;
+import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
+import org.hibernate.shards.integration.Permutation;
+import org.hibernate.shards.model.Building;
+import org.hibernate.shards.util.Lists;
 
 /**
  * @author Tomislav Nad
@@ -74,7 +75,7 @@ public class IdGeneratorPermutedIntegrationTest extends BaseShardingIntegrationT
         }
     }
 
-    @Parameterized.Parameters(name = "{index}: [{0}]")
+    @Parameterized.Parameters()
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

@@ -18,11 +18,24 @@
 
 package org.hibernate.shards.integration.model;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.Map;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.engine.StatefulPersistenceContext;
-import org.hibernate.impl.SessionImpl;
+import org.hibernate.engine.internal.StatefulPersistenceContext;
+import org.hibernate.internal.SessionImpl;
 import org.hibernate.shards.integration.IdGenType;
 import org.hibernate.shards.integration.platform.DatabasePlatform;
 import org.hibernate.shards.integration.platform.DatabasePlatformFactory;
@@ -30,18 +43,6 @@ import org.hibernate.shards.model.Person;
 import org.hibernate.shards.model.Tenant;
 import org.hibernate.shards.util.JdbcUtil;
 import org.hibernate.shards.util.Lists;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Map;
 
 import static org.hibernate.shards.integration.model.ModelDataFactory.person;
 import static org.hibernate.shards.integration.model.ModelDataFactory.tenant;

@@ -18,6 +18,11 @@
 
 package org.hibernate.shards.strategy.exit;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
+import org.junit.Test;
+
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.MappingException;
@@ -27,10 +32,6 @@ import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.shards.defaultmock.EntityPersisterDefaultMock;
 import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
 import org.hibernate.shards.util.StringUtil;
-import org.junit.Test;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import static org.junit.Assert.assertTrue;
 

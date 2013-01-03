@@ -18,10 +18,11 @@
 
 package org.hibernate.shards;
 
-import junit.framework.TestCase;
-import org.hibernate.shards.util.Lists;
-
 import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.hibernate.shards.util.Lists;
 
 /**
  * @author maxr@google.com (Max Ross)

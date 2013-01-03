@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.model;
 
-import org.hibernate.shards.util.Lists;
-
 import java.io.Serializable;
 import java.util.List;
+
+import org.hibernate.shards.util.Lists;
 
 /**
  * @author maxr@google.com (Max Ross)

@@ -18,255 +18,94 @@
 
 package org.hibernate.shards.defaultmock;
 
+import java.io.Serializable;
+import java.sql.Connection;
+
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
-import org.hibernate.EntityMode;
 import org.hibernate.Filter;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
+import org.hibernate.IdentifierLoadAccess;
 import org.hibernate.LobHelper;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
+import org.hibernate.NaturalIdLoadAccess;
 import org.hibernate.Query;
 import org.hibernate.ReplicationMode;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.SharedSessionBuilder;
+import org.hibernate.SimpleNaturalIdLoadAccess;
 import org.hibernate.Transaction;
 import org.hibernate.TypeHelper;
 import org.hibernate.UnknownProfileException;
-import org.hibernate.classic.Session;
+import org.hibernate.jdbc.ReturningWork;
 import org.hibernate.jdbc.Work;
 import org.hibernate.stat.SessionStatistics;
-import org.hibernate.type.Type;
-
-import java.io.Serializable;
-import java.sql.Connection;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)
  */
 public class SessionDefaultMock implements Session {
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public Object saveOrUpdateCopy(Object object) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public IdentifierLoadAccess byId(Class entityClass) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public Object saveOrUpdateCopy(final Object object, final Serializable id) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SharedSessionBuilder sessionWithOptions() {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public Object saveOrUpdateCopy(final String entityName, final Object object) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void refresh(String entityName, Object object) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public Object saveOrUpdateCopy(final String entityName,
-                                   final Object object,
-                                   final Serializable id) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void refresh(String entityName, Object object, LockOptions lockOptions) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public List find(final String query) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public IdentifierLoadAccess byId(String entityName) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public List find(final String query, final Object value, final Type type) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public NaturalIdLoadAccess byNaturalId(String entityName) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public List find(final String query, final Object[] values, final Type[] types) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public NaturalIdLoadAccess byNaturalId(Class entityClass) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public Iterator iterate(final String query) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SimpleNaturalIdLoadAccess bySimpleNaturalId(String entityName) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public Iterator iterate(final String query, final Object value, final Type type) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SimpleNaturalIdLoadAccess bySimpleNaturalId(Class entityClass) {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public Iterator iterate(final String query, final Object[] values, final Type[] types) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public <T> T doReturningWork(ReturningWork<T> work) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public Collection filter(final Object collection, final String filter) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public String getTenantIdentifier() {
+		throw new UnsupportedOperationException();
+	}
 
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public Collection filter(final Object collection,
-                             final String filter,
-                             final Object value,
-                             Type type) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public Collection filter(final Object collection,
-                             final String filter,
-                             final Object[] values,
-                             final Type[] types) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Override
-    @Deprecated
-    public int delete(final String query) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public int delete(String query, Object value, Type type) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public int delete(String query, Object[] values, Type[] types) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public Query createSQLQuery(String sql, String returnAlias, Class returnClass) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public Query createSQLQuery(String sql, String[] returnAliases, Class[] returnClasses) {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public void save(Object object, Serializable id) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public void save(String entityName, Object object, Serializable id) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public void update(Object object, Serializable id) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public void update(String entityName, Object object, Serializable id) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public EntityMode getEntityMode() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Session getSession(EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
+	@Override
     public void flush() throws HibernateException {
         throw new UnsupportedOperationException();
     }
@@ -293,15 +132,6 @@ public class SessionDefaultMock implements Session {
 
     @Override
     public SessionFactory getSessionFactory() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public Connection connection() throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
@@ -629,15 +459,6 @@ public class SessionDefaultMock implements Session {
 
     @Override
     public Connection disconnect() throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * @deprecated
-     */
-    @Deprecated
-    @Override
-    public void reconnect() throws HibernateException {
         throw new UnsupportedOperationException();
     }
 

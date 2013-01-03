@@ -18,12 +18,21 @@
 
 package org.hibernate.shards.session;
 
+import java.io.Serializable;
+import java.sql.Connection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import junit.framework.TestCase;
+
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
-import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardDefaultMock;
@@ -44,14 +53,6 @@ import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Pair;
 import org.hibernate.shards.util.Sets;
 import org.hibernate.type.Type;
-
-import java.io.Serializable;
-import java.sql.Connection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -217,7 +218,7 @@ public class ShardedSessionImplTest extends TestCase {
                     }
 
                     @Override
-                    public Object[] getPropertyValues(Object entity, EntityMode entityMode) {
+                    public Object[] getPropertyValues(Object entity) {
                         return new Object[]{null, null};
                     }
                 };
@@ -249,7 +250,7 @@ public class ShardedSessionImplTest extends TestCase {
                     }
 
                     @Override
-                    public Object[] getPropertyValues(Object entity, EntityMode entityMode) {
+                    public Object[] getPropertyValues(Object entity) {
                         return new Object[]{"yam", "jam"};
                     }
                 };
@@ -282,7 +283,7 @@ public class ShardedSessionImplTest extends TestCase {
                     }
 
                     @Override
-                    public Object[] getPropertyValues(Object entity, EntityMode entityMode) {
+                    public Object[] getPropertyValues(Object entity) {
                         return new Object[]{"yam", "jam"};
                     }
                 };
@@ -318,7 +319,7 @@ public class ShardedSessionImplTest extends TestCase {
                     }
 
                     @Override
-                    public Object[] getPropertyValues(Object entity, EntityMode entityMode) {
+                    public Object[] getPropertyValues(Object entity) {
                         return new Object[]{null, null};
                     }
                 };
@@ -349,7 +350,7 @@ public class ShardedSessionImplTest extends TestCase {
                     }
 
                     @Override
-                    public Object[] getPropertyValues(Object entity, EntityMode entityMode) {
+                    public Object[] getPropertyValues(Object entity) {
                         return new Object[]{null, Collections.singletonList("yam")};
                     }
                 };
@@ -381,7 +382,7 @@ public class ShardedSessionImplTest extends TestCase {
                     }
 
                     @Override
-                    public Object[] getPropertyValues(Object entity, EntityMode entityMode) {
+                    public Object[] getPropertyValues(Object entity) {
                         return new Object[]{Lists.newArrayList("jam", "yam")};
                     }
                 };
@@ -417,7 +418,7 @@ public class ShardedSessionImplTest extends TestCase {
                     }
 
                     @Override
-                    public Object[] getPropertyValues(Object entity, EntityMode entityMode) {
+                    public Object[] getPropertyValues(Object entity) {
                         return new Object[]{Collections.singletonList("jam"), Collections.singletonList("yam")};
                     }
                 };
@@ -453,7 +454,7 @@ public class ShardedSessionImplTest extends TestCase {
                     }
 
                     @Override
-                    public Object[] getPropertyValues(Object entity, EntityMode entityMode) {
+                    public Object[] getPropertyValues(Object entity) {
                         return new Object[]{"jam", Collections.singletonList("yam")};
                     }
                 };
@@ -485,7 +486,7 @@ public class ShardedSessionImplTest extends TestCase {
                     }
 
                     @Override
-                    public Object[] getPropertyValues(Object entity, EntityMode entityMode) {
+                    public Object[] getPropertyValues(Object entity) {
                         return new Object[]{"yam", Collections.singletonList("jam")};
                     }
                 };
@@ -696,7 +697,7 @@ public class ShardedSessionImplTest extends TestCase {
 
             public List<Shard> getShards() {
                 Shard shard1 = new ShardDefaultMock() {
-                    public org.hibernate.classic.Session getSession() {
+                    public org.hibernate.Session getSession() {
                         return new SessionDefaultMock() {
                             public Connection disconnect() throws HibernateException {
                                 return null;
@@ -706,7 +707,7 @@ public class ShardedSessionImplTest extends TestCase {
                 };
                 Shard shard2 = new ShardDefaultMock() {
 
-                    public org.hibernate.classic.Session getSession() {
+                    public org.hibernate.Session getSession() {
                         return null;
                     }
                 };

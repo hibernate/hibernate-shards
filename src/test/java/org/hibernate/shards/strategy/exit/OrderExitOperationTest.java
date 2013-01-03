@@ -18,24 +18,14 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import junit.framework.TestCase;
-import org.hibernate.EntityMode;
-import org.hibernate.HibernateException;
-import org.hibernate.MappingException;
-import org.hibernate.criterion.Order;
-import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.persister.entity.EntityPersister;
-import org.hibernate.shards.criteria.InMemoryOrderBy;
-import org.hibernate.shards.defaultmock.ClassMetadataDefaultMock;
-import org.hibernate.shards.defaultmock.EntityPersisterDefaultMock;
-import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
-import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.StringUtil;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.List;
+
+import junit.framework.TestCase;
+
+import org.hibernate.criterion.Order;
+import org.hibernate.shards.criteria.InMemoryOrderBy;
+import org.hibernate.shards.util.Lists;
 
 /**
  * @author Maulik Shah

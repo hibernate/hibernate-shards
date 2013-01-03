@@ -18,12 +18,20 @@
 
 package org.hibernate.shards.integration.model;
 
+import java.io.Serializable;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Interceptor;
 import org.hibernate.Session;
 import org.hibernate.TransactionException;
-import org.hibernate.impl.SessionImpl;
+import org.hibernate.internal.SessionImpl;
 import org.hibernate.shards.PermutationHelper;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
 import org.hibernate.shards.integration.Permutation;
@@ -33,13 +41,6 @@ import org.hibernate.shards.session.RequiresSession;
 import org.hibernate.shards.session.ShardedSession;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.type.Type;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -163,7 +164,7 @@ public class InterceptorBehaviorPermutedIntegrationTest extends BaseShardingInte
         }
     }
 
-    @Parameterized.Parameters(name = "{index}: [{0}]")
+    @Parameterized.Parameters()
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

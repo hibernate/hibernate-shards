@@ -18,12 +18,12 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import org.hibernate.shards.criteria.InMemoryOrderBy;
-import org.hibernate.shards.util.Lists;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+
+import org.hibernate.shards.criteria.InMemoryOrderBy;
+import org.hibernate.shards.util.Lists;
 
 /**
  * @author Maulik Shah

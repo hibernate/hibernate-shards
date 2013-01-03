@@ -18,11 +18,12 @@
 
 package org.hibernate.shards.query;
 
+import java.util.Date;
+
 import junit.framework.TestCase;
+
 import org.hibernate.Query;
 import org.hibernate.shards.defaultmock.QueryDefaultMock;
-
-import java.util.Date;
 
 /**
  * @author Maulik Shah

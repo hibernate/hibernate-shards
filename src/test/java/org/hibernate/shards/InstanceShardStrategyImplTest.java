@@ -19,6 +19,7 @@
 package org.hibernate.shards;
 
 import junit.framework.TestCase;
+
 import org.hibernate.shards.strategy.ShardStrategyImpl;
 import org.hibernate.shards.strategy.access.ShardAccessStrategy;
 import org.hibernate.shards.strategy.access.ShardAccessStrategyDefaultMock;

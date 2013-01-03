@@ -18,14 +18,15 @@
 
 package org.hibernate.shards.session;
 
+import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.hibernate.shards.CrossShardAssociationException;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.defaultmock.TypeDefaultMock;
 import org.hibernate.shards.util.Pair;
 import org.hibernate.type.Type;
-
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)

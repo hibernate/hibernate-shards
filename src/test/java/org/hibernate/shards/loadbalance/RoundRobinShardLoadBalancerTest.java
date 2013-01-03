@@ -18,11 +18,12 @@
 
 package org.hibernate.shards.loadbalance;
 
+import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.util.Lists;
-
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)

@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.strategy.exit;
 
+import java.util.List;
+
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.util.Lists;
-
-import java.util.List;
 
 /**
  * Threadsafe ExistStrategy that concatenates all the lists that are added.

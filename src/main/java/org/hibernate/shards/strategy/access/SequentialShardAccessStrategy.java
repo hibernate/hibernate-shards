@@ -18,21 +18,21 @@
 
 package org.hibernate.shards.strategy.access;
 
+import java.util.List;
+
+import org.jboss.logging.Logger;
+
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardOperation;
 import org.hibernate.shards.strategy.exit.ExitOperationsCollector;
 import org.hibernate.shards.strategy.exit.ExitStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)
  */
 public class SequentialShardAccessStrategy implements ShardAccessStrategy {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     public <T> T apply(final List<Shard> shards, final ShardOperation<T> operation, final ExitStrategy<T> exitStrategy,
                        final ExitOperationsCollector exitOperationsCollector) {

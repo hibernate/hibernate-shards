@@ -18,9 +18,9 @@
 
 package org.hibernate.shards.loadbalance;
 
-import org.hibernate.shards.ShardId;
-
 import java.util.List;
+
+import org.hibernate.shards.ShardId;
 
 /**
  * @author maxr@google.com (Max Ross)

@@ -18,12 +18,12 @@
 
 package org.hibernate.shards.engine;
 
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.shards.ShardId;
-import org.hibernate.shards.session.ShardedSessionFactory;
-
 import java.util.Map;
 import java.util.Set;
+
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.shards.ShardId;
+import org.hibernate.shards.session.ShardedSessionFactory;
 
 /**
  * Internal interface for implementors of ShardedSessionFactory

@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.strategy.resolution;
 
+import java.util.List;
+
 import org.hibernate.shards.BaseHasShardIdList;
 import org.hibernate.shards.ShardId;
-
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)

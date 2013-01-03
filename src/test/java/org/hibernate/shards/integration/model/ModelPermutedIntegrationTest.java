@@ -18,13 +18,25 @@
 
 package org.hibernate.shards.integration.model;
 
+import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.ReplicationMode;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.TransactionException;
-import org.hibernate.classic.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.shards.PermutationHelper;
@@ -46,17 +58,6 @@ import org.hibernate.shards.strategy.ShardStrategyFactoryDefaultMock;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Sets;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import java.io.Serializable;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import static org.hibernate.shards.integration.model.ModelDataFactory.building;
 import static org.hibernate.shards.integration.model.ModelDataFactory.elevator;
@@ -1110,7 +1111,7 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
         go[0] = false;
     }
 
-    @Parameterized.Parameters(name = "{index}: [{0}]")
+    @Parameterized.Parameters()
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

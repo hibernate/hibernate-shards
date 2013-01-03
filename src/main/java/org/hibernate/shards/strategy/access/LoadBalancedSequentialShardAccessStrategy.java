@@ -18,11 +18,11 @@
 
 package org.hibernate.shards.strategy.access;
 
-import org.hibernate.shards.Shard;
-import org.hibernate.shards.util.Iterables;
-
 import java.util.List;
 import java.util.Random;
+
+import org.hibernate.shards.Shard;
+import org.hibernate.shards.util.Iterables;
 
 /**
  * A SequentialShardAccessStrategy starts with the first Shard in the list

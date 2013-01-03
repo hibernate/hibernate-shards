@@ -18,6 +18,10 @@
 
 package org.hibernate.shards.criteria;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -37,11 +41,8 @@ import org.hibernate.shards.ShardOperation;
 import org.hibernate.shards.strategy.access.ShardAccessStrategy;
 import org.hibernate.shards.strategy.exit.ConcatenateListsExitStrategy;
 import org.hibernate.shards.strategy.exit.FirstNonNullResultExitStrategy;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Concrete implementation of the {@link ShardedCriteria} interface.
@@ -464,4 +465,33 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
         }
         return this;
     }
+
+	//todo impl these methods
+
+	@Override
+	public Criteria createAlias(String associationPath, String alias, JoinType joinType) throws HibernateException {
+		return null;
+	}
+
+	@Override
+	public Criteria createAlias(String associationPath, String alias, JoinType joinType, Criterion withClause)
+			throws HibernateException {
+		return null;
+	}
+
+	@Override
+	public Criteria createCriteria(String associationPath, JoinType joinType) throws HibernateException {
+		return null;
+	}
+
+	@Override
+	public Criteria createCriteria(String associationPath, String alias, JoinType joinType) throws HibernateException {
+		return null;
+	}
+
+	@Override
+	public Criteria createCriteria(String associationPath, String alias, JoinType joinType, Criterion withClause)
+			throws HibernateException {
+		return null;
+	}
 }

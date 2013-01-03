@@ -18,6 +18,12 @@
 
 package org.hibernate.shards.defaultmock;
 
+import java.io.Serializable;
+import java.sql.Connection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.hibernate.CacheMode;
 import org.hibernate.EntityMode;
 import org.hibernate.FlushMode;
@@ -27,28 +33,23 @@ import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Transaction;
-import org.hibernate.collection.PersistentCollection;
-import org.hibernate.engine.EntityKey;
-import org.hibernate.engine.LoadQueryInfluencers;
-import org.hibernate.engine.NonFlushedChanges;
-import org.hibernate.engine.PersistenceContext;
-import org.hibernate.engine.QueryParameters;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.engine.query.sql.NativeSQLQuerySpecification;
-import org.hibernate.event.EventListeners;
-import org.hibernate.impl.CriteriaImpl;
-import org.hibernate.jdbc.Batcher;
-import org.hibernate.jdbc.JDBCContext;
+import org.hibernate.cache.spi.CacheKey;
+import org.hibernate.collection.spi.PersistentCollection;
+import org.hibernate.engine.jdbc.LobCreationContext;
+import org.hibernate.engine.jdbc.spi.JdbcConnectionAccess;
+import org.hibernate.engine.query.spi.sql.NativeSQLQuerySpecification;
+import org.hibernate.engine.spi.PersistenceContext;
+import org.hibernate.engine.spi.EntityKey;
+import org.hibernate.engine.spi.LoadQueryInfluencers;
+import org.hibernate.engine.spi.NonFlushedChanges;
+import org.hibernate.engine.spi.QueryParameters;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.transaction.spi.TransactionCoordinator;
+import org.hibernate.internal.CriteriaImpl;
 import org.hibernate.loader.custom.CustomQuery;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.type.Type;
-
-import java.io.Serializable;
-import java.sql.Connection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -97,26 +98,6 @@ public class SessionImplementorDefaultMock implements SessionImplementor {
     }
 
     @Override
-    public Batcher getBatcher() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List list(String query, QueryParameters queryParameters) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Iterator iterate(String query, QueryParameters queryParameters) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ScrollableResults scroll(String query, QueryParameters queryParameters) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public ScrollableResults scroll(CriteriaImpl criteria, ScrollMode scrollMode) {
         throw new UnsupportedOperationException();
     }
@@ -127,33 +108,12 @@ public class SessionImplementorDefaultMock implements SessionImplementor {
     }
 
     @Override
-    public List listFilter(Object collection, String filter, QueryParameters queryParameters) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Iterator iterateFilter(Object collection, String filter,
-                                  QueryParameters queryParameters) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public EntityPersister getEntityPersister(String entityName, Object object) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Object getEntityUsingInterceptor(EntityKey key) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void afterTransactionCompletion(boolean successful, Transaction tx) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void beforeTransactionCompletion(Transaction tx) {
         throw new UnsupportedOperationException();
     }
 
@@ -174,29 +134,6 @@ public class SessionImplementorDefaultMock implements SessionImplementor {
 
     @Override
     public Object instantiate(String entityName, Serializable id) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List listCustomQuery(CustomQuery customQuery, QueryParameters queryParameters) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ScrollableResults scrollCustomQuery(CustomQuery customQuery,
-                                               QueryParameters queryParameters) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public List list(NativeSQLQuerySpecification spec,
-                     QueryParameters queryParameters) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public ScrollableResults scroll(NativeSQLQuerySpecification spec,
-                                    QueryParameters queryParameters) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
@@ -224,23 +161,7 @@ public class SessionImplementorDefaultMock implements SessionImplementor {
     }
 
     @Override
-    public EventListeners getListeners() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public PersistenceContext getPersistenceContext() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int executeUpdate(String query, QueryParameters queryParameters) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int executeNativeUpdate(NativeSQLQuerySpecification specification,
-                                   QueryParameters queryParameters) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
@@ -251,11 +172,6 @@ public class SessionImplementorDefaultMock implements SessionImplementor {
 
     @Override
     public void applyNonFlushedChanges(NonFlushedChanges nonFlushedChanges) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public EntityMode getEntityMode() {
         throw new UnsupportedOperationException();
     }
 
@@ -332,11 +248,6 @@ public class SessionImplementorDefaultMock implements SessionImplementor {
     }
 
     @Override
-    public JDBCContext getJDBCContext() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public boolean isClosed() {
         throw new UnsupportedOperationException();
     }
@@ -345,4 +256,99 @@ public class SessionImplementorDefaultMock implements SessionImplementor {
     public LoadQueryInfluencers getLoadQueryInfluencers() {
         throw new UnsupportedOperationException();
     }
+
+	@Override
+	public void disableTransactionAutoJoin() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getTenantIdentifier() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public JdbcConnectionAccess getJdbcConnectionAccess() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityKey generateEntityKey(Serializable id, EntityPersister persister) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public CacheKey generateCacheKey(Serializable id, Type type, String entityOrRoleName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List list(String query, QueryParameters queryParameters) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Iterator iterate(String query, QueryParameters queryParameters) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ScrollableResults scroll(String query, QueryParameters queryParameters) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List listFilter(Object collection, String filter, QueryParameters queryParameters)
+			throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Iterator iterateFilter(Object collection, String filter, QueryParameters queryParameters)
+			throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List listCustomQuery(CustomQuery customQuery, QueryParameters queryParameters) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ScrollableResults scrollCustomQuery(CustomQuery customQuery, QueryParameters queryParameters)
+			throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List list(NativeSQLQuerySpecification spec, QueryParameters queryParameters) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public ScrollableResults scroll(NativeSQLQuerySpecification spec, QueryParameters queryParameters)
+			throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int executeUpdate(String query, QueryParameters queryParameters) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int executeNativeUpdate(NativeSQLQuerySpecification specification, QueryParameters queryParameters)
+			throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public TransactionCoordinator getTransactionCoordinator() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T execute(Callback<T> callback) {
+		throw new UnsupportedOperationException();
+	}
 }

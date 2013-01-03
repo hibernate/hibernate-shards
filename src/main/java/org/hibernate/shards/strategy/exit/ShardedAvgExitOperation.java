@@ -18,21 +18,21 @@
 
 package org.hibernate.shards.strategy.exit;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.jboss.logging.Logger;
+
 import org.hibernate.criterion.Projection;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * @author Maulik Shah
  */
 public class ShardedAvgExitOperation implements ProjectionExitOperation {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     public ShardedAvgExitOperation(final Projection projection) {
         log.error("not ready to use!");

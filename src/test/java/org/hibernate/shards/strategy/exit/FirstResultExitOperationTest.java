@@ -19,11 +19,11 @@
 package org.hibernate.shards.strategy.exit;
 
 
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.hibernate.shards.util.Lists;
-
-import java.util.List;
 
 /**
  * @author Maulik Shah

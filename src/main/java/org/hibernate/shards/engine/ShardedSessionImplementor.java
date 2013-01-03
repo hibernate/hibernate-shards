@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.engine;
 
+import java.util.List;
+
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.session.ShardedSession;
-
-import java.util.List;
 
 /**
  * Defines the internal contract between the <tt>ShardedSession</tt> and other

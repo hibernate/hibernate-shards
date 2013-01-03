@@ -18,21 +18,22 @@
 
 package org.hibernate.shards.defaultmock;
 
-import org.dom4j.Node;
-import org.hibernate.EntityMode;
-import org.hibernate.HibernateException;
-import org.hibernate.MappingException;
-import org.hibernate.engine.Mapping;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.type.ForeignKeyDirection;
-import org.hibernate.type.Type;
-
 import java.io.Serializable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+
+import org.dom4j.Node;
+
+import org.hibernate.HibernateException;
+import org.hibernate.MappingException;
+import org.hibernate.engine.spi.Mapping;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.metamodel.relational.Size;
+import org.hibernate.type.ForeignKeyDirection;
+import org.hibernate.type.Type;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -72,35 +73,6 @@ public class TypeDefaultMock implements Type {
   }
 
   public Class getReturnedClass() {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean isSame(Object x, Object y, EntityMode entityMode)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean isEqual(Object x, Object y, EntityMode entityMode)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
-
-  public boolean isEqual(Object x, Object y, EntityMode entityMode,
-      SessionFactoryImplementor factory) throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
-
-  public int getHashCode(Object x, EntityMode entityMode)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
-
-  public int getHashCode(Object x, EntityMode entityMode,
-      SessionFactoryImplementor factory) throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
-
-  public int compare(Object x, Object y, EntityMode entityMode) {
     throw new UnsupportedOperationException();
   }
 
@@ -162,11 +134,6 @@ public class TypeDefaultMock implements Type {
     throw new UnsupportedOperationException();
   }
 
-  public Object deepCopy(Object value, EntityMode entityMode,
-      SessionFactoryImplementor factory) throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
-
   public boolean isMutable() {
     throw new UnsupportedOperationException();
   }
@@ -220,4 +187,49 @@ public class TypeDefaultMock implements Type {
   public boolean[] toColumnNullness(Object value, Mapping mapping) {
     throw new UnsupportedOperationException();
   }
+
+	@Override
+	public int compare(Object x, Object y) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Size[] dictatedSizes(Mapping mapping) throws MappingException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Size[] defaultSizes(Mapping mapping) throws MappingException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isSame(Object x, Object y) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isEqual(Object x, Object y) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isEqual(Object x, Object y, SessionFactoryImplementor factory) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getHashCode(Object x) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getHashCode(Object x, SessionFactoryImplementor factory) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object deepCopy(Object value, SessionFactoryImplementor factory) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 }

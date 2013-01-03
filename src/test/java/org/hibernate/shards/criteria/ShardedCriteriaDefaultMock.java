@@ -18,6 +18,8 @@
 
 package org.hibernate.shards.criteria;
 
+import java.util.List;
+
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -29,9 +31,8 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
-
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -207,4 +208,31 @@ public class ShardedCriteriaDefaultMock implements ShardedCriteria {
     public Object uniqueResult() throws HibernateException {
         throw new UnsupportedOperationException();
     }
+
+	@Override
+	public Criteria createAlias(String associationPath, String alias, JoinType joinType) throws HibernateException {
+		 throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Criteria createAlias(String associationPath, String alias, JoinType joinType, Criterion withClause)
+			throws HibernateException {
+		 throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Criteria createCriteria(String associationPath, JoinType joinType) throws HibernateException {
+		 throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Criteria createCriteria(String associationPath, String alias, JoinType joinType) throws HibernateException {
+		 throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Criteria createCriteria(String associationPath, String alias, JoinType joinType, Criterion withClause)
+			throws HibernateException {
+		 throw new UnsupportedOperationException();
+	}
 }

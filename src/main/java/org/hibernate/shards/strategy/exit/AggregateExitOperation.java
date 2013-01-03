@@ -18,13 +18,13 @@
 
 package org.hibernate.shards.strategy.exit;
 
-import org.hibernate.criterion.AggregateProjection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+
+import org.jboss.logging.Logger;
+
+import org.hibernate.criterion.AggregateProjection;
 
 /**
  * @author Maulik Shah
@@ -35,7 +35,7 @@ public class AggregateExitOperation implements ProjectionExitOperation {
 
     private final String fieldName;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     private enum SupportedAggregations {
 

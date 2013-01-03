@@ -18,12 +18,12 @@
 
 package org.hibernate.shards.query;
 
-import org.hibernate.engine.SessionFactoryImplementor;
+import java.util.List;
+
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.shards.strategy.exit.ExitOperationsCollector;
 import org.hibernate.shards.strategy.exit.FirstResultExitOperation;
 import org.hibernate.shards.strategy.exit.MaxResultsExitOperation;
-
-import java.util.List;
 
 /**
  * Exit operations for queries is essentially not implemented. Its intended use

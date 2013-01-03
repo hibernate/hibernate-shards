@@ -18,11 +18,11 @@
 
 package org.hibernate.shards;
 
-import org.hibernate.shards.util.Preconditions;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.hibernate.shards.util.Preconditions;
 
 /**
  * Base implementation for HasShadIdList.

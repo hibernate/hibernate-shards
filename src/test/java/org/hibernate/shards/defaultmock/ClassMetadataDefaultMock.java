@@ -18,14 +18,13 @@
 
 package org.hibernate.shards.defaultmock;
 
-import org.hibernate.EntityMode;
-import org.hibernate.HibernateException;
-import org.hibernate.engine.SessionImplementor;
-import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.type.Type;
-
 import java.io.Serializable;
 import java.util.Map;
+
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.type.Type;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -124,56 +123,13 @@ public class ClassMetadataDefaultMock implements ClassMetadata {
     }
 
     @Override
-    public Class getMappedClass(EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    @Override
-    public Object instantiate(Serializable id, EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Object instantiate(Serializable id, SessionImplementor session) {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public Object getPropertyValue(Object object, String propertyName, EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object[] getPropertyValues(Object entity, EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setPropertyValue(Object object, String propertyName, Object value, EntityMode entityMode)
-            throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setPropertyValues(Object object, Object[] values, EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    @Override
-    public Serializable getIdentifier(Object entity, EntityMode entityMode) throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
 
     @Override
     public Serializable getIdentifier(Object entity, SessionImplementor session) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Deprecated
-    @Override
-    public void setIdentifier(Object object, Serializable id, EntityMode entityMode) throws HibernateException {
         throw new UnsupportedOperationException();
     }
 
@@ -182,19 +138,43 @@ public class ClassMetadataDefaultMock implements ClassMetadata {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public boolean implementsLifecycle(EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Serializable getIdentifier(Object object) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public boolean implementsValidatable(EntityMode entityMode) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Class getMappedClass() {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public Object getVersion(Object object, EntityMode entityMode)
-            throws HibernateException {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Object getPropertyValue(Object object, String propertyName) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object[] getPropertyValues(Object entity) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setPropertyValue(Object object, String propertyName, Object value) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setPropertyValues(Object object, Object[] values) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean implementsLifecycle() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object getVersion(Object object) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 }

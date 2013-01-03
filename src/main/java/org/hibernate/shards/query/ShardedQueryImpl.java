@@ -18,6 +18,18 @@
 
 package org.hibernate.shards.query;
 
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
@@ -34,18 +46,6 @@ import org.hibernate.shards.strategy.exit.FirstNonNullResultExitStrategy;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.Type;
-
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 
 /**
  * Concrete implementation of ShardedQuery provided by Hibernate Shards. This

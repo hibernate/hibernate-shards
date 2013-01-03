@@ -18,12 +18,13 @@
 
 package org.hibernate.shards.query;
 
-import junit.framework.TestCase;
-import org.hibernate.Query;
-import org.hibernate.shards.defaultmock.QueryDefaultMock;
-
 import java.util.Collections;
 import java.util.Map;
+
+import junit.framework.TestCase;
+
+import org.hibernate.Query;
+import org.hibernate.shards.defaultmock.QueryDefaultMock;
 
 /**
  * @author Maulik Shah

@@ -1,11 +1,11 @@
 package org.hibernate.shards.session;
 
+import java.io.Serializable;
+
 import org.hibernate.CallbackException;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.type.Type;
-
-import java.io.Serializable;
 
 /**
  * Copyright (C) 2007 Google Inc.

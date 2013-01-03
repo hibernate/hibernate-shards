@@ -18,12 +18,16 @@
 
 package org.hibernate.shards.criteria;
 
+import java.util.List;
+
+import org.jboss.logging.Logger;
+
 import org.hibernate.criterion.AggregateProjection;
 import org.hibernate.criterion.Distinct;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.criterion.RowCountProjection;
-import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.shards.strategy.exit.AvgResultsExitOperation;
 import org.hibernate.shards.strategy.exit.DistinctExitOperation;
 import org.hibernate.shards.strategy.exit.ExitOperationsCollector;
@@ -32,10 +36,6 @@ import org.hibernate.shards.strategy.exit.MaxResultsExitOperation;
 import org.hibernate.shards.strategy.exit.OrderExitOperation;
 import org.hibernate.shards.strategy.exit.ProjectionExitOperationFactory;
 import org.hibernate.shards.util.Lists;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 /**
  * Implements the ExitOperationsCollector interface for {@link org.hibernate.Criteria}s
@@ -69,7 +69,7 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
     private List<InMemoryOrderBy> orders = Lists.newArrayList();
 
     // Our friendly neighborhood logger
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger( getClass() );
 
     /**
      * Sets the maximum number of results requested by the client

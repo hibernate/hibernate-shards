@@ -18,13 +18,13 @@
 
 package org.hibernate.shards.id;
 
+import java.io.Serializable;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.engine.SessionImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.TableHiLoGenerator;
 import org.hibernate.shards.session.ControlSessionProvider;
-
-import java.io.Serializable;
 
 /**
  * TableHiLoGenerator which uses control shard to store table with hi values.

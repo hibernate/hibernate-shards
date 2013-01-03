@@ -17,16 +17,17 @@
  */
 package org.hibernate.shards.criteria;
 
+import java.util.List;
+
 import junit.framework.TestCase;
+
 import org.hibernate.Criteria;
-import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardDefaultMock;
 import org.hibernate.shards.strategy.access.ShardAccessStrategy;
 import org.hibernate.shards.strategy.access.ShardAccessStrategyDefaultMock;
 import org.hibernate.shards.util.Lists;
-
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)

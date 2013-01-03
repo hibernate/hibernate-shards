@@ -18,13 +18,13 @@
 
 package org.hibernate.shards.session;
 
+import java.util.List;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.SessionFactory;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.strategy.ShardStrategyFactory;
-
-import java.util.List;
 
 /**
  * Shard-aware extension to {@link SessionFactory}.  Similar to {@link SessionFactory},

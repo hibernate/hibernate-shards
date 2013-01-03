@@ -18,11 +18,11 @@
 
 package org.hibernate.shards.query;
 
+import java.util.Collection;
+
 import org.hibernate.Query;
 import org.hibernate.shards.session.ShardedSessionException;
 import org.hibernate.type.Type;
-
-import java.util.Collection;
 
 /**
  * @author Maulik Shah

@@ -18,6 +18,9 @@
 
 package org.hibernate.shards.criteria;
 
+import java.util.List;
+import java.util.Map;
+
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -29,20 +32,17 @@ import org.hibernate.ScrollableResults;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
-import org.hibernate.impl.CriteriaImpl;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Preconditions;
+import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Concrete implementation of the {@link ShardedSubcriteria} interface.
  * You'll notice that this class does not extend {@link ShardedCriteria}.
- * Why? Because {@link CriteriaImpl.Subcriteria} doesn't extend {@link Criteria}.  We
+ * Why? Because {@link org.hibernate.internal.CriteriaImpl.Subcriteria} doesn't extend {@link Criteria}.  We
  * don't actually need the entire {@link Criteria} interface.
  *
  * @author maxr@google.com (Max Ross)
@@ -386,4 +386,31 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
     interface SubcriteriaRegistrar {
         void establishSubcriteria(Criteria parentCriteria, SubcriteriaFactory subcriteriaFactory);
     }
+	//TODO impl these methods
+	@Override
+	public Criteria createAlias(String associationPath, String alias, JoinType joinType) throws HibernateException {
+		return null;
+	}
+
+	@Override
+	public Criteria createAlias(String associationPath, String alias, JoinType joinType, Criterion withClause)
+			throws HibernateException {
+		return null;
+	}
+
+	@Override
+	public Criteria createCriteria(String associationPath, JoinType joinType) throws HibernateException {
+		return null;
+	}
+
+	@Override
+	public Criteria createCriteria(String associationPath, String alias, JoinType joinType) throws HibernateException {
+		return null;
+	}
+
+	@Override
+	public Criteria createCriteria(String associationPath, String alias, JoinType joinType, Criterion withClause)
+			throws HibernateException {
+		return null;
+	}
 }

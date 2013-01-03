@@ -18,11 +18,17 @@
 
 package org.hibernate.shards;
 
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.hibernate.Criteria;
 import org.hibernate.Interceptor;
 import org.hibernate.Query;
-import org.hibernate.classic.Session;
-import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.Session;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.shards.criteria.CriteriaEvent;
 import org.hibernate.shards.criteria.CriteriaId;
 import org.hibernate.shards.criteria.ShardedCriteria;
@@ -35,12 +41,6 @@ import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.shards.util.Sets;
-
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Concrete implementation of the {@link Shard} interface.
@@ -148,7 +148,7 @@ public class ShardImpl implements Shard {
             if (interceptor == null) {
                 session = sessionFactory.openSession();
             } else {
-                session = sessionFactory.openSession(interceptor);
+                session = sessionFactory.withOptions().interceptor( interceptor ).openSession();
             }
 
             // apply any OpenSessionEvents that have been queued up.

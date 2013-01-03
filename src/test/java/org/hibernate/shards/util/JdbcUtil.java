@@ -19,14 +19,13 @@
 package org.hibernate.shards.util;
 
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import org.jboss.logging.Logger;
 
 /**
  * Helper methods for Jdbc
@@ -35,7 +34,7 @@ import java.sql.Statement;
  */
 public class JdbcUtil {
 
-    private static final Logger LOG = LoggerFactory.getLogger(JdbcUtil.class);
+    private static final Logger LOG = Logger.getLogger(JdbcUtil.class);
 
     public static int executeUpdate(final Connection conn,
                                     final String query,

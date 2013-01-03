@@ -18,14 +18,14 @@
 
 package org.hibernate.shards.session;
 
-import org.hibernate.HibernateException;
-import org.hibernate.engine.SessionFactoryImplementor;
-import org.hibernate.shards.ShardId;
-import org.hibernate.shards.strategy.ShardStrategyFactory;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.hibernate.HibernateException;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.shards.ShardId;
+import org.hibernate.shards.strategy.ShardStrategyFactory;
 
 /**
  * This class extends ShardedSessionFactoryImpl and is constructed by supplying

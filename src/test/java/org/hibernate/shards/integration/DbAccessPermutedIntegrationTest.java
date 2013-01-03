@@ -18,21 +18,22 @@
 
 package org.hibernate.shards.integration;
 
-import static org.junit.Assert.*;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Set;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.shards.PermutationHelper;
 import org.hibernate.shards.engine.ShardedSessionFactoryImplementor;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
-import java.math.BigDecimal;
-import java.sql.SQLException;
-import java.util.List;
-import java.util.Set;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -87,7 +88,7 @@ public class DbAccessPermutedIntegrationTest extends BaseShardingIntegrationTest
         assertEquals(1, session.createSQLQuery("DELETE from sample_table where id = 0").executeUpdate());
     }
 
-    @Parameterized.Parameters(name = "{index}: [{0}]")
+    @Parameterized.Parameters()
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

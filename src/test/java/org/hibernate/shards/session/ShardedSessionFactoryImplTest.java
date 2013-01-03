@@ -18,13 +18,22 @@
 
 package org.hibernate.shards.session;
 
+import java.sql.Connection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import javax.naming.NamingException;
+
 import junit.framework.TestCase;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.cfg.Settings;
-import org.hibernate.engine.SessionFactoryImplementor;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
@@ -34,14 +43,6 @@ import org.hibernate.shards.strategy.ShardStrategyFactory;
 import org.hibernate.shards.strategy.ShardStrategyFactoryDefaultMock;
 import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Sets;
-
-import javax.naming.NamingException;
-import java.sql.Connection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -134,14 +135,14 @@ public class ShardedSessionFactoryImplTest extends TestCase {
         try {
             Connection conn = null;
             try {
-                ssf.openSession(conn);
+                ssf.withOptions().connection( conn ).openSession();
                 fail("Expected uoe");
             } catch (UnsupportedOperationException uoe) {
                 // good
             }
             Interceptor interceptor = null;
             try {
-                ssf.openSession(conn, interceptor);
+                ssf.withOptions().connection( conn ).interceptor( interceptor ).openSession();
                 fail("Expected uoe");
             } catch (UnsupportedOperationException uoe) {
                 // good

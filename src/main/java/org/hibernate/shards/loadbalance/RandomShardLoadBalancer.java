@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.loadbalance;
 
-import org.hibernate.shards.ShardId;
-
 import java.util.List;
 import java.util.Random;
+
+import org.hibernate.shards.ShardId;
 
 /**
  * Random selection load balancing algorithm.

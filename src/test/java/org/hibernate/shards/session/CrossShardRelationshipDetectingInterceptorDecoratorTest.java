@@ -18,14 +18,15 @@
 
 package org.hibernate.shards.session;
 
+import java.io.Serializable;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 import org.hibernate.CallbackException;
 import org.hibernate.Interceptor;
 import org.hibernate.shards.defaultmock.InterceptorDefaultMock;
 import org.hibernate.type.Type;
-import org.junit.Assert;
-import org.junit.Test;
-
-import java.io.Serializable;
 
 /**
  * @author maxr@google.com (Max Ross)

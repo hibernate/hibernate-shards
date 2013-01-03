@@ -18,12 +18,12 @@
 
 package org.hibernate.shards.session;
 
+import java.io.Serializable;
+
 import org.hibernate.CallbackException;
 import org.hibernate.Interceptor;
 import org.hibernate.shards.util.InterceptorDecorator;
 import org.hibernate.type.Type;
-
-import java.io.Serializable;
 
 /**
  * Decorator that checks for cross shard relationships before delegating

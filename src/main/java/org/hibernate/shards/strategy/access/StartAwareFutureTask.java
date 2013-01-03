@@ -18,11 +18,10 @@
 
 package org.hibernate.shards.strategy.access;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
+
+import org.jboss.logging.Logger;
 
 /**
  * Extension of FutureTask that provides slightly different cancel()
@@ -56,7 +55,7 @@ class StartAwareFutureTask extends FutureTask<Void> {
 
     private final int id;
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass());
 
     public StartAwareFutureTask(final Callable<Void> callable, final int id) {
         super(callable);

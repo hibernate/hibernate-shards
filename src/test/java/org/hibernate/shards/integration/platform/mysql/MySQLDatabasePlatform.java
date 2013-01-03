@@ -18,12 +18,12 @@
 
 package org.hibernate.shards.integration.platform.mysql;
 
+import java.util.List;
+
 import org.hibernate.shards.integration.IdGenType;
 import org.hibernate.shards.integration.platform.BaseDatabasePlatform;
 import org.hibernate.shards.integration.platform.DatabasePlatform;
 import org.hibernate.shards.util.Lists;
-
-import java.util.List;
 
 /**
  * @author maxr@google.com (Max Ross)

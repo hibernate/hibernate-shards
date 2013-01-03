@@ -17,19 +17,20 @@
  */
 package org.hibernate.shards.integration.model;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
-import org.hibernate.HibernateException;
 import org.hibernate.shards.PermutationHelper;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
 import org.hibernate.shards.integration.Permutation;
 import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.IdIsBaseType;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import static org.hibernate.shards.integration.model.ModelDataFactory.building;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -91,7 +92,7 @@ public class ModelIntegrationTest extends BaseShardingIntegrationTestCase {
         assertEquals(b.getShardId(), bReloaded.getShardId());
     }
 
-    @Parameterized.Parameters(name = "{index}: [{0}]")
+    @Parameterized.Parameters()
     public static Iterable<Object[]> data() {
         return PermutationHelper.data();
     }

@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.query;
 
+import java.io.Serializable;
+
 import org.hibernate.Query;
 import org.hibernate.shards.session.ShardedSessionException;
-
-import java.io.Serializable;
 
 /**
  * @author Maulik Shah

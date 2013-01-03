@@ -1,13 +1,11 @@
 package org.hibernate.shards;
 
+import java.util.List;
+
 import org.hibernate.shards.integration.IdGenType;
 import org.hibernate.shards.integration.Permutation;
 import org.hibernate.shards.integration.ShardAccessStrategyType;
 import org.hibernate.shards.util.Lists;
-import org.junit.runners.Parameterized;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class PermutationHelper {
 

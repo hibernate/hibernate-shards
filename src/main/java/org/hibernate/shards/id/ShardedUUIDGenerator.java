@@ -18,18 +18,18 @@
 
 package org.hibernate.shards.id;
 
+import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Properties;
+
 import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.SessionImplementor;
+import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.UUIDHexGenerator;
+import org.hibernate.internal.util.config.ConfigurationHelper;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.session.ShardedSessionImpl;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.type.Type;
-import org.hibernate.util.PropertiesHelper;
-
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Properties;
 
 /**
  * Supports generation of either 32-character hex String UUID or 128 bit
@@ -105,6 +105,6 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncod
 
     @Override
     public void configure(final Type type, final Properties params, final Dialect d) {
-        this.idType = IdType.valueOf(PropertiesHelper.getString(ID_TYPE_PROPERTY, params, "INTEGER"));
+        this.idType = IdType.valueOf( ConfigurationHelper.getString( ID_TYPE_PROPERTY, params, "INTEGER" ));
     }
 }

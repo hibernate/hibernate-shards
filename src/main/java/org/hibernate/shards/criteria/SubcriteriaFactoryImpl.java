@@ -24,7 +24,7 @@ import org.hibernate.shards.session.ShardedSessionException;
 
 /**
  * Concrete implementation of the {@link SubcriteriaFactory} interface.
- * Used to lazily create {@link org.hibernate.impl.CriteriaImpl.Subcriteria}
+ * Used to lazily create {@link org.hibernate.internal.CriteriaImpl.Subcriteria}
  *
  * @author maxr@google.com (Max Ross)
  * @see Criteria#createCriteria(String)
