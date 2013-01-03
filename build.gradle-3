@@ -3,7 +3,7 @@ apply plugin: 'idea'
 apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'uploadAuth'
-apply from: "./libraries.gradle"
+apply from: './libraries.gradle'
 
 group = 'org.hibernate'
 version = '4.0.0-SNAPSHOT'
@@ -33,9 +33,6 @@ buildscript {
 
 // set up special classpath elements ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 configurations {
-    jbossLoggingTool {
-        description = "Dependencies for running the JBoss logging AnnotationProcessor tool"
-    }
     deployerJars {
         description = 'Jars needed for doing deployment to JBoss Nexus repo'
     }
@@ -46,23 +43,15 @@ configurations {
 
 // declare dependencies ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 dependencies {
-    compile( libraries.hibernate_orm )
-    compile( libraries.logging )
+    compile( libraries.slf4j_api )
+    compile( 'org.hibernate:hibernate-core:3.6.10.Final' )
 
-    testCompile( libraries.hibernate_testing )
     testCompile( libraries.junit )  // may already be a transitive dep from testing
-
-    testRuntime( libraries.h2 )
-    testRuntime( libraries.javassist ) // may already be a transitive dep from orm
-    testRuntime( libraries.slf4j_api )
+    testCompile( libraries.hsqldb )
+    testCompile( libraries.slf4j_api )
+    testCompile( libraries.mockito )
     testRuntime( libraries.slf4j_log4j12 )
-    testRuntime( libraries.jcl_slf4j )
-    testRuntime( libraries.jcl_api )
-    testRuntime( libraries.jcl )
-
-    jbossLoggingTool( libraries.logging_processor )
-
-    deployerJars( 'org.apache.maven.wagon:wagon-http:1.0' )
+    testRuntime( libraries.javassist ) // may already be a transitive dep from orm
 }
 
 // MacOS fun-ness ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -72,46 +61,6 @@ if ( ext.toolsJar.exists() ) {
         testCompile files( toolsJar )
     }
 }
-
-// set up logging generation task ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ext.generatedLoggingSrcDir = file( "${project.buildDir}/generated-src/logging/" )
-task generateMainLoggingClasses(type: Compile) {
-    ext.aptDumpDir = file( "${project.buildDir}/tmp/apt/logging" )
-    classpath = compileJava.classpath + configurations.jbossLoggingTool
-    source = sourceSets.main.java.srcDirs
-    destinationDir = aptDumpDir
-    options.define(
-            compilerArgs: [
-                    "-nowarn",
-                    "-proc:only",
-                    "-encoding", "UTF-8",
-                    "-processor", "org.jboss.logging.processor.apt.LoggingToolsProcessor",
-                    "-s", "$generatedLoggingSrcDir.absolutePath",
-                    "-AloggingVersion=3.0",
-                    "-source", "1.6",
-                    "-target", "1.6",
-                    "-AtranslationFilesPath=${project.rootDir}/src/main/resources"
-            ]
-    );
-    outputs.dir generatedLoggingSrcDir;
-    doFirst {
-        generatedLoggingSrcDir.mkdirs()
-    }
-    doLast {
-        aptDumpDir.delete()
-    }
-}
-
-sourceSets.main {
-    java.srcDir generatedLoggingSrcDir
-}
-
-// for the time being eat the annoying output from running the annotation processors
-generateMainLoggingClasses.logging.captureStandardError(LogLevel.INFO)
-
-compileJava.dependsOn generateMainLoggingClasses
-compileJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
-compileTestJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
 
 // Configure test task ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 test {
@@ -194,4 +143,15 @@ uploadArchives {
 // Configure gradlew generation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 task wrapper(type: Wrapper) {
     gradleVersion = '1.1'
+}
+
+
+idea {
+    module {
+        //if you love browsing Javadoc
+        downloadJavadoc = true
+
+        //and hate reading sources :)
+        downloadSources = true
+    }
 }
