@@ -25,8 +25,8 @@ import org.junit.Test;
  */
 public class ParallelShardAccessStrategyTest {
 
-    @Test(expected = NullPointerException.class)
-    public void testCtor() {
-        new ParallelShardAccessStrategy(null);
-    }
+	@Test(expected = NullPointerException.class)
+	public void testCtor() {
+		new ParallelShardAccessStrategy( null );
+	}
 }

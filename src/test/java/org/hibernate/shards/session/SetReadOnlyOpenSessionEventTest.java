@@ -28,17 +28,17 @@ import org.hibernate.shards.defaultmock.SessionDefaultMock;
  */
 public class SetReadOnlyOpenSessionEventTest extends TestCase {
 
-  public void testOnOpenSession() {
-    SetReadOnlyOpenSessionEvent event = new SetReadOnlyOpenSessionEvent(null, false);
-    final boolean[] called = {false};
-    Session session = new SessionDefaultMock() {
-      @Override
-      public void setReadOnly(Object entity, boolean readOnly) {
-        called[0] = true;
-      }
-    };
-    event.onOpenSession(session);
-    assertTrue(called[0]);
-  }
+	public void testOnOpenSession() {
+		SetReadOnlyOpenSessionEvent event = new SetReadOnlyOpenSessionEvent( null, false );
+		final boolean[] called = {false};
+		Session session = new SessionDefaultMock() {
+			@Override
+			public void setReadOnly(Object entity, boolean readOnly) {
+				called[0] = true;
+			}
+		};
+		event.onOpenSession( session );
+		assertTrue( called[0] );
+	}
 
 }

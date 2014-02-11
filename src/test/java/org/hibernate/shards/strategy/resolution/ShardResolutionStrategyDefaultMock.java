@@ -28,8 +28,8 @@ import org.hibernate.shards.strategy.selection.ShardResolutionStrategyData;
  */
 public class ShardResolutionStrategyDefaultMock implements ShardResolutionStrategy {
 
-  public List<ShardId> selectShardIdsFromShardResolutionStrategyData(
-      ShardResolutionStrategyData shardResolutionStrategyData) {
-    throw new UnsupportedOperationException();
-  }
+	public List<ShardId> selectShardIdsFromShardResolutionStrategyData(
+			ShardResolutionStrategyData shardResolutionStrategyData) {
+		throw new UnsupportedOperationException();
+	}
 }

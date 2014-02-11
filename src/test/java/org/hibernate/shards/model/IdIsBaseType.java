@@ -27,22 +27,22 @@ import java.math.BigInteger;
  */
 public class IdIsBaseType {
 
-    private BigInteger idIsBaseTypeId;
-    private String value;
+	private BigInteger idIsBaseTypeId;
+	private String value;
 
-    public BigInteger getIdIsBaseTypeId() {
-        return idIsBaseTypeId;
-    }
+	public BigInteger getIdIsBaseTypeId() {
+		return idIsBaseTypeId;
+	}
 
-    public void setIdIsBaseTypeId(BigInteger hasLongId) {
-        this.idIsBaseTypeId = hasLongId;
-    }
+	public void setIdIsBaseTypeId(BigInteger hasLongId) {
+		this.idIsBaseTypeId = hasLongId;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public String getValue() {
+		return value;
+	}
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+	public void setValue(String value) {
+		this.value = value;
+	}
 }

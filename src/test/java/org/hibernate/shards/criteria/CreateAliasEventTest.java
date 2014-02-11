@@ -30,34 +30,35 @@ import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
  */
 public class CreateAliasEventTest {
 
-    @Test
-    public void testOnOpenSession() {
-        final CreateAliasEvent event = new CreateAliasEvent(null, null);
-        final boolean[] called = {false};
-        final Criteria crit = new CriteriaDefaultMock() {
-            @Override
-            public Criteria createAlias(String associationPath, String alias) throws HibernateException {
-                called[0] = true;
-                return null;
-            }
-        };
-        event.onEvent(crit);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSession() {
+		final CreateAliasEvent event = new CreateAliasEvent( null, null );
+		final boolean[] called = {false};
+		final Criteria crit = new CriteriaDefaultMock() {
+			@Override
+			public Criteria createAlias(String associationPath, String alias) throws HibernateException {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( crit );
+		Assert.assertTrue( called[0] );
+	}
 
-    @Test
-    public void testOnOpenSessionWithJoinType() {
-        final CreateAliasEvent event = new CreateAliasEvent(null, null, 0);
-        final boolean[] called = {false};
-        final Criteria crit = new CriteriaDefaultMock() {
-            @Override
-            public Criteria createAlias(final String associationPath, final String alias,
-                                        final int joinType) throws HibernateException {
-                called[0] = true;
-                return null;
-            }
-        };
-        event.onEvent(crit);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSessionWithJoinType() {
+		final CreateAliasEvent event = new CreateAliasEvent( null, null, 0 );
+		final boolean[] called = {false};
+		final Criteria crit = new CriteriaDefaultMock() {
+			@Override
+			public Criteria createAlias(
+					final String associationPath, final String alias,
+					final int joinType) throws HibernateException {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( crit );
+		Assert.assertTrue( called[0] );
+	}
 }

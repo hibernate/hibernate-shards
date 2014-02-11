@@ -29,18 +29,18 @@ import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
  */
 public class SetFirstResultEventTest {
 
-    @Test
-    public void testOnOpenSession() {
-        SetFirstResultEvent event = new SetFirstResultEvent(33);
-        final boolean[] called = {false};
-        Criteria crit = new CriteriaDefaultMock() {
-            @Override
-            public Criteria setFirstResult(int firstResult) {
-                called[0] = true;
-                return null;
-            }
-        };
-        event.onEvent(crit);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSession() {
+		SetFirstResultEvent event = new SetFirstResultEvent( 33 );
+		final boolean[] called = {false};
+		Criteria crit = new CriteriaDefaultMock() {
+			@Override
+			public Criteria setFirstResult(int firstResult) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( crit );
+		Assert.assertTrue( called[0] );
+	}
 }

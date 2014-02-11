@@ -25,55 +25,55 @@ import java.io.Serializable;
  */
 public class Escalator {
 
-    private Serializable escalatorId;
-    private Floor bottomFloor;
-    private Floor topFloor;
+	private Serializable escalatorId;
+	private Floor bottomFloor;
+	private Floor topFloor;
 
-    public Serializable getEscalatorId() {
-        return escalatorId;
-    }
+	public Serializable getEscalatorId() {
+		return escalatorId;
+	}
 
-    void setEscalatorId(final Serializable escalatorId) {
-        this.escalatorId = escalatorId;
-    }
+	void setEscalatorId(final Serializable escalatorId) {
+		this.escalatorId = escalatorId;
+	}
 
-    public Floor getBottomFloor() {
-        return bottomFloor;
-    }
+	public Floor getBottomFloor() {
+		return bottomFloor;
+	}
 
-    public void setBottomFloor(final Floor bottomFloor) {
-        this.bottomFloor = bottomFloor;
-    }
+	public void setBottomFloor(final Floor bottomFloor) {
+		this.bottomFloor = bottomFloor;
+	}
 
-    public Floor getTopFloor() {
-        return topFloor;
-    }
+	public Floor getTopFloor() {
+		return topFloor;
+	}
 
-    public void setTopFloor(final Floor topFloor) {
-        this.topFloor = topFloor;
-    }
+	public void setTopFloor(final Floor topFloor) {
+		this.topFloor = topFloor;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-        final Escalator escalator = (Escalator) o;
+		final Escalator escalator = (Escalator) o;
 
-        if (escalatorId != null ? !escalatorId.equals(escalator.escalatorId)
-                : escalator.escalatorId != null) {
-            return false;
-        }
+		if ( escalatorId != null ? !escalatorId.equals( escalator.escalatorId )
+				: escalator.escalatorId != null ) {
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        return (escalatorId != null ? escalatorId.hashCode() : 0);
-    }
+	@Override
+	public int hashCode() {
+		return (escalatorId != null ? escalatorId.hashCode() : 0);
+	}
 }

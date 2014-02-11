@@ -29,108 +29,108 @@ import org.hibernate.shards.util.Lists;
  */
 public class Floor {
 
-    private Serializable floorId;
-    private int number;
-    private BigDecimal squareFeet;
-    private List<Tenant> tenants;
-    private List<Office> offices = Lists.newArrayList();
-    private List<Elevator> elevators = Lists.newArrayList();
-    private Escalator goingUp;
-    private Escalator goingDown;
-    private Building building;
+	private Serializable floorId;
+	private int number;
+	private BigDecimal squareFeet;
+	private List<Tenant> tenants;
+	private List<Office> offices = Lists.newArrayList();
+	private List<Elevator> elevators = Lists.newArrayList();
+	private Escalator goingUp;
+	private Escalator goingDown;
+	private Building building;
 
-    public Serializable getFloorId() {
-        return floorId;
-    }
+	public Serializable getFloorId() {
+		return floorId;
+	}
 
-    void setFloorId(Serializable floorId) {
-        this.floorId = floorId;
-    }
+	void setFloorId(Serializable floorId) {
+		this.floorId = floorId;
+	}
 
-    public int getNumber() {
-        return number;
-    }
+	public int getNumber() {
+		return number;
+	}
 
-    public void setNumber(int number) {
-        this.number = number;
-    }
+	public void setNumber(int number) {
+		this.number = number;
+	}
 
-    public BigDecimal getSquareFeet() {
-        return squareFeet;
-    }
+	public BigDecimal getSquareFeet() {
+		return squareFeet;
+	}
 
-    public void setSquareFeet(BigDecimal squareFeet) {
-        this.squareFeet = squareFeet;
-    }
+	public void setSquareFeet(BigDecimal squareFeet) {
+		this.squareFeet = squareFeet;
+	}
 
-    public List<Tenant> getTenants() {
-        return tenants;
-    }
+	public List<Tenant> getTenants() {
+		return tenants;
+	}
 
-    public void setTenants(List<Tenant> tenants) {
-        this.tenants = tenants;
-    }
+	public void setTenants(List<Tenant> tenants) {
+		this.tenants = tenants;
+	}
 
-    public List<Office> getOffices() {
-        return offices;
-    }
+	public List<Office> getOffices() {
+		return offices;
+	}
 
-    public void setOffices(List<Office> offices) {
-        this.offices = offices;
-    }
+	public void setOffices(List<Office> offices) {
+		this.offices = offices;
+	}
 
-    public List<Elevator> getElevators() {
-        return elevators;
-    }
+	public List<Elevator> getElevators() {
+		return elevators;
+	}
 
-    public void setElevators(List<Elevator> elevators) {
-        this.elevators = elevators;
-    }
+	public void setElevators(List<Elevator> elevators) {
+		this.elevators = elevators;
+	}
 
-    public Escalator getGoingUp() {
-        return goingUp;
-    }
+	public Escalator getGoingUp() {
+		return goingUp;
+	}
 
-    public void setGoingUp(Escalator goingUp) {
-        this.goingUp = goingUp;
-    }
+	public void setGoingUp(Escalator goingUp) {
+		this.goingUp = goingUp;
+	}
 
-    public Escalator getGoingDown() {
-        return goingDown;
-    }
+	public Escalator getGoingDown() {
+		return goingDown;
+	}
 
-    public void setGoingDown(Escalator goingDown) {
-        this.goingDown = goingDown;
-    }
+	public void setGoingDown(Escalator goingDown) {
+		this.goingDown = goingDown;
+	}
 
-    public Building getBuilding() {
-        return building;
-    }
+	public Building getBuilding() {
+		return building;
+	}
 
-    public void setBuilding(Building building) {
-        this.building = building;
-    }
+	public void setBuilding(Building building) {
+		this.building = building;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-        final Floor floor = (Floor) o;
+		final Floor floor = (Floor) o;
 
-        if (floorId != null ? !floorId.equals(floor.floorId) : floor.floorId != null) {
-            return false;
-        }
+		if ( floorId != null ? !floorId.equals( floor.floorId ) : floor.floorId != null ) {
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        return (floorId != null ? floorId.hashCode() : 0);
-    }
+	@Override
+	public int hashCode() {
+		return (floorId != null ? floorId.hashCode() : 0);
+	}
 }

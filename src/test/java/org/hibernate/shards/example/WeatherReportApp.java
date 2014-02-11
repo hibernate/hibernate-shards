@@ -53,105 +53,110 @@ import org.hibernate.shards.util.DatabaseUtils;
  */
 public class WeatherReportApp {
 
-    private SessionFactory sessionFactory;
+	private SessionFactory sessionFactory;
 
-    public static void main(String[] args) throws Exception {
-        WeatherReportApp app = new WeatherReportApp();
-        app.run();
-    }
+	public static void main(String[] args) throws Exception {
+		WeatherReportApp app = new WeatherReportApp();
+		app.run();
+	}
 
-    private void run() throws SQLException {
-        createSchema();
-        sessionFactory = createSessionFactory();
+	private void run() throws SQLException {
+		createSchema();
+		sessionFactory = createSessionFactory();
 
-        addData();
+		addData();
 
-        Session session = sessionFactory.openSession();
-        try {
-            Criteria criteria = session.createCriteria(WeatherReport.class);
-            List count = criteria.list();
-            System.out.println(count.size());
-            criteria.add(Restrictions.gt("temperature", 33));
-            List reports = criteria.list();
-            System.out.println(reports.size());
-        } finally {
-            session.close();
-        }
-    }
+		Session session = sessionFactory.openSession();
+		try {
+			Criteria criteria = session.createCriteria( WeatherReport.class );
+			List count = criteria.list();
+			System.out.println( count.size() );
+			criteria.add( Restrictions.gt( "temperature", 33 ) );
+			List reports = criteria.list();
+			System.out.println( reports.size() );
+		}
+		finally {
+			session.close();
+		}
+	}
 
-    private void addData() {
-        Session session = sessionFactory.openSession();
-        try {
-            session.beginTransaction();
-            WeatherReport report = new WeatherReport();
-            report.setContinent("North America");
-            report.setLatitude(new BigDecimal(25));
-            report.setLongitude(new BigDecimal(30));
-            report.setReportTime(new Date());
-            report.setTemperature(44);
-            session.save(report);
+	private void addData() {
+		Session session = sessionFactory.openSession();
+		try {
+			session.beginTransaction();
+			WeatherReport report = new WeatherReport();
+			report.setContinent( "North America" );
+			report.setLatitude( new BigDecimal( 25 ) );
+			report.setLongitude( new BigDecimal( 30 ) );
+			report.setReportTime( new Date() );
+			report.setTemperature( 44 );
+			session.save( report );
 
-            report = new WeatherReport();
-            report.setContinent("Africa");
-            report.setLatitude(new BigDecimal(44));
-            report.setLongitude(new BigDecimal(99));
-            report.setReportTime(new Date());
-            report.setTemperature(31);
-            session.save(report);
+			report = new WeatherReport();
+			report.setContinent( "Africa" );
+			report.setLatitude( new BigDecimal( 44 ) );
+			report.setLongitude( new BigDecimal( 99 ) );
+			report.setReportTime( new Date() );
+			report.setTemperature( 31 );
+			session.save( report );
 
-            report = new WeatherReport();
-            report.setContinent("Asia");
-            report.setLatitude(new BigDecimal(13));
-            report.setLongitude(new BigDecimal(12));
-            report.setReportTime(new Date());
-            report.setTemperature(104);
-            session.save(report);
-            session.getTransaction().commit();
-        } finally {
-            session.close();
-        }
-    }
+			report = new WeatherReport();
+			report.setContinent( "Asia" );
+			report.setLatitude( new BigDecimal( 13 ) );
+			report.setLongitude( new BigDecimal( 12 ) );
+			report.setReportTime( new Date() );
+			report.setTemperature( 104 );
+			session.save( report );
+			session.getTransaction().commit();
+		}
+		finally {
+			session.close();
+		}
+	}
 
-    private void createSchema() throws SQLException {
-        for (int i = 0; i < 3; i++) {
-            DatabaseUtils.destroyDatabase(i, IdGenType.SIMPLE);
-            DatabaseUtils.createDatabase(i, IdGenType.SIMPLE);
-        }
-    }
+	private void createSchema() throws SQLException {
+		for ( int i = 0; i < 3; i++ ) {
+			DatabaseUtils.destroyDatabase( i, IdGenType.SIMPLE );
+			DatabaseUtils.createDatabase( i, IdGenType.SIMPLE );
+		}
+	}
 
-    public SessionFactory createSessionFactory() {
-        Configuration prototypeConfig = new Configuration()
-                .configure(getClass().getResource("hibernate0.cfg.xml"));
-        prototypeConfig.addURL(getClass().getResource("weather.hbm.xml"));
-        List<ShardConfiguration> shardConfigs = new ArrayList<ShardConfiguration>();
-        shardConfigs.add(buildShardConfig(getClass().getResource("hibernate0.cfg.xml")));
-        shardConfigs.add(buildShardConfig(getClass().getResource("hibernate1.cfg.xml")));
-        shardConfigs.add(buildShardConfig(getClass().getResource("hibernate2.cfg.xml")));
-        ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
-        ShardedConfiguration shardedConfig = new ShardedConfiguration(
-                prototypeConfig,
-                shardConfigs,
-                shardStrategyFactory);
-        return shardedConfig.buildShardedSessionFactory();
-    }
+	public SessionFactory createSessionFactory() {
+		Configuration prototypeConfig = new Configuration()
+				.configure( getClass().getResource( "hibernate0.cfg.xml" ) );
+		prototypeConfig.addURL( getClass().getResource( "weather.hbm.xml" ) );
+		List<ShardConfiguration> shardConfigs = new ArrayList<ShardConfiguration>();
+		shardConfigs.add( buildShardConfig( getClass().getResource( "hibernate0.cfg.xml" ) ) );
+		shardConfigs.add( buildShardConfig( getClass().getResource( "hibernate1.cfg.xml" ) ) );
+		shardConfigs.add( buildShardConfig( getClass().getResource( "hibernate2.cfg.xml" ) ) );
+		ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
+		ShardedConfiguration shardedConfig = new ShardedConfiguration(
+				prototypeConfig,
+				shardConfigs,
+				shardStrategyFactory
+		);
+		return shardedConfig.buildShardedSessionFactory();
+	}
 
-    ShardStrategyFactory buildShardStrategyFactory() {
-        return new ShardStrategyFactory() {
-            public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
-                RoundRobinShardLoadBalancer loadBalancer
-                        = new RoundRobinShardLoadBalancer(shardIds);
-                ShardSelectionStrategy pss = new RoundRobinShardSelectionStrategy(
-                        loadBalancer);
-                ShardResolutionStrategy prs = new AllShardsShardResolutionStrategy(
-                        shardIds);
-                ShardAccessStrategy pas = new SequentialShardAccessStrategy();
-                return new ShardStrategyImpl(pss, prs, pas);
-            }
-        };
-    }
+	ShardStrategyFactory buildShardStrategyFactory() {
+		return new ShardStrategyFactory() {
+			public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
+				RoundRobinShardLoadBalancer loadBalancer
+						= new RoundRobinShardLoadBalancer( shardIds );
+				ShardSelectionStrategy pss = new RoundRobinShardSelectionStrategy(
+						loadBalancer
+				);
+				ShardResolutionStrategy prs = new AllShardsShardResolutionStrategy(
+						shardIds
+				);
+				ShardAccessStrategy pas = new SequentialShardAccessStrategy();
+				return new ShardStrategyImpl( pss, prs, pas );
+			}
+		};
+	}
 
-    ShardConfiguration buildShardConfig(URL configFile) {
-        Configuration config = new Configuration().configure(configFile);
-        return new ConfigurationToShardConfigurationAdapter(config);
-    }
+	ShardConfiguration buildShardConfig(URL configFile) {
+		Configuration config = new Configuration().configure( configFile );
+		return new ConfigurationToShardConfigurationAdapter( config );
+	}
 }

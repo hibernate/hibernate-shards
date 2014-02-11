@@ -30,57 +30,57 @@ import org.hibernate.shards.util.Lists;
  */
 public class FirstResultExitOperationTest extends TestCase {
 
-  public void testApply() {
-    FirstResultExitOperation exitOp = new FirstResultExitOperation(1);
+	public void testApply() {
+		FirstResultExitOperation exitOp = new FirstResultExitOperation( 1 );
 
-    List<Object> list = Lists.<Object>newArrayList(1, 2, null, 3, 4, 5);
+		List<Object> list = Lists.<Object>newArrayList( 1, 2, null, 3, 4, 5 );
 
-    List<Object> objects = exitOp.apply(list);
-    assertEquals(4, objects.size());
-    assertNoNullElements(objects);
-    assertEquals(Lists.newArrayList(2, 3, 4, 5), objects);
-    exitOp = new FirstResultExitOperation(2);
+		List<Object> objects = exitOp.apply( list );
+		assertEquals( 4, objects.size() );
+		assertNoNullElements( objects );
+		assertEquals( Lists.newArrayList( 2, 3, 4, 5 ), objects );
+		exitOp = new FirstResultExitOperation( 2 );
 
-    list = Lists.<Object>newArrayList(1, 2, null, 3, 4, 5);
+		list = Lists.<Object>newArrayList( 1, 2, null, 3, 4, 5 );
 
-    objects = exitOp.apply(list);
-    assertEquals(3, objects.size());
-    assertNoNullElements(objects);
-    assertEquals(Lists.newArrayList(3, 4, 5), objects);
-  }
+		objects = exitOp.apply( list );
+		assertEquals( 3, objects.size() );
+		assertNoNullElements( objects );
+		assertEquals( Lists.newArrayList( 3, 4, 5 ), objects );
+	}
 
-  public void testApplyWhenNoResults() {
-    FirstResultExitOperation exitOp = new FirstResultExitOperation(9);
+	public void testApplyWhenNoResults() {
+		FirstResultExitOperation exitOp = new FirstResultExitOperation( 9 );
 
-    List<Object> list = Lists.newArrayList();
+		List<Object> list = Lists.newArrayList();
 
-    List<Object> objects = exitOp.apply(list);
-    assertTrue(objects.isEmpty());
+		List<Object> objects = exitOp.apply( list );
+		assertTrue( objects.isEmpty() );
 
-    Object nullObj = null;
-    list = Lists.newArrayList(nullObj, nullObj, nullObj);
+		Object nullObj = null;
+		list = Lists.newArrayList( nullObj, nullObj, nullObj );
 
-    objects = exitOp.apply(list);
-    assertTrue(objects.isEmpty());
-  }
+		objects = exitOp.apply( list );
+		assertTrue( objects.isEmpty() );
+	}
 
-  public void testApplyWhenFirstResultIsTooBig() {
-    FirstResultExitOperation exitOp = new FirstResultExitOperation(9);
+	public void testApplyWhenFirstResultIsTooBig() {
+		FirstResultExitOperation exitOp = new FirstResultExitOperation( 9 );
 
-    List<Object> list = Lists.<Object>newArrayList(1, 2, null, 3, 4, 5);
+		List<Object> list = Lists.<Object>newArrayList( 1, 2, null, 3, 4, 5 );
 
-    List<Object> objects = exitOp.apply(list);
-    assertTrue(objects.isEmpty());
+		List<Object> objects = exitOp.apply( list );
+		assertTrue( objects.isEmpty() );
 
-    // edge case
-    exitOp = new FirstResultExitOperation(list.size());
-    objects = exitOp.apply(list);
-    assertTrue(objects.isEmpty());
-  }
+		// edge case
+		exitOp = new FirstResultExitOperation( list.size() );
+		objects = exitOp.apply( list );
+		assertTrue( objects.isEmpty() );
+	}
 
-  private void assertNoNullElements(List<Object> objects) {
-    for(Object obj : objects) {
-      assertTrue(obj != null);
-    }
-  }
+	private void assertNoNullElements(List<Object> objects) {
+		for ( Object obj : objects ) {
+			assertTrue( obj != null );
+		}
+	}
 }

@@ -29,46 +29,46 @@ import org.hibernate.engine.transaction.spi.LocalStatus;
  */
 public class ShardedTransactionDefaultMock implements ShardedTransaction {
 
-  public void setupTransaction(Session session) {
-    throw new UnsupportedOperationException();
-  }
+	public void setupTransaction(Session session) {
+		throw new UnsupportedOperationException();
+	}
 
-  public void begin() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+	public void begin() throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void commit() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+	public void commit() throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void rollback() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+	public void rollback() throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 
-  public boolean wasRolledBack() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+	public boolean wasRolledBack() throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 
-  public boolean wasCommitted() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+	public boolean wasCommitted() throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 
-  public boolean isActive() throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+	public boolean isActive() throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void registerSynchronization(Synchronization synchronization)
-      throws HibernateException {
-    throw new UnsupportedOperationException();
-  }
+	public void registerSynchronization(Synchronization synchronization)
+			throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void setTimeout(int seconds) {
-    throw new UnsupportedOperationException();
-  }
+	public void setTimeout(int seconds) {
+		throw new UnsupportedOperationException();
+	}
 
 	@Override
 	public LocalStatus getLocalStatus() {
-		 throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

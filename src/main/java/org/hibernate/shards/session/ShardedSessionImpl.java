@@ -43,6 +43,7 @@ import org.hibernate.Query;
 import org.hibernate.ReplicationMode;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.SessionEventListener;
 import org.hibernate.SessionException;
 import org.hibernate.SharedSessionBuilder;
 import org.hibernate.SimpleNaturalIdLoadAccess;
@@ -51,12 +52,14 @@ import org.hibernate.TransientObjectException;
 import org.hibernate.TypeHelper;
 import org.hibernate.UnknownProfileException;
 import org.hibernate.UnresolvableObjectException;
+import org.hibernate.cfg.NotYetImplementedException;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.jdbc.ReturningWork;
 import org.hibernate.jdbc.Work;
 import org.hibernate.metadata.ClassMetadata;
+import org.hibernate.procedure.ProcedureCall;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.shards.CrossShardAssociationException;
 import org.hibernate.shards.Shard;
@@ -2022,4 +2025,30 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		return null;
 	}
 	// end todo
+
+
+	@Override
+	public void addEventListeners(SessionEventListener... listeners) {
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public ProcedureCall getNamedProcedureCall(String name) {
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public ProcedureCall createStoredProcedureCall(String procedureName) {
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public ProcedureCall createStoredProcedureCall(String procedureName, Class... resultClasses) {
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public ProcedureCall createStoredProcedureCall(String procedureName, String... resultSetMappings) {
+		throw new NotYetImplementedException();
+	}
 }

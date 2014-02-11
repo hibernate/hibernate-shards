@@ -25,7 +25,7 @@ import org.hibernate.shards.ShardId;
  */
 class ShardIdResolverDefaultMock implements ShardIdResolver {
 
-  public ShardId getShardIdForObject(Object obj) {
-    throw new UnsupportedOperationException();
-  }
+	public ShardId getShardIdForObject(Object obj) {
+		throw new UnsupportedOperationException();
+	}
 }

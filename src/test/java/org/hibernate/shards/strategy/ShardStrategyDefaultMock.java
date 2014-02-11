@@ -27,15 +27,15 @@ import org.hibernate.shards.strategy.selection.ShardSelectionStrategy;
  */
 public class ShardStrategyDefaultMock implements ShardStrategy {
 
-  public ShardSelectionStrategy getShardSelectionStrategy() {
-    throw new UnsupportedOperationException();
-  }
+	public ShardSelectionStrategy getShardSelectionStrategy() {
+		throw new UnsupportedOperationException();
+	}
 
-  public ShardAccessStrategy getShardAccessStrategy() {
-    throw new UnsupportedOperationException();
-  }
+	public ShardAccessStrategy getShardAccessStrategy() {
+		throw new UnsupportedOperationException();
+	}
 
-  public ShardResolutionStrategy getShardResolutionStrategy() {
-    throw new UnsupportedOperationException();
-  }
+	public ShardResolutionStrategy getShardResolutionStrategy() {
+		throw new UnsupportedOperationException();
+	}
 }

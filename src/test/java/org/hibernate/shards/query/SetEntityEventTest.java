@@ -26,33 +26,33 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetEntityEventTest extends TestCase {
+public class SetEntityEventTest extends TestCase {
 
-   public void testSetEntityEventPositionVal() {
-     SetEntityEvent event = new SetEntityEvent(-1, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setEntity(int position, Object val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetEntityEventPositionVal() {
+		SetEntityEvent event = new SetEntityEvent( -1, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setEntity(int position, Object val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 
-   public void testSetEntityEventNameVal() {
-     SetEntityEvent event = new SetEntityEvent(null, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setEntity(String name, Object val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetEntityEventNameVal() {
+		SetEntityEvent event = new SetEntityEvent( null, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setEntity(String name, Object val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

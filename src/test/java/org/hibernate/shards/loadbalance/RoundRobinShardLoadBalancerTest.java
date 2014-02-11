@@ -30,11 +30,11 @@ import org.hibernate.shards.util.Lists;
  */
 public class RoundRobinShardLoadBalancerTest extends TestCase {
 
-  public void testBalancer() {
-    List<ShardId> shardIds = Lists.newArrayList(new ShardId(1), new ShardId(2));
-    RoundRobinShardLoadBalancer balancer = new RoundRobinShardLoadBalancer(shardIds);
-    assertEquals(0, balancer.getNextIndex());
-    assertEquals(1, balancer.getNextIndex());
-    assertEquals(0, balancer.getNextIndex());
-  }
+	public void testBalancer() {
+		List<ShardId> shardIds = Lists.newArrayList( new ShardId( 1 ), new ShardId( 2 ) );
+		RoundRobinShardLoadBalancer balancer = new RoundRobinShardLoadBalancer( shardIds );
+		assertEquals( 0, balancer.getNextIndex() );
+		assertEquals( 1, balancer.getNextIndex() );
+		assertEquals( 0, balancer.getNextIndex() );
+	}
 }

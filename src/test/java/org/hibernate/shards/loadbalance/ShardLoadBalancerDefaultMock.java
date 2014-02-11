@@ -27,11 +27,11 @@ import org.hibernate.shards.ShardId;
  */
 public class ShardLoadBalancerDefaultMock implements org.hibernate.shards.loadbalance.ShardLoadBalancer {
 
-  public ShardId getNextShardId() {
-    throw new UnsupportedOperationException();
-  }
+	public ShardId getNextShardId() {
+		throw new UnsupportedOperationException();
+	}
 
-  public List<ShardId> getAllShardIds() {
-    throw new UnsupportedOperationException();
-  }
+	public List<ShardId> getAllShardIds() {
+		throw new UnsupportedOperationException();
+	}
 }

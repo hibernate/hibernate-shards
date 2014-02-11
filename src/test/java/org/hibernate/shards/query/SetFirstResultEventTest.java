@@ -26,19 +26,19 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetFirstResultEventTest extends TestCase {
+public class SetFirstResultEventTest extends TestCase {
 
-   public void testSetFirstResultEventFirstresult() {
-     SetFirstResultEvent event = new SetFirstResultEvent(-1);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setFirstResult(int firstResult) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetFirstResultEventFirstresult() {
+		SetFirstResultEvent event = new SetFirstResultEvent( -1 );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setFirstResult(int firstResult) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

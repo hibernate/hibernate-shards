@@ -29,38 +29,40 @@ import org.hibernate.shards.util.Lists;
  */
 public class BaseHasShardIdListTest extends TestCase {
 
-    public void testShardIdListUnmodifiable() {
-        List<ShardId> shardIdList = null;
-        try {
-            new MyBaseHasShardIdList(shardIdList);
-            fail("expected npe");
-        } catch (NullPointerException npe) {
-            // good
-        }
-        shardIdList = Lists.newArrayList();
-        try {
-            new MyBaseHasShardIdList(shardIdList);
-            fail("expected iae");
-        } catch (IllegalArgumentException iae) {
-            // good
-        }
-        shardIdList.add(new ShardId(0));
-        BaseHasShardIdList bhsil = new MyBaseHasShardIdList(shardIdList);
-        ShardId anotherId = new ShardId(1);
-        shardIdList.add(anotherId);
-        // demonstrate that external changes to the list that was passed in
-        // aren't reflected inside the object
-        assertFalse(bhsil.shardIds.contains(anotherId));
-    }
+	public void testShardIdListUnmodifiable() {
+		List<ShardId> shardIdList = null;
+		try {
+			new MyBaseHasShardIdList( shardIdList );
+			fail( "expected npe" );
+		}
+		catch (NullPointerException npe) {
+			// good
+		}
+		shardIdList = Lists.newArrayList();
+		try {
+			new MyBaseHasShardIdList( shardIdList );
+			fail( "expected iae" );
+		}
+		catch (IllegalArgumentException iae) {
+			// good
+		}
+		shardIdList.add( new ShardId( 0 ) );
+		BaseHasShardIdList bhsil = new MyBaseHasShardIdList( shardIdList );
+		ShardId anotherId = new ShardId( 1 );
+		shardIdList.add( anotherId );
+		// demonstrate that external changes to the list that was passed in
+		// aren't reflected inside the object
+		assertFalse( bhsil.shardIds.contains( anotherId ) );
+	}
 
-    private static final class MyBaseHasShardIdList extends BaseHasShardIdList {
+	private static final class MyBaseHasShardIdList extends BaseHasShardIdList {
 
-        protected MyBaseHasShardIdList(List<ShardId> shardIds) {
-            super(shardIds);
-        }
+		protected MyBaseHasShardIdList(List<ShardId> shardIds) {
+			super( shardIds );
+		}
 
-        public ShardId selectShardIdForNewObject(Object obj) {
-            throw new UnsupportedOperationException();
-        }
-    }
+		public ShardId selectShardIdForNewObject(Object obj) {
+			throw new UnsupportedOperationException();
+		}
+	}
 }

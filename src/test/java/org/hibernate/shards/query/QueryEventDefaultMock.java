@@ -25,7 +25,7 @@ import org.hibernate.Query;
  */
 public class QueryEventDefaultMock implements QueryEvent {
 
-  public void onEvent(Query query) {
-    throw new UnsupportedOperationException();
-  }
+	public void onEvent(Query query) {
+		throw new UnsupportedOperationException();
+	}
 }

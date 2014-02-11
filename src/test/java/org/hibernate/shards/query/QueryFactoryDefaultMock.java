@@ -27,13 +27,13 @@ import org.hibernate.Session;
  */
 public class QueryFactoryDefaultMock implements QueryFactory {
 
-    @Override
-    public Query createQuery(Session session) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Query createQuery(Session session) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public SQLQuery createSQLQuery(Session session) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SQLQuery createSQLQuery(Session session) {
+		throw new UnsupportedOperationException();
+	}
 }

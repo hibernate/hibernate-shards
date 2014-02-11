@@ -22,23 +22,23 @@ package org.hibernate.shards.integration;
  * @author maxr@google.com (Max Ross)
  */
 public enum IdGenType {
-  SIMPLE("mappings.hbm.xml", false),
-  SHARD_HI_LO("mappings-shardedTableHiLo.hbm.xml", false),
-  SHARD_UUID("mappings-shardedUUID.hbm.xml", true);
+	SIMPLE( "mappings.hbm.xml", false ),
+	SHARD_HI_LO( "mappings-shardedTableHiLo.hbm.xml", false ),
+	SHARD_UUID( "mappings-shardedUUID.hbm.xml", true );
 
-  private final String mappingFile;
-  private final boolean supportsVirtualSharding;
+	private final String mappingFile;
+	private final boolean supportsVirtualSharding;
 
-  private IdGenType(String mappingFile, boolean supportsVirtualSharding) {
-   this.mappingFile = mappingFile;
-   this.supportsVirtualSharding = supportsVirtualSharding;
- }
+	private IdGenType(String mappingFile, boolean supportsVirtualSharding) {
+		this.mappingFile = mappingFile;
+		this.supportsVirtualSharding = supportsVirtualSharding;
+	}
 
-  public String getMappingFile() {
-    return mappingFile;
-  }
+	public String getMappingFile() {
+		return mappingFile;
+	}
 
-  public boolean getSupportsVirtualSharding() {
-    return supportsVirtualSharding;
-  }
+	public boolean getSupportsVirtualSharding() {
+		return supportsVirtualSharding;
+	}
 }

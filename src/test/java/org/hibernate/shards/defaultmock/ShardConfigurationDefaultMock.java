@@ -24,32 +24,32 @@ import org.hibernate.shards.cfg.ShardConfiguration;
  */
 public class ShardConfigurationDefaultMock implements ShardConfiguration {
 
-  public String getShardUrl() {
-    throw new UnsupportedOperationException();
-  }
+	public String getShardUrl() {
+		throw new UnsupportedOperationException();
+	}
 
-  public String getShardUser() {
-    throw new UnsupportedOperationException();
-  }
+	public String getShardUser() {
+		throw new UnsupportedOperationException();
+	}
 
-  public String getShardPassword() {
-    throw new UnsupportedOperationException();
-  }
+	public String getShardPassword() {
+		throw new UnsupportedOperationException();
+	}
 
-  public String getShardSessionFactoryName() {
-    throw new UnsupportedOperationException();
-  }
+	public String getShardSessionFactoryName() {
+		throw new UnsupportedOperationException();
+	}
 
-  public Integer getShardId() {
-    throw new UnsupportedOperationException();
-  }
+	public Integer getShardId() {
+		throw new UnsupportedOperationException();
+	}
 
-  public String getShardDatasource() {
-    throw new UnsupportedOperationException();
-  }
+	public String getShardDatasource() {
+		throw new UnsupportedOperationException();
+	}
 
-  public String getShardCacheRegionPrefix() {
-    throw new UnsupportedOperationException();
-  }
+	public String getShardCacheRegionPrefix() {
+		throw new UnsupportedOperationException();
+	}
 }
 

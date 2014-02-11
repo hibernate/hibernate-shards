@@ -31,16 +31,16 @@ import org.hibernate.shards.loadbalance.ShardLoadBalancer;
  */
 public class LoadBalancedShardSelectionStrategyTest extends TestCase {
 
-  public void testSelectShardForNewObject() {
-    final List<ShardId> shardIds = Collections.emptyList();
-    final ShardId shardId = new ShardId(1);
-    ShardLoadBalancer balancer = new ShardLoadBalancer() {
-      public ShardId getNextShardId() {
-        return shardId;
-      }
-    };
-    LoadBalancedShardSelectionStrategy strategy = new LoadBalancedShardSelectionStrategy(balancer);
-    assertSame(shardId, strategy.selectShardIdForNewObject(null));
-    assertSame(shardId, strategy.selectShardIdForNewObject(null));
-  }
+	public void testSelectShardForNewObject() {
+		final List<ShardId> shardIds = Collections.emptyList();
+		final ShardId shardId = new ShardId( 1 );
+		ShardLoadBalancer balancer = new ShardLoadBalancer() {
+			public ShardId getNextShardId() {
+				return shardId;
+			}
+		};
+		LoadBalancedShardSelectionStrategy strategy = new LoadBalancedShardSelectionStrategy( balancer );
+		assertSame( shardId, strategy.selectShardIdForNewObject( null ) );
+		assertSame( shardId, strategy.selectShardIdForNewObject( null ) );
+	}
 }

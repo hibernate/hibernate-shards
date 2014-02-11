@@ -26,60 +26,64 @@ import org.hibernate.shards.ShardId;
  */
 public class ShardAwareInterceptorTest extends TestCase {
 
-  public void testOnLoadNotShardAware() {
-    ShardAwareInterceptor interceptor =
-        new ShardAwareInterceptor(new ShardIdResolverDefaultMock());
+	public void testOnLoadNotShardAware() {
+		ShardAwareInterceptor interceptor =
+				new ShardAwareInterceptor( new ShardIdResolverDefaultMock() );
 
-    interceptor.onLoad(new Object(), null, null, null, null);
-    // doesn't blow up
-  }
+		interceptor.onLoad( new Object(), null, null, null, null );
+		// doesn't blow up
+	}
 
-  public void testOnLoadShardAware() {
-    final ShardId shardId = new ShardId(33);
-    ShardAwareInterceptor interceptor =
-        new ShardAwareInterceptor(new ShardIdResolverDefaultMock() {
-          public ShardId getShardIdForObject(Object obj) {
-            return shardId;
-          }
-        });
+	public void testOnLoadShardAware() {
+		final ShardId shardId = new ShardId( 33 );
+		ShardAwareInterceptor interceptor =
+				new ShardAwareInterceptor(
+						new ShardIdResolverDefaultMock() {
+							public ShardId getShardIdForObject(Object obj) {
+								return shardId;
+							}
+						}
+				);
 
-    MyShardAware msa = new MyShardAware();
-    interceptor.onLoad(msa, null, null, null, null);
-    assertSame(shardId, msa.getShardId());
-  }
+		MyShardAware msa = new MyShardAware();
+		interceptor.onLoad( msa, null, null, null, null );
+		assertSame( shardId, msa.getShardId() );
+	}
 
-  public void testOnSaveNotShardAware() {
-    ShardAwareInterceptor interceptor =
-        new ShardAwareInterceptor(new ShardIdResolverDefaultMock());
+	public void testOnSaveNotShardAware() {
+		ShardAwareInterceptor interceptor =
+				new ShardAwareInterceptor( new ShardIdResolverDefaultMock() );
 
-    interceptor.onSave(new Object(), null, null, null, null);
-    // doesn't blow up
-  }
+		interceptor.onSave( new Object(), null, null, null, null );
+		// doesn't blow up
+	}
 
-  public void testOnSaveShardAware() {
-    final ShardId shardId = new ShardId(33);
-    ShardAwareInterceptor interceptor =
-        new ShardAwareInterceptor(new ShardIdResolverDefaultMock() {
-          public ShardId getShardIdForObject(Object obj) {
-            return shardId;
-          }
-        });
+	public void testOnSaveShardAware() {
+		final ShardId shardId = new ShardId( 33 );
+		ShardAwareInterceptor interceptor =
+				new ShardAwareInterceptor(
+						new ShardIdResolverDefaultMock() {
+							public ShardId getShardIdForObject(Object obj) {
+								return shardId;
+							}
+						}
+				);
 
-    MyShardAware msa = new MyShardAware();
-    interceptor.onSave(msa, null, null, null, null);
-    assertSame(shardId, msa.getShardId());
-  }
+		MyShardAware msa = new MyShardAware();
+		interceptor.onSave( msa, null, null, null, null );
+		assertSame( shardId, msa.getShardId() );
+	}
 
-  private class MyShardAware implements ShardAware {
+	private class MyShardAware implements ShardAware {
 
-    private ShardId shardId;
+		private ShardId shardId;
 
-    public void setShardId(ShardId shardId) {
-      this.shardId = shardId;
-    }
+		public void setShardId(ShardId shardId) {
+			this.shardId = shardId;
+		}
 
-    public ShardId getShardId() {
-      return shardId;
-    }
-  }
+		public ShardId getShardId() {
+			return shardId;
+		}
+	}
 }

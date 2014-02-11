@@ -32,17 +32,17 @@ import org.hibernate.shards.session.ShardedSessionImpl;
 @RunWith(Parameterized.class)
 public class ConfigPermutedIntegrationTest extends BaseShardingIntegrationTestCase {
 
-    public ConfigPermutedIntegrationTest(final Permutation perm) {
-        super(perm);
-    }
+	public ConfigPermutedIntegrationTest(final Permutation perm) {
+		super( perm );
+	}
 
-    @Test
-    public void testShardedEnvironment() {
-        Assert.assertTrue(((ShardedSessionImpl) session).getCheckAllAssociatedObjectsForDifferentShards());
-    }
+	@Test
+	public void testShardedEnvironment() {
+		Assert.assertTrue( ((ShardedSessionImpl) session).getCheckAllAssociatedObjectsForDifferentShards() );
+	}
 
-    @Parameterized.Parameters()
-    public static Iterable<Object[]> data() {
-        return PermutationHelper.data();
-    }
+	@Parameterized.Parameters()
+	public static Iterable<Object[]> data() {
+		return PermutationHelper.data();
+	}
 }

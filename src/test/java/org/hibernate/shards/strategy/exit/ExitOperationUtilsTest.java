@@ -27,62 +27,62 @@ import static org.junit.Assert.assertEquals;
  */
 public class ExitOperationUtilsTest {
 
-    private class MyInt {
+	private class MyInt {
 
-        private final Integer i;
-        private final String name;
-        private final String rank;
-        private MyInt innerMyInt;
+		private final Integer i;
+		private final String name;
+		private final String rank;
+		private MyInt innerMyInt;
 
-        public MyInt(int i, String name, String rank) {
-            this.i = i;
-            this.name = name;
-            this.rank = rank;
-        }
+		public MyInt(int i, String name, String rank) {
+			this.i = i;
+			this.name = name;
+			this.rank = rank;
+		}
 
-        // these private methods, while unused, are used to verify that the method
-        // works for private methods
-        private MyInt getInnerMyInt() {
-            return innerMyInt;
-        }
+		// these private methods, while unused, are used to verify that the method
+		// works for private methods
+		private MyInt getInnerMyInt() {
+			return innerMyInt;
+		}
 
-        private void setInnerMyInt(MyInt innerMyInt) {
-            this.innerMyInt = innerMyInt;
-        }
+		private void setInnerMyInt(MyInt innerMyInt) {
+			this.innerMyInt = innerMyInt;
+		}
 
-        private Number getValue() {
-            return i;
-        }
+		private Number getValue() {
+			return i;
+		}
 
-        private String getName() {
-            return name;
-        }
+		private String getName() {
+			return name;
+		}
 
-        protected String getRank() {
-            return rank;
-        }
-    }
+		protected String getRank() {
+			return rank;
+		}
+	}
 
-    private class MySubInt extends MyInt {
+	private class MySubInt extends MyInt {
 
-        public MySubInt(int i, String name, String rank) {
-            super(i, name, rank);
-        }
-    }
+		public MySubInt(int i, String name, String rank) {
+			super( i, name, rank );
+		}
+	}
 
-    @Test(expected = RuntimeException.class)
-    public void testGetPropertyValue() throws Exception {
-        final MyInt myInt = new MySubInt(1, "one", "a");
-        myInt.setInnerMyInt(new MySubInt(5, "five", "b"));
+	@Test(expected = RuntimeException.class)
+	public void testGetPropertyValue() throws Exception {
+		final MyInt myInt = new MySubInt( 1, "one", "a" );
+		myInt.setInnerMyInt( new MySubInt( 5, "five", "b" ) );
 
-        assertEquals(1, ExitOperationUtils.getPropertyValue(myInt, "value"));
-        assertEquals("one", ExitOperationUtils.getPropertyValue(myInt, "name"));
-        assertEquals("a", ExitOperationUtils.getPropertyValue(myInt, "rank"));
+		assertEquals( 1, ExitOperationUtils.getPropertyValue( myInt, "value" ) );
+		assertEquals( "one", ExitOperationUtils.getPropertyValue( myInt, "name" ) );
+		assertEquals( "a", ExitOperationUtils.getPropertyValue( myInt, "rank" ) );
 
-        assertEquals(5, ExitOperationUtils.getPropertyValue(myInt, "innerMyInt.value"));
-        assertEquals("five", ExitOperationUtils.getPropertyValue(myInt, "innerMyInt.name"));
-        assertEquals("b", ExitOperationUtils.getPropertyValue(myInt, "innerMyInt.rank"));
+		assertEquals( 5, ExitOperationUtils.getPropertyValue( myInt, "innerMyInt.value" ) );
+		assertEquals( "five", ExitOperationUtils.getPropertyValue( myInt, "innerMyInt.name" ) );
+		assertEquals( "b", ExitOperationUtils.getPropertyValue( myInt, "innerMyInt.rank" ) );
 
-        ExitOperationUtils.getPropertyValue(myInt, "innerMyInt.doesNotExist");
-    }
+		ExitOperationUtils.getPropertyValue( myInt, "innerMyInt.doesNotExist" );
+	}
 }

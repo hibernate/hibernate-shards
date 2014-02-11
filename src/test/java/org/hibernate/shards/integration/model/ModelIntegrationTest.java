@@ -38,62 +38,62 @@ import static org.junit.Assert.assertNull;
 @RunWith(Parameterized.class)
 public class ModelIntegrationTest extends BaseShardingIntegrationTestCase {
 
-    public ModelIntegrationTest(final Permutation perm) {
-        super(perm);
-    }
+	public ModelIntegrationTest(final Permutation perm) {
+		super( perm );
+	}
 
-    @Test
-    public void testSaveIdIsBaseType() {
-        IdIsBaseType hli = new IdIsBaseType();
-        session.beginTransaction();
-        hli.setValue("yamma");
-        session.save(hli);
-        commitAndResetSession();
-        hli = reload(hli);
-        assertNotNull(hli);
-    }
+	@Test
+	public void testSaveIdIsBaseType() {
+		IdIsBaseType hli = new IdIsBaseType();
+		session.beginTransaction();
+		hli.setValue( "yamma" );
+		session.save( hli );
+		commitAndResetSession();
+		hli = reload( hli );
+		assertNotNull( hli );
+	}
 
-    @Test
-    public void testSaveOrUpdateIdIsBasetype() {
-        IdIsBaseType hli = new IdIsBaseType();
-        session.beginTransaction();
-        hli.setValue("yamma");
-        session.saveOrUpdate(hli);
-        commitAndResetSession();
-        hli = reload(hli);
-        assertNotNull(hli);
-    }
+	@Test
+	public void testSaveOrUpdateIdIsBasetype() {
+		IdIsBaseType hli = new IdIsBaseType();
+		session.beginTransaction();
+		hli.setValue( "yamma" );
+		session.saveOrUpdate( hli );
+		commitAndResetSession();
+		hli = reload( hli );
+		assertNotNull( hli );
+	}
 
-    @Test
-    public void testUpdateIdIsBasetype() {
-        IdIsBaseType hli = new IdIsBaseType();
-        session.beginTransaction();
-        hli.setValue("yamma");
-        session.save(hli);
-        session.getTransaction().commit();
-        session.evict(hli);
-        resetSession();
-        session.beginTransaction();
-        session.saveOrUpdate(hli);
-        commitAndResetSession();
-        hli = reload(hli);
-        assertNotNull(hli);
-    }
+	@Test
+	public void testUpdateIdIsBasetype() {
+		IdIsBaseType hli = new IdIsBaseType();
+		session.beginTransaction();
+		hli.setValue( "yamma" );
+		session.save( hli );
+		session.getTransaction().commit();
+		session.evict( hli );
+		resetSession();
+		session.beginTransaction();
+		session.saveOrUpdate( hli );
+		commitAndResetSession();
+		hli = reload( hli );
+		assertNotNull( hli );
+	}
 
-    @Test
-    public void testShardAware() {
-        final Building b = building("yam");
-        assertNull(b.getShardId());
-        session.beginTransaction();
-        session.save(b);
-        assertNotNull(b.getShardId());
-        commitAndResetSession();
-        final Building bReloaded = reload(b);
-        assertEquals(b.getShardId(), bReloaded.getShardId());
-    }
+	@Test
+	public void testShardAware() {
+		final Building b = building( "yam" );
+		assertNull( b.getShardId() );
+		session.beginTransaction();
+		session.save( b );
+		assertNotNull( b.getShardId() );
+		commitAndResetSession();
+		final Building bReloaded = reload( b );
+		assertEquals( b.getShardId(), bReloaded.getShardId() );
+	}
 
-    @Parameterized.Parameters()
-    public static Iterable<Object[]> data() {
-        return PermutationHelper.data();
-    }
+	@Parameterized.Parameters()
+	public static Iterable<Object[]> data() {
+		return PermutationHelper.data();
+	}
 }

@@ -33,63 +33,65 @@ import static org.junit.Assert.fail;
  */
 public class AvgResultsExitOperationTest {
 
-    @Test
-    public void testEmptyList() {
-        final AvgResultsExitOperation op = new AvgResultsExitOperation();
-        final List<Object> result = op.apply(Collections.emptyList());
-        assertEquals(1, result.size());
-        assertNull(result.get(0));
-    }
+	@Test
+	public void testEmptyList() {
+		final AvgResultsExitOperation op = new AvgResultsExitOperation();
+		final List<Object> result = op.apply( Collections.emptyList() );
+		assertEquals( 1, result.size() );
+		assertNull( result.get( 0 ) );
+	}
 
-    @Test
-    public void testSingleResult() {
-        final AvgResultsExitOperation op = new AvgResultsExitOperation();
+	@Test
+	public void testSingleResult() {
+		final AvgResultsExitOperation op = new AvgResultsExitOperation();
 
-        Object[] objArr = {null, 3};
-        List<Object> result = op.apply(Collections.singletonList((Object) objArr));
-        assertEquals(1, result.size());
-        assertNull(result.get(0));
+		Object[] objArr = {null, 3};
+		List<Object> result = op.apply( Collections.singletonList( (Object) objArr ) );
+		assertEquals( 1, result.size() );
+		assertNull( result.get( 0 ) );
 
-        objArr[0] = 9.0;
-        result = op.apply(Collections.singletonList((Object) objArr));
-        assertEquals(1, result.size());
-        assertEquals(9.0, result.get(0));
-    }
+		objArr[0] = 9.0;
+		result = op.apply( Collections.singletonList( (Object) objArr ) );
+		assertEquals( 1, result.size() );
+		assertEquals( 9.0, result.get( 0 ) );
+	}
 
-    @Test
-    public void testMultipleResults() {
-        final AvgResultsExitOperation op = new AvgResultsExitOperation();
+	@Test
+	public void testMultipleResults() {
+		final AvgResultsExitOperation op = new AvgResultsExitOperation();
 
-        Object[] objArr1 = {null, 3};
-        Object[] objArr2 = {2.5, 2};
-        List<Object> result = op.apply(Lists.<Object>newArrayList(objArr1, objArr2));
-        assertEquals(1, result.size());
-        assertEquals(2.5, result.get(0));
+		Object[] objArr1 = {null, 3};
+		Object[] objArr2 = {2.5, 2};
+		List<Object> result = op.apply( Lists.<Object>newArrayList( objArr1, objArr2 ) );
+		assertEquals( 1, result.size() );
+		assertEquals( 2.5, result.get( 0 ) );
 
-        objArr1[0] = 2.0;
-        result = op.apply(Lists.<Object>newArrayList(objArr1, objArr2));
-        assertEquals(1, result.size());
-        assertEquals(2.2, result.get(0));
-    }
+		objArr1[0] = 2.0;
+		result = op.apply( Lists.<Object>newArrayList( objArr1, objArr2 ) );
+		assertEquals( 1, result.size() );
+		assertEquals( 2.2, result.get( 0 ) );
+	}
 
-    @Test
-    public void testBadInput() {
-        final AvgResultsExitOperation op = new AvgResultsExitOperation();
+	@Test
+	public void testBadInput() {
+		final AvgResultsExitOperation op = new AvgResultsExitOperation();
 
-        Object[] objArr = {null};
-        try {
-            op.apply(Collections.singletonList((Object) objArr));
-            fail("expected IllegalStateException");
-        } catch (IllegalStateException rte) {
-            // good
-        }
+		Object[] objArr = {null};
+		try {
+			op.apply( Collections.singletonList( (Object) objArr ) );
+			fail( "expected IllegalStateException" );
+		}
+		catch (IllegalStateException rte) {
+			// good
+		}
 
-        final Object obj = new Object();
-        try {
-            op.apply(Collections.singletonList(obj));
-            fail("expected IllegalStateException");
-        } catch (IllegalStateException rte) {
-            // good
-        }
-    }
+		final Object obj = new Object();
+		try {
+			op.apply( Collections.singletonList( obj ) );
+			fail( "expected IllegalStateException" );
+		}
+		catch (IllegalStateException rte) {
+			// good
+		}
+	}
 }

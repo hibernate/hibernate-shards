@@ -33,52 +33,58 @@ import org.hibernate.shards.strategy.selection.ShardSelectionStrategyDefaultMock
  */
 public class InstanceShardStrategyImplTest extends TestCase {
 
-  public void testCtor() {
-    try {
-      new ShardStrategyImpl(null, null, null);
-      fail("expected npe");
-    } catch (NullPointerException npe) {
-      // good
-    }
+	public void testCtor() {
+		try {
+			new ShardStrategyImpl( null, null, null );
+			fail( "expected npe" );
+		}
+		catch (NullPointerException npe) {
+			// good
+		}
 
-    ShardSelectionStrategy sss = new ShardSelectionStrategyDefaultMock();
-    ShardResolutionStrategy srs = new ShardResolutionStrategyDefaultMock();
-    ShardAccessStrategy sas = new ShardAccessStrategyDefaultMock();
-    try {
-      new ShardStrategyImpl(sss, null, null);
-      fail("expected npe");
-    } catch (NullPointerException npe) {
-      // good
-    }
+		ShardSelectionStrategy sss = new ShardSelectionStrategyDefaultMock();
+		ShardResolutionStrategy srs = new ShardResolutionStrategyDefaultMock();
+		ShardAccessStrategy sas = new ShardAccessStrategyDefaultMock();
+		try {
+			new ShardStrategyImpl( sss, null, null );
+			fail( "expected npe" );
+		}
+		catch (NullPointerException npe) {
+			// good
+		}
 
-    try {
-      new ShardStrategyImpl(null, srs, null);
-      fail("expected npe");
-    } catch (NullPointerException npe) {
-      // good
-    }
+		try {
+			new ShardStrategyImpl( null, srs, null );
+			fail( "expected npe" );
+		}
+		catch (NullPointerException npe) {
+			// good
+		}
 
-    try {
-      new ShardStrategyImpl(null, null, sas);
-      fail("expected npe");
-    } catch (NullPointerException npe) {
-      // good
-    }
+		try {
+			new ShardStrategyImpl( null, null, sas );
+			fail( "expected npe" );
+		}
+		catch (NullPointerException npe) {
+			// good
+		}
 
-    try {
-      new ShardStrategyImpl(sss, srs, null);
-      fail("expected npe");
-    } catch (NullPointerException npe) {
-      // good
-    }
+		try {
+			new ShardStrategyImpl( sss, srs, null );
+			fail( "expected npe" );
+		}
+		catch (NullPointerException npe) {
+			// good
+		}
 
 
-    try {
-      new ShardStrategyImpl(null, srs, sas);
-      fail("expected npe");
-    } catch (NullPointerException npe) {
-      // good
-    }
-    new ShardStrategyImpl(sss, srs, sas);
-  }
+		try {
+			new ShardStrategyImpl( null, srs, sas );
+			fail( "expected npe" );
+		}
+		catch (NullPointerException npe) {
+			// good
+		}
+		new ShardStrategyImpl( sss, srs, sas );
+	}
 }

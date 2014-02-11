@@ -28,55 +28,55 @@ import org.hibernate.shards.util.Lists;
  */
 public class Elevator {
 
-  private Serializable elevatorId;
-  private List<Floor> floors = Lists.newArrayList();
-  private Building building;
+	private Serializable elevatorId;
+	private List<Floor> floors = Lists.newArrayList();
+	private Building building;
 
-  public Serializable getElevatorId() {
-    return elevatorId;
-  }
+	public Serializable getElevatorId() {
+		return elevatorId;
+	}
 
-  public void setElevatorId(Serializable elevatorId) {
-    this.elevatorId = elevatorId;
-  }
+	public void setElevatorId(Serializable elevatorId) {
+		this.elevatorId = elevatorId;
+	}
 
-  public List<Floor> getFloors() {
-    return floors;
-  }
+	public List<Floor> getFloors() {
+		return floors;
+	}
 
-  public void setFloors(List<Floor> floors) {
-    this.floors = floors;
-  }
+	public void setFloors(List<Floor> floors) {
+		this.floors = floors;
+	}
 
-  public Building getBuilding() {
-    return building;
-  }
+	public Building getBuilding() {
+		return building;
+	}
 
-  public void setBuilding(Building building) {
-    this.building = building;
-  }
+	public void setBuilding(Building building) {
+		this.building = building;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-    final Elevator elevator = (Elevator)o;
+		final Elevator elevator = (Elevator) o;
 
-    if (elevatorId != null ? !elevatorId.equals(elevator.elevatorId)
-        : elevator.elevatorId != null) {
-      return false;
-    }
+		if ( elevatorId != null ? !elevatorId.equals( elevator.elevatorId )
+				: elevator.elevatorId != null ) {
+			return false;
+		}
 
-    return true;
-  }
+		return true;
+	}
 
-  @Override
-  public int hashCode() {
-    return (elevatorId != null ? elevatorId.hashCode() : 0);
-  }
+	@Override
+	public int hashCode() {
+		return (elevatorId != null ? elevatorId.hashCode() : 0);
+	}
 }

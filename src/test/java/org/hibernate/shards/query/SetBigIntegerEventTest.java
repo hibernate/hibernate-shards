@@ -30,31 +30,31 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
  */
 public class SetBigIntegerEventTest extends TestCase {
 
-   public void testSetBigIntegerEventPositionVal() {
-     SetBigIntegerEvent event = new SetBigIntegerEvent(-1, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setBigInteger(int position, BigInteger val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetBigIntegerEventPositionVal() {
+		SetBigIntegerEvent event = new SetBigIntegerEvent( -1, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setBigInteger(int position, BigInteger val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 
-   public void testSetBigIntegerEventNameVal() {
-     SetBigIntegerEvent event = new SetBigIntegerEvent(null, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setBigInteger(String name, BigInteger val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetBigIntegerEventNameVal() {
+		SetBigIntegerEvent event = new SetBigIntegerEvent( null, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setBigInteger(String name, BigInteger val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

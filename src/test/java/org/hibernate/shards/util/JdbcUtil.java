@@ -34,92 +34,105 @@ import org.jboss.logging.Logger;
  */
 public class JdbcUtil {
 
-    private static final Logger LOG = Logger.getLogger(JdbcUtil.class);
+	private static final Logger LOG = Logger.getLogger( JdbcUtil.class );
 
-    public static int executeUpdate(final Connection conn,
-                                    final String query,
-                                    final boolean closeConnection) throws SQLException {
+	public static int executeUpdate(
+			final Connection conn,
+			final String query,
+			final boolean closeConnection) throws SQLException {
 
-        Statement statement = null;
-        try {
-            statement = conn.createStatement();
-            return statement.executeUpdate(query);
-        } finally {
-            if (closeConnection) {
-                closeAllResources(null, statement, conn);
-            } else {
-                closeAllResources(null, statement, null);
-            }
-        }
-    }
+		Statement statement = null;
+		try {
+			statement = conn.createStatement();
+			return statement.executeUpdate( query );
+		}
+		finally {
+			if ( closeConnection ) {
+				closeAllResources( null, statement, conn );
+			}
+			else {
+				closeAllResources( null, statement, null );
+			}
+		}
+	}
 
-    public static void executeJdbcQuery(final Connection conn,
-                                        final String query,
-                                        final JdbcStrategy jdbcStrategy,
-                                        final boolean closeConnection) throws SQLException {
+	public static void executeJdbcQuery(
+			final Connection conn,
+			final String query,
+			final JdbcStrategy jdbcStrategy,
+			final boolean closeConnection) throws SQLException {
 
-        Statement statement = null;
-        ResultSet rs = null;
-        try {
-            statement = conn.createStatement();
-            rs = statement.executeQuery(query);
-            while (rs.next()) {
-                jdbcStrategy.extractData(rs);
-            }
-        } finally {
-            if (closeConnection) {
-                closeAllResources(rs, statement, conn);
-            } else {
-                closeAllResources(rs, statement, null);
-            }
-        }
-    }
+		Statement statement = null;
+		ResultSet rs = null;
+		try {
+			statement = conn.createStatement();
+			rs = statement.executeQuery( query );
+			while ( rs.next() ) {
+				jdbcStrategy.extractData( rs );
+			}
+		}
+		finally {
+			if ( closeConnection ) {
+				closeAllResources( rs, statement, conn );
+			}
+			else {
+				closeAllResources( rs, statement, null );
+			}
+		}
+	}
 
-    public static void executePreparedStatementQuery(final Connection conn,
-                                                     final PreparedStatement stmt,
-                                                     final JdbcStrategy strategy,
-                                                     final boolean closeConnection) throws SQLException {
-        ResultSet rs = null;
-        try {
-            rs = stmt.executeQuery();
-            while (rs.next()) {
-                strategy.extractData(rs);
-            }
-        } finally {
-            if (closeConnection) {
-                closeAllResources(rs, stmt, conn);
-            } else {
-                closeAllResources(rs, stmt, null);
-            }
-        }
-    }
+	public static void executePreparedStatementQuery(
+			final Connection conn,
+			final PreparedStatement stmt,
+			final JdbcStrategy strategy,
+			final boolean closeConnection) throws SQLException {
+		ResultSet rs = null;
+		try {
+			rs = stmt.executeQuery();
+			while ( rs.next() ) {
+				strategy.extractData( rs );
+			}
+		}
+		finally {
+			if ( closeConnection ) {
+				closeAllResources( rs, stmt, conn );
+			}
+			else {
+				closeAllResources( rs, stmt, null );
+			}
+		}
+	}
 
-    public static void closeAllResources(final ResultSet rs,
-                                         final Statement statement,
-                                         final Connection conn) {
+	public static void closeAllResources(
+			final ResultSet rs,
+			final Statement statement,
+			final Connection conn) {
 
-        if (rs != null) {
-            try {
-                rs.close();
-            } catch (Throwable t) {
-                LOG.error("Error closing result set.", t);
-            }
-        }
+		if ( rs != null ) {
+			try {
+				rs.close();
+			}
+			catch (Throwable t) {
+				LOG.error( "Error closing result set.", t );
+			}
+		}
 
-        if (statement != null) {
-            try {
-                statement.close();
-            } catch (Throwable t) {
-                LOG.error("Error closing statement.", t);
-            }
-        }
+		if ( statement != null ) {
+			try {
+				statement.close();
+			}
+			catch (Throwable t) {
+				LOG.error( "Error closing statement.", t );
+			}
+		}
 
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (Throwable t) {
-                LOG.error("Error closing connection.", t);
-            }
-        }
-    }
+		if ( conn != null ) {
+			try {
+				conn.close();
+			}
+			catch (Throwable t) {
+				LOG.error( "Error closing connection.", t );
+			}
+		}
+	}
 }

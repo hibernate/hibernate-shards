@@ -26,70 +26,70 @@ import java.util.List;
  */
 public class Office {
 
-  private Serializable officeId;
-  private String label;
-  private Floor floor;
-  private Window window;
-  private List<Person> people;
+	private Serializable officeId;
+	private String label;
+	private Floor floor;
+	private Window window;
+	private List<Person> people;
 
-  public Serializable getOfficeId() {
-    return officeId;
-  }
+	public Serializable getOfficeId() {
+		return officeId;
+	}
 
-  void setOfficeId(Serializable officeId) {
-    this.officeId = officeId;
-  }
+	void setOfficeId(Serializable officeId) {
+		this.officeId = officeId;
+	}
 
-  public String getLabel() {
-    return label;
-  }
+	public String getLabel() {
+		return label;
+	}
 
-  public void setLabel(String label) {
-    this.label = label;
-  }
+	public void setLabel(String label) {
+		this.label = label;
+	}
 
-  public Floor getFloor() {
-    return floor;
-  }
+	public Floor getFloor() {
+		return floor;
+	}
 
-  public void setFloor(Floor floor) {
-    this.floor = floor;
-  }
+	public void setFloor(Floor floor) {
+		this.floor = floor;
+	}
 
-  public List<Person> getPeople() {
-    return people;
-  }
+	public List<Person> getPeople() {
+		return people;
+	}
 
-  public void setPeople(List<Person> people) {
-    this.people = people;
-  }
+	public void setPeople(List<Person> people) {
+		this.people = people;
+	}
 
-  public Window getWindow() {
-    return window;
-  }
+	public Window getWindow() {
+		return window;
+	}
 
-  public void setWindow(Window window) {
-    this.window = window;
-  }
+	public void setWindow(Window window) {
+		this.window = window;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-    final Office office = (Office)o;
+		final Office office = (Office) o;
 
-    return !(officeId != null ? !officeId.equals(office.officeId)
-        : office.officeId != null);
+		return !(officeId != null ? !officeId.equals( office.officeId )
+				: office.officeId != null);
 
-  }
+	}
 
-  @Override
-  public int hashCode() {
-    return (officeId != null ? officeId.hashCode() : 0);
-  }
+	@Override
+	public int hashCode() {
+		return (officeId != null ? officeId.hashCode() : 0);
+	}
 }

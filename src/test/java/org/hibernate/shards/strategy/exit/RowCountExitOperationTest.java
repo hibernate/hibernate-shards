@@ -29,20 +29,21 @@ import org.hibernate.shards.util.Lists;
  * @author Maulik Shah
  */
 public class RowCountExitOperationTest extends TestCase {
-  public void testCtor() throws Exception {
-    try {
-      new RowCountExitOperation(Projections.avg("foo"));
-      fail();
-    } catch (IllegalStateException e) {
-      //good
-    }
-  }
+	public void testCtor() throws Exception {
+		try {
+			new RowCountExitOperation( Projections.avg( "foo" ) );
+			fail();
+		}
+		catch (IllegalStateException e) {
+			//good
+		}
+	}
 
-  public void testApplyCount() throws Exception {
-    RowCountExitOperation exitOp = new RowCountExitOperation(Projections.rowCount());
+	public void testApplyCount() throws Exception {
+		RowCountExitOperation exitOp = new RowCountExitOperation( Projections.rowCount() );
 
-    List<Object> list = Lists.<Object>newArrayList(1,2,null,3);
-    assertEquals(3, (int)(Integer)exitOp.apply(list).get(0));
-  }
+		List<Object> list = Lists.<Object>newArrayList( 1, 2, null, 3 );
+		assertEquals( 3, (int) (Integer) exitOp.apply( list ).get( 0 ) );
+	}
 
 }

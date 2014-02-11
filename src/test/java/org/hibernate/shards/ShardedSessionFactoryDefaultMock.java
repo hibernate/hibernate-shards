@@ -29,6 +29,7 @@ import javax.naming.Reference;
 
 import org.hibernate.Cache;
 import org.hibernate.CustomEntityDirtinessStrategy;
+import org.hibernate.EntityNameResolver;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
@@ -58,12 +59,13 @@ import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.exception.spi.SQLExceptionConverter;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.factory.IdentifierGeneratorFactory;
+import org.hibernate.internal.NamedQueryRepository;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.EntityNotFoundDelegate;
-import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
+import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.hibernate.service.spi.ServiceRegistryImplementor;
 import org.hibernate.shards.engine.ShardedSessionFactoryImplementor;
 import org.hibernate.shards.session.ShardedSession;
@@ -466,6 +468,26 @@ public class ShardedSessionFactoryDefaultMock implements ShardedSessionFactoryIm
 
 	@Override
 	public StatelessSessionBuilder withStatelessOptions() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void registerNamedQueryDefinition(String name, NamedQueryDefinition definition) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void registerNamedSQLQueryDefinition(String name, NamedSQLQueryDefinition definition) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public NamedQueryRepository getNamedQueryRepository() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Iterable<EntityNameResolver> iterateEntityNameResolvers() {
 		throw new UnsupportedOperationException();
 	}
 }

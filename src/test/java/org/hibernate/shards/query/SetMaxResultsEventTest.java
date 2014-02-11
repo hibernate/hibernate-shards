@@ -26,19 +26,19 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetMaxResultsEventTest extends TestCase {
+public class SetMaxResultsEventTest extends TestCase {
 
-   public void testSetMaxResultsEventMaxresults() {
-     SetMaxResultsEvent event = new SetMaxResultsEvent(-1);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setMaxResults(int maxResults) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetMaxResultsEventMaxresults() {
+		SetMaxResultsEvent event = new SetMaxResultsEvent( -1 );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setMaxResults(int maxResults) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

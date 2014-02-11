@@ -27,7 +27,7 @@ import org.hibernate.shards.ShardId;
  */
 public class ShardStrategyFactoryDefaultMock implements ShardStrategyFactory {
 
-  public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
-    throw new UnsupportedOperationException();
-  }
+	public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
+		throw new UnsupportedOperationException();
+	}
 }

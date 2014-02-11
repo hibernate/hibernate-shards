@@ -26,33 +26,33 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetLongEventTest extends TestCase {
+public class SetLongEventTest extends TestCase {
 
-   public void testSetLongEventPositionVal() {
-     SetLongEvent event = new SetLongEvent(-1, 0l);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setLong(int position, long val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetLongEventPositionVal() {
+		SetLongEvent event = new SetLongEvent( -1, 0l );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setLong(int position, long val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 
-   public void testSetLongEventNameVal() {
-     SetLongEvent event = new SetLongEvent(null, 0l);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setLong(String name, long val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetLongEventNameVal() {
+		SetLongEvent event = new SetLongEvent( null, 0l );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setLong(String name, long val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

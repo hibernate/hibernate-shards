@@ -41,55 +41,64 @@ import static org.junit.Assert.assertEquals;
 @RunWith(Parameterized.class)
 public class DbAccessPermutedIntegrationTest extends BaseShardingIntegrationTestCase {
 
-    public DbAccessPermutedIntegrationTest(final Permutation perm) {
-        super(perm);
-    }
+	public DbAccessPermutedIntegrationTest(final Permutation perm) {
+		super( perm );
+	}
 
-    @Test
-    public void testAccess() throws SQLException {
-        final Set<? extends SessionFactory> sfSet = ((ShardedSessionFactoryImplementor) sf).getSessionFactoryShardIdMap().keySet();
-        for (final SessionFactory sf : sfSet) {
-            testShard(sf);
-            testShard(sf);
-            testShard(sf);
-        }
-    }
+	@Test
+	public void testAccess() throws SQLException {
+		final Set<? extends SessionFactory> sfSet = ((ShardedSessionFactoryImplementor) sf).getSessionFactoryShardIdMap()
+				.keySet();
+		for ( final SessionFactory sf : sfSet ) {
+			testShard( sf );
+			testShard( sf );
+			testShard( sf );
+		}
+	}
 
-    private void testShard(SessionFactory sf) throws SQLException {
-        Session session = sf.openSession();
-        try {
-            insertRecord(session);
-            updateRecord(session);
-            selectRecord(session);
-            deleteRecord(session);
-        } finally {
-            session.close();
-        }
-    }
+	private void testShard(SessionFactory sf) throws SQLException {
+		Session session = sf.openSession();
+		try {
+			insertRecord( session );
+			updateRecord( session );
+			selectRecord( session );
+			deleteRecord( session );
+		}
+		finally {
+			session.close();
+		}
+	}
 
-    private void insertRecord(Session session) throws SQLException {
-        assertEquals(1, session.createSQLQuery("INSERT INTO sample_table(id, str_col) values (0, 'yam')").executeUpdate());
-    }
+	private void insertRecord(Session session) throws SQLException {
+		assertEquals(
+				1,
+				session.createSQLQuery( "INSERT INTO sample_table(id, str_col) values (0, 'yam')" )
+						.executeUpdate()
+		);
+	}
 
-    private void updateRecord(Session session) throws SQLException {
-        assertEquals(1, session.createSQLQuery("UPDATE sample_table set str_col = 'max' where id = 0").executeUpdate());
-    }
+	private void updateRecord(Session session) throws SQLException {
+		assertEquals(
+				1,
+				session.createSQLQuery( "UPDATE sample_table set str_col = 'max' where id = 0" ).executeUpdate()
+		);
+	}
 
-    private void selectRecord(Session session) throws SQLException {
-        SQLQuery query = session.createSQLQuery("select id, str_col from sample_table where id = 0");
-        List results = query.list();
-        assertEquals(1, results.size());
-        Object[] result = (Object[]) results.get(0);
-        assertEquals(new BigDecimal(0), result[0]);
-        assertEquals("max", result[1]);
-    }
+	private void selectRecord(Session session) throws SQLException {
+		SQLQuery query = session.createSQLQuery( "select id, str_col from sample_table where id = 0" );
+		List results = query.list();
+		assertEquals( 1, results.size() );
+		Object[] result = (Object[]) results.get( 0 );
+		assertEquals( new BigDecimal( 0 ), result[0] );
+		assertEquals( "max", result[1] );
+	}
 
-    private void deleteRecord(Session session) throws SQLException {
-        assertEquals(1, session.createSQLQuery("DELETE from sample_table where id = 0").executeUpdate());
-    }
+	private void deleteRecord(Session session) throws SQLException {
+		assertEquals( 1, session.createSQLQuery( "DELETE from sample_table where id = 0" ).executeUpdate() );
+	}
 
-    @Parameterized.Parameters()
-    public static Iterable<Object[]> data() {
-        return PermutationHelper.data();
-    }
+	@Parameterized.Parameters()
+	public static Iterable<Object[]> data() {
+		return PermutationHelper.data();
+	}
 }

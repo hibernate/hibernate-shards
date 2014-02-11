@@ -25,7 +25,7 @@ import org.hibernate.Criteria;
  */
 public class CriteriaEventDefaultMock implements CriteriaEvent {
 
-  public void onEvent(Criteria criteria) {
-    throw new UnsupportedOperationException();
-  }
+	public void onEvent(Criteria criteria) {
+		throw new UnsupportedOperationException();
+	}
 }

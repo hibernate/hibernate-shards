@@ -30,8 +30,9 @@ import org.hibernate.shards.strategy.exit.ExitStrategy;
  */
 public class ShardAccessStrategyDefaultMock implements ShardAccessStrategy {
 
-  public <T> T apply(List<Shard> shards, ShardOperation<T> operation,
-      ExitStrategy<T> exitStrategy, ExitOperationsCollector exitOperationsCollector) {
-    throw new UnsupportedOperationException();
-  }
+	public <T> T apply(
+			List<Shard> shards, ShardOperation<T> operation,
+			ExitStrategy<T> exitStrategy, ExitOperationsCollector exitOperationsCollector) {
+		throw new UnsupportedOperationException();
+	}
 }

@@ -26,33 +26,33 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetBinaryEventTest extends TestCase {
+public class SetBinaryEventTest extends TestCase {
 
-   public void testSetBinaryEventPositionVal() {
-     SetBinaryEvent event = new SetBinaryEvent(-1, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setBinary(int position, byte[] val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetBinaryEventPositionVal() {
+		SetBinaryEvent event = new SetBinaryEvent( -1, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setBinary(int position, byte[] val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 
-   public void testSetBinaryEventNameVal() {
-     SetBinaryEvent event = new SetBinaryEvent(null, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setBinary(String name, byte[] val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetBinaryEventNameVal() {
+		SetBinaryEvent event = new SetBinaryEvent( null, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setBinary(String name, byte[] val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

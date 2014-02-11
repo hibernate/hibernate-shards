@@ -25,11 +25,11 @@ import org.hibernate.shards.Shard;
  */
 public class ExitStrategyDefaultMock<T> implements ExitStrategy<T> {
 
-  public boolean addResult(T result, Shard shard) {
-    throw new UnsupportedOperationException();
-  }
+	public boolean addResult(T result, Shard shard) {
+		throw new UnsupportedOperationException();
+	}
 
-  public T compileResults(ExitOperationsCollector exitOperationsCollector) {
-    throw new UnsupportedOperationException();
-  }
+	public T compileResults(ExitOperationsCollector exitOperationsCollector) {
+		throw new UnsupportedOperationException();
+	}
 }

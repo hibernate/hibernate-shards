@@ -26,19 +26,19 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetFetchSizeEventTest extends TestCase {
+public class SetFetchSizeEventTest extends TestCase {
 
-   public void testSetFetchSizeEventFetchsize() {
-     SetFetchSizeEvent event = new SetFetchSizeEvent(-1);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setFetchSize(int fetchSize) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetFetchSizeEventFetchsize() {
+		SetFetchSizeEvent event = new SetFetchSizeEvent( -1 );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setFetchSize(int fetchSize) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

@@ -26,19 +26,19 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetReadOnlyEventTest extends TestCase {
+public class SetReadOnlyEventTest extends TestCase {
 
-   public void testSetReadOnlyEventReadonly() {
-     SetReadOnlyEvent event = new SetReadOnlyEvent(false);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setReadOnly(boolean readOnly) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetReadOnlyEventReadonly() {
+		SetReadOnlyEvent event = new SetReadOnlyEvent( false );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setReadOnly(boolean readOnly) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

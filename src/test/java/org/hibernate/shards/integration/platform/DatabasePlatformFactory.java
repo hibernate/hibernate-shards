@@ -25,28 +25,31 @@ import org.hibernate.shards.util.StringUtil;
  * @author maxr@google.com (Max Ross)
  */
 public interface DatabasePlatformFactory {
-    DatabasePlatform getDatabasePlatform();
+	DatabasePlatform getDatabasePlatform();
 
-    DatabasePlatformFactory FACTORY = new DatabasePlatformFactory() {
-        public DatabasePlatform getDatabasePlatform() {
-            String platformClassStr = System.getProperty("hibernate.shard.database.platform");
-            if (StringUtil.isEmptyOrWhitespace(platformClassStr)) {
-                return getDefaultPlatform();
-            }
-            try {
-                Class clazz = Class.forName(platformClassStr);
-                return (DatabasePlatform) clazz.newInstance();
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Unknown platform class", e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException("Could not access platform class", e);
-            } catch (InstantiationException e) {
-                throw new RuntimeException("Could not instantiate platform class", e);
-            }
-        }
+	DatabasePlatformFactory FACTORY = new DatabasePlatformFactory() {
+		public DatabasePlatform getDatabasePlatform() {
+			String platformClassStr = System.getProperty( "hibernate.shard.database.platform" );
+			if ( StringUtil.isEmptyOrWhitespace( platformClassStr ) ) {
+				return getDefaultPlatform();
+			}
+			try {
+				Class clazz = Class.forName( platformClassStr );
+				return (DatabasePlatform) clazz.newInstance();
+			}
+			catch (ClassNotFoundException e) {
+				throw new RuntimeException( "Unknown platform class", e );
+			}
+			catch (IllegalAccessException e) {
+				throw new RuntimeException( "Could not access platform class", e );
+			}
+			catch (InstantiationException e) {
+				throw new RuntimeException( "Could not instantiate platform class", e );
+			}
+		}
 
-        private DatabasePlatform getDefaultPlatform() {
-            return HSQLDatabasePlatform.getInstance();
-        }
-    };
+		private DatabasePlatform getDefaultPlatform() {
+			return HSQLDatabasePlatform.getInstance();
+		}
+	};
 }

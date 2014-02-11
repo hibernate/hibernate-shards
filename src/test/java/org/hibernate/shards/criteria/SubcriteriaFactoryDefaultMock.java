@@ -25,8 +25,9 @@ import org.hibernate.Criteria;
  */
 public class SubcriteriaFactoryDefaultMock implements SubcriteriaFactory {
 
-  public Criteria createSubcriteria(Criteria parent,
-      Iterable<CriteriaEvent> events) {
-    throw new UnsupportedOperationException();
-  }
+	public Criteria createSubcriteria(
+			Criteria parent,
+			Iterable<CriteriaEvent> events) {
+		throw new UnsupportedOperationException();
+	}
 }

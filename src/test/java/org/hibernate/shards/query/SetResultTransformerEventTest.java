@@ -29,17 +29,17 @@ import org.hibernate.transform.ResultTransformer;
  */
 public class SetResultTransformerEventTest extends TestCase {
 
-   public void testSetResultTransformerEventTransformer() {
-     SetResultTransformerEvent event = new SetResultTransformerEvent(null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setResultTransformer(ResultTransformer transformer) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetResultTransformerEventTransformer() {
+		SetResultTransformerEvent event = new SetResultTransformerEvent( null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setResultTransformer(ResultTransformer transformer) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

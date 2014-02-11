@@ -29,25 +29,25 @@ import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
  */
 public class CreateSubcriteriaEventTest {
 
-    @Test
-    public void testOnEvent() {
-        final Criteria[] calledWithCrit = {null};
-        final SubcriteriaFactory[] calledWithFactory = {null};
+	@Test
+	public void testOnEvent() {
+		final Criteria[] calledWithCrit = {null};
+		final SubcriteriaFactory[] calledWithFactory = {null};
 
-        ShardedSubcriteriaImpl.SubcriteriaRegistrar provider = new ShardedSubcriteriaImpl.SubcriteriaRegistrar() {
-            public void establishSubcriteria(
-                    Criteria parentCriteria,
-                    SubcriteriaFactory subcriteriaFactory) {
-                calledWithCrit[0] = parentCriteria;
-                calledWithFactory[0] = subcriteriaFactory;
-            }
-        };
+		ShardedSubcriteriaImpl.SubcriteriaRegistrar provider = new ShardedSubcriteriaImpl.SubcriteriaRegistrar() {
+			public void establishSubcriteria(
+					Criteria parentCriteria,
+					SubcriteriaFactory subcriteriaFactory) {
+				calledWithCrit[0] = parentCriteria;
+				calledWithFactory[0] = subcriteriaFactory;
+			}
+		};
 
-        SubcriteriaFactory factory = new SubcriteriaFactoryDefaultMock();
-        CreateSubcriteriaEvent cse = new CreateSubcriteriaEvent(factory, provider);
-        Criteria crit = new CriteriaDefaultMock();
-        cse.onEvent(crit);
-        Assert.assertSame(crit, calledWithCrit[0]);
-        Assert.assertSame(factory, calledWithFactory[0]);
-    }
+		SubcriteriaFactory factory = new SubcriteriaFactoryDefaultMock();
+		CreateSubcriteriaEvent cse = new CreateSubcriteriaEvent( factory, provider );
+		Criteria crit = new CriteriaDefaultMock();
+		cse.onEvent( crit );
+		Assert.assertSame( crit, calledWithCrit[0] );
+		Assert.assertSame( factory, calledWithFactory[0] );
+	}
 }

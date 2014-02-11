@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+
 import org.mockito.Mockito;
 
 import org.hibernate.SessionFactory;
@@ -52,138 +53,143 @@ import static org.junit.Assert.fail;
  */
 public class ShardedConfigurationTest {
 
-    private MyShardStrategyFactory shardStrategyFactory;
-    private ShardConfiguration shardConfig;
-    private ShardedConfiguration shardedConfiguration;
+	private MyShardStrategyFactory shardStrategyFactory;
+	private ShardConfiguration shardConfig;
+	private ShardedConfiguration shardedConfiguration;
 
-    @Before
-    public void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 
-        shardStrategyFactory = new MyShardStrategyFactory();
-        Configuration protoConfig = new Configuration();
-        protoConfig.setProperty(Environment.DIALECT, HSQLDialect.class.getName());
-        shardConfig = new MyShardConfig("user", "url", "pwd", "sfname", "prefix", 33);
+		shardStrategyFactory = new MyShardStrategyFactory();
+		Configuration protoConfig = new Configuration();
+		protoConfig.setProperty( Environment.DIALECT, HSQLDialect.class.getName() );
+		shardConfig = new MyShardConfig( "user", "url", "pwd", "sfname", "prefix", 33 );
 
-        shardedConfiguration = new ShardedConfiguration(
-                protoConfig,
-                Collections.singletonList(shardConfig),
-                shardStrategyFactory);
-    }
+		shardedConfiguration = new ShardedConfiguration(
+				protoConfig,
+				Collections.singletonList( shardConfig ),
+				shardStrategyFactory
+		);
+	}
 
-    @Test
-    public void testBuildShardedSessionFactoryPreconditions() throws Exception {
-        final List<ShardConfiguration> shardConfigs = Lists.newArrayList(shardConfig);
-        try {
-            new ShardedConfiguration(null, shardConfigs, shardStrategyFactory);
-            fail("Expected npe");
-        } catch (NullPointerException npe) {
-            // good
-        }
+	@Test
+	public void testBuildShardedSessionFactoryPreconditions() throws Exception {
+		final List<ShardConfiguration> shardConfigs = Lists.newArrayList( shardConfig );
+		try {
+			new ShardedConfiguration( null, shardConfigs, shardStrategyFactory );
+			fail( "Expected npe" );
+		}
+		catch (NullPointerException npe) {
+			// good
+		}
 
-        final Configuration config = new Configuration();
-        try {
-            new ShardedConfiguration(config, null, shardStrategyFactory);
-            fail("Expected npe");
-        } catch (NullPointerException npe) {
-            // good
-        }
+		final Configuration config = new Configuration();
+		try {
+			new ShardedConfiguration( config, null, shardStrategyFactory );
+			fail( "Expected npe" );
+		}
+		catch (NullPointerException npe) {
+			// good
+		}
 
-        shardConfigs.clear();
-        try {
-            new ShardedConfiguration(config, shardConfigs, shardStrategyFactory);
-            fail("Expected iae");
-        } catch (IllegalArgumentException iae) {
-            // good
-        }
-    }
+		shardConfigs.clear();
+		try {
+			new ShardedConfiguration( config, shardConfigs, shardStrategyFactory );
+			fail( "Expected iae" );
+		}
+		catch (IllegalArgumentException iae) {
+			// good
+		}
+	}
 
-    @Test(expected = NullPointerException.class)
-    public void testShardIdRequired() {
-        final ShardConfiguration config = new MyShardConfig("user", "url", "pwd", "sfname", null, null);
-        shardedConfiguration.populatePrototypeWithVariableProperties(config);
-    }
+	@Test(expected = NullPointerException.class)
+	public void testShardIdRequired() {
+		final ShardConfiguration config = new MyShardConfig( "user", "url", "pwd", "sfname", null, null );
+		shardedConfiguration.populatePrototypeWithVariableProperties( config );
+	}
 
-    @Test
-    public void testBuildShardedSessionFactory() {
-        final ShardedSessionFactoryImpl ssfi = (ShardedSessionFactoryImpl) shardedConfiguration.buildShardedSessionFactory();
-        assertNotNull(ssfi);
-        // make sure the session factory contained in the sharded session factory
-        // has the number of session factories we expect
-        List<SessionFactory> sfList = ssfi.getSessionFactories();
-        assertEquals(1, sfList.size());
-    }
+	@Test
+	public void testBuildShardedSessionFactory() {
+		final ShardedSessionFactoryImpl ssfi = (ShardedSessionFactoryImpl) shardedConfiguration.buildShardedSessionFactory();
+		assertNotNull( ssfi );
+		// make sure the session factory contained in the sharded session factory
+		// has the number of session factories we expect
+		List<SessionFactory> sfList = ssfi.getSessionFactories();
+		assertEquals( 1, sfList.size() );
+	}
 
-    public void testRequiresShardLock() {
-        final Mappings mappingsMock = Mockito.mock(Mappings.class);
-        final Property property = new Property();
-        assertFalse(shardedConfiguration.doesNotSupportTopLevelSave(property));
-        final ManyToOne mto = new ManyToOne(mappingsMock, new Table());
-        property.setValue(mto);
-        assertFalse(shardedConfiguration.doesNotSupportTopLevelSave(property));
-        final OneToOne oto = new OneToOne(mappingsMock, new Table(), new RootClass());
-        property.setValue(oto);
-        assertTrue(shardedConfiguration.doesNotSupportTopLevelSave(property));
-    }
+	public void testRequiresShardLock() {
+		final Mappings mappingsMock = Mockito.mock( Mappings.class );
+		final Property property = new Property();
+		assertFalse( shardedConfiguration.doesNotSupportTopLevelSave( property ) );
+		final ManyToOne mto = new ManyToOne( mappingsMock, new Table() );
+		property.setValue( mto );
+		assertFalse( shardedConfiguration.doesNotSupportTopLevelSave( property ) );
+		final OneToOne oto = new OneToOne( mappingsMock, new Table(), new RootClass() );
+		property.setValue( oto );
+		assertTrue( shardedConfiguration.doesNotSupportTopLevelSave( property ) );
+	}
 
-    private class MyShardStrategyFactory extends ShardStrategyFactoryDefaultMock {
-        @Override
-        public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
-            return null;
-        }
-    }
+	private class MyShardStrategyFactory extends ShardStrategyFactoryDefaultMock {
+		@Override
+		public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
+			return null;
+		}
+	}
 
-    private static final class MyShardConfig implements ShardConfiguration {
+	private static final class MyShardConfig implements ShardConfiguration {
 
-        private final String user;
-        private final String url;
-        private final String password;
-        private final String sessionFactoryName;
-        private final String cacheRegionPrefix;
-        private final Integer shardId;
+		private final String user;
+		private final String url;
+		private final String password;
+		private final String sessionFactoryName;
+		private final String cacheRegionPrefix;
+		private final Integer shardId;
 
-        public MyShardConfig(String user, String url, String password,
-                             String sessionFactoryName, String cacheRegionPrefix, Integer shardId) {
-            this.user = user;
-            this.url = url;
-            this.password = password;
-            this.sessionFactoryName = sessionFactoryName;
-            this.cacheRegionPrefix = cacheRegionPrefix;
-            this.shardId = shardId;
-        }
+		public MyShardConfig(
+				String user, String url, String password,
+				String sessionFactoryName, String cacheRegionPrefix, Integer shardId) {
+			this.user = user;
+			this.url = url;
+			this.password = password;
+			this.sessionFactoryName = sessionFactoryName;
+			this.cacheRegionPrefix = cacheRegionPrefix;
+			this.shardId = shardId;
+		}
 
-        @Override
-        public String getShardUser() {
-            return user;
-        }
+		@Override
+		public String getShardUser() {
+			return user;
+		}
 
-        @Override
-        public String getShardUrl() {
-            return url;
-        }
+		@Override
+		public String getShardUrl() {
+			return url;
+		}
 
-        @Override
-        public String getShardPassword() {
-            return password;
-        }
+		@Override
+		public String getShardPassword() {
+			return password;
+		}
 
-        @Override
-        public String getShardSessionFactoryName() {
-            return sessionFactoryName;
-        }
+		@Override
+		public String getShardSessionFactoryName() {
+			return sessionFactoryName;
+		}
 
-        @Override
-        public Integer getShardId() {
-            return shardId;
-        }
+		@Override
+		public Integer getShardId() {
+			return shardId;
+		}
 
-        @Override
-        public String getShardDatasource() {
-            return null;
-        }
+		@Override
+		public String getShardDatasource() {
+			return null;
+		}
 
-        @Override
-        public String getShardCacheRegionPrefix() {
-            return cacheRegionPrefix;
-        }
-    }
+		@Override
+		public String getShardCacheRegionPrefix() {
+			return cacheRegionPrefix;
+		}
+	}
 }

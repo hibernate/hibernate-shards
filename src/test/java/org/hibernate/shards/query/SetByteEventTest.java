@@ -26,33 +26,33 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetByteEventTest extends TestCase {
+public class SetByteEventTest extends TestCase {
 
-   public void testSetByteEventPositionVal() {
-     SetByteEvent event = new SetByteEvent(-1, (byte) 0);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setByte(int position, byte val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetByteEventPositionVal() {
+		SetByteEvent event = new SetByteEvent( -1, (byte) 0 );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setByte(int position, byte val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 
-   public void testSetByteEventNameVal() {
-     SetByteEvent event = new SetByteEvent(null, (byte) 0);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setByte(String name, byte val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetByteEventNameVal() {
+		SetByteEvent event = new SetByteEvent( null, (byte) 0 );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setByte(String name, byte val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

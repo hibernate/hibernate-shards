@@ -30,18 +30,18 @@ import org.hibernate.transform.ResultTransformer;
  */
 public class SetResultTransformerEventTest {
 
-    @Test
-    public void testOnOpenSession() {
-        SetResultTransformerEvent event = new SetResultTransformerEvent(null);
-        final boolean[] called = {false};
-        Criteria crit = new CriteriaDefaultMock() {
-            @Override
-            public Criteria setResultTransformer(ResultTransformer resultTransformer) {
-                called[0] = true;
-                return null;
-            }
-        };
-        event.onEvent(crit);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSession() {
+		SetResultTransformerEvent event = new SetResultTransformerEvent( null );
+		final boolean[] called = {false};
+		Criteria crit = new CriteriaDefaultMock() {
+			@Override
+			public Criteria setResultTransformer(ResultTransformer resultTransformer) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( crit );
+		Assert.assertTrue( called[0] );
+	}
 }

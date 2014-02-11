@@ -40,115 +40,121 @@ import org.hibernate.shards.util.Sets;
  */
 public class ShardedSubcriteriaImplTest {
 
-    @Test
-    public void testInit() {
-        final int[] next = {0};
-        class MyShard extends ShardDefaultMock {
-            @Override
-            public Set<ShardId> getShardIds() {
-                return Sets.newHashSet(new ShardId(next[0]++));
-            }
-        }
+	@Test
+	public void testInit() {
+		final int[] next = {0};
+		class MyShard extends ShardDefaultMock {
+			@Override
+			public Set<ShardId> getShardIds() {
+				return Sets.newHashSet( new ShardId( next[0]++ ) );
+			}
+		}
 
-        final List<Shard> shards = Lists.<Shard>newArrayList(new MyShard(), new MyShard(), new MyShard());
-        final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
-        final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(shards, new ShardedCriteriaDefaultMock(), collector, "");
-        Assert.assertEquals(shards.size(), ss.getShardToCriteriaMap().size());
-        Assert.assertEquals(shards.size(), ss.getShardToEventListMap().size());
-    }
+		final List<Shard> shards = Lists.<Shard>newArrayList( new MyShard(), new MyShard(), new MyShard() );
+		final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
+		final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(
+				shards,
+				new ShardedCriteriaDefaultMock(),
+				collector,
+				""
+		);
+		Assert.assertEquals( shards.size(), ss.getShardToCriteriaMap().size() );
+		Assert.assertEquals( shards.size(), ss.getShardToEventListMap().size() );
+	}
 
-    @Test
-    public void testListDelegatesToParent() {
-        final List<Shard> shards = Lists.<Shard>newArrayList(new ShardDefaultMock());
-        final boolean[] called = {false};
-        final ShardedCriteria parent = new ShardedCriteriaDefaultMock() {
-            @Override
-            public List list() throws HibernateException {
-                called[0] = true;
-                return null;
-            }
-        };
-        final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
-        final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(shards, parent, collector, "");
-        ss.list();
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testListDelegatesToParent() {
+		final List<Shard> shards = Lists.<Shard>newArrayList( new ShardDefaultMock() );
+		final boolean[] called = {false};
+		final ShardedCriteria parent = new ShardedCriteriaDefaultMock() {
+			@Override
+			public List list() throws HibernateException {
+				called[0] = true;
+				return null;
+			}
+		};
+		final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
+		final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl( shards, parent, collector, "" );
+		ss.list();
+		Assert.assertTrue( called[0] );
+	}
 
-    @Test
-    public void testUniqueResultDelegatesToParent() {
-        List<Shard> shards = Lists.<Shard>newArrayList(new ShardDefaultMock());
-        final boolean[] called = {false};
-        ShardedCriteria parent = new ShardedCriteriaDefaultMock() {
-            @Override
-            public Object uniqueResult() throws HibernateException {
-                called[0] = true;
-                return null;
-            }
-        };
-        final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
-        final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(shards, parent, collector, "");
-        ss.uniqueResult();
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testUniqueResultDelegatesToParent() {
+		List<Shard> shards = Lists.<Shard>newArrayList( new ShardDefaultMock() );
+		final boolean[] called = {false};
+		ShardedCriteria parent = new ShardedCriteriaDefaultMock() {
+			@Override
+			public Object uniqueResult() throws HibernateException {
+				called[0] = true;
+				return null;
+			}
+		};
+		final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
+		final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl( shards, parent, collector, "" );
+		ss.uniqueResult();
+		Assert.assertTrue( called[0] );
+	}
 
-    @Test
-    public void testScrollDelegatesToParent() {
-        final List<Shard> shards = Lists.<Shard>newArrayList(new ShardDefaultMock());
-        final boolean[] scrollNoArgsCalled = {false};
-        final boolean[] scroll1ArgCalled = {false};
-        final ShardedCriteria parent = new ShardedCriteriaDefaultMock() {
-            @Override
-            public ScrollableResults scroll() throws HibernateException {
-                scrollNoArgsCalled[0] = true;
-                return null;
-            }
+	@Test
+	public void testScrollDelegatesToParent() {
+		final List<Shard> shards = Lists.<Shard>newArrayList( new ShardDefaultMock() );
+		final boolean[] scrollNoArgsCalled = {false};
+		final boolean[] scroll1ArgCalled = {false};
+		final ShardedCriteria parent = new ShardedCriteriaDefaultMock() {
+			@Override
+			public ScrollableResults scroll() throws HibernateException {
+				scrollNoArgsCalled[0] = true;
+				return null;
+			}
 
-            @Override
-            public ScrollableResults scroll(final ScrollMode scrollMode) throws HibernateException {
-                scroll1ArgCalled[0] = true;
-                return null;
-            }
-        };
-        final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
-        final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(shards, parent, collector, "");
-        ss.scroll();
-        Assert.assertTrue(scrollNoArgsCalled[0]);
-        Assert.assertFalse(scroll1ArgCalled[0]);
+			@Override
+			public ScrollableResults scroll(final ScrollMode scrollMode) throws HibernateException {
+				scroll1ArgCalled[0] = true;
+				return null;
+			}
+		};
+		final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
+		final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl( shards, parent, collector, "" );
+		ss.scroll();
+		Assert.assertTrue( scrollNoArgsCalled[0] );
+		Assert.assertFalse( scroll1ArgCalled[0] );
 
-        scrollNoArgsCalled[0] = false;
-        ss.scroll(ScrollMode.FORWARD_ONLY);
-        Assert.assertFalse(scrollNoArgsCalled[0]);
-        Assert.assertTrue(scroll1ArgCalled[0]);
-    }
+		scrollNoArgsCalled[0] = false;
+		ss.scroll( ScrollMode.FORWARD_ONLY );
+		Assert.assertFalse( scrollNoArgsCalled[0] );
+		Assert.assertTrue( scroll1ArgCalled[0] );
+	}
 
-    @Test
-    public void testEstablishCriteria() {
-        Shard shard = new ShardDefaultMock() {
-            @Override
-            public Set<ShardId> getShardIds() {
-                return Sets.newHashSet(new ShardId(0));
-            }
-        };
-        final Shard someOtherShard = new ShardDefaultMock();
-        final List<Shard> shards = Lists.newArrayList(shard, someOtherShard);
-        final ShardedCriteria parent = new ShardedCriteriaDefaultMock();
-        final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
-        final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl(shards, parent, collector, "");
-        ss.getShardToEventListMap().get(shard).add(new CriteriaEventDefaultMock());
-        final Criteria subcritToReturn = new CriteriaDefaultMock();
-        SubcriteriaFactory factory = new SubcriteriaFactoryDefaultMock() {
-            @Override
-            public Criteria createSubcriteria(Criteria parent,
-                                              Iterable<CriteriaEvent> events) {
-                return subcritToReturn;
-            }
-        };
-        final Criteria parentCrit = new CriteriaDefaultMock();
-        ss.getSubcriteriaRegistrar(shard).establishSubcriteria(parentCrit, factory);
-        ss.getSubcriteriaRegistrar(someOtherShard).establishSubcriteria(parentCrit, factory);
-        Assert.assertTrue(ss.getShardToEventListMap().get(shard).isEmpty());
-        Assert.assertTrue(ss.getShardToEventListMap().get(someOtherShard).isEmpty());
-        Assert.assertSame(subcritToReturn, ss.getShardToCriteriaMap().get(shard));
-        Assert.assertSame(subcritToReturn, ss.getShardToCriteriaMap().get(someOtherShard));
-    }
+	@Test
+	public void testEstablishCriteria() {
+		Shard shard = new ShardDefaultMock() {
+			@Override
+			public Set<ShardId> getShardIds() {
+				return Sets.newHashSet( new ShardId( 0 ) );
+			}
+		};
+		final Shard someOtherShard = new ShardDefaultMock();
+		final List<Shard> shards = Lists.newArrayList( shard, someOtherShard );
+		final ShardedCriteria parent = new ShardedCriteriaDefaultMock();
+		final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
+		final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl( shards, parent, collector, "" );
+		ss.getShardToEventListMap().get( shard ).add( new CriteriaEventDefaultMock() );
+		final Criteria subcritToReturn = new CriteriaDefaultMock();
+		SubcriteriaFactory factory = new SubcriteriaFactoryDefaultMock() {
+			@Override
+			public Criteria createSubcriteria(
+					Criteria parent,
+					Iterable<CriteriaEvent> events) {
+				return subcritToReturn;
+			}
+		};
+		final Criteria parentCrit = new CriteriaDefaultMock();
+		ss.getSubcriteriaRegistrar( shard ).establishSubcriteria( parentCrit, factory );
+		ss.getSubcriteriaRegistrar( someOtherShard ).establishSubcriteria( parentCrit, factory );
+		Assert.assertTrue( ss.getShardToEventListMap().get( shard ).isEmpty() );
+		Assert.assertTrue( ss.getShardToEventListMap().get( someOtherShard ).isEmpty() );
+		Assert.assertSame( subcritToReturn, ss.getShardToCriteriaMap().get( shard ) );
+		Assert.assertSame( subcritToReturn, ss.getShardToCriteriaMap().get( someOtherShard ) );
+	}
 }

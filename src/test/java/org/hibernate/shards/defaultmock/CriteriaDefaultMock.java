@@ -225,4 +225,9 @@ public class CriteriaDefaultMock implements Criteria {
 			throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public Criteria addQueryHint(String hint) {
+		throw new UnsupportedOperationException();
+	}
 }

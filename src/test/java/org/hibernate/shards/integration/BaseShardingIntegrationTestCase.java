@@ -71,257 +71,262 @@ import org.hibernate.shards.util.Maps;
  */
 public abstract class BaseShardingIntegrationTestCase {
 
-    private final Permutation perm;
+	private final Permutation perm;
 
-    protected ShardedSessionFactory sf;
-    protected ShardedSession session;
+	protected ShardedSessionFactory sf;
+	protected ShardedSession session;
 
-    /**
-     * Gosh, it sure seems expensive to be initializing a ThreadPoolExecutor
-     * for each test that needs it rather than initializing it once and just
-     * using it for any test that needs it.  So why do it this way?  Well, first
-     * read my novella in MemoryLeakPlugger.  Done?  Ok, welcome back.  So you
-     * should now recognize that the MemoryLeakPlugger is used to clear out the
-     * value of a specific, problematic ThreadLocal.  But what do you think happens
-     * if Hibernate and CGLib were doing their thing in some other thread?
-     * Exactly.  The MemoryLeakPlugger isn't going to be able to clear out the
-     * Callbacks that were initialized in different threads, and any test
-     * that does work in other threads is going to cause memory leaks.  The
-     * solution is to make sure the threads die (all ThreadLocals get gc'ed when
-     * a Thread dies), so we initialize and shutdown the ThreadPoolExecutor for
-     * every test that needs it.
-     */
-    protected ThreadPoolExecutor executor;
+	/**
+	 * Gosh, it sure seems expensive to be initializing a ThreadPoolExecutor
+	 * for each test that needs it rather than initializing it once and just
+	 * using it for any test that needs it.  So why do it this way?  Well, first
+	 * read my novella in MemoryLeakPlugger.  Done?  Ok, welcome back.  So you
+	 * should now recognize that the MemoryLeakPlugger is used to clear out the
+	 * value of a specific, problematic ThreadLocal.  But what do you think happens
+	 * if Hibernate and CGLib were doing their thing in some other thread?
+	 * Exactly.  The MemoryLeakPlugger isn't going to be able to clear out the
+	 * Callbacks that were initialized in different threads, and any test
+	 * that does work in other threads is going to cause memory leaks.  The
+	 * solution is to make sure the threads die (all ThreadLocals get gc'ed when
+	 * a Thread dies), so we initialize and shutdown the ThreadPoolExecutor for
+	 * every test that needs it.
+	 */
+	protected ThreadPoolExecutor executor;
 
-    protected BaseShardingIntegrationTestCase(final Permutation perm) {
-        this.perm = perm != null ? perm : Permutation.DEFAULT;
-    }
+	protected BaseShardingIntegrationTestCase(final Permutation perm) {
+		this.perm = perm != null ? perm : Permutation.DEFAULT;
+	}
 
-    @Before
-    public void beforeTest() throws Exception {
-        this.setUp();
-    }
+	@Before
+	public void beforeTest() throws Exception {
+		this.setUp();
+	}
 
-    protected void setUp() throws Exception {
-        for (int i = 0; i < getNumDatabases(); i++) {
-            DatabaseUtils.destroyDatabase(i, getIdGenType());
-            DatabaseUtils.createDatabase(i, getIdGenType());
-        }
+	protected void setUp() throws Exception {
+		for ( int i = 0; i < getNumDatabases(); i++ ) {
+			DatabaseUtils.destroyDatabase( i, getIdGenType() );
+			DatabaseUtils.createDatabase( i, getIdGenType() );
+		}
 
-        final Configuration prototypeConfig = buildPrototypeConfig();
-        final List<ShardConfiguration> configurations = buildConfigurations();
+		final Configuration prototypeConfig = buildPrototypeConfig();
+		final List<ShardConfiguration> configurations = buildConfigurations();
 
-        // now we use these configs to build our sharded config
-        final ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
-        final Map<Integer, Integer> virtualShardMap = buildVirtualShardToShardMap();
+		// now we use these configs to build our sharded config
+		final ShardStrategyFactory shardStrategyFactory = buildShardStrategyFactory();
+		final Map<Integer, Integer> virtualShardMap = buildVirtualShardToShardMap();
 
-        // we base the configuration off of the shard0 config with the expectation
-        // that all other configs will be the same
-        final ShardedConfiguration shardedConfig = new ShardedConfiguration(
-                prototypeConfig,
-                configurations,
-                shardStrategyFactory,
-                virtualShardMap);
-        sf = shardedConfig.buildShardedSessionFactory();
+		// we base the configuration off of the shard0 config with the expectation
+		// that all other configs will be the same
+		final ShardedConfiguration shardedConfig = new ShardedConfiguration(
+				prototypeConfig,
+				configurations,
+				shardStrategyFactory,
+				virtualShardMap
+		);
+		sf = shardedConfig.buildShardedSessionFactory();
 
-        session = openSession();
-    }
+		session = openSession();
+	}
 
-    protected ShardedSession openSession() {
-        return sf.openSession();
-    }
+	protected ShardedSession openSession() {
+		return sf.openSession();
+	}
 
-    protected Map<Integer, Integer> buildVirtualShardToShardMap() {
-        final Map<Integer, Integer> virtualShardToShardMap = Maps.newHashMap();
-        if (isVirtualShardingEnabled()) {
-            for (int i = 0; i < getNumShards(); ++i) {
-                virtualShardToShardMap.put(i, i % getNumDatabases());
-            }
-        }
-        return virtualShardToShardMap;
-    }
+	protected Map<Integer, Integer> buildVirtualShardToShardMap() {
+		final Map<Integer, Integer> virtualShardToShardMap = Maps.newHashMap();
+		if ( isVirtualShardingEnabled() ) {
+			for ( int i = 0; i < getNumShards(); ++i ) {
+				virtualShardToShardMap.put( i, i % getNumDatabases() );
+			}
+		}
+		return virtualShardToShardMap;
+	}
 
-    private Configuration buildPrototypeConfig() {
-        final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-        final String dbPlatformConfigDirectory = "platform/" + dbPlatform.getName().toLowerCase() + "/config/";
-        final String configurationFile = dbPlatformConfigDirectory + "shard0.hibernate.cfg.xml";
-        final IdGenType idGenType = getIdGenType();
-        final Configuration config = createPrototypeConfiguration();
-        config.configure(BaseShardingIntegrationTestCase.class.getResource(configurationFile));
-        config.addURL(BaseShardingIntegrationTestCase.class.getResource(dbPlatformConfigDirectory + idGenType.getMappingFile()));
-        return config;
-    }
+	private Configuration buildPrototypeConfig() {
+		final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
+		final String dbPlatformConfigDirectory = "platform/" + dbPlatform.getName().toLowerCase() + "/config/";
+		final String configurationFile = dbPlatformConfigDirectory + "shard0.hibernate.cfg.xml";
+		final IdGenType idGenType = getIdGenType();
+		final Configuration config = createPrototypeConfiguration();
+		config.configure( BaseShardingIntegrationTestCase.class.getResource( configurationFile ) );
+		config.addURL( BaseShardingIntegrationTestCase.class.getResource( dbPlatformConfigDirectory + idGenType.getMappingFile() ) );
+		return config;
+	}
 
-    /**
-     * You can override this if you want to return your own subclass of Configuration.
-     *
-     * @return The {@link Configuration} to use as the prototype
-     */
-    protected Configuration createPrototypeConfiguration() {
-        return new Configuration();
-    }
+	/**
+	 * You can override this if you want to return your own subclass of Configuration.
+	 *
+	 * @return The {@link Configuration} to use as the prototype
+	 */
+	protected Configuration createPrototypeConfiguration() {
+		return new Configuration();
+	}
 
-    protected List<ShardConfiguration> buildConfigurations() {
-        final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-        final String dbPlatformConfigDirectory = "platform/" + dbPlatform.getName().toLowerCase() + "/config/";
-        final List<ShardConfiguration> configs = Lists.newArrayList();
-        for (int i = 0; i < getNumDatabases(); i++) {
-            final Configuration config = new Configuration();
-            config.configure(BaseShardingIntegrationTestCase.class.getResource(dbPlatformConfigDirectory + "shard" + i + ".hibernate.cfg.xml"));
-            configs.add(new ConfigurationToShardConfigurationAdapter(config));
-        }
-        return configs;
-    }
+	protected List<ShardConfiguration> buildConfigurations() {
+		final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
+		final String dbPlatformConfigDirectory = "platform/" + dbPlatform.getName().toLowerCase() + "/config/";
+		final List<ShardConfiguration> configs = Lists.newArrayList();
+		for ( int i = 0; i < getNumDatabases(); i++ ) {
+			final Configuration config = new Configuration();
+			config.configure( BaseShardingIntegrationTestCase.class.getResource( dbPlatformConfigDirectory + "shard" + i + ".hibernate.cfg.xml" ) );
+			configs.add( new ConfigurationToShardConfigurationAdapter( config ) );
+		}
+		return configs;
+	}
 
-    protected ShardStrategyFactory buildShardStrategyFactory() {
-        return new ShardStrategyFactory() {
-            public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
-                final RoundRobinShardLoadBalancer loadBalancer = new RoundRobinShardLoadBalancer(shardIds);
-                final ShardSelectionStrategy sss = new RoundRobinShardSelectionStrategy(loadBalancer);
-                final ShardResolutionStrategy srs = new AllShardsShardResolutionStrategy(shardIds);
-                final ShardAccessStrategy sas = getShardAccessStrategy();
-                return new ShardStrategyImpl(sss, srs, sas);
-            }
-        };
-    }
+	protected ShardStrategyFactory buildShardStrategyFactory() {
+		return new ShardStrategyFactory() {
+			public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
+				final RoundRobinShardLoadBalancer loadBalancer = new RoundRobinShardLoadBalancer( shardIds );
+				final ShardSelectionStrategy sss = new RoundRobinShardSelectionStrategy( loadBalancer );
+				final ShardResolutionStrategy srs = new AllShardsShardResolutionStrategy( shardIds );
+				final ShardAccessStrategy sas = getShardAccessStrategy();
+				return new ShardStrategyImpl( sss, srs, sas );
+			}
+		};
+	}
 
-    protected void commitAndResetSession() {
-        session.getTransaction().commit();
-        resetSession();
-        session.beginTransaction();
-    }
+	protected void commitAndResetSession() {
+		session.getTransaction().commit();
+		resetSession();
+		session.beginTransaction();
+	}
 
-    protected void resetSession() {
-        session.close();
-        session = openSession();
-    }
+	protected void resetSession() {
+		session.close();
+		session = openSession();
+	}
 
-    @After
-    public void afterTest() throws Exception {
-        tearDown();
-    }
+	@After
+	public void afterTest() throws Exception {
+		tearDown();
+	}
 
-    protected void tearDown() throws Exception {
-        if (executor != null) {
-            executor.shutdownNow();
-            executor = null;
-        }
+	protected void tearDown() throws Exception {
+		if ( executor != null ) {
+			executor.shutdownNow();
+			executor = null;
+		}
 
-        try {
-            if (session != null) {
-                session.close();
-                session = null;
-            }
-        } finally {
-            if (sf != null) {
-                sf.close();
-                sf = null;
-            }
-        }
-        ShardedSessionImpl.setCurrentSubgraphShardId(null);
-    }
+		try {
+			if ( session != null ) {
+				session.close();
+				session = null;
+			}
+		}
+		finally {
+			if ( sf != null ) {
+				sf.close();
+				sf = null;
+			}
+		}
+		ShardedSessionImpl.setCurrentSubgraphShardId( null );
+	}
 
-    /**
-     * Override if you want more than the default
-     *
-     * @return the number of databases
-     */
-    protected int getNumDatabases() {
-        return perm.getNumDbs();
-    }
+	/**
+	 * Override if you want more than the default
+	 *
+	 * @return the number of databases
+	 */
+	protected int getNumDatabases() {
+		return perm.getNumDbs();
+	}
 
-    protected int getNumShards() {
-        if (isVirtualShardingEnabled()) {
-            return perm.getNumShards();
-        }
-        return getNumDatabases();
-    }
+	protected int getNumShards() {
+		if ( isVirtualShardingEnabled() ) {
+			return perm.getNumShards();
+		}
+		return getNumDatabases();
+	}
 
-    protected boolean isVirtualShardingEnabled() {
-        return perm.isVirtualShardingEnabled();
-    }
+	protected boolean isVirtualShardingEnabled() {
+		return perm.isVirtualShardingEnabled();
+	}
 
-    protected IdGenType getIdGenType() {
-        return perm.getIdGenType();
-    }
+	protected IdGenType getIdGenType() {
+		return perm.getIdGenType();
+	}
 
-    protected ShardAccessStrategyType getShardAccessStrategyType() {
-        return perm.getSast();
-    }
+	protected ShardAccessStrategyType getShardAccessStrategyType() {
+		return perm.getSast();
+	}
 
-    protected <T> T reloadAssertNotNull(final T reloadMe) {
-        final T result = reload(reloadMe);
-        Assert.assertNotNull(result);
-        return result;
-    }
+	protected <T> T reloadAssertNotNull(final T reloadMe) {
+		final T result = reload( reloadMe );
+		Assert.assertNotNull( result );
+		return result;
+	}
 
-    protected <T> T reload(final T reloadMe) {
-        return reload(session, reloadMe);
-    }
+	protected <T> T reload(final T reloadMe) {
+		return reload( session, reloadMe );
+	}
 
-    protected <T> T reloadAssertNotNull(final Session session, final T reloadMe) {
-        final T result = reload(session, reloadMe);
-        Assert.assertNotNull(result);
-        return result;
-    }
+	protected <T> T reloadAssertNotNull(final Session session, final T reloadMe) {
+		final T result = reload( session, reloadMe );
+		Assert.assertNotNull( result );
+		return result;
+	}
 
-    @SuppressWarnings("unchecked")
-    protected <T> T reload(final Session session, final T reloadMe) {
-        final Class<?> clazz = reloadMe.getClass();
-        final String className = clazz.getSimpleName();
-        try {
-            final Method m = clazz.getMethod("get" + className + "Id");
-            return (T) get(session, clazz, (Serializable) m.invoke(reloadMe));
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InvocationTargetException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	@SuppressWarnings("unchecked")
+	protected <T> T reload(final Session session, final T reloadMe) {
+		final Class<?> clazz = reloadMe.getClass();
+		final String className = clazz.getSimpleName();
+		try {
+			final Method m = clazz.getMethod( "get" + className + "Id" );
+			return (T) get( session, clazz, (Serializable) m.invoke( reloadMe ) );
+		}
+		catch (NoSuchMethodException e) {
+			throw new RuntimeException( e );
+		}
+		catch (IllegalAccessException e) {
+			throw new RuntimeException( e );
+		}
+		catch (InvocationTargetException e) {
+			throw new RuntimeException( e );
+		}
+	}
 
-    protected ShardId getShardIdForObject(final Object obj) {
-        final ShardId shardId = session.getShardIdForObject(obj);
-        if (obj instanceof ShardAware) {
-            Assert.assertEquals(((ShardAware) obj).getShardId(), shardId);
-        }
-        return shardId;
-    }
+	protected ShardId getShardIdForObject(final Object obj) {
+		final ShardId shardId = session.getShardIdForObject( obj );
+		if ( obj instanceof ShardAware ) {
+			Assert.assertEquals( ((ShardAware) obj).getShardId(), shardId );
+		}
+		return shardId;
+	}
 
-    private ShardAccessStrategy getShardAccessStrategy() {
-        switch (getShardAccessStrategyType()) {
-            case SEQUENTIAL:
-                return new SequentialShardAccessStrategy();
-            case PARALLEL:
-                executor = buildThreadPoolExecutor();
-                return new ParallelShardAccessStrategy(executor);
-            default:
-                throw new RuntimeException("unsupported shard access strategy type");
-        }
-    }
+	private ShardAccessStrategy getShardAccessStrategy() {
+		switch ( getShardAccessStrategyType() ) {
+			case SEQUENTIAL:
+				return new SequentialShardAccessStrategy();
+			case PARALLEL:
+				executor = buildThreadPoolExecutor();
+				return new ParallelShardAccessStrategy( executor );
+			default:
+				throw new RuntimeException( "unsupported shard access strategy type" );
+		}
+	}
 
-    private static final ThreadFactory FACTORY = new ThreadFactory() {
-        private int nextThreadId = 0;
+	private static final ThreadFactory FACTORY = new ThreadFactory() {
+		private int nextThreadId = 0;
 
-        @Override
-        public Thread newThread(final Runnable r) {
-            final Thread t = Executors.defaultThreadFactory().newThread(r);
-            t.setDaemon(true);
-            t.setName("T" + (nextThreadId++));
-            return t;
-        }
-    };
+		@Override
+		public Thread newThread(final Runnable r) {
+			final Thread t = Executors.defaultThreadFactory().newThread( r );
+			t.setDaemon( true );
+			t.setName( "T" + (nextThreadId++) );
+			return t;
+		}
+	};
 
-    private ThreadPoolExecutor buildThreadPoolExecutor() {
-        return new ThreadPoolExecutor(10, 50, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), FACTORY);
-    }
+	private ThreadPoolExecutor buildThreadPoolExecutor() {
+		return new ThreadPoolExecutor( 10, 50, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), FACTORY );
+	}
 
-    /**
-     * Catch all throwables so we get an opportunity to add info about the
-     * permutation under which the failure took place.
-     */
-    /*
+	/**
+	 * Catch all throwables so we get an opportunity to add info about the
+	 * permutation under which the failure took place.
+	 */
+	/*
     @Override
     public void runBare() throws Throwable {
         try {
@@ -332,24 +337,23 @@ public abstract class BaseShardingIntegrationTestCase {
         }
     }
     */
+	@SuppressWarnings("unchecked")
+	protected <T> List<T> list(final Criteria crit) {
+		return crit.list();
+	}
 
-    @SuppressWarnings("unchecked")
-    protected <T> List<T> list(final Criteria crit) {
-        return crit.list();
-    }
+	@SuppressWarnings("unchecked")
+	protected <T> List<T> list(final Query query) {
+		return query.list();
+	}
 
-    @SuppressWarnings("unchecked")
-    protected <T> List<T> list(final Query query) {
-        return query.list();
-    }
+	@SuppressWarnings("unchecked")
+	protected <T> T uniqueResult(final Criteria crit) {
+		return (T) crit.uniqueResult();
+	}
 
-    @SuppressWarnings("unchecked")
-    protected <T> T uniqueResult(final Criteria crit) {
-        return (T) crit.uniqueResult();
-    }
-
-    @SuppressWarnings("unchecked")
-    protected <T> T get(final Session session, final Class<?> clazz, final Serializable id) {
-        return (T) session.get(clazz, id);
-    }
+	@SuppressWarnings("unchecked")
+	protected <T> T get(final Session session, final Class<?> clazz, final Serializable id) {
+		return (T) session.get( clazz, id );
+	}
 }

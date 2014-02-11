@@ -30,18 +30,18 @@ import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
  */
 public class AddOrderEventTest {
 
-    @Test
-    public void testOnOpenSession() {
-        AddOrderEvent event = new AddOrderEvent(null);
-        final boolean[] called = {false};
-        Criteria crit = new CriteriaDefaultMock() {
-            @Override
-            public Criteria addOrder(Order order) {
-                called[0] = true;
-                return null;
-            }
-        };
-        event.onEvent(crit);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSession() {
+		AddOrderEvent event = new AddOrderEvent( null );
+		final boolean[] called = {false};
+		Criteria crit = new CriteriaDefaultMock() {
+			@Override
+			public Criteria addOrder(Order order) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( crit );
+		Assert.assertTrue( called[0] );
+	}
 }

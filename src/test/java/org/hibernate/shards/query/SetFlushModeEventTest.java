@@ -29,17 +29,17 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
  */
 public class SetFlushModeEventTest extends TestCase {
 
-   public void testSetFlushModeEventFlushmode() {
-     SetFlushModeEvent event = new SetFlushModeEvent(null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setFlushMode(FlushMode flushMode) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetFlushModeEventFlushmode() {
+		SetFlushModeEvent event = new SetFlushModeEvent( null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setFlushMode(FlushMode flushMode) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

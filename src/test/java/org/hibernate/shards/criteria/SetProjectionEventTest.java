@@ -30,18 +30,18 @@ import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
  */
 public class SetProjectionEventTest {
 
-    @Test
-    public void testOnOpenSession() {
-        SetProjectionEvent event = new SetProjectionEvent(null);
-        final boolean[] called = {false};
-        Criteria crit = new CriteriaDefaultMock() {
-            @Override
-            public Criteria setProjection(Projection projection) {
-                called[0] = true;
-                return null;
-            }
-        };
-        event.onEvent(crit);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSession() {
+		SetProjectionEvent event = new SetProjectionEvent( null );
+		final boolean[] called = {false};
+		Criteria crit = new CriteriaDefaultMock() {
+			@Override
+			public Criteria setProjection(Projection projection) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( crit );
+		Assert.assertTrue( called[0] );
+	}
 }

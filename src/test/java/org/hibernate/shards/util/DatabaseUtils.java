@@ -30,39 +30,43 @@ import org.hibernate.shards.integration.platform.DatabasePlatformFactory;
  */
 public class DatabaseUtils {
 
-    public static Connection createConnection(final int index) throws SQLException {
-        final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-        return DriverManager.getConnection(
-                dbPlatform.getUrl(index),
-                dbPlatform.getUser(),
-                dbPlatform.getPassword());
-    }
+	public static Connection createConnection(final int index) throws SQLException {
+		final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
+		return DriverManager.getConnection(
+				dbPlatform.getUrl( index ),
+				dbPlatform.getUser(),
+				dbPlatform.getPassword()
+		);
+	}
 
-    public static void destroyDatabase(final int index, final IdGenType idGenType) throws SQLException {
-        final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-        final Connection conn = createConnection(index);
-        try {
-            for (final String statement : dbPlatform.getDropTableStatements(idGenType)) {
-                try {
-                    JdbcUtil.executeUpdate(conn, statement, false);
-                } catch (SQLException sqle) {
-                    // not interested, keep moving
-                }
-            }
-        } finally {
-            conn.close();
-        }
-    }
+	public static void destroyDatabase(final int index, final IdGenType idGenType) throws SQLException {
+		final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
+		final Connection conn = createConnection( index );
+		try {
+			for ( final String statement : dbPlatform.getDropTableStatements( idGenType ) ) {
+				try {
+					JdbcUtil.executeUpdate( conn, statement, false );
+				}
+				catch (SQLException sqle) {
+					// not interested, keep moving
+				}
+			}
+		}
+		finally {
+			conn.close();
+		}
+	}
 
-    public static void createDatabase(final int index, final IdGenType idGenType) throws SQLException {
-        final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-        final Connection conn = createConnection(index);
-        try {
-            for (final String statement : dbPlatform.getCreateTableStatements(idGenType)) {
-                JdbcUtil.executeUpdate(conn, statement, false);
-            }
-        } finally {
-            conn.close();
-        }
-    }
+	public static void createDatabase(final int index, final IdGenType idGenType) throws SQLException {
+		final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
+		final Connection conn = createConnection( index );
+		try {
+			for ( final String statement : dbPlatform.getCreateTableStatements( idGenType ) ) {
+				JdbcUtil.executeUpdate( conn, statement, false );
+			}
+		}
+		finally {
+			conn.close();
+		}
+	}
 }

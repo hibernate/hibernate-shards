@@ -23,11 +23,11 @@ package org.hibernate.shards;
  */
 public class ShardOperationDefaultMock<T> implements ShardOperation<T> {
 
-  public T execute(Shard shard) {
-    throw new UnsupportedOperationException();
-  }
+	public T execute(Shard shard) {
+		throw new UnsupportedOperationException();
+	}
 
-  public String getOperationName() {
-    throw new UnsupportedOperationException();
-  }
+	public String getOperationName() {
+		throw new UnsupportedOperationException();
+	}
 }

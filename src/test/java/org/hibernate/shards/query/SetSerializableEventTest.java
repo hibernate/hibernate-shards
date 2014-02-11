@@ -30,31 +30,31 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
  */
 public class SetSerializableEventTest extends TestCase {
 
-   public void testSetSerializableEventPositionVal() {
-     SetSerializableEvent event = new SetSerializableEvent(-1, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setSerializable(int position, Serializable val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetSerializableEventPositionVal() {
+		SetSerializableEvent event = new SetSerializableEvent( -1, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setSerializable(int position, Serializable val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 
-   public void testSetSerializableEventNameVal() {
-     SetSerializableEvent event = new SetSerializableEvent(null, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setSerializable(String name, Serializable val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetSerializableEventNameVal() {
+		SetSerializableEvent event = new SetSerializableEvent( null, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setSerializable(String name, Serializable val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

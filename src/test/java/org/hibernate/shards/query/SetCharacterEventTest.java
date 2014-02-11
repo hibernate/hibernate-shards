@@ -26,33 +26,33 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetCharacterEventTest extends TestCase {
+public class SetCharacterEventTest extends TestCase {
 
-   public void testSetCharacterEventPositionVal() {
-     SetCharacterEvent event = new SetCharacterEvent(-1, 'a');
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setCharacter(int position, char val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetCharacterEventPositionVal() {
+		SetCharacterEvent event = new SetCharacterEvent( -1, 'a' );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setCharacter(int position, char val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 
-   public void testSetCharacterEventNameVal() {
-     SetCharacterEvent event = new SetCharacterEvent(null, 'a');
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setCharacter(String name, char val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetCharacterEventNameVal() {
+		SetCharacterEvent event = new SetCharacterEvent( null, 'a' );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setCharacter(String name, char val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

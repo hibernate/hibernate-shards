@@ -25,63 +25,63 @@ import java.util.List;
  */
 public class Tenant {
 
-    private Serializable tenantId;
-    private String name;
-    private List<Building> buildings;
-    private List<Person> employees;
+	private Serializable tenantId;
+	private String name;
+	private List<Building> buildings;
+	private List<Person> employees;
 
-    public Serializable getTenantId() {
-        return tenantId;
-    }
+	public Serializable getTenantId() {
+		return tenantId;
+	}
 
-    void setTenantId(final Serializable tenantId) {
-        this.tenantId = tenantId;
-    }
+	void setTenantId(final Serializable tenantId) {
+		this.tenantId = tenantId;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(final String name) {
-        this.name = name;
-    }
+	public void setName(final String name) {
+		this.name = name;
+	}
 
-    public List<Building> getBuildings() {
-        return buildings;
-    }
+	public List<Building> getBuildings() {
+		return buildings;
+	}
 
-    public void setBuildings(final List<Building> buildings) {
-        this.buildings = buildings;
-    }
+	public void setBuildings(final List<Building> buildings) {
+		this.buildings = buildings;
+	}
 
-    public List<Person> getEmployees() {
-        return employees;
-    }
+	public List<Person> getEmployees() {
+		return employees;
+	}
 
-    public void setEmployees(final List<Person> employees) {
-        this.employees = employees;
-    }
+	public void setEmployees(final List<Person> employees) {
+		this.employees = employees;
+	}
 
-    @Override
-    public boolean equals(final Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
+	@Override
+	public boolean equals(final Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-        final Tenant tenant = (Tenant) o;
+		final Tenant tenant = (Tenant) o;
 
-        if (tenantId != null ? !tenantId.equals(tenant.tenantId) : tenant.tenantId != null) {
-            return false;
-        }
+		if ( tenantId != null ? !tenantId.equals( tenant.tenantId ) : tenant.tenantId != null ) {
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        return (tenantId != null ? tenantId.hashCode() : 0);
-    }
+	@Override
+	public int hashCode() {
+		return (tenantId != null ? tenantId.hashCode() : 0);
+	}
 }

@@ -32,86 +32,92 @@ import org.hibernate.type.Type;
  */
 public class InterceptorDefaultMock implements Interceptor {
 
-  public boolean onLoad(Object entity, Serializable id, Object[] state,
-      String[] propertyNames, Type[] types) throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public boolean onLoad(
+			Object entity, Serializable id, Object[] state,
+			String[] propertyNames, Type[] types) throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public boolean onFlushDirty(Object entity, Serializable id,
-      Object[] currentState, Object[] previousState, String[] propertyNames,
-      Type[] types) throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public boolean onFlushDirty(
+			Object entity, Serializable id,
+			Object[] currentState, Object[] previousState, String[] propertyNames,
+			Type[] types) throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public boolean onSave(Object entity, Serializable id, Object[] state,
-      String[] propertyNames, Type[] types) throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public boolean onSave(
+			Object entity, Serializable id, Object[] state,
+			String[] propertyNames, Type[] types) throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void onDelete(Object entity, Serializable id, Object[] state,
-      String[] propertyNames, Type[] types) throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public void onDelete(
+			Object entity, Serializable id, Object[] state,
+			String[] propertyNames, Type[] types) throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void onCollectionRecreate(Object collection, Serializable key)
-      throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public void onCollectionRecreate(Object collection, Serializable key)
+			throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void onCollectionRemove(Object collection, Serializable key)
-      throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public void onCollectionRemove(Object collection, Serializable key)
+			throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void onCollectionUpdate(Object collection, Serializable key)
-      throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public void onCollectionUpdate(Object collection, Serializable key)
+			throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void preFlush(Iterator entities) throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public void preFlush(Iterator entities) throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void postFlush(Iterator entities) throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public void postFlush(Iterator entities) throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public Boolean isTransient(Object entity) {
-    throw new UnsupportedOperationException();
-  }
+	public Boolean isTransient(Object entity) {
+		throw new UnsupportedOperationException();
+	}
 
-  public int[] findDirty(Object entity, Serializable id, Object[] currentState,
-      Object[] previousState, String[] propertyNames, Type[] types) {
-    throw new UnsupportedOperationException();
-  }
+	public int[] findDirty(
+			Object entity, Serializable id, Object[] currentState,
+			Object[] previousState, String[] propertyNames, Type[] types) {
+		throw new UnsupportedOperationException();
+	}
 
-  public Object instantiate(String entityName, EntityMode entityMode,
-      Serializable id) throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public Object instantiate(
+			String entityName, EntityMode entityMode,
+			Serializable id) throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public String getEntityName(Object object) throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public String getEntityName(Object object) throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public Object getEntity(String entityName, Serializable id)
-      throws CallbackException {
-    throw new UnsupportedOperationException();
-  }
+	public Object getEntity(String entityName, Serializable id)
+			throws CallbackException {
+		throw new UnsupportedOperationException();
+	}
 
-  public void afterTransactionBegin(Transaction tx) {
-    throw new UnsupportedOperationException();
-  }
+	public void afterTransactionBegin(Transaction tx) {
+		throw new UnsupportedOperationException();
+	}
 
-  public void beforeTransactionCompletion(Transaction tx) {
-    throw new UnsupportedOperationException();
-  }
+	public void beforeTransactionCompletion(Transaction tx) {
+		throw new UnsupportedOperationException();
+	}
 
-  public void afterTransactionCompletion(Transaction tx) {
-    throw new UnsupportedOperationException();
-  }
+	public void afterTransactionCompletion(Transaction tx) {
+		throw new UnsupportedOperationException();
+	}
 
-  public String onPrepareStatement(String sql) {
-    throw new UnsupportedOperationException();
-  }
+	public String onPrepareStatement(String sql) {
+		throw new UnsupportedOperationException();
+	}
 }

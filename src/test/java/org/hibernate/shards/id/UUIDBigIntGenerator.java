@@ -28,18 +28,18 @@ import org.hibernate.id.UUIDHexGenerator;
  */
 public class UUIDBigIntGenerator extends UUIDHexGenerator {
 
-    @Override
-    public BigInteger generate(SessionImplementor session, Object obj) {
+	@Override
+	public BigInteger generate(SessionImplementor session, Object obj) {
 
-        final String str = new StringBuilder(32)
-                .append(format((short) 0))
-                .append(format(getIP()))
-                .append(format((short) (getJVM() >>> 16)))
-                .append(format(getHiTime()))
-                .append(format(getLoTime()))
-                .append(format(getCount()))
-                .toString();
+		final String str = new StringBuilder( 32 )
+				.append( format( (short) 0 ) )
+				.append( format( getIP() ) )
+				.append( format( (short) (getJVM() >>> 16) ) )
+				.append( format( getHiTime() ) )
+				.append( format( getLoTime() ) )
+				.append( format( getCount() ) )
+				.toString();
 
-        return new BigInteger(str, 16);
-    }
+		return new BigInteger( str, 16 );
+	}
 }

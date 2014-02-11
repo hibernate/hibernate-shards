@@ -26,23 +26,23 @@ import org.hibernate.criterion.Order;
  */
 public class InMemoryOrderByTest extends TestCase {
 
-  public void testTopLevel() {
-    InMemoryOrderBy imob = new InMemoryOrderBy(null, Order.asc("yam"));
-    assertEquals("yam", imob.getExpression());
-    assertTrue(imob.isAscending());
+	public void testTopLevel() {
+		InMemoryOrderBy imob = new InMemoryOrderBy( null, Order.asc( "yam" ) );
+		assertEquals( "yam", imob.getExpression() );
+		assertTrue( imob.isAscending() );
 
-    imob = new InMemoryOrderBy(null, Order.desc("yam"));
-    assertEquals("yam", imob.getExpression());
-    assertFalse(imob.isAscending());
-  }
+		imob = new InMemoryOrderBy( null, Order.desc( "yam" ) );
+		assertEquals( "yam", imob.getExpression() );
+		assertFalse( imob.isAscending() );
+	}
 
-  public void testSubObject() {
-    InMemoryOrderBy imob = new InMemoryOrderBy("a.b.c", Order.asc("yam"));
-    assertEquals("a.b.c.yam", imob.getExpression());
-    assertTrue(imob.isAscending());
+	public void testSubObject() {
+		InMemoryOrderBy imob = new InMemoryOrderBy( "a.b.c", Order.asc( "yam" ) );
+		assertEquals( "a.b.c.yam", imob.getExpression() );
+		assertTrue( imob.isAscending() );
 
-    imob = new InMemoryOrderBy("a.b.c", Order.desc("yam"));
-    assertEquals("a.b.c.yam", imob.getExpression());
-    assertFalse(imob.isAscending());
-  }
+		imob = new InMemoryOrderBy( "a.b.c", Order.desc( "yam" ) );
+		assertEquals( "a.b.c.yam", imob.getExpression() );
+		assertFalse( imob.isAscending() );
+	}
 }

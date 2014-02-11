@@ -28,17 +28,17 @@ import org.hibernate.shards.defaultmock.SessionDefaultMock;
  * @author maxr@google.com (Max Ross)
  */
 public class SetFlushModeOpenSessionEventTest extends TestCase {
-  public void testOnOpenSession() {
-    SetFlushModeOpenSessionEvent event = new SetFlushModeOpenSessionEvent(FlushMode.ALWAYS);
-    final boolean[] called = {false};
-    Session session = new SessionDefaultMock() {
-      @Override
-      public void setFlushMode(FlushMode flushMode) {
-        called[0] = true;
-      }
-    };
-    event.onOpenSession(session);
-    assertTrue(called[0]);
-  }
+	public void testOnOpenSession() {
+		SetFlushModeOpenSessionEvent event = new SetFlushModeOpenSessionEvent( FlushMode.ALWAYS );
+		final boolean[] called = {false};
+		Session session = new SessionDefaultMock() {
+			@Override
+			public void setFlushMode(FlushMode flushMode) {
+				called[0] = true;
+			}
+		};
+		event.onOpenSession( session );
+		assertTrue( called[0] );
+	}
 
 }

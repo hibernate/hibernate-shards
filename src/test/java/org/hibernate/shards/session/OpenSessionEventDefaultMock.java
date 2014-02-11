@@ -25,7 +25,7 @@ import org.hibernate.Session;
  */
 public class OpenSessionEventDefaultMock implements OpenSessionEvent {
 
-  public void onOpenSession(Session session) {
-    throw new UnsupportedOperationException();
-  }
+	public void onOpenSession(Session session) {
+		throw new UnsupportedOperationException();
+	}
 }

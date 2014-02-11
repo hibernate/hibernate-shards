@@ -30,18 +30,18 @@ import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
  */
 public class SetCacheModeEventTest {
 
-    @Test
-    public void testOnOpenSession() {
-        SetCacheModeEvent event = new SetCacheModeEvent(CacheMode.GET);
-        final boolean[] called = {false};
-        Criteria crit = new CriteriaDefaultMock() {
-            @Override
-            public Criteria setCacheMode(CacheMode cacheMode) {
-                called[0] = true;
-                return null;
-            }
-        };
-        event.onEvent(crit);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSession() {
+		SetCacheModeEvent event = new SetCacheModeEvent( CacheMode.GET );
+		final boolean[] called = {false};
+		Criteria crit = new CriteriaDefaultMock() {
+			@Override
+			public Criteria setCacheMode(CacheMode cacheMode) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( crit );
+		Assert.assertTrue( called[0] );
+	}
 }

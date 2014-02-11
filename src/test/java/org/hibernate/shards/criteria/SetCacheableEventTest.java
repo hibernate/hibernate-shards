@@ -29,18 +29,18 @@ import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
  */
 public class SetCacheableEventTest {
 
-    @Test
-    public void testOnOpenSession() {
-        SetCacheableEvent event = new SetCacheableEvent(true);
-        final boolean[] called = {false};
-        Criteria crit = new CriteriaDefaultMock() {
-            @Override
-            public Criteria setCacheable(boolean cacheable) {
-                called[0] = true;
-                return null;
-            }
-        };
-        event.onEvent(crit);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSession() {
+		SetCacheableEvent event = new SetCacheableEvent( true );
+		final boolean[] called = {false};
+		Criteria crit = new CriteriaDefaultMock() {
+			@Override
+			public Criteria setCacheable(boolean cacheable) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( crit );
+		Assert.assertTrue( called[0] );
+	}
 }

@@ -32,6 +32,7 @@ import org.jboss.logging.Logger;
 
 import org.hibernate.Cache;
 import org.hibernate.CustomEntityDirtinessStrategy;
+import org.hibernate.EntityNameResolver;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
@@ -44,6 +45,7 @@ import org.hibernate.TypeHelper;
 import org.hibernate.cache.spi.QueryCache;
 import org.hibernate.cache.spi.Region;
 import org.hibernate.cache.spi.UpdateTimestampsCache;
+import org.hibernate.cfg.NotYetImplementedException;
 import org.hibernate.cfg.Settings;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
 import org.hibernate.dialect.Dialect;
@@ -62,12 +64,13 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.exception.spi.SQLExceptionConverter;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.factory.IdentifierGeneratorFactory;
+import org.hibernate.internal.NamedQueryRepository;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
 import org.hibernate.persister.collection.CollectionPersister;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.EntityNotFoundDelegate;
-import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
+import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.hibernate.service.spi.ServiceRegistryImplementor;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.engine.ShardedSessionFactoryImplementor;
@@ -870,6 +873,27 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	@Override
 	public StatelessSessionBuilder withStatelessOptions() {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void registerNamedQueryDefinition(String name, NamedQueryDefinition definition) {
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public void registerNamedSQLQueryDefinition(String name, NamedSQLQueryDefinition definition) {
+		throw new NotYetImplementedException();
+
+	}
+
+	@Override
+	public NamedQueryRepository getNamedQueryRepository() {
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public Iterable<EntityNameResolver> iterateEntityNameResolvers() {
+		throw new NotYetImplementedException();
 	}
 }
 

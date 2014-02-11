@@ -26,19 +26,19 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
 /**
  * @author Maulik Shah
  */
- public class SetCacheRegionEventTest extends TestCase {
+public class SetCacheRegionEventTest extends TestCase {
 
-   public void testSetCacheRegionEventCacheregion() {
-     SetCacheRegionEvent event = new SetCacheRegionEvent(null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setCacheRegion(String cacheRegion) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetCacheRegionEventCacheregion() {
+		SetCacheRegionEvent event = new SetCacheRegionEvent( null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setCacheRegion(String cacheRegion) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

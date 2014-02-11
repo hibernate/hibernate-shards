@@ -22,5 +22,6 @@ package org.hibernate.shards.integration;
  * @author maxr@google.com (Max Ross)
  */
 public enum ShardAccessStrategyType {
-  SEQUENTIAL, PARALLEL
+	SEQUENTIAL,
+	PARALLEL
 }

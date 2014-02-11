@@ -30,87 +30,87 @@ import org.hibernate.shards.util.Lists;
  */
 public class Building implements ShardAware {
 
-  private Serializable buildingId;
-  private String name;
-  private List<Floor> floors = Lists.newArrayList();
-  private List<Tenant> tenants = Lists.newArrayList();
-  private List<Elevator> elevators = Lists.newArrayList();
-  private ShardId shardId;
+	private Serializable buildingId;
+	private String name;
+	private List<Floor> floors = Lists.newArrayList();
+	private List<Tenant> tenants = Lists.newArrayList();
+	private List<Elevator> elevators = Lists.newArrayList();
+	private ShardId shardId;
 
-  public Serializable getBuildingId() {
-    return buildingId;
-  }
+	public Serializable getBuildingId() {
+		return buildingId;
+	}
 
-  public void setBuildingId(Serializable buildingId) {
-    this.buildingId = buildingId;
-  }
+	public void setBuildingId(Serializable buildingId) {
+		this.buildingId = buildingId;
+	}
 
-  public String getName() {
-    return name;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public void setName(String name) {
-    this.name = name;
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-  public List<Floor> getFloors() {
-    return floors;
-  }
+	public List<Floor> getFloors() {
+		return floors;
+	}
 
-  public void setFloors(List<Floor> floors) {
-    this.floors = floors;
-  }
+	public void setFloors(List<Floor> floors) {
+		this.floors = floors;
+	}
 
-  public List<Tenant> getTenants() {
-    return tenants;
-  }
+	public List<Tenant> getTenants() {
+		return tenants;
+	}
 
-  public void setTenants(List<Tenant> tenants) {
-    this.tenants = tenants;
-  }
+	public void setTenants(List<Tenant> tenants) {
+		this.tenants = tenants;
+	}
 
-  public List<Elevator> getElevators() {
-    return elevators;
-  }
+	public List<Elevator> getElevators() {
+		return elevators;
+	}
 
-  public void setElevators(List<Elevator> elevators) {
-    this.elevators = elevators;
-  }
+	public void setElevators(List<Elevator> elevators) {
+		this.elevators = elevators;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-    final Building building = (Building)o;
+		final Building building = (Building) o;
 
-    if (buildingId != null ? !buildingId.equals(building.buildingId)
-        : building.buildingId != null) {
-      return false;
-    }
+		if ( buildingId != null ? !buildingId.equals( building.buildingId )
+				: building.buildingId != null ) {
+			return false;
+		}
 
-    return true;
-  }
+		return true;
+	}
 
-  @Override
-  public int hashCode() {
-    return (buildingId != null ? buildingId.hashCode() : 0);
-  }
+	@Override
+	public int hashCode() {
+		return (buildingId != null ? buildingId.hashCode() : 0);
+	}
 
-  public void setShardId(ShardId shardId) {
-    this.shardId = shardId;
-  }
+	public void setShardId(ShardId shardId) {
+		this.shardId = shardId;
+	}
 
-  public ShardId getShardId() {
-    return shardId;
-  }
+	public ShardId getShardId() {
+		return shardId;
+	}
 
-  @Override
-  public String toString() {
-    return buildingId.toString() + "," + name;
-  }
+	@Override
+	public String toString() {
+		return buildingId.toString() + "," + name;
+	}
 }

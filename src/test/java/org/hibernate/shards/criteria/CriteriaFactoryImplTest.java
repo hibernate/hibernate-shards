@@ -31,67 +31,67 @@ import org.hibernate.shards.defaultmock.SessionDefaultMock;
  */
 public class CriteriaFactoryImplTest {
 
-    @Test
-    public void testOnOpenSessionAssocPath() {
-        CriteriaFactoryImpl cfi = new CriteriaFactoryImpl("entity name");
-        final boolean[] called = {false};
-        Session session = new SessionDefaultMock() {
-            @Override
-            public Criteria createCriteria(String entityName)
-                    throws HibernateException {
-                called[0] = true;
-                return null;
-            }
-        };
-        cfi.createCriteria(session);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSessionAssocPath() {
+		CriteriaFactoryImpl cfi = new CriteriaFactoryImpl( "entity name" );
+		final boolean[] called = {false};
+		Session session = new SessionDefaultMock() {
+			@Override
+			public Criteria createCriteria(String entityName)
+					throws HibernateException {
+				called[0] = true;
+				return null;
+			}
+		};
+		cfi.createCriteria( session );
+		Assert.assertTrue( called[0] );
+	}
 
-    @Test
-    public void testOnOpenSessionAssocPathAndJoinType() {
-        CriteriaFactoryImpl cfi = new CriteriaFactoryImpl("entity name", "alias");
-        final boolean[] called = {false};
-        Session session = new SessionDefaultMock() {
-            @Override
-            public Criteria createCriteria(String entityName, String alias)
-                    throws HibernateException {
-                called[0] = true;
-                return null;
-            }
-        };
-        cfi.createCriteria(session);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSessionAssocPathAndJoinType() {
+		CriteriaFactoryImpl cfi = new CriteriaFactoryImpl( "entity name", "alias" );
+		final boolean[] called = {false};
+		Session session = new SessionDefaultMock() {
+			@Override
+			public Criteria createCriteria(String entityName, String alias)
+					throws HibernateException {
+				called[0] = true;
+				return null;
+			}
+		};
+		cfi.createCriteria( session );
+		Assert.assertTrue( called[0] );
+	}
 
-    @Test
-    public void testOnOpenSessionAssocPathAndAlias() {
-        CriteriaFactoryImpl cfi = new CriteriaFactoryImpl(String.class);
-        final boolean[] called = {false};
-        Session session = new SessionDefaultMock() {
-            @Override
-            public Criteria createCriteria(Class pc)
-                    throws HibernateException {
-                called[0] = true;
-                return null;
-            }
-        };
-        cfi.createCriteria(session);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSessionAssocPathAndAlias() {
+		CriteriaFactoryImpl cfi = new CriteriaFactoryImpl( String.class );
+		final boolean[] called = {false};
+		Session session = new SessionDefaultMock() {
+			@Override
+			public Criteria createCriteria(Class pc)
+					throws HibernateException {
+				called[0] = true;
+				return null;
+			}
+		};
+		cfi.createCriteria( session );
+		Assert.assertTrue( called[0] );
+	}
 
-    @Test
-    public void testOnOpenSessionAssocPathAndAliasAndJoinType() {
-        CriteriaFactoryImpl cfi = new CriteriaFactoryImpl(String.class, "alias");
-        final boolean[] called = {false};
-        Session session = new SessionDefaultMock() {
-            @Override
-            public Criteria createCriteria(Class pc, String alias)
-                    throws HibernateException {
-                called[0] = true;
-                return null;
-            }
-        };
-        cfi.createCriteria(session);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSessionAssocPathAndAliasAndJoinType() {
+		CriteriaFactoryImpl cfi = new CriteriaFactoryImpl( String.class, "alias" );
+		final boolean[] called = {false};
+		Session session = new SessionDefaultMock() {
+			@Override
+			public Criteria createCriteria(Class pc, String alias)
+					throws HibernateException {
+				called[0] = true;
+				return null;
+			}
+		};
+		cfi.createCriteria( session );
+		Assert.assertTrue( called[0] );
+	}
 }

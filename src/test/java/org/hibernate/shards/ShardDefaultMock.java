@@ -39,83 +39,83 @@ import org.hibernate.shards.session.OpenSessionEvent;
  */
 public class ShardDefaultMock implements Shard {
 
-    @Override
-    public SessionFactoryImplementor getSessionFactoryImplementor() {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public SessionFactoryImplementor getSessionFactoryImplementor() {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public Session getSession() {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Session getSession() {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public void addOpenSessionEvent(OpenSessionEvent event) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void addOpenSessionEvent(OpenSessionEvent event) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public Session establishSession() {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Session establishSession() {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public Criteria getCriteriaById(CriteriaId id) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Criteria getCriteriaById(CriteriaId id) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public void addCriteriaEvent(CriteriaId id, CriteriaEvent event) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void addCriteriaEvent(CriteriaId id, CriteriaEvent event) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public Criteria establishCriteria(ShardedCriteria shardedCriteria) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Criteria establishCriteria(ShardedCriteria shardedCriteria) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public List<Object> list(CriteriaId criteriaId) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public List<Object> list(CriteriaId criteriaId) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public Object uniqueResult(CriteriaId criteriaId) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Object uniqueResult(CriteriaId criteriaId) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public Set<ShardId> getShardIds() {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Set<ShardId> getShardIds() {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public Query getQueryById(QueryId queryId) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Query getQueryById(QueryId queryId) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public void addQueryEvent(QueryId id, QueryEvent event) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public void addQueryEvent(QueryId id, QueryEvent event) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public Query establishQuery(ShardedQuery shardedQuery) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Query establishQuery(ShardedQuery shardedQuery) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public List<Object> list(QueryId queryId) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public List<Object> list(QueryId queryId) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public int executeUpdate(QueryId queryId) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public int executeUpdate(QueryId queryId) {
+		throw new UnsupportedOperationException();
+	}
 
-    @Override
-    public Object uniqueResult(QueryId queryId) {
-        throw new UnsupportedOperationException();
-    }
+	@Override
+	public Object uniqueResult(QueryId queryId) {
+		throw new UnsupportedOperationException();
+	}
 }

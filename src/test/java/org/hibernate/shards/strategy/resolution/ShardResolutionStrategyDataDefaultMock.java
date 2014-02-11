@@ -27,11 +27,11 @@ import org.hibernate.shards.strategy.selection.ShardResolutionStrategyData;
  */
 public class ShardResolutionStrategyDataDefaultMock implements ShardResolutionStrategyData {
 
-  public String getEntityName() {
-    throw new UnsupportedOperationException();
-  }
+	public String getEntityName() {
+		throw new UnsupportedOperationException();
+	}
 
-  public Serializable getId() {
-    throw new UnsupportedOperationException();
-  }
+	public Serializable getId() {
+		throw new UnsupportedOperationException();
+	}
 }

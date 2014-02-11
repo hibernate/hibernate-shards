@@ -28,18 +28,19 @@ import org.hibernate.shards.defaultmock.SessionDefaultMock;
  */
 public class SetSessionOnRequiresSessionEventTest extends TestCase {
 
-  public void testOnOpenSession() {
-    class MyRequiresSession implements RequiresSession {
-      private Session session;
-      public void setSession(Session session) {
-        this.session = session;
-      }
-    }
-    MyRequiresSession requiresSession = new MyRequiresSession();
-    SetSessionOnRequiresSessionEvent event = new SetSessionOnRequiresSessionEvent(requiresSession);
-    Session session = new SessionDefaultMock();
-    event.onOpenSession(session);
-    assertSame(requiresSession.session, session);
-  }
+	public void testOnOpenSession() {
+		class MyRequiresSession implements RequiresSession {
+			private Session session;
+
+			public void setSession(Session session) {
+				this.session = session;
+			}
+		}
+		MyRequiresSession requiresSession = new MyRequiresSession();
+		SetSessionOnRequiresSessionEvent event = new SetSessionOnRequiresSessionEvent( requiresSession );
+		Session session = new SessionDefaultMock();
+		event.onOpenSession( session );
+		assertSame( requiresSession.session, session );
+	}
 
 }

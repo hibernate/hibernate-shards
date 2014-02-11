@@ -29,18 +29,18 @@ import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
  */
 public class SetCacheRegionEventTest {
 
-    @Test
-    public void testOnOpenSession() {
-        SetCacheRegionEvent event = new SetCacheRegionEvent(null);
-        final boolean[] called = {false};
-        Criteria crit = new CriteriaDefaultMock() {
-            @Override
-            public Criteria setCacheRegion(String cacheRegion) {
-                called[0] = true;
-                return null;
-            }
-        };
-        event.onEvent(crit);
-        Assert.assertTrue(called[0]);
-    }
+	@Test
+	public void testOnOpenSession() {
+		SetCacheRegionEvent event = new SetCacheRegionEvent( null );
+		final boolean[] called = {false};
+		Criteria crit = new CriteriaDefaultMock() {
+			@Override
+			public Criteria setCacheRegion(String cacheRegion) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( crit );
+		Assert.assertTrue( called[0] );
+	}
 }

@@ -25,7 +25,7 @@ import org.hibernate.shards.ShardId;
  */
 public class ShardSelectionStrategyDefaultMock implements ShardSelectionStrategy {
 
-  public ShardId selectShardIdForNewObject(Object obj) {
-    throw new UnsupportedOperationException();
-  }
+	public ShardId selectShardIdForNewObject(Object obj) {
+		throw new UnsupportedOperationException();
+	}
 }

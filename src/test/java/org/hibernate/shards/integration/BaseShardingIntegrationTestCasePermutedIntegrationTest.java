@@ -36,20 +36,20 @@ import org.hibernate.shards.PermutationHelper;
 @RunWith(Parameterized.class)
 public class BaseShardingIntegrationTestCasePermutedIntegrationTest extends BaseShardingIntegrationTestCase {
 
-    public BaseShardingIntegrationTestCasePermutedIntegrationTest(final Permutation perm) {
-        super(perm);
-    }
+	public BaseShardingIntegrationTestCasePermutedIntegrationTest(final Permutation perm) {
+		super( perm );
+	}
 
-    @Test
-    public void testThatThing() {
-    }
+	@Test
+	public void testThatThing() {
+	}
 
-    @Test
-    public void testThatOtherThing() {
-    }
+	@Test
+	public void testThatOtherThing() {
+	}
 
-    @Parameterized.Parameters()
-    public static Iterable<Object[]> data() {
-        return PermutationHelper.data();
-    }
+	@Parameterized.Parameters()
+	public static Iterable<Object[]> data() {
+		return PermutationHelper.data();
+	}
 }

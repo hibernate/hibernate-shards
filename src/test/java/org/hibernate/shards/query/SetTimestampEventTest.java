@@ -30,31 +30,31 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
  */
 public class SetTimestampEventTest extends TestCase {
 
-   public void testSetTimestampEventPositionVal() {
-     SetTimestampEvent event = new SetTimestampEvent(-1, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setTimestamp(int position, Date val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetTimestampEventPositionVal() {
+		SetTimestampEvent event = new SetTimestampEvent( -1, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setTimestamp(int position, Date val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 
-   public void testSetTimestampEventNameVal() {
-     SetTimestampEvent event = new SetTimestampEvent(null, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setTimestamp(String name, Date val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetTimestampEventNameVal() {
+		SetTimestampEvent event = new SetTimestampEvent( null, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setTimestamp(String name, Date val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

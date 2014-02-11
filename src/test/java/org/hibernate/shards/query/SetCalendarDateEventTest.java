@@ -30,31 +30,31 @@ import org.hibernate.shards.defaultmock.QueryDefaultMock;
  */
 public class SetCalendarDateEventTest extends TestCase {
 
-   public void testSetCalendarDateEventPositionVal() {
-     SetCalendarDateEvent event = new SetCalendarDateEvent(-1, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setCalendarDate(int position, Calendar val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetCalendarDateEventPositionVal() {
+		SetCalendarDateEvent event = new SetCalendarDateEvent( -1, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setCalendarDate(int position, Calendar val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 
-   public void testSetCalendarDateEventNameVal() {
-     SetCalendarDateEvent event = new SetCalendarDateEvent(null, null);
-     final boolean[] called = {false};
-     Query query = new QueryDefaultMock() {
-       @Override
-       public Query setCalendarDate(String name, Calendar val) {
-         called[0] = true;
-         return null;
-       }
-     };
-     event.onEvent(query);
-     assertTrue(called[0]);
-   }
+	public void testSetCalendarDateEventNameVal() {
+		SetCalendarDateEvent event = new SetCalendarDateEvent( null, null );
+		final boolean[] called = {false};
+		Query query = new QueryDefaultMock() {
+			@Override
+			public Query setCalendarDate(String name, Calendar val) {
+				called[0] = true;
+				return null;
+			}
+		};
+		event.onEvent( query );
+		assertTrue( called[0] );
+	}
 }

@@ -40,47 +40,71 @@ import static org.junit.Assert.assertTrue;
  */
 public class ProjectionExitOperationFactoryTest {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testReturnedOperations() throws Exception {
-        final ProjectionExitOperationFactory factory = ProjectionExitOperationFactory.getFactory();
+	@Test(expected = IllegalArgumentException.class)
+	public void testReturnedOperations() throws Exception {
+		final ProjectionExitOperationFactory factory = ProjectionExitOperationFactory.getFactory();
 
-        assertTrue(factory.getProjectionExitOperation(Projections.rowCount(), new SessionFactoryMock()) instanceof RowCountExitOperation);
-        assertTrue(factory.getProjectionExitOperation(Projections.max("foo"), new SessionFactoryMock()) instanceof AggregateExitOperation);
-        assertTrue(factory.getProjectionExitOperation(Projections.min("foo"), new SessionFactoryMock()) instanceof AggregateExitOperation);
-        assertTrue(factory.getProjectionExitOperation(Projections.sum("foo"), new SessionFactoryMock()) instanceof AggregateExitOperation);
-        factory.getProjectionExitOperation(Projections.avg("foo"), new SessionFactoryMock());
-    }
+		assertTrue(
+				factory.getProjectionExitOperation(
+						Projections.rowCount(),
+						new SessionFactoryMock()
+				) instanceof RowCountExitOperation
+		);
+		assertTrue(
+				factory.getProjectionExitOperation(
+						Projections.max( "foo" ),
+						new SessionFactoryMock()
+				) instanceof AggregateExitOperation
+		);
+		assertTrue(
+				factory.getProjectionExitOperation(
+						Projections.min( "foo" ),
+						new SessionFactoryMock()
+				) instanceof AggregateExitOperation
+		);
+		assertTrue(
+				factory.getProjectionExitOperation(
+						Projections.sum( "foo" ),
+						new SessionFactoryMock()
+				) instanceof AggregateExitOperation
+		);
+		factory.getProjectionExitOperation( Projections.avg( "foo" ), new SessionFactoryMock() );
+	}
 
-    static class SessionFactoryMock extends SessionFactoryDefaultMock {
+	static class SessionFactoryMock extends SessionFactoryDefaultMock {
 
-        public ClassMetadata getClassMetadata(Class persistentClass)
-                throws HibernateException {
-            return null;
-        }
+		public ClassMetadata getClassMetadata(Class persistentClass)
+				throws HibernateException {
+			return null;
+		}
 
-        public EntityPersister getEntityPersister(String entityName)
-                throws MappingException {
-            return new EntityPersisterMock();
-        }
-    }
+		public EntityPersister getEntityPersister(String entityName)
+				throws MappingException {
+			return new EntityPersisterMock();
+		}
+	}
 
-    static class EntityPersisterMock extends EntityPersisterDefaultMock {
+	static class EntityPersisterMock extends EntityPersisterDefaultMock {
 
-        @SuppressWarnings("unchecked")
-        public Object getPropertyValue(Object object, String propertyName,
-                                       EntityMode entityMode) throws HibernateException {
-            Class clazz = object.getClass();
-            propertyName = StringUtil.capitalize(propertyName);
-            try {
-                Method m = clazz.getMethod("get" + propertyName);
-                return m.invoke(object);
-            } catch (NoSuchMethodException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
+		@SuppressWarnings("unchecked")
+		public Object getPropertyValue(
+				Object object, String propertyName,
+				EntityMode entityMode) throws HibernateException {
+			Class clazz = object.getClass();
+			propertyName = StringUtil.capitalize( propertyName );
+			try {
+				Method m = clazz.getMethod( "get" + propertyName );
+				return m.invoke( object );
+			}
+			catch (NoSuchMethodException e) {
+				throw new RuntimeException( e );
+			}
+			catch (IllegalAccessException e) {
+				throw new RuntimeException( e );
+			}
+			catch (InvocationTargetException e) {
+				throw new RuntimeException( e );
+			}
+		}
+	}
 }

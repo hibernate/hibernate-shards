@@ -25,64 +25,64 @@ import java.io.Serializable;
  */
 public class Person {
 
-  private Serializable personId;
-  private String name;
-  private Office office;
-  private Tenant employer;
+	private Serializable personId;
+	private String name;
+	private Office office;
+	private Tenant employer;
 
-  public Serializable getPersonId() {
-    return personId;
-  }
+	public Serializable getPersonId() {
+		return personId;
+	}
 
-  void setPersonId(Serializable personId) {
-    this.personId = personId;
-  }
+	void setPersonId(Serializable personId) {
+		this.personId = personId;
+	}
 
-  public String getName() {
-    return name;
-  }
+	public String getName() {
+		return name;
+	}
 
-  public void setName(String name) {
-    this.name = name;
-  }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-  public Office getOffice() {
-    return office;
-  }
+	public Office getOffice() {
+		return office;
+	}
 
-  public void setOffice(Office office) {
-    this.office = office;
-  }
+	public void setOffice(Office office) {
+		this.office = office;
+	}
 
-  public Tenant getEmployer() {
-    return employer;
-  }
+	public Tenant getEmployer() {
+		return employer;
+	}
 
-  public void setEmployer(Tenant employer) {
-    this.employer = employer;
-  }
+	public void setEmployer(Tenant employer) {
+		this.employer = employer;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-    final Person person = (Person)o;
+		final Person person = (Person) o;
 
-    if (personId != null ? !personId.equals(person.personId)
-        : person.personId != null) {
-      return false;
-    }
+		if ( personId != null ? !personId.equals( person.personId )
+				: person.personId != null ) {
+			return false;
+		}
 
-    return true;
-  }
+		return true;
+	}
 
-  @Override
-  public int hashCode() {
-    return (personId != null ? personId.hashCode() : 0);
-  }
+	@Override
+	public int hashCode() {
+		return (personId != null ? personId.hashCode() : 0);
+	}
 }

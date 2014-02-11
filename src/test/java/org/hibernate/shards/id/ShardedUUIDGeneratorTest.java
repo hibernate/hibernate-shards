@@ -30,28 +30,28 @@ import org.hibernate.shards.session.ShardedSessionImpl;
  * @author Tomislav Nad
  */
 public class ShardedUUIDGeneratorTest extends TestCase {
-  private ShardedUUIDGenerator gen;
+	private ShardedUUIDGenerator gen;
 
-  @Override
-  protected void setUp() {
-    gen = new ShardedUUIDGenerator();
-  }
+	@Override
+	protected void setUp() {
+		gen = new ShardedUUIDGenerator();
+	}
 
-  public void testHexShardEncoding() throws Exception {
-    Properties prop = new Properties();
-    prop.setProperty("sharded-uuid-type", "STRING");
-    gen.configure(null, prop, null);
-    ShardedSessionImpl.setCurrentSubgraphShardId(new ShardId(13));
-    Serializable id = gen.generate(null, null);
-    assertEquals(new ShardId(13), gen.extractShardId(id));
-  }
+	public void testHexShardEncoding() throws Exception {
+		Properties prop = new Properties();
+		prop.setProperty( "sharded-uuid-type", "STRING" );
+		gen.configure( null, prop, null );
+		ShardedSessionImpl.setCurrentSubgraphShardId( new ShardId( 13 ) );
+		Serializable id = gen.generate( null, null );
+		assertEquals( new ShardId( 13 ), gen.extractShardId( id ) );
+	}
 
-  public void testIntegerShardEncoding() throws Exception {
-    Properties prop = new Properties();
-    gen.configure(null, prop, null);
-    ShardedSessionImpl.setCurrentSubgraphShardId(new ShardId(13));
-    Serializable id = gen.generate(null, null);
-    assertEquals(new ShardId(13), gen.extractShardId(id));
-  }
+	public void testIntegerShardEncoding() throws Exception {
+		Properties prop = new Properties();
+		gen.configure( null, prop, null );
+		ShardedSessionImpl.setCurrentSubgraphShardId( new ShardId( 13 ) );
+		Serializable id = gen.generate( null, null );
+		assertEquals( new ShardId( 13 ), gen.extractShardId( id ) );
+	}
 
 }

@@ -24,42 +24,42 @@ import java.io.Serializable;
  * @author maxr@google.com (Max Ross)
  */
 public class Window {
-  private Serializable windowId;
+	private Serializable windowId;
 
-  private boolean opens;
+	private boolean opens;
 
-  public Serializable getWindowId() {
-    return windowId;
-  }
+	public Serializable getWindowId() {
+		return windowId;
+	}
 
-  public void setWindowId(Serializable windowId) {
-    this.windowId = windowId;
-  }
+	public void setWindowId(Serializable windowId) {
+		this.windowId = windowId;
+	}
 
-  public boolean getOpens() {
-    return opens;
-  }
+	public boolean getOpens() {
+		return opens;
+	}
 
-  public void setOpens(boolean opens) {
-    this.opens = opens;
-  }
+	public void setOpens(boolean opens) {
+		this.opens = opens;
+	}
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
-      return true;
-    }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
-    }
+	@Override
+	public boolean equals(Object o) {
+		if ( this == o ) {
+			return true;
+		}
+		if ( o == null || getClass() != o.getClass() ) {
+			return false;
+		}
 
-    final Window window = (Window) o;
+		final Window window = (Window) o;
 
-    return windowId.equals(window.windowId);
-  }
+		return windowId.equals( window.windowId );
+	}
 
-  @Override
-  public int hashCode() {
-    return windowId.hashCode();
-  }
+	@Override
+	public int hashCode() {
+		return windowId.hashCode();
+	}
 }

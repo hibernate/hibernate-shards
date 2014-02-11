@@ -30,29 +30,29 @@ import org.hibernate.shards.util.Lists;
  */
 public class MaxResultExitOperationTest extends TestCase {
 
-  public void testApply() {
-    MaxResultsExitOperation exitOp = new MaxResultsExitOperation(3);
+	public void testApply() {
+		MaxResultsExitOperation exitOp = new MaxResultsExitOperation( 3 );
 
-    List<Object> list = Lists.<Object>newArrayList(1, 2, null, 3, 4, 5);
+		List<Object> list = Lists.<Object>newArrayList( 1, 2, null, 3, 4, 5 );
 
-    List<Object> objects = exitOp.apply(list);
-    assertEquals(3, objects.size());
-    assertNoNullElements(objects);
-    assertEquals(Lists.newArrayList(1, 2, 3), objects);
-  }
+		List<Object> objects = exitOp.apply( list );
+		assertEquals( 3, objects.size() );
+		assertNoNullElements( objects );
+		assertEquals( Lists.newArrayList( 1, 2, 3 ), objects );
+	}
 
-  public void testApplyWithFewerElementsThanMaxResults() {
-    MaxResultsExitOperation exitOp = new MaxResultsExitOperation(8);
-    List<Object> list = Lists.<Object>newArrayList(1, 2, null, 3, 4, 5);
-    List<Object> objects = exitOp.apply(list);
-    assertEquals(5, objects.size());
-    assertNoNullElements(objects);
-    assertEquals(Lists.newArrayList(1, 2, 3, 4, 5), objects);
-  }
+	public void testApplyWithFewerElementsThanMaxResults() {
+		MaxResultsExitOperation exitOp = new MaxResultsExitOperation( 8 );
+		List<Object> list = Lists.<Object>newArrayList( 1, 2, null, 3, 4, 5 );
+		List<Object> objects = exitOp.apply( list );
+		assertEquals( 5, objects.size() );
+		assertNoNullElements( objects );
+		assertEquals( Lists.newArrayList( 1, 2, 3, 4, 5 ), objects );
+	}
 
-  private void assertNoNullElements(List<Object> objects) {
-    for(Object obj : objects) {
-      assertTrue(obj != null);
-    }
-  }
+	private void assertNoNullElements(List<Object> objects) {
+		for ( Object obj : objects ) {
+			assertTrue( obj != null );
+		}
+	}
 }
