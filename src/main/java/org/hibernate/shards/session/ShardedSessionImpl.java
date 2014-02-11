@@ -2032,26 +2032,31 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 
 	@Override
 	public void addEventListeners(SessionEventListener... listeners) {
+		//todo may be UnsupportedOperationException
 		throw new NotYetImplementedException();
 	}
 
 	@Override
 	public ProcedureCall getNamedProcedureCall(String name) {
+		//todo may be UnsupportedOperationException
 		throw new NotYetImplementedException();
 	}
 
 	@Override
 	public ProcedureCall createStoredProcedureCall(String procedureName) {
+		//todo may be UnsupportedOperationException
 		throw new NotYetImplementedException();
 	}
 
 	@Override
 	public ProcedureCall createStoredProcedureCall(String procedureName, Class... resultClasses) {
+		//todo may be UnsupportedOperationException
 		throw new NotYetImplementedException();
 	}
 
 	@Override
 	public ProcedureCall createStoredProcedureCall(String procedureName, String... resultSetMappings) {
+		//todo may be UnsupportedOperationException
 		throw new NotYetImplementedException();
 	}
 }

@@ -38,6 +38,7 @@ import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.cfg.NotYetImplementedException;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardOperation;
 import org.hibernate.shards.strategy.access.ShardAccessStrategy;
@@ -662,5 +663,71 @@ public class ShardedQueryImpl implements ShardedQuery {
 			}
 		}
 		return this;
+	}
+
+	@Override
+	public Integer getMaxResults() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public Integer getFirstResult() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public LockOptions getLockOptions() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public String getComment() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public Query addQueryHint(String hint) {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public FlushMode getFlushMode() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public CacheMode getCacheMode() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public boolean isCacheable() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public String getCacheRegion() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public Integer getTimeout() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public Integer getFetchSize() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
 	}
 }

@@ -879,22 +879,26 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 
 	@Override
 	public void registerNamedQueryDefinition(String name, NamedQueryDefinition definition) {
+		//todo may be UnsupportedOperationException
 		throw new NotYetImplementedException();
 	}
 
 	@Override
 	public void registerNamedSQLQueryDefinition(String name, NamedSQLQueryDefinition definition) {
+		//todo may be UnsupportedOperationException
 		throw new NotYetImplementedException();
 
 	}
 
 	@Override
 	public NamedQueryRepository getNamedQueryRepository() {
+		//todo may be UnsupportedOperationException
 		throw new NotYetImplementedException();
 	}
 
 	@Override
 	public Iterable<EntityNameResolver> iterateEntityNameResolvers() {
+		//todo may be UnsupportedOperationException
 		throw new NotYetImplementedException();
 	}
 }

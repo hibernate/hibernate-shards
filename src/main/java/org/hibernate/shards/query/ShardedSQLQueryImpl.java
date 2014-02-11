@@ -1,10 +1,13 @@
 package org.hibernate.shards.query;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.LockMode;
 import org.hibernate.MappingException;
 import org.hibernate.SQLQuery;
+import org.hibernate.cfg.NotYetImplementedException;
+import org.hibernate.engine.query.spi.sql.NativeSQLQueryReturn;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.strategy.access.ShardAccessStrategy;
 import org.hibernate.type.Type;
@@ -108,5 +111,23 @@ public class ShardedSQLQueryImpl extends ShardedQueryImpl implements ShardedSQLQ
 	@Override
 	public SQLQuery setResultSetMapping(final String name) {
 		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isCallable() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public List<NativeSQLQueryReturn> getQueryReturns() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
+	}
+
+	@Override
+	public Collection<String> getSynchronizedQuerySpaces() {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
 	}
 }

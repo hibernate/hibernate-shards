@@ -30,6 +30,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.cfg.NotYetImplementedException;
 import org.hibernate.criterion.AvgProjection;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
@@ -504,5 +505,11 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 	public Criteria createCriteria(String associationPath, String alias, JoinType joinType, Criterion withClause)
 			throws HibernateException {
 		return null;
+	}
+
+	@Override
+	public Criteria addQueryHint(String hint) {
+		//todo may be UnsupportedOperationException
+		throw new NotYetImplementedException();
 	}
 }

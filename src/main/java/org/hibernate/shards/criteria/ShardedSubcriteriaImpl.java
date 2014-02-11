@@ -29,6 +29,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
+import org.hibernate.cfg.NotYetImplementedException;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
@@ -424,5 +425,10 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	public Criteria createCriteria(String associationPath, String alias, JoinType joinType, Criterion withClause)
 			throws HibernateException {
 		return null;
+	}
+
+	@Override
+	public Criteria addQueryHint(String hint) {
+		throw new NotYetImplementedException();
 	}
 }
