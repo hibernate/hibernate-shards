@@ -33,27 +33,39 @@ import org.hibernate.type.Type;
 public class InterceptorDefaultMock implements Interceptor {
 
 	public boolean onLoad(
-			Object entity, Serializable id, Object[] state,
-			String[] propertyNames, Type[] types) throws CallbackException {
+			Object entity,
+			Serializable id,
+			Object[] state,
+			String[] propertyNames,
+			Type[] types) throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean onFlushDirty(
-			Object entity, Serializable id,
-			Object[] currentState, Object[] previousState, String[] propertyNames,
+			Object entity,
+			Serializable id,
+			Object[] currentState,
+			Object[] previousState,
+			String[] propertyNames,
 			Type[] types) throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean onSave(
-			Object entity, Serializable id, Object[] state,
-			String[] propertyNames, Type[] types) throws CallbackException {
+			Object entity,
+			Serializable id,
+			Object[] state,
+			String[] propertyNames,
+			Type[] types) throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
 	public void onDelete(
-			Object entity, Serializable id, Object[] state,
-			String[] propertyNames, Type[] types) throws CallbackException {
+			Object entity,
+			Serializable id,
+			Object[] state,
+			String[] propertyNames,
+			Type[] types) throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -85,13 +97,18 @@ public class InterceptorDefaultMock implements Interceptor {
 	}
 
 	public int[] findDirty(
-			Object entity, Serializable id, Object[] currentState,
-			Object[] previousState, String[] propertyNames, Type[] types) {
+			Object entity,
+			Serializable id,
+			Object[] currentState,
+			Object[] previousState,
+			String[] propertyNames,
+			Type[] types) {
 		throw new UnsupportedOperationException();
 	}
 
 	public Object instantiate(
-			String entityName, EntityMode entityMode,
+			String entityName,
+			EntityMode entityMode,
 			Serializable id) throws CallbackException {
 		throw new UnsupportedOperationException();
 	}

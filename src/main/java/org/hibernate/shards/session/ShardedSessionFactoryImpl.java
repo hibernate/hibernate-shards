@@ -141,11 +141,12 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	 * @param classesWithoutTopLevelSaveSupport All classes that cannot be saved
 	 * as top-level objects
 	 * @param checkAllAssociatedObjectsForDifferentShards Flag that controls
-	 * whether or not we do full cross-shard relationshp checking (very slow)
+	 * whether or not we do full cross-shard relationship checking (very slow)
 	 */
 	public ShardedSessionFactoryImpl(
 			final List<ShardId> shardIds,
-			final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
+			final Map<SessionFactoryImplementor,
+			Set<ShardId>> sessionFactoryShardIdMap,
 			final ShardStrategyFactory shardStrategyFactory,
 			final Set<Class<?>> classesWithoutTopLevelSaveSupport,
 			final boolean checkAllAssociatedObjectsForDifferentShards) {

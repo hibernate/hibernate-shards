@@ -58,9 +58,12 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
 
 	@Override
 	public boolean onFlushDirty(
-			final Object entity, final Serializable id,
-			final Object[] currentState, final Object[] previousState,
-			final String[] propertyNames, final Type[] types) throws CallbackException {
+			final Object entity,
+			final Serializable id,
+			final Object[] currentState,
+			final Object[] previousState,
+			final String[] propertyNames,
+			final Type[] types) throws CallbackException {
 
 		final ShardId expectedShardId = getAndRefreshExpectedShardId( entity );
 		Preconditions.checkNotNull( expectedShardId );
@@ -104,7 +107,8 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
 	}
 
 	void checkIterable(
-			final String classOfUpdatedObject, final ShardId expectedShardId,
+			final String classOfUpdatedObject,
+			final ShardId expectedShardId,
 			final Iterable<Object> iterable) {
 
 		for ( final Object obj : iterable ) {
@@ -116,18 +120,19 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
 			final String classOfUpdatedObject, final ShardId expectedShardId,
 			final Object associatedObject) {
 
-		ShardId localShardId;	/*
-	 * Here's something you wish you didn't need to know: If the associated
-     * object is an unitialized proxy and the object is not on the same
-     * shard as the shard with which the interceptor is associated, attempting
-     * to lookup the shard for the object will yield an ObjectNotFoundException
-     * that Hibernate will swallow, and getShardIdForObject will return null and
-     * the association will be let through.
-     * In order to avoid this, we check to see if the associated object is
-     * a proxy, and if it is we force it to initialize.
-     * If the associated object is a pojo or a proxy that has already been
-     * initialized, the call to getShardIdForObject will succeed.
-     */
+		ShardId localShardId;
+		/*
+		 * Here's something you wish you didn't need to know: If the associated
+		 * object is an uninitialized proxy and the object is not on the same
+		 * shard as the shard with which the interceptor is associated, attempting
+		 * to lookup the shard for the object will yield an ObjectNotFoundException
+		 * that Hibernate will swallow, and getShardIdForObject will return null and
+		 * the association will be let through.
+		 * In order to avoid this, we check to see if the associated object is
+		 * a proxy, and if it is we force it to initialize.
+		 * If the associated object is a pojo or a proxy that has already been
+		 * initialized, the call to getShardIdForObject will succeed.
+		 */
 		if ( associatedObject instanceof HibernateProxy ) {
 			final HibernateProxy hp = (HibernateProxy) associatedObject;
 			try {

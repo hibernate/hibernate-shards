@@ -46,7 +46,8 @@ public class ShardAwareInterceptor extends EmptyInterceptor {
 			final Object entity,
 			final Serializable id,
 			final Object[] state,
-			final String[] propertyNames, Type[] types) throws CallbackException {
+			final String[] propertyNames,
+			Type[] types) throws CallbackException {
 
 		return setShardId( entity );
 	}
@@ -56,7 +57,8 @@ public class ShardAwareInterceptor extends EmptyInterceptor {
 			final Object entity,
 			final Serializable id,
 			final Object[] state,
-			final String[] propertyNames, Type[] types) {
+			final String[] propertyNames,
+			Type[] types) {
 
 		return setShardId( entity );
 	}

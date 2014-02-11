@@ -160,8 +160,11 @@ public class InterceptorBehaviorPermutedIntegrationTest extends BaseShardingInte
 
 		@Override
 		public boolean onFlushDirty(
-				Object entity, Serializable id,
-				Object[] currentState, Object[] previousState, String[] propertyNames,
+				Object entity,
+				Serializable id,
+				Object[] currentState,
+				Object[] previousState,
+				String[] propertyNames,
 				Type[] types) {
 			throw new CallbackException( "boom" );
 		}

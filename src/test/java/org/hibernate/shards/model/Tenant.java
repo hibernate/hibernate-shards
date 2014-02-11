@@ -73,7 +73,9 @@ public class Tenant {
 
 		final Tenant tenant = (Tenant) o;
 
-		if ( tenantId != null ? !tenantId.equals( tenant.tenantId ) : tenant.tenantId != null ) {
+		if ( tenantId != null
+				? !tenantId.equals( tenant.tenantId )
+				: tenant.tenantId != null ) {
 			return false;
 		}
 

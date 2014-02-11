@@ -82,47 +82,61 @@ public class TypeDefaultMock implements Type {
 	}
 
 	public boolean isDirty(
-			Object old, Object current, boolean[] checkable,
+			Object old,
+			Object current,
+			boolean[] checkable,
 			SessionImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	public boolean isModified(
-			Object oldHydratedState, Object currentState,
-			boolean[] checkable, SessionImplementor session)
+			Object oldHydratedState,
+			Object currentState,
+			boolean[] checkable,
+			SessionImplementor session)
 			throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	public Object nullSafeGet(
-			ResultSet rs, String[] names,
-			SessionImplementor session, Object owner)
+			ResultSet rs,
+			String[] names,
+			SessionImplementor session,
+			Object owner)
 			throws HibernateException, SQLException {
 		throw new UnsupportedOperationException();
 	}
 
 	public Object nullSafeGet(
-			ResultSet rs, String name,
-			SessionImplementor session, Object owner)
+			ResultSet rs,
+			String name,
+			SessionImplementor session,
+			Object owner)
 			throws HibernateException, SQLException {
 		throw new UnsupportedOperationException();
 	}
 
 	public void nullSafeSet(
-			PreparedStatement st, Object value, int index,
-			boolean[] settable, SessionImplementor session)
+			PreparedStatement st,
+			Object value,
+			int index,
+			boolean[] settable,
+			SessionImplementor session)
 			throws HibernateException, SQLException {
 		throw new UnsupportedOperationException();
 	}
 
 	public void nullSafeSet(
-			PreparedStatement st, Object value, int index,
+			PreparedStatement st,
+			Object value,
+			int index,
 			SessionImplementor session) throws HibernateException, SQLException {
 		throw new UnsupportedOperationException();
 	}
 
 	public void setToXMLNode(
-			Node node, Object value,
+			Node node,
+			Object value,
 			SessionFactoryImplementor factory) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
@@ -147,13 +161,15 @@ public class TypeDefaultMock implements Type {
 	}
 
 	public Serializable disassemble(
-			Object value, SessionImplementor session,
+			Object value,
+			SessionImplementor session,
 			Object owner) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	public Object assemble(
-			Serializable cached, SessionImplementor session,
+			Serializable cached,
+			SessionImplementor session,
 			Object owner) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
@@ -163,8 +179,10 @@ public class TypeDefaultMock implements Type {
 	}
 
 	public Object hydrate(
-			ResultSet rs, String[] names,
-			SessionImplementor session, Object owner)
+			ResultSet rs,
+			String[] names,
+			SessionImplementor session,
+			Object owner)
 			throws HibernateException, SQLException {
 		throw new UnsupportedOperationException();
 	}
@@ -175,7 +193,8 @@ public class TypeDefaultMock implements Type {
 	}
 
 	public Object semiResolve(
-			Object value, SessionImplementor session,
+			Object value,
+			SessionImplementor session,
 			Object owner) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
@@ -185,15 +204,21 @@ public class TypeDefaultMock implements Type {
 	}
 
 	public Object replace(
-			Object original, Object target,
-			SessionImplementor session, Object owner, Map copyCache)
+			Object original,
+			Object target,
+			SessionImplementor session,
+			Object owner,
+			Map copyCache)
 			throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	public Object replace(
-			Object original, Object target,
-			SessionImplementor session, Object owner, Map copyCache,
+			Object original,
+			Object target,
+			SessionImplementor session,
+			Object owner,
+			Map copyCache,
 			ForeignKeyDirection foreignKeyDirection) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}

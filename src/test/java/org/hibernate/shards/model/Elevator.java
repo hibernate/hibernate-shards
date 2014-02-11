@@ -67,7 +67,8 @@ public class Elevator {
 
 		final Elevator elevator = (Elevator) o;
 
-		if ( elevatorId != null ? !elevatorId.equals( elevator.elevatorId )
+		if ( elevatorId != null
+				? !elevatorId.equals( elevator.elevatorId )
 				: elevator.elevatorId != null ) {
 			return false;
 		}

@@ -122,7 +122,9 @@ public class Floor {
 
 		final Floor floor = (Floor) o;
 
-		if ( floorId != null ? !floorId.equals( floor.floorId ) : floor.floorId != null ) {
+		if ( floorId != null
+				? !floorId.equals( floor.floorId )
+				: floor.floorId != null ) {
 			return false;
 		}
 

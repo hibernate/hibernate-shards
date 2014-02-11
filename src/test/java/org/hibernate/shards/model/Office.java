@@ -83,7 +83,8 @@ public class Office {
 
 		final Office office = (Office) o;
 
-		return !(officeId != null ? !officeId.equals( office.officeId )
+		return !(officeId != null
+				? !officeId.equals( office.officeId )
 				: office.officeId != null);
 
 	}

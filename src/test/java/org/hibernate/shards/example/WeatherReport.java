@@ -94,7 +94,8 @@ public class WeatherReport {
 
 		WeatherReport that = (WeatherReport) o;
 
-		return !(reportId != null ? !reportId.equals( that.reportId )
+		return !(reportId != null
+				? !reportId.equals( that.reportId )
 				: that.reportId != null);
 
 	}

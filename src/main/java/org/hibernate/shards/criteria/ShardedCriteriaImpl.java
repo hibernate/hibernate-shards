@@ -167,7 +167,9 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 
 	@Override
 	public Criteria createAlias(
-			final String associationPath, final String alias, final int joinType,
+			final String associationPath,
+			final String alias,
+			final int joinType,
 			final Criterion withClause) throws HibernateException {
 		final SubcriteriaFactory factory = new SubcriteriaFactoryImpl( associationPath, alias, joinType, withClause );
 		return createSubcriteria( factory, associationPath );

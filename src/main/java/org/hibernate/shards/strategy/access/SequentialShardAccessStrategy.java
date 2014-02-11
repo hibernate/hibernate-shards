@@ -32,10 +32,12 @@ import org.hibernate.shards.strategy.exit.ExitStrategy;
  */
 public class SequentialShardAccessStrategy implements ShardAccessStrategy {
 
-	private final Logger log = Logger.getLogger( getClass() );
+	private static final Logger log = Logger.getLogger( SequentialShardAccessStrategy.class );
 
 	public <T> T apply(
-			final List<Shard> shards, final ShardOperation<T> operation, final ExitStrategy<T> exitStrategy,
+			final List<Shard> shards,
+			final ShardOperation<T> operation,
+			final ExitStrategy<T> exitStrategy,
 			final ExitOperationsCollector exitOperationsCollector) {
 
 		for ( final Shard shard : getNextOrderingOfShards( shards ) ) {

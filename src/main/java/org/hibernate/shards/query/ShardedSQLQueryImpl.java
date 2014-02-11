@@ -18,8 +18,10 @@ import org.hibernate.type.Type;
 public class ShardedSQLQueryImpl extends ShardedQueryImpl implements ShardedSQLQuery {
 
 	public ShardedSQLQueryImpl(
-			final QueryId queryId, final List<Shard> shards,
-			final QueryFactory queryFactory, final ShardAccessStrategy shardAccessStrategy) {
+			final QueryId queryId,
+			final List<Shard> shards,
+			final QueryFactory queryFactory,
+			final ShardAccessStrategy shardAccessStrategy) {
 		super( queryId, shards, queryFactory, shardAccessStrategy );
 	}
 

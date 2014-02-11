@@ -144,7 +144,9 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 
 	@Override
 	public Criteria createAlias(
-			final String associationPath, final String alias, final int joinType,
+			final String associationPath,
+			final String alias,
+			final int joinType,
 			final Criterion withClause) throws HibernateException {
 		return setSubcriteriaEvent( new CreateAliasEvent( associationPath, alias, joinType, withClause ) );
 	}
@@ -346,7 +348,9 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 
 	@Override
 	public Criteria createCriteria(
-			final String associationPath, final String alias, final int joinType,
+			final String associationPath,
+			final String alias,
+			final int joinType,
 			final Criterion withClause) throws HibernateException {
 		final SubcriteriaFactory factory = new SubcriteriaFactoryImpl( associationPath, alias, joinType, withClause );
 		return createSubcriteria( factory, associationPath );

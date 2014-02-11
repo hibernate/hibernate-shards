@@ -64,7 +64,8 @@ public class Escalator {
 
 		final Escalator escalator = (Escalator) o;
 
-		if ( escalatorId != null ? !escalatorId.equals( escalator.escalatorId )
+		if ( escalatorId != null
+				? !escalatorId.equals( escalator.escalatorId )
 				: escalator.escalatorId != null ) {
 			return false;
 		}

@@ -88,7 +88,8 @@ public class Building implements ShardAware {
 
 		final Building building = (Building) o;
 
-		if ( buildingId != null ? !buildingId.equals( building.buildingId )
+		if ( buildingId != null
+				? !buildingId.equals( building.buildingId )
 				: building.buildingId != null ) {
 			return false;
 		}

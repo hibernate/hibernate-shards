@@ -73,7 +73,8 @@ public class Person {
 
 		final Person person = (Person) o;
 
-		if ( personId != null ? !personId.equals( person.personId )
+		if ( personId != null
+				? !personId.equals( person.personId )
 				: person.personId != null ) {
 			return false;
 		}

@@ -40,25 +40,32 @@ public class SubsetShardedSessionFactoryImpl extends ShardedSessionFactoryImpl {
 
 	public SubsetShardedSessionFactoryImpl(
 			final List<ShardId> shardIds,
-			final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
+			final Map<SessionFactoryImplementor,
+			Set<ShardId>> sessionFactoryShardIdMap,
 			final ShardStrategyFactory shardStrategyFactory,
 			final Set<Class<?>> classesWithoutTopLevelSaveSupport,
 			final boolean checkAllAssociatedObjectsForDifferentShards) {
 
 		super(
-				shardIds, sessionFactoryShardIdMap, shardStrategyFactory, classesWithoutTopLevelSaveSupport,
+				shardIds,
+				sessionFactoryShardIdMap,
+				shardStrategyFactory,
+				classesWithoutTopLevelSaveSupport,
 				checkAllAssociatedObjectsForDifferentShards
 		);
 	}
 
 	protected SubsetShardedSessionFactoryImpl(
-			final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
+			final Map<SessionFactoryImplementor,
+			Set<ShardId>> sessionFactoryShardIdMap,
 			final ShardStrategyFactory shardStrategyFactory,
 			final Set<Class<?>> classesWithoutTopLevelSaveSupport,
 			final boolean checkAllAssociatedObjectsForDifferentShards) {
 
 		super(
-				sessionFactoryShardIdMap, shardStrategyFactory, classesWithoutTopLevelSaveSupport,
+				sessionFactoryShardIdMap,
+				shardStrategyFactory,
+				classesWithoutTopLevelSaveSupport,
 				checkAllAssociatedObjectsForDifferentShards
 		);
 	}

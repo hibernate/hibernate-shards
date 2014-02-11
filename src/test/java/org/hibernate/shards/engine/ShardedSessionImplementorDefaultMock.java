@@ -105,13 +105,17 @@ public class ShardedSessionImplementorDefaultMock implements ShardedSessionImple
 	}
 
 	public Collection filter(
-			Object collection, String filter, Object value,
+			Object collection,
+			String filter,
+			Object value,
 			Type type) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	public Collection filter(
-			Object collection, String filter, Object[] values,
+			Object collection,
+			String filter,
+			Object[] values,
 			Type[] types) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
@@ -131,13 +135,15 @@ public class ShardedSessionImplementorDefaultMock implements ShardedSessionImple
 	}
 
 	public Query createSQLQuery(
-			String sql, String returnAlias,
+			String sql,
+			String returnAlias,
 			Class returnClass) {
 		throw new UnsupportedOperationException();
 	}
 
 	public Query createSQLQuery(
-			String sql, String[] returnAliases,
+			String sql,
+			String[] returnAliases,
 			Class[] returnClasses) {
 		throw new UnsupportedOperationException();
 	}
@@ -258,7 +264,8 @@ public class ShardedSessionImplementorDefaultMock implements ShardedSessionImple
 	}
 
 	public void replicate(
-			String entityName, Object object,
+			String entityName,
+			Object object,
 			ReplicationMode replicationMode) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
