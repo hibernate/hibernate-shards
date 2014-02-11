@@ -46,7 +46,7 @@ public class ShardedTableHiLoGenerator extends TableHiLoGenerator implements Gen
 		}
 		finally {
 			if ( controlSession != null ) {
-				( (Session) controlSession ).close();
+				((Session) controlSession).close();
 			}
 		}
 		return id;

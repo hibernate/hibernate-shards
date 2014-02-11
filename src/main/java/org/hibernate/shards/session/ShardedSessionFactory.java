@@ -45,7 +45,7 @@ public interface ShardedSessionFactory extends SessionFactory {
 	 * the desired shardIds, the client can limit operations to these shards.
 	 * Alternatively, this method can be used to create a ShardedSessionFactory
 	 * with different strategies that might be appropriate for a specific operation.
-	 *
+	 * <p/>
 	 * The factory returned will not be stored as one of the factories that would
 	 * be returned by a call to getSessionFactories.
 	 *
@@ -54,8 +54,9 @@ public interface ShardedSessionFactory extends SessionFactory {
 	 *
 	 * @return specially configured ShardedSessionFactory
 	 */
-	ShardedSessionFactory getSessionFactory(List<ShardId> shardIds,
-											ShardStrategyFactory shardStrategyFactory);
+	ShardedSessionFactory getSessionFactory(
+			List<ShardId> shardIds,
+			ShardStrategyFactory shardStrategyFactory);
 
 	/**
 	 * Create database connection(s) and open a <tt>ShardedSession</tt> on it,

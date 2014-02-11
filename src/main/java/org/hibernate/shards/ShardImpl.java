@@ -114,9 +114,10 @@ public class ShardImpl implements Shard {
 	 * @param interceptor the interceptor that we'll pass in when we create the
 	 * Session (if and when we create the Session).  Can be null.
 	 */
-	public ShardImpl(final Set<ShardId> shardIds,
-					 final SessionFactoryImplementor sessionFactory,
-					 final /*@Nullable*/ Interceptor interceptor) {
+	public ShardImpl(
+			final Set<ShardId> shardIds,
+			final SessionFactoryImplementor sessionFactory,
+			final /*@Nullable*/ Interceptor interceptor) {
 
 		// make a copy to be safe
 		this.shardIds = Collections.unmodifiableSet( Sets.newHashSet( shardIds ) );
@@ -246,7 +247,7 @@ public class ShardImpl implements Shard {
 		if ( this == o ) {
 			return true;
 		}
-		if ( !( o instanceof ShardImpl ) ) {
+		if ( !(o instanceof ShardImpl) ) {
 			return false;
 		}
 
@@ -337,7 +338,7 @@ public class ShardImpl implements Shard {
 
 	/**
 	 * @return the Interceptor we use in the construction of the Session (if
-	 *         and when we construct the Session).  Can be null.
+	 * and when we construct the Session).  Can be null.
 	 */
 	public /*@Nullable*/ Interceptor getInterceptor() {
 		return interceptor;

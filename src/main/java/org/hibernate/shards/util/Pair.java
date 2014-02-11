@@ -46,7 +46,7 @@ public class Pair<A, B> {
 	}
 
 	private static boolean eq(/*@Nullable*/ Object a, /*@Nullable*/ Object b) {
-		return a == b || ( a != null && a.equals( b ) );
+		return a == b || (a != null && a.equals( b ));
 	}
 
 	@Override

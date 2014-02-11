@@ -48,7 +48,7 @@ public interface ShardConfiguration {
 
 	/**
 	 * @return the name that the {@link org.hibernate.SessionFactory} created from
-	 *         this config will have
+	 * this config will have
 	 */
 	String getShardSessionFactoryName();
 

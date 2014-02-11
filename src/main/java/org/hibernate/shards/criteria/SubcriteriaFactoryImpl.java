@@ -65,11 +65,12 @@ public class SubcriteriaFactoryImpl implements SubcriteriaFactory {
 	 * @param joinType the join type we'll pass to createCriteria.  Can be null.
 	 * @param alias the alias we'll pass to createCriteria.  Can be null.
 	 */
-	private SubcriteriaFactoryImpl(final MethodSig methodSig,
-								   final String association,
-								   final int joinType,
-								   final String alias,
-								   final Criterion criterion) {
+	private SubcriteriaFactoryImpl(
+			final MethodSig methodSig,
+			final String association,
+			final int joinType,
+			final String alias,
+			final Criterion criterion) {
 
 		this.methodSig = methodSig;
 		this.association = association;
@@ -125,7 +126,11 @@ public class SubcriteriaFactoryImpl implements SubcriteriaFactory {
 	 * @param alias the alias we'll pass to createCriteria
 	 * @param joinType the join type we'll pass to createCriteria
 	 */
-	public SubcriteriaFactoryImpl(final String association, final String alias, final int joinType, final Criterion criterion) {
+	public SubcriteriaFactoryImpl(
+			final String association,
+			final String alias,
+			final int joinType,
+			final Criterion criterion) {
 		this( MethodSig.ASSOCIATION_AND_ALIAS_AND_JOIN_TYPE_AND_CRITERION, association, joinType, alias, criterion );
 	}
 

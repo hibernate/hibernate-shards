@@ -61,8 +61,8 @@ import org.hibernate.type.Type;
  *
  * @author Maulik Shah
  * @see org.hibernate.shards.query.QueryEvent
- *      <p/>
- *      {@inheritDoc}
+ * <p/>
+ * {@inheritDoc}
  */
 public class ShardedQueryImpl implements ShardedQuery {
 
@@ -87,10 +87,11 @@ public class ShardedQueryImpl implements ShardedQuery {
 	 * @param queryFactory factory that knows how to create the actual query we'll execute
 	 * @param shardAccessStrategy the shard strategy for this query
 	 */
-	public ShardedQueryImpl(final QueryId queryId,
-							final List<Shard> shards,
-							final QueryFactory queryFactory,
-							final ShardAccessStrategy shardAccessStrategy) {
+	public ShardedQueryImpl(
+			final QueryId queryId,
+			final List<Shard> shards,
+			final QueryFactory queryFactory,
+			final ShardAccessStrategy shardAccessStrategy) {
 
 		this.queryId = queryId;
 		this.shards = shards;
@@ -182,7 +183,7 @@ public class ShardedQueryImpl implements ShardedQuery {
 	 * results.
 	 *
 	 * @return a list containing the concatenated results of executing the
-	 *         query on all shards
+	 * query on all shards
 	 *
 	 * @throws HibernateException
 	 */

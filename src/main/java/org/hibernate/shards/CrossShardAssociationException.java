@@ -27,7 +27,7 @@ import org.hibernate.HibernateException;
  * between AccountManagers and Accounts, and we are sharding by AccountManager.
  * That means an AccountManager and all her Accounts live on the same shard.
  * Now suppose you did the following:
- *
+ * <p/>
  * {@code
  * public void reassignLeastProfitableAccount(AccountManager mgr1, AccountManager mgr2) {
  * Account acct = mgr1.removeLeastProfitableAccount();
@@ -38,7 +38,7 @@ import org.hibernate.HibernateException;
  * attempt to save the second manager you would receive a
  * CrossShardAssociationException because the account lives on a different shard
  * than the manager with which you're attempting to associate it.
- *
+ * <p/>
  * Now you'll notice a few things about this example.  First, it doesn't really
  * respect the constraints of an owned one-to-many relationship.  If AccountManagers
  * truly own Accounts (as opposed to just being associated with them), it doesn't
@@ -50,7 +50,7 @@ import org.hibernate.HibernateException;
  * off just letting Hibernate manage the relationship between AccountManagers
  * and account ids and loading the objects uniquely identified by those ids
  * on your own.
- *
+ * <p/>
  * The other thing you'll notice is that if the two managers happen to live on
  * the same shard this will work just fine.  Yup, it will.  We can detect
  * cross-shard relationships.  We can't detect risky code.  You just need to

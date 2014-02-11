@@ -30,7 +30,9 @@ public class CreateSubcriteriaEvent implements CriteriaEvent {
 	private final SubcriteriaFactory subcriteriaFactory;
 	private final ShardedSubcriteriaImpl.SubcriteriaRegistrar subcriteriaRegistrar;
 
-	public CreateSubcriteriaEvent(SubcriteriaFactory subcriteriaFactory, ShardedSubcriteriaImpl.SubcriteriaRegistrar subcriteriaRegistrar) {
+	public CreateSubcriteriaEvent(
+			SubcriteriaFactory subcriteriaFactory,
+			ShardedSubcriteriaImpl.SubcriteriaRegistrar subcriteriaRegistrar) {
 		this.subcriteriaFactory = subcriteriaFactory;
 		this.subcriteriaRegistrar = subcriteriaRegistrar;
 	}

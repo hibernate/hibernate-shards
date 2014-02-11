@@ -34,7 +34,7 @@ public class Iterables {
 
 	/**
 	 * @return an Iterable that allows you to iterate over the contents of
-	 *         all the iterables passed in.
+	 * all the iterables passed in.
 	 */
 	public static <T> Iterable<T> concat(Iterable<? extends T>... iterables) {
 		List<T> list = Lists.newArrayList();
@@ -48,7 +48,7 @@ public class Iterables {
 
 	/**
 	 * @return an Iterable that allows you to iterate over the contents of
-	 *         all the iterables passed in.
+	 * all the iterables passed in.
 	 */
 	public static <T> Iterable<T> concat(Iterable<? extends Iterable<? extends T>> iterable) {
 		List<T> list = Lists.newArrayList();

@@ -26,5 +26,9 @@ import org.hibernate.shards.strategy.exit.ExitOperationsCollector;
 import org.hibernate.shards.strategy.exit.ExitStrategy;
 
 public interface ShardAccessStrategy {
-	<T> T apply(List<Shard> shards, ShardOperation<T> operation, ExitStrategy<T> exitStrategy, ExitOperationsCollector exitOperationsCollector);
+	<T> T apply(
+			List<Shard> shards,
+			ShardOperation<T> operation,
+			ExitStrategy<T> exitStrategy,
+			ExitOperationsCollector exitOperationsCollector);
 }

@@ -16,7 +16,7 @@ class EnableFetchProfileOpenSessionEvent implements OpenSessionEvent {
 		try {
 			session.enableFetchProfile( name );
 		}
-		catch ( UnknownProfileException e ) {
+		catch (UnknownProfileException e) {
 			throw new UnsupportedOperationException( "fetch profile " + name + " is unknown to one session", e );
 		}
 	}

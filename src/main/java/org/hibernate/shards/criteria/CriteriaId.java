@@ -49,7 +49,7 @@ public class CriteriaId {
 		if ( this == o ) {
 			return true;
 		}
-		if ( !( o instanceof CriteriaId ) ) {
+		if ( !(o instanceof CriteriaId) ) {
 			return false;
 		}
 

@@ -56,12 +56,13 @@ class ParallelShardOperationCallable<T> implements Callable<Void> {
 
 	private final List<StartAwareFutureTask> futureTasks;
 
-	public ParallelShardOperationCallable(final CountDownLatch startSignal,
-										  final CountDownLatch doneSignal,
-										  final ExitStrategy<T> exitStrategy,
-										  final ShardOperation<T> operation,
-										  final Shard shard,
-										  final List<StartAwareFutureTask> futureTasks) {
+	public ParallelShardOperationCallable(
+			final CountDownLatch startSignal,
+			final CountDownLatch doneSignal,
+			final ExitStrategy<T> exitStrategy,
+			final ShardOperation<T> operation,
+			final Shard shard,
+			final List<StartAwareFutureTask> futureTasks) {
 
 		this.startSignal = startSignal;
 		this.doneSignal = doneSignal;
@@ -150,7 +151,7 @@ class ParallelShardOperationCallable<T> implements Callable<Void> {
 		try {
 			startSignal.await();
 		}
-		catch ( InterruptedException e ) {
+		catch (InterruptedException e) {
 			// I see no reason why this should happen
 			final String msg = String.format(
 					"Received interrupt while waiting to begin execution of %s against shard %s",

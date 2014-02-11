@@ -42,19 +42,21 @@ public class ShardAwareInterceptor extends EmptyInterceptor {
 	}
 
 	@Override
-	public boolean onLoad(final Object entity,
-						  final Serializable id,
-						  final Object[] state,
-						  final String[] propertyNames, Type[] types) throws CallbackException {
+	public boolean onLoad(
+			final Object entity,
+			final Serializable id,
+			final Object[] state,
+			final String[] propertyNames, Type[] types) throws CallbackException {
 
 		return setShardId( entity );
 	}
 
 	@Override
-	public boolean onSave(final Object entity,
-						  final Serializable id,
-						  final Object[] state,
-						  final String[] propertyNames, Type[] types) {
+	public boolean onSave(
+			final Object entity,
+			final Serializable id,
+			final Object[] state,
+			final String[] propertyNames, Type[] types) {
 
 		return setShardId( entity );
 	}

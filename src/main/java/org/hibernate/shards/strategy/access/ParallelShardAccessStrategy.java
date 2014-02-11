@@ -48,10 +48,11 @@ public class ParallelShardAccessStrategy implements ShardAccessStrategy {
 		this.executor = executor;
 	}
 
-	public <T> T apply(final List<Shard> shards,
-					   final ShardOperation<T> operation,
-					   final ExitStrategy<T> exitStrategy,
-					   final ExitOperationsCollector exitOperationsCollector) {
+	public <T> T apply(
+			final List<Shard> shards,
+			final ShardOperation<T> operation,
+			final ExitStrategy<T> exitStrategy,
+			final ExitOperationsCollector exitOperationsCollector) {
 
 		final List<StartAwareFutureTask> tasks = Lists.newArrayListWithCapacity( shards.size() );
 
@@ -94,7 +95,7 @@ public class ParallelShardAccessStrategy implements ShardAccessStrategy {
 			log.debug( "Waiting for threads to complete processing before proceeding." );
 			//TODO(maxr) let users customize timeout behavior
 			  /*
-              if(!doneSignal.await(10, TimeUnit.SECONDS)) {
+			  if(!doneSignal.await(10, TimeUnit.SECONDS)) {
                 final String msg = "Parallel operations timed out.";
                 log.error(msg);
                 throw new HibernateException(msg);
@@ -104,7 +105,7 @@ public class ParallelShardAccessStrategy implements ShardAccessStrategy {
 			// now we wait until all threads finish
 			doneSignal.await();
 		}
-		catch ( InterruptedException e ) {
+		catch (InterruptedException e) {
 			// not sure why this would happen or what we should do if it does
 			log.error( "Received unexpected exception while waiting for done signal.", e );
 		}

@@ -57,9 +57,10 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
 	}
 
 	@Override
-	public boolean onFlushDirty(final Object entity, final Serializable id,
-								final Object[] currentState, final Object[] previousState,
-								final String[] propertyNames, final Type[] types) throws CallbackException {
+	public boolean onFlushDirty(
+			final Object entity, final Serializable id,
+			final Object[] currentState, final Object[] previousState,
+			final String[] propertyNames, final Type[] types) throws CallbackException {
 
 		final ShardId expectedShardId = getAndRefreshExpectedShardId( entity );
 		Preconditions.checkNotNull( expectedShardId );
@@ -102,19 +103,21 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
 		return associationList;
 	}
 
-	void checkIterable(final String classOfUpdatedObject, final ShardId expectedShardId,
-					   final Iterable<Object> iterable) {
+	void checkIterable(
+			final String classOfUpdatedObject, final ShardId expectedShardId,
+			final Iterable<Object> iterable) {
 
 		for ( final Object obj : iterable ) {
 			checkForConflictingShardId( classOfUpdatedObject, expectedShardId, obj );
 		}
 	}
 
-	void checkForConflictingShardId(final String classOfUpdatedObject, final ShardId expectedShardId,
-									final Object associatedObject) {
+	void checkForConflictingShardId(
+			final String classOfUpdatedObject, final ShardId expectedShardId,
+			final Object associatedObject) {
 
 		ShardId localShardId;	/*
-     * Here's something you wish you didn't need to know: If the associated
+	 * Here's something you wish you didn't need to know: If the associated
      * object is an unitialized proxy and the object is not on the same
      * shard as the shard with which the interceptor is associated, attempting
      * to lookup the shard for the object will yield an ObjectNotFoundException
@@ -130,7 +133,7 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
 			try {
 				hp.getHibernateLazyInitializer().initialize();
 			}
-			catch ( ObjectNotFoundException e ) {
+			catch (ObjectNotFoundException e) {
 				final String msg = String.format(
 						"Object of type %s is on shard %d but an associated object of type %s is on different shard.",
 						classOfUpdatedObject,
@@ -159,7 +162,7 @@ class CrossShardRelationshipDetectingInterceptor extends EmptyInterceptor {
 
 	@Override
 	public void onCollectionUpdate(final Object collection, final Serializable key) throws CallbackException {
-		final ShardId expectedShardId = getAndRefreshExpectedShardId( ( (PersistentCollection) collection ).getOwner() );
+		final ShardId expectedShardId = getAndRefreshExpectedShardId( ((PersistentCollection) collection).getOwner() );
 		Preconditions.checkNotNull( expectedShardId );
 		@SuppressWarnings("unchecked")
 		Iterable<Object> iterable = (Iterable<Object>) collection;

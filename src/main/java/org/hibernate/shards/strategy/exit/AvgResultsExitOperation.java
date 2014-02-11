@@ -101,7 +101,7 @@ public class AvgResultsExitOperation implements ExitOperation {
 
 	private Pair<Object, Object> getResultPair(final Object result) {
 
-		if ( !( result instanceof Object[] ) ) {
+		if ( !(result instanceof Object[]) ) {
 			final String msg = "Wrong type in result list.  Expected " + Object[].class +
 					" but found " + result.getClass();
 			log.error( msg );

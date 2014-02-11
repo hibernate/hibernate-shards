@@ -38,7 +38,9 @@ public class ProjectionExitOperationFactory {
 		return projectionExitOperationFactory;
 	}
 
-	public ProjectionExitOperation getProjectionExitOperation(Projection projection, SessionFactoryImplementor sessionFactoryImplementor) {
+	public ProjectionExitOperation getProjectionExitOperation(
+			Projection projection,
+			SessionFactoryImplementor sessionFactoryImplementor) {
 		if ( projection instanceof RowCountProjection ) {
 			return new RowCountExitOperation( projection );
 		}

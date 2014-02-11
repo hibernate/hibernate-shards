@@ -38,11 +38,12 @@ import org.hibernate.shards.strategy.ShardStrategyFactory;
  */
 public class SubsetShardedSessionFactoryImpl extends ShardedSessionFactoryImpl {
 
-	public SubsetShardedSessionFactoryImpl(final List<ShardId> shardIds,
-										   final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
-										   final ShardStrategyFactory shardStrategyFactory,
-										   final Set<Class<?>> classesWithoutTopLevelSaveSupport,
-										   final boolean checkAllAssociatedObjectsForDifferentShards) {
+	public SubsetShardedSessionFactoryImpl(
+			final List<ShardId> shardIds,
+			final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
+			final ShardStrategyFactory shardStrategyFactory,
+			final Set<Class<?>> classesWithoutTopLevelSaveSupport,
+			final boolean checkAllAssociatedObjectsForDifferentShards) {
 
 		super(
 				shardIds, sessionFactoryShardIdMap, shardStrategyFactory, classesWithoutTopLevelSaveSupport,

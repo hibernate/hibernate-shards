@@ -93,7 +93,7 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 			try {
 				t.begin();
 			}
-			catch ( HibernateException he ) {
+			catch (HibernateException he) {
 				log.warn( "exception starting underlying transaction", he );
 				beginException = true;
 			}
@@ -104,7 +104,7 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 					try {
 						t.rollback();
 					}
-					catch ( HibernateException he ) {
+					catch (HibernateException he) {
 						// TODO(maxr) What do we do?
 					}
 
@@ -130,7 +130,7 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 			try {
 				t.commit();
 			}
-			catch ( HibernateException he ) {
+			catch (HibernateException he) {
 				log.warn( "exception commiting underlying transaction", he );
 				commitException = true;
 				// we're only going to rethrow the first commit exception we receive
@@ -162,7 +162,7 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 			try {
 				t.rollback();
 			}
-			catch ( HibernateException he ) {
+			catch (HibernateException he) {
 				log.warn( "exception rolling back underlying transaction", he );
 				rollbackException = true;
 				if ( firstRollbackException == null ) {
@@ -189,7 +189,7 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 
 	@Override
 	public boolean isActive() throws HibernateException {
-		return begun && !( rolledBack || committed || commitFailed );
+		return begun && !(rolledBack || committed || commitFailed);
 	}
 
 	@Override
@@ -218,7 +218,7 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 				try {
 					sync.beforeCompletion();
 				}
-				catch ( Throwable t ) {
+				catch (Throwable t) {
 					log.warn( "exception calling user Synchronization", t );
 				}
 			}
@@ -232,7 +232,7 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 				try {
 					sync.afterCompletion( status );
 				}
-				catch ( Throwable t ) {
+				catch (Throwable t) {
 					log.warn( "exception calling user Synchronization", t );
 				}
 			}

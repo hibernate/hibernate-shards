@@ -21,7 +21,7 @@ class DisableFetchProfileOpenSessionEvent implements OpenSessionEvent {
 		try {
 			session.disableFetchProfile( name );
 		}
-		catch ( UnknownProfileException e ) {
+		catch (UnknownProfileException e) {
 			throw new UnsupportedOperationException( "fetch profile " + name + " is unknown to one session", e );
 		}
 	}

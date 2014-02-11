@@ -87,9 +87,10 @@ public class ShardedConfiguration {
 	 * @param shardConfigs Shard-specific configuration data for each shard.
 	 * @param shardStrategyFactory factory that knows how to create the right type of shard strategy
 	 */
-	public ShardedConfiguration(final Configuration prototypeConfiguration,
-								final List<ShardConfiguration> shardConfigs,
-								final ShardStrategyFactory shardStrategyFactory) {
+	public ShardedConfiguration(
+			final Configuration prototypeConfiguration,
+			final List<ShardConfiguration> shardConfigs,
+			final ShardStrategyFactory shardStrategyFactory) {
 
 		this( prototypeConfiguration, shardConfigs, shardStrategyFactory, Maps.<Integer, Integer>newHashMap() );
 	}
@@ -109,10 +110,11 @@ public class ShardedConfiguration {
 	 * @param shardStrategyFactory factory that knows how to create the right kind of shard strategy
 	 * @param virtualShardToShardMap A map that maps virtual shard ids to real
 	 */
-	public ShardedConfiguration(final Configuration prototypeConfiguration,
-								final List<ShardConfiguration> shardConfigs,
-								final ShardStrategyFactory shardStrategyFactory,
-								final Map<Integer, Integer> virtualShardToShardMap) {
+	public ShardedConfiguration(
+			final Configuration prototypeConfiguration,
+			final List<ShardConfiguration> shardConfigs,
+			final ShardStrategyFactory shardStrategyFactory,
+			final Map<Integer, Integer> virtualShardToShardMap) {
 
 		this.prototypeConfiguration = Preconditions.checkNotNull( prototypeConfiguration );
 		this.shardConfigs = Preconditions.checkNotNull( shardConfigs );
@@ -144,7 +146,7 @@ public class ShardedConfiguration {
 
 	/**
 	 * @return A ShardedSessionFactory built from the prototype config and
-	 *         the shard-specific configs passed into the constructor.
+	 * the shard-specific configs passed into the constructor.
 	 */
 	public ShardedSessionFactory buildShardedSessionFactory() {
 		final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactories = Maps.newHashMap();

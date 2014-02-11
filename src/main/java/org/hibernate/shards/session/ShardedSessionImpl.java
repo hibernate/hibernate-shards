@@ -143,10 +143,11 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	 * @param classesWithoutTopLevelSaveSupport The set of classes on which top-level save can not be performed
 	 * @param checkAllAssociatedObjectsForDifferentShards Should we check for cross-shard relationships
 	 */
-	ShardedSessionImpl(final ShardedSessionFactoryImplementor shardedSessionFactory,
-					   final ShardStrategy shardStrategy,
-					   final Set<Class<?>> classesWithoutTopLevelSaveSupport,
-					   final boolean checkAllAssociatedObjectsForDifferentShards) {
+	ShardedSessionImpl(
+			final ShardedSessionFactoryImplementor shardedSessionFactory,
+			final ShardStrategy shardStrategy,
+			final Set<Class<?>> classesWithoutTopLevelSaveSupport,
+			final boolean checkAllAssociatedObjectsForDifferentShards) {
 
 		this(
 				null, shardedSessionFactory, shardStrategy, classesWithoutTopLevelSaveSupport,
@@ -163,11 +164,12 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	 * @param classesWithoutTopLevelSaveSupport The set of classes on which top-level save can not be performed
 	 * @param checkAllAssociatedObjectsForDifferentShards Should we check for cross-shard relationships
 	 */
-	ShardedSessionImpl(final /*@Nullable*/ Interceptor interceptor,
-					   final ShardedSessionFactoryImplementor shardedSessionFactory,
-					   final ShardStrategy shardStrategy,
-					   final Set<Class<?>> classesWithoutTopLevelSaveSupport,
-					   final boolean checkAllAssociatedObjectsForDifferentShards) {
+	ShardedSessionImpl(
+			final /*@Nullable*/ Interceptor interceptor,
+			final ShardedSessionFactoryImplementor shardedSessionFactory,
+			final ShardStrategy shardStrategy,
+			final Set<Class<?>> classesWithoutTopLevelSaveSupport,
+			final boolean checkAllAssociatedObjectsForDifferentShards) {
 
 		this.shardedSessionFactory = shardedSessionFactory;
 		this.shards = buildShardListFromSessionFactoryShardIdMap(
@@ -249,7 +251,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			// user-provided an interceptor
 			if ( providedInterceptor instanceof StatefulInterceptorFactory ) {
 				// it's stateful so we need to create a new one for each shard
-				providedInterceptor = ( (StatefulInterceptorFactory) providedInterceptor ).newInstance();
+				providedInterceptor = ((StatefulInterceptorFactory) providedInterceptor).newInstance();
 				if ( providedInterceptor instanceof RequiresSession ) {
 					openSessionEvent = new SetSessionOnRequiresSessionEvent( (RequiresSession) providedInterceptor );
 				}
@@ -459,7 +461,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 				try {
 					shard.getSession().close();
 				}
-				catch ( Throwable t ) {
+				catch (Throwable t) {
 					if ( thrown == null ) {
 						thrown = Lists.newArrayList();
 					}
@@ -548,7 +550,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 				try {
 					return shard.getSession().getIdentifier( object );
 				}
-				catch ( TransientObjectException e ) {
+				catch (TransientObjectException e) {
 					// Object is transient or is not associated with this session.
 				}
 			}
@@ -746,7 +748,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			return lockedShardId;
 		}
 		ShardId shardId;	/*
-     * Someone is trying to save this object, and that's wonderful, but if
+	 * Someone is trying to save this object, and that's wonderful, but if
      * this object references or is referenced by any other objects that have already been
      * associated with a session it's important that this object end up
      * associated with the same session.  In order to make sure that happens,
@@ -847,8 +849,9 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		return shardId;
 	}
 
-	ShardId checkForConflictingShardId(ShardId existingShardId,
-									   final Class<?> newObjectClass, final Object associatedObject) {
+	ShardId checkForConflictingShardId(
+			ShardId existingShardId,
+			final Class<?> newObjectClass, final Object associatedObject) {
 
 		final ShardId localShardId = getShardIdForObject( associatedObject );
 		if ( localShardId != null ) {
@@ -1176,7 +1179,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 						op.refresh( shard, object );
 						return;
 					}
-					catch ( UnresolvableObjectException uoe ) {
+					catch (UnresolvableObjectException uoe) {
 						// ignore
 					}
 				}
@@ -1766,7 +1769,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		else {
 			String className;
 			if ( obj instanceof HibernateProxy ) {
-				className = ( (HibernateProxy) obj ).getHibernateLazyInitializer().getPersistentClass().getName();
+				className = ((HibernateProxy) obj).getHibernateLazyInitializer().getPersistentClass().getName();
 			}
 			else {
 				className = obj.getClass().getName();
@@ -1775,7 +1778,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			final IdentifierGenerator idGenerator = shard.getSessionFactoryImplementor()
 					.getIdentifierGenerator( className );
 			if ( idGenerator instanceof ShardEncodingIdentifierGenerator ) {
-				return ( (ShardEncodingIdentifierGenerator) idGenerator ).extractShardId( getIdentifier( obj ) );
+				return ((ShardEncodingIdentifierGenerator) idGenerator).extractShardId( getIdentifier( obj ) );
 			}
 			else {
 				// HSHARDS-64
@@ -1804,7 +1807,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	private Shard getShardForCollection(final Object coll, final List<Shard> shardsToConsider) {
 		for ( final Shard shard : shardsToConsider ) {
 			if ( shard.getSession() != null ) {
-				final SessionImplementor si = ( (SessionImplementor) shard.getSession() );
+				final SessionImplementor si = ((SessionImplementor) shard.getSession());
 				if ( si.getPersistenceContext().getCollectionEntryOrNull( coll ) != null ) {
 					return shard;
 				}
@@ -1830,7 +1833,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 				try {
 					close();
 				}
-				catch ( Exception e ) {
+				catch (Exception e) {
 					log.warn( "Caught exception trying to close.", e );
 				}
 			}
@@ -1880,8 +1883,8 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 
 	List<ShardId> selectShardIdsFromShardResolutionStrategyData(final ShardResolutionStrategyData srsd) {
 		final IdentifierGenerator idGenerator = shardedSessionFactory.getIdentifierGenerator( srsd.getEntityName() );
-		if ( ( idGenerator instanceof ShardEncodingIdentifierGenerator ) && ( srsd.getId() != null ) ) {
-			return Collections.singletonList( ( (ShardEncodingIdentifierGenerator) idGenerator ).extractShardId( srsd.getId() ) );
+		if ( (idGenerator instanceof ShardEncodingIdentifierGenerator) && (srsd.getId() != null) ) {
+			return Collections.singletonList( ((ShardEncodingIdentifierGenerator) idGenerator).extractShardId( srsd.getId() ) );
 		}
 		return shardStrategy.getShardResolutionStrategy().selectShardIdsFromShardResolutionStrategyData( srsd );
 	}

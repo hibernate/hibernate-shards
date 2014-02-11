@@ -32,9 +32,10 @@ public class ShardStrategyImpl implements ShardStrategy {
 	private final ShardResolutionStrategy shardResolutionStrategy;
 	private final ShardAccessStrategy shardAccessStrategy;
 
-	public ShardStrategyImpl(final ShardSelectionStrategy shardSelectionStrategy,
-							 final ShardResolutionStrategy shardResolutionStrategy,
-							 final ShardAccessStrategy shardAccessStrategy) {
+	public ShardStrategyImpl(
+			final ShardSelectionStrategy shardSelectionStrategy,
+			final ShardResolutionStrategy shardResolutionStrategy,
+			final ShardAccessStrategy shardAccessStrategy) {
 
 		this.shardSelectionStrategy = Preconditions.checkNotNull( shardSelectionStrategy );
 		this.shardResolutionStrategy = Preconditions.checkNotNull( shardResolutionStrategy );

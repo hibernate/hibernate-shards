@@ -73,7 +73,7 @@ public class ExitOperationUtils {
 				}
 			}
 
-			final String[] methods = ( "get" + propertyPath.toString().replaceAll( "\\.", ".get" ) ).split( "\\." );
+			final String[] methods = ("get" + propertyPath.toString().replaceAll( "\\.", ".get" )).split( "\\." );
 			Object root = obj;
 			for ( final String method : methods ) {
 				final Method m = findPotentiallyPrivateMethod( root.getClass(), method );
@@ -85,13 +85,13 @@ public class ExitOperationUtils {
 			}
 			return (Comparable<Object>) root;
 		}
-		catch ( NoSuchMethodException e ) {
+		catch (NoSuchMethodException e) {
 			throw new RuntimeException( e );
 		}
-		catch ( IllegalAccessException e ) {
+		catch (IllegalAccessException e) {
 			throw new RuntimeException( e );
 		}
-		catch ( InvocationTargetException e ) {
+		catch (InvocationTargetException e) {
 			throw new RuntimeException( e );
 		}
 	}
@@ -101,7 +101,7 @@ public class ExitOperationUtils {
 		try {
 			return clazz.getMethod( methodName );
 		}
-		catch ( NoSuchMethodException nsme ) {
+		catch (NoSuchMethodException nsme) {
 			// that's ok, we'll try the slower approach
 		}
 
@@ -111,7 +111,7 @@ public class ExitOperationUtils {
 			try {
 				return clazz.getDeclaredMethod( methodName );
 			}
-			catch ( NoSuchMethodException e ) {
+			catch (NoSuchMethodException e) {
 				clazz = (Class) clazz.getGenericSuperclass();
 			}
 		}

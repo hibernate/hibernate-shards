@@ -70,7 +70,7 @@ public class CriteriaFactoryImpl implements CriteriaFactory {
 	private CriteriaFactoryImpl(
 			MethodSig methodSig,
 	  /*@Nullable*/ Class persistentClass,
-      /*@Nullable*/ String alias,
+	  /*@Nullable*/ String alias,
       /*@Nullable*/ String entityName) {
 		this.methodSig = methodSig;
 		this.persistentClass = persistentClass;

@@ -43,9 +43,10 @@ class CrossShardRelationshipDetectingInterceptorDecorator extends InterceptorDec
 	}
 
 	@Override
-	public boolean onFlushDirty(Object entity, Serializable id,
-								Object[] currentState, Object[] previousState, String[] propertyNames,
-								Type[] types) throws CallbackException {
+	public boolean onFlushDirty(
+			Object entity, Serializable id,
+			Object[] currentState, Object[] previousState, String[] propertyNames,
+			Type[] types) throws CallbackException {
 
 		// first give the cross relationship detector a chance
 		csrdi.onFlushDirty( entity, id, currentState, previousState, propertyNames, types );

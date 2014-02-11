@@ -82,7 +82,11 @@ class CreateAliasEvent implements CriteriaEvent {
 	 * @param alias the name of the alias we're creating.
 	 * @param joinType the join type of the alias we're creating.
 	 */
-	public CreateAliasEvent(final String associationPath, final String alias, final int joinType, final Criterion criterion) {
+	public CreateAliasEvent(
+			final String associationPath,
+			final String alias,
+			final int joinType,
+			final Criterion criterion) {
 		this( MethodSig.ASSOC_PATH_AND_ALIAS_AND_JOIN_TYPE_AND_CRITERION, associationPath, alias, joinType, criterion );
 	}
 
@@ -96,8 +100,9 @@ class CreateAliasEvent implements CriteriaEvent {
 	 * @param joinType the join type of the alias we're creating.  Can be null.
 	 * @param criterion the criterion.  Can be null.
 	 */
-	private CreateAliasEvent(final MethodSig methodSig, final String associationPath, final String alias,
-							 final int joinType, final Criterion criterion) {
+	private CreateAliasEvent(
+			final MethodSig methodSig, final String associationPath, final String alias,
+			final int joinType, final Criterion criterion) {
 
 		this.methodSig = methodSig;
 		this.associationPath = associationPath;

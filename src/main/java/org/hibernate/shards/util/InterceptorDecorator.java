@@ -42,42 +42,46 @@ public class InterceptorDecorator implements Interceptor {
 	}
 
 	@Override
-	public boolean onLoad(final Object entity,
-						  final Serializable id,
-						  final Object[] state,
-						  final String[] propertyNames,
-						  final Type[] types) throws CallbackException {
+	public boolean onLoad(
+			final Object entity,
+			final Serializable id,
+			final Object[] state,
+			final String[] propertyNames,
+			final Type[] types) throws CallbackException {
 
 		return delegate.onLoad( entity, id, state, propertyNames, types );
 	}
 
 	@Override
-	public boolean onFlushDirty(final Object entity,
-								final Serializable id,
-								final Object[] currentState,
-								final Object[] previousState,
-								final String[] propertyNames,
-								final Type[] types) throws CallbackException {
+	public boolean onFlushDirty(
+			final Object entity,
+			final Serializable id,
+			final Object[] currentState,
+			final Object[] previousState,
+			final String[] propertyNames,
+			final Type[] types) throws CallbackException {
 
 		return delegate.onFlushDirty( entity, id, currentState, previousState, propertyNames, types );
 	}
 
 	@Override
-	public boolean onSave(final Object entity,
-						  final Serializable id,
-						  final Object[] state,
-						  final String[] propertyNames,
-						  final Type[] types) throws CallbackException {
+	public boolean onSave(
+			final Object entity,
+			final Serializable id,
+			final Object[] state,
+			final String[] propertyNames,
+			final Type[] types) throws CallbackException {
 
 		return delegate.onSave( entity, id, state, propertyNames, types );
 	}
 
 	@Override
-	public void onDelete(final Object entity,
-						 final Serializable id,
-						 final Object[] state,
-						 final String[] propertyNames,
-						 final Type[] types) throws CallbackException {
+	public void onDelete(
+			final Object entity,
+			final Serializable id,
+			final Object[] state,
+			final String[] propertyNames,
+			final Type[] types) throws CallbackException {
 
 		delegate.onDelete( entity, id, state, propertyNames, types );
 	}
@@ -113,20 +117,22 @@ public class InterceptorDecorator implements Interceptor {
 	}
 
 	@Override
-	public int[] findDirty(final Object entity,
-						   final Serializable id,
-						   final Object[] currentState,
-						   final Object[] previousState,
-						   final String[] propertyNames,
-						   final Type[] types) {
+	public int[] findDirty(
+			final Object entity,
+			final Serializable id,
+			final Object[] currentState,
+			final Object[] previousState,
+			final String[] propertyNames,
+			final Type[] types) {
 
 		return delegate.findDirty( entity, id, currentState, previousState, propertyNames, types );
 	}
 
 	@Override
-	public Object instantiate(final String entityName,
-							  final EntityMode entityMode,
-							  final Serializable id) throws CallbackException {
+	public Object instantiate(
+			final String entityName,
+			final EntityMode entityMode,
+			final Serializable id) throws CallbackException {
 
 		return delegate.instantiate( entityName, entityMode, id );
 	}

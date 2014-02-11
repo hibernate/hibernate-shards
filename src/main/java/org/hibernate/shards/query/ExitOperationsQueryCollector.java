@@ -29,10 +29,10 @@ import org.hibernate.shards.strategy.exit.MaxResultsExitOperation;
  * Exit operations for queries is essentially not implemented. Its intended use
  * is to record a set of aggregation type operations to be executed on the
  * combined results for a query executed on each shard.
- *
+ * <p/>
  * We do implement setMaxResults and setFirstResult as these operations do not
  * require parsing the query string.
- *
+ * <p/>
  * {@inheritDoc}
  *
  * @author Maulik Shah

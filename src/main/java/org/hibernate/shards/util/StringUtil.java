@@ -29,7 +29,7 @@ public class StringUtil {
 	 * Helper function for null, empty, and whitespace string testing.
 	 *
 	 * @return true if s == null or s.equals("") or s contains only whitespace
-	 *         characters.
+	 * characters.
 	 */
 	public static boolean isEmptyOrWhitespace(String s) {
 		s = makeSafe( s );
@@ -54,7 +54,7 @@ public class StringUtil {
 	 * @return (s == null) ? "" : s;
 	 */
 	public static String makeSafe(String s) {
-		return ( s == null ) ? "" : s;
+		return (s == null) ? "" : s;
 	}
 
 	/**
@@ -66,6 +66,6 @@ public class StringUtil {
 		}
 		char first = s.charAt( 0 );
 		char capitalized = Character.toUpperCase( first );
-		return ( first == capitalized ) ? s : capitalized + s.substring( 1 );
+		return (first == capitalized) ? s : capitalized + s.substring( 1 );
 	}
 }

@@ -70,7 +70,7 @@ public class AggregateExitOperation implements ProjectionExitOperation {
 		try {
 			this.aggregate = SupportedAggregations.valueOf( aggregateName.toUpperCase() );
 		}
-		catch ( IllegalArgumentException e ) {
+		catch (IllegalArgumentException e) {
 			log.error( "Use of unsupported aggregate: " + aggregateName );
 			throw e;
 		}

@@ -86,10 +86,11 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 	 * @param shardAccessStrategy the access strategy we use when we execute this
 	 * ShardedCriteria across multiple shards.
 	 */
-	public ShardedCriteriaImpl(final CriteriaId criteriaId,
-							   final List<Shard> shards,
-							   final CriteriaFactory criteriaFactory,
-							   final ShardAccessStrategy shardAccessStrategy) {
+	public ShardedCriteriaImpl(
+			final CriteriaId criteriaId,
+			final List<Shard> shards,
+			final CriteriaFactory criteriaFactory,
+			final ShardAccessStrategy shardAccessStrategy) {
 
 		this.criteriaId = criteriaId;
 		this.shards = shards;
@@ -164,8 +165,9 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 	}
 
 	@Override
-	public Criteria createAlias(final String associationPath, final String alias, final int joinType,
-								final Criterion withClause) throws HibernateException {
+	public Criteria createAlias(
+			final String associationPath, final String alias, final int joinType,
+			final Criterion withClause) throws HibernateException {
 		final SubcriteriaFactory factory = new SubcriteriaFactoryImpl( associationPath, alias, joinType, withClause );
 		return createSubcriteria( factory, associationPath );
 	}
@@ -196,7 +198,11 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 	}
 
 	@Override
-	public Criteria createCriteria(final String associationPath, final String alias, final int joinType, final Criterion withClause)
+	public Criteria createCriteria(
+			final String associationPath,
+			final String alias,
+			final int joinType,
+			final Criterion withClause)
 			throws HibernateException {
 		final SubcriteriaFactory factory = new SubcriteriaFactoryImpl( associationPath, alias, joinType, withClause );
 		return createSubcriteria( factory, associationPath );
@@ -403,7 +409,7 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 
 	/**
 	 * @return any Criteria.  If no Criteria has been established we establish
-	 *         one and return it.
+	 * one and return it.
 	 */
 	private Criteria getOrEstablishSomeCriteria() {
 		Criteria criteria = getSomeCriteria();

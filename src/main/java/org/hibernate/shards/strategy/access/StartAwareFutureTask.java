@@ -66,7 +66,7 @@ class StartAwareFutureTask extends FutureTask<Void> {
 	public void run() {
 
 		log.debug( String.format( "Task %d: Run invoked.", id ) );
-		synchronized ( this ) {
+		synchronized (this) {
 			if ( cancelled ) {
 				log.debug( String.format( "Task %d: Task will not run.", id ) );
 				return;

@@ -75,10 +75,11 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	 * @param criteriaCollector the collector for extit operations
 	 * @param associationPath the association path for the subcriteria
 	 */
-	public ShardedSubcriteriaImpl(final List<Shard> shards,
-								  final ShardedCriteria parent,
-								  final ExitOperationsCriteriaCollector criteriaCollector,
-								  final String associationPath) {
+	public ShardedSubcriteriaImpl(
+			final List<Shard> shards,
+			final ShardedCriteria parent,
+			final ExitOperationsCriteriaCollector criteriaCollector,
+			final String associationPath) {
 
 		this.shards = Preconditions.checkNotNull( shards );
 		Preconditions.checkArgument( !shards.isEmpty() );
@@ -141,8 +142,9 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	}
 
 	@Override
-	public Criteria createAlias(final String associationPath, final String alias, final int joinType,
-								final Criterion withClause) throws HibernateException {
+	public Criteria createAlias(
+			final String associationPath, final String alias, final int joinType,
+			final Criterion withClause) throws HibernateException {
 		return setSubcriteriaEvent( new CreateAliasEvent( associationPath, alias, joinType, withClause ) );
 	}
 
@@ -274,7 +276,7 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 
 	/**
 	 * @return Returns an actual Criteria object.  If no actual Criteria object
-	 *         has been allocated, allocate one and return it.
+	 * has been allocated, allocate one and return it.
 	 */
 	private Criteria getOrEstablishSomeSubcriteria() {
 		final Criteria crit = getSomeSubcriteria();
@@ -286,8 +288,9 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 		return getSomeSubcriteria();
 	}
 
-	private ShardedSubcriteriaImpl createSubcriteria(final SubcriteriaFactory factory,
-													 final String newAssociationPath) {
+	private ShardedSubcriteriaImpl createSubcriteria(
+			final SubcriteriaFactory factory,
+			final String newAssociationPath) {
 
 		final String fullAssociationPath = associationPath + "." + newAssociationPath;
 
@@ -341,8 +344,9 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	}
 
 	@Override
-	public Criteria createCriteria(final String associationPath, final String alias, final int joinType,
-								   final Criterion withClause) throws HibernateException {
+	public Criteria createCriteria(
+			final String associationPath, final String alias, final int joinType,
+			final Criterion withClause) throws HibernateException {
 		final SubcriteriaFactory factory = new SubcriteriaFactoryImpl( associationPath, alias, joinType, withClause );
 		return createSubcriteria( factory, associationPath );
 	}
@@ -368,7 +372,9 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 		return new SubcriteriaRegistrar() {
 
 			@Override
-			public void establishSubcriteria(final Criteria parentCriteria, final SubcriteriaFactory subcriteriaFactory) {
+			public void establishSubcriteria(
+					final Criteria parentCriteria,
+					final SubcriteriaFactory subcriteriaFactory) {
 				List<CriteriaEvent> criteriaEvents = shardToEventListMap.get( shard );
 				// create the subcrit with the proper list of events
 				Criteria newCrit = subcriteriaFactory.createSubcriteria( parentCriteria, criteriaEvents );

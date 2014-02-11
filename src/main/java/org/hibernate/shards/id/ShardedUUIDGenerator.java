@@ -64,7 +64,7 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncod
 			case INTEGER:
 				String strippedHexId;
 				if ( identifier instanceof BigInteger ) {
-					strippedHexId = ( (BigInteger) identifier ).toString( 16 );
+					strippedHexId = ((BigInteger) identifier).toString( 16 );
 				}
 				else if ( identifier instanceof Long ) {
 					strippedHexId = BigInteger.valueOf( (Long) identifier ).toString( 16 );
@@ -87,7 +87,7 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncod
 
 		final String id = format( (short) getShardId() ) +
 				format( getIP() ) +
-				format( (short) ( getJVM() >>> 16 ) ) +
+				format( (short) (getJVM() >>> 16) ) +
 				format( getHiTime() ) +
 				format( getLoTime() ) +
 				format( getCount() );

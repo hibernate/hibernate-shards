@@ -52,7 +52,7 @@ public interface Shard {
 
 	/**
 	 * @return the Session associated with this Shard.  Will return null if
-	 *         the Session has not yet been established.
+	 * the Session has not yet been established.
 	 */
   /* @Nullable */ Session getSession();
 
@@ -63,8 +63,8 @@ public interface Shard {
 
 	/**
 	 * @return establish a Session using the SessionFactoryImplementor associated
-	 *         with this Shard and apply any OpenSessionEvents that have been added.  If
-	 *         the Session has already been established just return it.
+	 * with this Shard and apply any OpenSessionEvents that have been added.  If
+	 * the Session has already been established just return it.
 	 */
 	Session establishSession();
 
@@ -101,7 +101,7 @@ public interface Shard {
 
 	/**
 	 * @return the ids of the virtual shards that are mapped to this physical shard.
-	 *         The returned Set is unmodifiable.
+	 * The returned Set is unmodifiable.
 	 */
 	Set<ShardId> getShardIds();
 

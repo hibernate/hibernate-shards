@@ -143,11 +143,12 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	 * @param checkAllAssociatedObjectsForDifferentShards Flag that controls
 	 * whether or not we do full cross-shard relationshp checking (very slow)
 	 */
-	public ShardedSessionFactoryImpl(final List<ShardId> shardIds,
-									 final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
-									 final ShardStrategyFactory shardStrategyFactory,
-									 final Set<Class<?>> classesWithoutTopLevelSaveSupport,
-									 final boolean checkAllAssociatedObjectsForDifferentShards) {
+	public ShardedSessionFactoryImpl(
+			final List<ShardId> shardIds,
+			final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
+			final ShardStrategyFactory shardStrategyFactory,
+			final Set<Class<?>> classesWithoutTopLevelSaveSupport,
+			final boolean checkAllAssociatedObjectsForDifferentShards) {
 
 		Preconditions.checkNotNull( sessionFactoryShardIdMap );
 		Preconditions.checkArgument( !sessionFactoryShardIdMap.isEmpty() );
@@ -238,7 +239,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 				ClassMetadata cmd = (ClassMetadata) obj;
 				EntityPersister ep = sfi.getEntityPersister( cmd.getEntityName() );
 				if ( ep.getIdentifierGenerator() instanceof GeneratorRequiringControlSessionProvider ) {
-					( (GeneratorRequiringControlSessionProvider) ep.getIdentifierGenerator() ).setControlSessionProvider(
+					((GeneratorRequiringControlSessionProvider) ep.getIdentifierGenerator()).setControlSessionProvider(
 							this
 					);
 				}
@@ -535,8 +536,9 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	 * @return ShardedSessionFactory
 	 */
 	@Override
-	public ShardedSessionFactory getSessionFactory(final List<ShardId> shardIds,
-												   final ShardStrategyFactory shardStrategyFactory) {
+	public ShardedSessionFactory getSessionFactory(
+			final List<ShardId> shardIds,
+			final ShardStrategyFactory shardStrategyFactory) {
 		return new SubsetShardedSessionFactoryImpl(
 				shardIds,
 				fullSessionFactoryShardIdMap,
@@ -555,7 +557,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 				try {
 					close();
 				}
-				catch ( Exception e ) {
+				catch (Exception e) {
 					log.warn( "Caught exception trying to close.", e );
 				}
 			}

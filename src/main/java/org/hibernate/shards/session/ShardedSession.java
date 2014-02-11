@@ -40,7 +40,7 @@ public interface ShardedSession extends Session {
 	 * @param obj the object for which we want the Session
 	 *
 	 * @return the Session with which this object is associated, or null if the
-	 *         object is not associated with a session belonging to this ShardedSession
+	 * object is not associated with a session belonging to this ShardedSession
 	 */
 	Session getSessionForObject(Object obj);
 
@@ -50,8 +50,8 @@ public interface ShardedSession extends Session {
 	 * @param obj the object for which we want the Session
 	 *
 	 * @return the ShardId of the Shard with which this object is associated, or
-	 *         null if the object is not associated with a shard belonging to this
-	 *         ShardedSession
+	 * null if the object is not associated with a shard belonging to this
+	 * ShardedSession
 	 */
 	ShardId getShardIdForObject(Object obj);
 

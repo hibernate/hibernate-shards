@@ -60,11 +60,12 @@ public class InterceptorList implements Interceptor {
 	 * @throws CallbackException {@inheritDoc}
 	 */
 	@Override
-	public boolean onLoad(final Object entity,
-						  final Serializable id,
-						  final Object[] state,
-						  final String[] propertyNames,
-						  final Type[] types) throws CallbackException {
+	public boolean onLoad(
+			final Object entity,
+			final Serializable id,
+			final Object[] state,
+			final String[] propertyNames,
+			final Type[] types) throws CallbackException {
 
 		boolean result = false;
 		for ( final Interceptor interceptor : interceptors ) {
@@ -88,12 +89,13 @@ public class InterceptorList implements Interceptor {
 	 * @throws CallbackException {@inheritDoc}
 	 */
 	@Override
-	public boolean onFlushDirty(final Object entity,
-								final Serializable id,
-								final Object[] currentState,
-								final Object[] previousState,
-								final String[] propertyNames,
-								final Type[] types) throws CallbackException {
+	public boolean onFlushDirty(
+			final Object entity,
+			final Serializable id,
+			final Object[] currentState,
+			final Object[] previousState,
+			final String[] propertyNames,
+			final Type[] types) throws CallbackException {
 
 		boolean result = false;
 		for ( final Interceptor interceptor : interceptors ) {
@@ -116,11 +118,12 @@ public class InterceptorList implements Interceptor {
 	 * @throws CallbackException {@inheritDoc}
 	 */
 	@Override
-	public boolean onSave(final Object entity,
-						  final Serializable id,
-						  final Object[] state,
-						  final String[] propertyNames,
-						  final Type[] types) throws CallbackException {
+	public boolean onSave(
+			final Object entity,
+			final Serializable id,
+			final Object[] state,
+			final String[] propertyNames,
+			final Type[] types) throws CallbackException {
 
 		boolean result = false;
 		for ( final Interceptor interceptor : interceptors ) {
@@ -130,11 +133,12 @@ public class InterceptorList implements Interceptor {
 	}
 
 	@Override
-	public void onDelete(final Object entity,
-						 final Serializable id,
-						 final Object[] state,
-						 final String[] propertyNames,
-						 final Type[] types) throws CallbackException {
+	public void onDelete(
+			final Object entity,
+			final Serializable id,
+			final Object[] state,
+			final String[] propertyNames,
+			final Type[] types) throws CallbackException {
 
 		for ( final Interceptor interceptor : interceptors ) {
 			interceptor.onDelete( entity, id, state, propertyNames, types );
@@ -182,7 +186,7 @@ public class InterceptorList implements Interceptor {
 	 * @param entity {@inheritDoc}
 	 *
 	 * @return the first non-null result returned by a contained interceptor, or
-	 *         null if none of the contained interceptors return a non-null result
+	 * null if none of the contained interceptors return a non-null result
 	 */
 	@Override
 	public Boolean isTransient(final Object entity) {
@@ -206,15 +210,16 @@ public class InterceptorList implements Interceptor {
 	 * @param types {@inheritDoc}
 	 *
 	 * @return the first non-null result returned by a contained interceptor, or
-	 *         null if none of the contained interceptors return a non-null result
+	 * null if none of the contained interceptors return a non-null result
 	 */
 	@Override
-	public int[] findDirty(final Object entity,
-						   final Serializable id,
-						   final Object[] currentState,
-						   final Object[] previousState,
-						   final String[] propertyNames,
-						   final Type[] types) {
+	public int[] findDirty(
+			final Object entity,
+			final Serializable id,
+			final Object[] currentState,
+			final Object[] previousState,
+			final String[] propertyNames,
+			final Type[] types) {
 
 		for ( final Interceptor interceptor : interceptors ) {
 			final int[] result = interceptor.findDirty( entity, id, currentState, previousState, propertyNames, types );
@@ -233,14 +238,15 @@ public class InterceptorList implements Interceptor {
 	 * @param id {@inheritDoc}
 	 *
 	 * @return the first non-null result returned by a contained interceptor, or
-	 *         null if none of the contained interceptors return a non-null result
+	 * null if none of the contained interceptors return a non-null result
 	 *
 	 * @throws CallbackException {@inheritDoc}
 	 */
 	@Override
-	public Object instantiate(final String entityName,
-							  final EntityMode entityMode,
-							  final Serializable id) throws CallbackException {
+	public Object instantiate(
+			final String entityName,
+			final EntityMode entityMode,
+			final Serializable id) throws CallbackException {
 
 		for ( final Interceptor interceptor : interceptors ) {
 			final Object result = interceptor.instantiate( entityName, entityMode, id );
@@ -257,7 +263,7 @@ public class InterceptorList implements Interceptor {
 	 * @param object {@inheritDoc}
 	 *
 	 * @return the first non-null result returned by a contained interceptor, or
-	 *         null if none of the contained interceptors return a non-null result
+	 * null if none of the contained interceptors return a non-null result
 	 *
 	 * @throws CallbackException {@inheritDoc}
 	 */
@@ -279,7 +285,7 @@ public class InterceptorList implements Interceptor {
 	 * @param id {@inheritDoc}
 	 *
 	 * @return the first non-null result returned by a contained interceptor, or
-	 *         null if none of the contained interceptors return a non-null result
+	 * null if none of the contained interceptors return a non-null result
 	 *
 	 * @throws CallbackException {@inheritDoc}
 	 */
@@ -321,7 +327,7 @@ public class InterceptorList implements Interceptor {
 	 * @param sql {@inheritDoc}
 	 *
 	 * @return the result of the first contained interceptor that modified the sql,
-	 *         or the original sql if none of the contained interceptors modified the sql.
+	 * or the original sql if none of the contained interceptors modified the sql.
 	 */
 	@Override
 	public String onPrepareStatement(final String sql) {

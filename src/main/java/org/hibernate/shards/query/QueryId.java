@@ -37,7 +37,7 @@ public class QueryId {
 		if ( this == o ) {
 			return true;
 		}
-		if ( !( o instanceof QueryId ) ) {
+		if ( !(o instanceof QueryId) ) {
 			return false;
 		}
 

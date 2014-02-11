@@ -34,8 +34,9 @@ public class SequentialShardAccessStrategy implements ShardAccessStrategy {
 
 	private final Logger log = Logger.getLogger( getClass() );
 
-	public <T> T apply(final List<Shard> shards, final ShardOperation<T> operation, final ExitStrategy<T> exitStrategy,
-					   final ExitOperationsCollector exitOperationsCollector) {
+	public <T> T apply(
+			final List<Shard> shards, final ShardOperation<T> operation, final ExitStrategy<T> exitStrategy,
+			final ExitOperationsCollector exitOperationsCollector) {
 
 		for ( final Shard shard : getNextOrderingOfShards( shards ) ) {
 			if ( exitStrategy.addResult( operation.execute( shard ), shard ) ) {
