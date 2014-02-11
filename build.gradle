@@ -129,43 +129,6 @@ if ( ext.toolsJar.exists() ) {
     }
 }
 
-// set up logging generation task ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ext.generatedLoggingSrcDir = file( "${project.buildDir}/generated-src/logging/" )
-task generateMainLoggingClasses(type: Compile) {
-    ext.aptDumpDir = file( "${project.buildDir}/tmp/apt/logging" )
-    classpath = compileJava.classpath + configurations.jbossLoggingTool
-    source = sourceSets.main.java.srcDirs
-    destinationDir = aptDumpDir
-    options.define(
-            compilerArgs: [
-                    "-nowarn",
-                    "-proc:only",
-                    "-encoding", "UTF-8",
-                    "-processor", "org.jboss.logging.processor.apt.LoggingToolsProcessor",
-                    "-s", "$generatedLoggingSrcDir.absolutePath",
-                    "-AloggingVersion=3.0",
-                    "-source", "1.6",
-                    "-target", "1.6",
-                    "-AtranslationFilesPath=${project.rootDir}/src/main/resources"
-            ]
-    );
-    outputs.dir generatedLoggingSrcDir;
-    doFirst {
-        generatedLoggingSrcDir.mkdirs()
-    }
-    doLast {
-        aptDumpDir.delete()
-    }
-}
-
-sourceSets.main {
-    java.srcDir generatedLoggingSrcDir
-}
-
-// for the time being eat the annoying output from running the annotation processors
-generateMainLoggingClasses.logging.captureStandardError(LogLevel.INFO)
-
-compileJava.dependsOn generateMainLoggingClasses
 compileJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
 compileTestJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
 
@@ -175,6 +138,16 @@ test {
     systemProperties += System.properties.findAll { it.key.startsWith( "hibernate.") }
     maxHeapSize = "1024m"
 }
+
+processTestResources.doLast( {
+    copy {
+        from( sourceSets.test.java.srcDirs ) {
+            include '**/*.properties'
+            include '**/*.xml'
+        }
+        into sourceSets.test.output.classesDir
+    }
+} )
 
 // Set up jar manifest information ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 manifest.mainAttributes(
