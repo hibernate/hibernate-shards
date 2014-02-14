@@ -63,7 +63,16 @@ public class ShardedConfigurationTest {
 		shardStrategyFactory = new MyShardStrategyFactory();
 		Configuration protoConfig = new Configuration();
 		protoConfig.setProperty( Environment.DIALECT, HSQLDialect.class.getName() );
-		shardConfig = new MyShardConfig( "user", "url", "pwd", "sfname", "prefix", 33 );
+		shardConfig = new MyShardConfig(
+				"sa",
+				"jdbc:hsqldb:mem:shard0",
+				"",
+				"sfname",
+				"prefix",
+				33,
+				"org.hsqldb.jdbcDriver",
+				"org.hibernate.dialect.HSQLDialect"
+		);
 
 		shardedConfiguration = new ShardedConfiguration(
 				protoConfig,
@@ -79,7 +88,7 @@ public class ShardedConfigurationTest {
 			new ShardedConfiguration( null, shardConfigs, shardStrategyFactory );
 			fail( "Expected npe" );
 		}
-		catch (NullPointerException npe) {
+		catch (IllegalArgumentException npe) {
 			// good
 		}
 
@@ -88,7 +97,7 @@ public class ShardedConfigurationTest {
 			new ShardedConfiguration( config, null, shardStrategyFactory );
 			fail( "Expected npe" );
 		}
-		catch (NullPointerException npe) {
+		catch (IllegalArgumentException npe) {
 			// good
 		}
 
@@ -104,7 +113,16 @@ public class ShardedConfigurationTest {
 
 	@Test(expected = NullPointerException.class)
 	public void testShardIdRequired() {
-		final ShardConfiguration config = new MyShardConfig( "user", "url", "pwd", "sfname", null, null );
+		final ShardConfiguration config = new MyShardConfig(
+				"user",
+				"url",
+				"pwd",
+				"sfname",
+				null,
+				null,
+				"org.hsqldb.jdbcDriver",
+				"org.hibernate.dialect.HSQLDialect"
+		);
 		shardedConfiguration.populatePrototypeWithVariableProperties( config );
 	}
 
@@ -145,16 +163,26 @@ public class ShardedConfigurationTest {
 		private final String sessionFactoryName;
 		private final String cacheRegionPrefix;
 		private final Integer shardId;
+		private final String driverClass;
+		private final String dialect;
 
 		public MyShardConfig(
-				String user, String url, String password,
-				String sessionFactoryName, String cacheRegionPrefix, Integer shardId) {
+				String user,
+				String url,
+				String password,
+				String sessionFactoryName,
+				String cacheRegionPrefix,
+				Integer shardId,
+				String driverClass,
+				String dialect) {
 			this.user = user;
 			this.url = url;
 			this.password = password;
 			this.sessionFactoryName = sessionFactoryName;
 			this.cacheRegionPrefix = cacheRegionPrefix;
 			this.shardId = shardId;
+			this.driverClass = driverClass;
+			this.dialect = dialect;
 		}
 
 		@Override
@@ -190,6 +218,16 @@ public class ShardedConfigurationTest {
 		@Override
 		public String getShardCacheRegionPrefix() {
 			return cacheRegionPrefix;
+		}
+
+		@Override
+		public String getDriverClassName() {
+			return driverClass;
+		}
+
+		@Override
+		public String getHibernateDialect() {
+			return dialect;
 		}
 	}
 }

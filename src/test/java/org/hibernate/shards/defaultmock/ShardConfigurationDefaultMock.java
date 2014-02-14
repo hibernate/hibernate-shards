@@ -51,5 +51,15 @@ public class ShardConfigurationDefaultMock implements ShardConfiguration {
 	public String getShardCacheRegionPrefix() {
 		throw new UnsupportedOperationException();
 	}
+
+	@Override
+	public String getDriverClassName() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getHibernateDialect() {
+		throw new UnsupportedOperationException();
+	}
 }
 

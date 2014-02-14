@@ -19,6 +19,8 @@
 package org.hibernate.shards;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,9 +41,7 @@ import org.hibernate.shards.cfg.ShardedEnvironment;
 import org.hibernate.shards.session.ShardedSessionFactory;
 import org.hibernate.shards.session.ShardedSessionFactoryImpl;
 import org.hibernate.shards.strategy.ShardStrategyFactory;
-import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Preconditions;
-import org.hibernate.shards.util.Sets;
 
 /**
  * Like regular Hibernate's Configuration, this class helps construct your
@@ -71,7 +71,7 @@ public class ShardedConfiguration {
 	private final Map<Integer, Set<ShardId>> shardToVirtualShardIdMap;
 
 	// our lovely logger
-	private final Logger log = Logger.getLogger( getClass() );
+	private static final Logger LOG = Logger.getLogger( ShardedConfiguration.class );
 
 	/**
 	 * Constructs a ShardedConfiguration.
@@ -92,7 +92,7 @@ public class ShardedConfiguration {
 			final List<ShardConfiguration> shardConfigs,
 			final ShardStrategyFactory shardStrategyFactory) {
 
-		this( prototypeConfiguration, shardConfigs, shardStrategyFactory, Maps.<Integer, Integer>newHashMap() );
+		this( prototypeConfiguration, shardConfigs, shardStrategyFactory, Collections.<Integer, Integer>emptyMap() );
 	}
 
 	/**
@@ -116,28 +116,48 @@ public class ShardedConfiguration {
 			final ShardStrategyFactory shardStrategyFactory,
 			final Map<Integer, Integer> virtualShardToShardMap) {
 
-		this.prototypeConfiguration = Preconditions.checkNotNull( prototypeConfiguration );
-		this.shardConfigs = Preconditions.checkNotNull( shardConfigs );
-		Preconditions.checkArgument( !shardConfigs.isEmpty() );
-		this.shardStrategyFactory = Preconditions.checkNotNull( shardStrategyFactory );
+		if ( prototypeConfiguration == null ) {
+			String message = "Prototype configuration can't be null";
+			LOG.error( message );
+			throw new IllegalArgumentException( message );
+		}
+		if ( shardConfigs == null
+				|| shardConfigs.isEmpty() ) {
+			String message = "Shard configuration can't be null or empty";
+			LOG.error( message );
+			throw new IllegalArgumentException( message );
+		}
+		if ( shardStrategyFactory == null ) {
+			String message = "Shard strategy factory can't be null";
+			LOG.error( message );
+			throw new IllegalArgumentException( message );
+		}
+		if ( virtualShardToShardMap == null ) {
+			String message = "Shard and virtual shard mapping is null";
+			LOG.error( message );
+			throw new IllegalArgumentException( message );
+		}
+		this.prototypeConfiguration = prototypeConfiguration;
+		this.shardConfigs = shardConfigs;
+		this.shardStrategyFactory = shardStrategyFactory;
 		this.virtualShardToShardMap = Preconditions.checkNotNull( virtualShardToShardMap );
 
 		if ( !virtualShardToShardMap.isEmpty() ) {
 			// build the map from shard to set of virtual shards
-			shardToVirtualShardIdMap = Maps.newHashMap();
+			shardToVirtualShardIdMap = new HashMap<Integer, Set<ShardId>>();
 			for ( Map.Entry<Integer, Integer> entry : virtualShardToShardMap.entrySet() ) {
 				Set<ShardId> set = shardToVirtualShardIdMap.get( entry.getValue() );
 				// see if we already have a set of virtual shards
 				if ( set == null ) {
 					// we don't, so create it and add it to the map
-					set = Sets.newHashSet();
+					set = new HashSet<ShardId>();
 					shardToVirtualShardIdMap.put( entry.getValue(), set );
 				}
 				set.add( new ShardId( entry.getKey() ) );
 			}
 		}
 		else {
-			shardToVirtualShardIdMap = Maps.newHashMap();
+			shardToVirtualShardIdMap = Collections.emptyMap();
 		}
 
 		// Initializes the mapping configuration.
@@ -149,7 +169,7 @@ public class ShardedConfiguration {
 	 * the shard-specific configs passed into the constructor.
 	 */
 	public ShardedSessionFactory buildShardedSessionFactory() {
-		final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactories = Maps.newHashMap();
+		final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactories = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		// since all configs get their mappings from the prototype config, and we
 		// get the set of classes that don't support top-level saves from the mappings,
 		// we can get the set from the prototype and then just reuse it.
@@ -163,7 +183,7 @@ public class ShardedConfiguration {
 			if ( shardId == null ) {
 				final String msg = "Attempt to build a ShardedSessionFactory using a "
 						+ "ShardConfiguration that has a null shard id.";
-				log.error( msg );
+				LOG.error( msg );
 				throw new NullPointerException( msg );
 			}
 			Set<ShardId> virtualShardIds;
@@ -199,13 +219,13 @@ public class ShardedConfiguration {
 	 */
 	@SuppressWarnings("unchecked")
 	private Set<Class<?>> determineClassesWithoutTopLevelSaveSupport(final Configuration prototypeConfig) {
-		final Set<Class<?>> classesWithoutTopLevelSaveSupport = Sets.newHashSet();
+		final Set<Class<?>> classesWithoutTopLevelSaveSupport = new HashSet<Class<?>>();
 		for ( final Iterator<PersistentClass> pcIter = prototypeConfig.getClassMappings(); pcIter.hasNext(); ) {
 			final PersistentClass pc = pcIter.next();
 			for ( final Iterator<Property> propIter = pc.getPropertyIterator(); propIter.hasNext(); ) {
 				if ( doesNotSupportTopLevelSave( propIter.next() ) ) {
 					final Class<?> mappedClass = pc.getMappedClass();
-					log.info( String.format( "Class %s does not support top-level saves.", mappedClass.getName() ) );
+					LOG.info( String.format( "Class %s does not support top-level saves.", mappedClass.getName() ) );
 					classesWithoutTopLevelSaveSupport.add( mappedClass );
 					break;
 				}
@@ -236,6 +256,8 @@ public class ShardedConfiguration {
 		safeSet( prototypeConfiguration, Environment.DATASOURCE, config.getShardDatasource() );
 		safeSet( prototypeConfiguration, Environment.CACHE_REGION_PREFIX, config.getShardCacheRegionPrefix() );
 		safeSet( prototypeConfiguration, Environment.SESSION_FACTORY_NAME, config.getShardSessionFactoryName() );
+		safeSet( prototypeConfiguration, Environment.DRIVER, config.getDriverClassName() );
+		safeSet( prototypeConfiguration, Environment.DIALECT, config.getHibernateDialect() );
 		safeSet( prototypeConfiguration, ShardedEnvironment.SHARD_ID_PROPERTY, config.getShardId().toString() );
 	}
 

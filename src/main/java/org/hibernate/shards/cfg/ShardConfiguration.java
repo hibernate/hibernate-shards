@@ -22,6 +22,7 @@ package org.hibernate.shards.cfg;
  * instances contained within your {@link org.hibernate.shards.session.ShardedSessionFactory}.
  *
  * @author maxr@google.com (Max Ross)
+ * @author Aleksander Dukhno
  */
 public interface ShardConfiguration {
 
@@ -70,4 +71,18 @@ public interface ShardConfiguration {
 	 * @see org.hibernate.cfg.Environment#CACHE_REGION_PREFIX
 	 */
 	String getShardCacheRegionPrefix();
+
+	/**
+	 * @return the class name of driver
+	 *
+	 * @see org.hibernate.cfg.Environment#DRIVER
+	 */
+	String getDriverClassName();
+
+	/**
+	 * @return the class name of hibernate dialect for current database
+	 *
+	 * @see org.hibernate.cfg.Environment#DIALECT
+	 */
+	String getHibernateDialect();
 }

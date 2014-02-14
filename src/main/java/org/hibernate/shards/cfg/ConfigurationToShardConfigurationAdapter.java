@@ -60,4 +60,14 @@ public class ConfigurationToShardConfigurationAdapter implements ShardConfigurat
 	public String getShardCacheRegionPrefix() {
 		return config.getProperty( Environment.CACHE_REGION_PREFIX );
 	}
+
+	@Override
+	public String getDriverClassName() {
+		return config.getProperty( Environment.DRIVER );
+	}
+
+	@Override
+	public String getHibernateDialect() {
+		return config.getProperty( Environment.DIALECT );
+	}
 }
