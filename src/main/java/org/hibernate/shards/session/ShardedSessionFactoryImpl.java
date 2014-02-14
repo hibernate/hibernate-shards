@@ -21,6 +21,7 @@ package org.hibernate.shards.session;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -79,7 +80,6 @@ import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.ShardStrategyFactory;
 import org.hibernate.shards.util.Iterables;
 import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.shards.util.Sets;
 import org.hibernate.stat.Statistics;
@@ -125,7 +125,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	private final Statistics statistics = new ConcurrentStatisticsImpl( this );
 
 	// our lovely logger
-	private final Logger log = Logger.getLogger( getClass() );
+	private static final Logger LOG = Logger.getLogger( ShardedSessionFactoryImpl.class );
 
 	/**
 	 * Constructs a ShardedSessionFactoryImpl
@@ -157,7 +157,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 		Preconditions.checkNotNull( classesWithoutTopLevelSaveSupport );
 
 		this.sessionFactories = Lists.newArrayList( sessionFactoryShardIdMap.keySet() );
-		this.sessionFactoryShardIdMap = Maps.newHashMap();
+		this.sessionFactoryShardIdMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		this.fullSessionFactoryShardIdMap = sessionFactoryShardIdMap;
 		this.classesWithoutTopLevelSaveSupport = Sets.newHashSet( classesWithoutTopLevelSaveSupport );
 		this.checkAllAssociatedObjectsForDifferentShards = checkAllAssociatedObjectsForDifferentShards;
@@ -180,7 +180,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 							"Cannot have more than one shard with shard id %d.",
 							shardId.getId()
 					);
-					log.error( msg );
+					LOG.error( msg );
 					throw new HibernateException( msg );
 				}
 				if ( shardIds.contains( shardId ) ) {
@@ -214,7 +214,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	 * @param classesWithoutTopLevelSaveSupport All classes that cannot be saved
 	 * as top-level objects
 	 * @param checkAllAssociatedObjectsForDifferentShards Flag that controls
-	 * whether or not we do full cross-shard relationshp checking (very slow)
+	 * whether or not we do full cross-shard relationship checking (very slow)
 	 */
 	public ShardedSessionFactoryImpl(
 			Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap,
@@ -554,12 +554,12 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 		try {
 			// try to be helpful to apps that don't clean up properly
 			if ( !isClosed() ) {
-				log.warn( "ShardedSessionFactoryImpl is being garbage collected but it was never properly closed." );
+				LOG.warn( "ShardedSessionFactoryImpl is being garbage collected but it was never properly closed." );
 				try {
 					close();
 				}
 				catch (Exception e) {
-					log.warn( "Caught exception trying to close.", e );
+					LOG.warn( "Caught exception trying to close.", e );
 				}
 			}
 		}

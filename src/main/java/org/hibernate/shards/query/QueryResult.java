@@ -19,19 +19,19 @@
 package org.hibernate.shards.query;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Maps;
 
 /**
  * @author Maulik Shah
  */
 public class QueryResult {
 
-	private final Map<Shard, List> resultMap = Maps.newHashMap();
+	private final Map<Shard, List> resultMap = new HashMap<Shard, List>();
 
 	private final List<Object> entityList = Lists.newArrayList();
 

@@ -19,6 +19,7 @@
 package org.hibernate.shards;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,6 @@ import org.hibernate.shards.query.ShardedQuery;
 import org.hibernate.shards.query.ShardedSQLQuery;
 import org.hibernate.shards.session.OpenSessionEvent;
 import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.shards.util.Sets;
 
@@ -67,21 +67,21 @@ public class ShardImpl implements Shard {
 	private Session session;
 
 	// events that need to fire when the Session is opened
-	private final LinkedList<OpenSessionEvent> openSessionEvents = Lists.newLinkedList();
+	private final LinkedList<OpenSessionEvent> openSessionEvents = new LinkedList<OpenSessionEvent>();
 
 	// maps criteria ids to Criteria objects for quick lookup
-	private Map<CriteriaId, Criteria> criteriaMap = Maps.newHashMap();
+	private Map<CriteriaId, Criteria> criteriaMap = new HashMap<CriteriaId, Criteria>();
 
 	// maps query ids to Query objects for quick lookup
-	private Map<QueryId, Query> queryMap = Maps.newHashMap();
+	private Map<QueryId, Query> queryMap = new HashMap<QueryId, Query>();
 
 	// maps criteria ids to lists of criteria events.  The criteria events
 	// need to fire when the actual Criteria is established
-	private Map<CriteriaId, LinkedList<CriteriaEvent>> criteriaEventMap = Maps.newHashMap();
+	private Map<CriteriaId, LinkedList<CriteriaEvent>> criteriaEventMap = new HashMap<CriteriaId, LinkedList<CriteriaEvent>>();
 
 	// maps query ids to lists of query events.  The query events
 	// need to fire when the actual Query is established
-	private Map<QueryId, LinkedList<QueryEvent>> queryEventMap = Maps.newHashMap();
+	private Map<QueryId, LinkedList<QueryEvent>> queryEventMap = new HashMap<QueryId, LinkedList<QueryEvent>>();
 
 	/**
 	 * Construct a ShardImpl
@@ -299,7 +299,7 @@ public class ShardImpl implements Shard {
 	/**
 	 * @return the OpenSessionEvents that are waiting to fire
 	 */
-	LinkedList<OpenSessionEvent> getOpenSessionEvents() {
+	List<OpenSessionEvent> getOpenSessionEvents() {
 		return openSessionEvents;
 	}
 
@@ -311,7 +311,7 @@ public class ShardImpl implements Shard {
 	}
 
 	/**
-	 * @return the CrtieriaEvents that are waiting to fire
+	 * @return the CriteriaEvents that are waiting to fire
 	 */
 	Map<CriteriaId, LinkedList<CriteriaEvent>> getCriteriaEventMap() {
 		return criteriaEventMap;

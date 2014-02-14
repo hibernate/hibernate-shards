@@ -21,6 +21,7 @@ package org.hibernate.shards.session;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,6 @@ import org.hibernate.shards.strategy.selection.ShardSelectionStrategy;
 import org.hibernate.shards.strategy.selection.ShardSelectionStrategyDefaultMock;
 import org.hibernate.shards.util.InterceptorList;
 import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Pair;
 import org.hibernate.shards.util.Sets;
 import org.hibernate.type.Type;
@@ -541,7 +541,7 @@ public class ShardedSessionImplTest extends TestCase {
 	}
 
 	public void testBuildShardListFromSessionFactoryShardIdMap() {
-		Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap = Maps.newHashMap();
+		Map<SessionFactoryImplementor, Set<ShardId>> sessionFactoryShardIdMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		ShardIdResolver resolver = new ShardIdResolverDefaultMock();
 
 		assertTrue(

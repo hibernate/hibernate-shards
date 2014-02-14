@@ -20,6 +20,7 @@ package org.hibernate.shards.session;
 
 import java.sql.Connection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -43,7 +44,6 @@ import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.ShardStrategyDefaultMock;
 import org.hibernate.shards.strategy.ShardStrategyFactory;
 import org.hibernate.shards.strategy.ShardStrategyFactoryDefaultMock;
-import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Sets;
 
 /**
@@ -87,7 +87,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 	}
 
 	public void testCtors() {
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = Maps.newHashMap();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		Set<Class<?>> crsl = Collections.emptySet();
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
 		try {
@@ -129,7 +129,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 
 	public void testOpenSessionWithUserSuppliedConnection() {
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = Maps.newHashMap();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
 		ShardedSessionFactory ssf =
@@ -164,7 +164,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 
 	public void testOpenStatelessSessionWithUserSuppliedConnection() {
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = Maps.newHashMap();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
 		ShardedSessionFactory ssf =
@@ -217,7 +217,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 				return Collections.emptyMap();
 			}
 		};
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = Maps.newHashMap();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		sfMap.put( mock1, Sets.newHashSet( new ShardId( 1 ) ) );
 		ShardedSessionFactory ssf =
 				new ShardedSessionFactoryImpl(
@@ -275,7 +275,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 
 	public void testGetReference() throws NamingException {
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = Maps.newHashMap();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
 		ShardedSessionFactory ssf =
@@ -299,7 +299,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 
 	public void testGetStatistics() {
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = Maps.newHashMap();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
 		ShardedSessionFactory ssf =
@@ -317,7 +317,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 		final boolean[] closeCalled = {false};
 
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = Maps.newHashMap();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
 		ShardedSessionFactoryImpl ssf =
@@ -346,7 +346,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 		final boolean[] closeCalled = {false};
 
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = Maps.newHashMap();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 		ShardedSessionFactoryImpl ssf =
 				new ShardedSessionFactoryImpl(
@@ -371,7 +371,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 	}
 
 	public void testFailsWhenMultipleSessionFactoriesHaveSameShardId() {
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = Maps.newHashMap();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
 		Set<Class<?>> crsl = Collections.emptySet();
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );

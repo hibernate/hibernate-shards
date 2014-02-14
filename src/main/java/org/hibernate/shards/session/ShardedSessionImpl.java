@@ -22,6 +22,7 @@ import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,7 +89,6 @@ import org.hibernate.shards.transaction.ShardedTransactionImpl;
 import org.hibernate.shards.util.InterceptorList;
 import org.hibernate.shards.util.Iterables;
 import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Pair;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.shards.util.Sets;
@@ -186,7 +186,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	}
 
 	private Map<ShardId, Shard> buildShardIdsToShardsMap() {
-		final Map<ShardId, Shard> map = Maps.newHashMap();
+		final Map<ShardId, Shard> map = new HashMap<ShardId, Shard>();
 		for ( final Shard shard : shards ) {
 			for ( final ShardId shardId : shard.getShardIds() ) {
 				map.put( shardId, shard );

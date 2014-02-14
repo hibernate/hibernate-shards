@@ -18,6 +18,7 @@
 
 package org.hibernate.shards.criteria;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,6 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.transform.ResultTransformer;
@@ -58,11 +58,11 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	final ShardedCriteria parent;
 
 	// maps shards to actual Criteria objects
-	private final Map<Shard, Criteria> shardToCriteriaMap = Maps.newHashMap();
+	private final Map<Shard, Criteria> shardToCriteriaMap = new HashMap<Shard, Criteria>();
 
 	// maps shards to lists of criteria events that need to be applied
 	// when the actual Criteria objects are established
-	private final Map<Shard, List<CriteriaEvent>> shardToEventListMap = Maps.newHashMap();
+	private final Map<Shard, List<CriteriaEvent>> shardToEventListMap = new HashMap<Shard, List<CriteriaEvent>>();
 
 	private final ExitOperationsCriteriaCollector criteriaCollector;
 
@@ -73,7 +73,7 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	 *
 	 * @param shards the shards that we're aware of
 	 * @param parent our parent
-	 * @param criteriaCollector the collector for extit operations
+	 * @param criteriaCollector the collector for exit operations
 	 * @param associationPath the association path for the subcriteria
 	 */
 	public ShardedSubcriteriaImpl(

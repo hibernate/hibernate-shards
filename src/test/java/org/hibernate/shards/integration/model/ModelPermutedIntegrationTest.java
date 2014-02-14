@@ -20,6 +20,7 @@ package org.hibernate.shards.integration.model;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,7 +57,6 @@ import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.ShardStrategyFactory;
 import org.hibernate.shards.strategy.ShardStrategyFactoryDefaultMock;
 import org.hibernate.shards.util.Lists;
-import org.hibernate.shards.util.Maps;
 import org.hibernate.shards.util.Sets;
 
 import static org.hibernate.shards.integration.model.ModelDataFactory.building;
@@ -113,7 +113,7 @@ public class ModelPermutedIntegrationTest extends BaseShardingIntegrationTestCas
 		}
 		Assert.assertEquals( getNumShards() * 2, total );
 		session.beginTransaction();
-		Map<ShardId, List<Serializable>> shards = Maps.newHashMap();
+		Map<ShardId, List<Serializable>> shards = new HashMap<ShardId, List<Serializable>>();
 		for ( Building b : buildings ) {
 			Building bReloaded = reloadAssertNotNull( b );
 			Assert.assertEquals( b.getName(), bReloaded.getName() );
