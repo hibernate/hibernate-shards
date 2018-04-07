@@ -49,6 +49,7 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.engine.transaction.spi.TransactionCoordinator;
 import org.hibernate.loader.custom.CustomQuery;
 import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.shards.defaultmock.ConnectionDefaultMock;
 import org.hibernate.shards.defaultmock.SessionDefaultMock;
 import org.hibernate.shards.defaultmock.SessionImplementorDefaultMock;
 import org.hibernate.shards.session.ControlSessionProvider;
@@ -82,7 +83,7 @@ public class ShardedTableHiLoGeneratorTest extends TestCase {
 
 		@Override
 		public Connection close() throws HibernateException {
-			throw new UnsupportedOperationException();
+			return new ConnectionDefaultMock();
 		}
 
 		@Override
@@ -158,7 +159,6 @@ public class ShardedTableHiLoGeneratorTest extends TestCase {
 		public Object instantiate(String entityName, Serializable id) throws HibernateException {
 			throw new UnsupportedOperationException();
 		}
-
 
 		@Deprecated
 		@Override

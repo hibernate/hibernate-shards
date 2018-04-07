@@ -259,6 +259,7 @@ public class SessionFactoryDefaultMock implements SessionFactoryImplementor {
 	}
 
 	@Override
+	@Deprecated
 	public ConnectionProvider getConnectionProvider() {
 		throw new UnsupportedOperationException();
 	}

@@ -272,7 +272,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 	}
 
 	@Test
-	public void testMaxResults() throws Exception {
+	public void testMaxResults() {
 		final Criteria criteria = session.createCriteria( Building.class ).setMaxResults( 1 );
 		Assert.assertEquals( 1, list( criteria ).size() );
 	}
@@ -327,7 +327,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 	}
 
 	@Test
-	public void testAggregateProjection() throws Exception {
+	public void testAggregateProjection() {
 		final Criteria criteria = session.createCriteria( Floor.class ).setProjection( Projections.sum( "number" ) );
 		final List<BigDecimal> l = list( criteria );
 		Assert.assertEquals( 1, l.size() );
@@ -335,7 +335,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 	}
 
 	@Test
-	public void testMultiExitOperations() throws Exception {
+	public void testMultiExitOperations() {
 		session.beginTransaction();
 		final Building b = ModelDataFactory.building( "Only Has Floors from 199-210" );
 		ModelDataFactory.floor( b, 199 );
@@ -356,7 +356,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 	}
 
 	@Test
-	public void testMultiOrdering() throws Exception {
+	public void testMultiOrdering() {
 
 		final Criteria criteria = session.createCriteria( Office.class )
 				.addOrder( Order.asc( "label" ) )
@@ -365,7 +365,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 				.addOrder( Order.desc( "name" ) );
 		final List<Office> listResult = list( criteria );
 		final List<Office> answer = Lists.newArrayList( b2f1o1, b1f3o2, b1f3o1 );
-		Assert.assertTrue( answer.equals( listResult ) );
+		Assert.assertEquals(answer, listResult);
 	}
 
 	@Parameterized.Parameters()

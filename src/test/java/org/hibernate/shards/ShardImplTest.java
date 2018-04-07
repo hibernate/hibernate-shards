@@ -25,6 +25,8 @@ import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.SessionBuilder;
+import org.hibernate.engine.spi.SessionBuilderImplementor;
 import org.hibernate.shards.criteria.CriteriaEvent;
 import org.hibernate.shards.criteria.CriteriaEventDefaultMock;
 import org.hibernate.shards.criteria.CriteriaFactory;
@@ -34,6 +36,7 @@ import org.hibernate.shards.criteria.ShardedCriteriaDefaultMock;
 import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
 import org.hibernate.shards.defaultmock.InterceptorDefaultMock;
 import org.hibernate.shards.defaultmock.QueryDefaultMock;
+import org.hibernate.shards.defaultmock.SessionBuilderImplementorDefaultMock;
 import org.hibernate.shards.defaultmock.SessionDefaultMock;
 import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
 import org.hibernate.shards.query.QueryEvent;
@@ -444,12 +447,10 @@ public class ShardImplTest extends TestCase {
 			return new SessionDefaultMock();
 		}
 
-//    @Override
-//    public org.hibernate.Session openSession(Interceptor interceptor)
-//        throws HibernateException {
-//      numOpenSessionWithInterceptorCalls++;
-//      return new SessionDefaultMock();
-//    }
+		@Override
+		public SessionBuilderImplementor withOptions() {
+			return new MySessionBuilderImplementor(this);
+		}
 	}
 
 	private static final class MyShardedCriteria extends ShardedCriteriaDefaultMock {
@@ -515,7 +516,7 @@ public class ShardImplTest extends TestCase {
 		}
 	}
 
-	public static final class MyQueryFactory extends QueryFactoryDefaultMock {
+	private static final class MyQueryFactory extends QueryFactoryDefaultMock {
 		private org.hibernate.Session createQueryCalledWith;
 		private Query queryToReturn;
 
@@ -534,6 +535,26 @@ public class ShardImplTest extends TestCase {
 
 		public void onEvent(Query query) {
 			numOnEventCalls++;
+		}
+	}
+
+	private static final class MySessionBuilderImplementor extends SessionBuilderImplementorDefaultMock {
+
+		private final MySessionFactory sessionFactoryDefaultMock;
+
+		MySessionBuilderImplementor(MySessionFactory sessionFactoryDefaultMock) {
+			this.sessionFactoryDefaultMock = sessionFactoryDefaultMock;
+		}
+
+		@Override
+		public SessionBuilder interceptor(Interceptor interceptor) {
+			this.sessionFactoryDefaultMock.numOpenSessionWithInterceptorCalls++;
+			return this;
+		}
+
+		@Override
+		public Session openSession() {
+			return new SessionDefaultMock();
 		}
 	}
 }
