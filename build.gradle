@@ -1,40 +1,70 @@
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'uploadAuth'
-apply plugin: 'jdocbook'
-apply from: "./libraries.gradle"
+import org.apache.tools.ant.filters.ReplaceTokens
 
-group = 'org.hibernate'
-version = '4.3.1-SNAPSHOT'
-buildDir = "target"
-targetCompatibility = "1.6"
-sourceCompatibility = "1.6"
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-    mavenRepo name: 'jboss-nexus', url: "http://repository.jboss.org/nexus/content/groups/public/"
-    mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
-}
+/*
+ * Hibernate, Relational Persistence for Idiomatic Java
+ *
+ * License: GNU Lesser General Public License (LGPL), version 2.1 or later.
+ * See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
+ */
 
 buildscript {
     repositories {
         mavenCentral()
         mavenLocal()
-        mavenRepo name: 'jboss-nexus', url: "http://repository.jboss.org/nexus/content/groups/public/"
-        mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
+        jcenter()
+        maven {
+            name "jboss-snapshots"
+            url "http://snapshots.jboss.org/maven2/"
+        }
     }
     dependencies {
-        classpath 'org.hibernate.build.gradle:gradle-upload-auth-plugin:1.1.1'
-        classpath "org.jboss.jdocbook:gradle-jdocbook:1.2.1"
+        classpath 'org.hibernate.build.gradle:gradle-maven-publish-auth:2.0.1'
+        classpath 'org.hibernate.build.gradle:hibernate-matrix-testing:2.0.0-SNAPSHOT'
+        classpath 'org.hibernate.build.gradle:version-injection-plugin:1.0.0'
+        classpath 'org.hibernate.build.gradle:gradle-xjc-plugin:1.0.2.Final'
+        classpath 'com.github.lburgazzoli:lb-karaf-features-gen:1.0.0-SNAPSHOT'
+        classpath 'org.asciidoctor:asciidoctor-gradle-plugin:1.5.2'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        //classpath 'org.hibernate.build.gradle:gradle-upload-auth-plugin:1.1.1'
+        //classpath "org.jboss.jdocbook:gradle-jdocbook:1.2.1"
     }
 }
 
+plugins {
+    id 'com.gradle.build-scan' version '1.9'
+    id 'me.champeau.buildscan-recipes' version '0.1.7'
+}
+
+version = '5.3.0-SNAPSHOT'
+buildDir = "target"
+
+allprojects {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+        maven {
+            name "jboss-snapshots"
+            url "http://snapshots.jboss.org/maven2/"
+        }
+    }
+
+    // minimize changes, at least for now (gradle uses 'build' by default)..
+    buildDir = "target"
+
+    apply from: rootProject.file( 'gradle/base-information.gradle' )
+}
+
+apply plugin: 'java'
+apply plugin: 'idea'
+apply plugin: 'maven'
+//apply plugin: 'uploadAuth'
+//apply plugin: 'jdocbook'
+apply from: "./libraries.gradle"
+
+
 idea {
     project {
-        languageLevel = '1.6'
+        languageLevel = '1.8'
         ipr {
             withXml { provider ->
                 provider.node.component.find { it.@name == 'VcsDirectoryMappings' }.mapping.@vcs = 'Git'
@@ -54,8 +84,6 @@ idea {
     }
 }
 
-
-
 // set up special classpath elements ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 configurations {
     jbossLoggingTool {
@@ -67,7 +95,6 @@ configurations {
     // for all imported dependencies, exclude xml-apis (which are jdk specific) from transitivity
     all*.exclude group: 'xml-apis', module: 'xml-apis'
 }
-
 
 // declare dependencies ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 dependencies {
@@ -81,56 +108,45 @@ dependencies {
     testRuntime( libraries.jcl_api )
     testRuntime( libraries.jcl )
 
-    jdocbookXsl( libraries.pressgang_xslt )
-    jdocbookXsl( libraries.pressgang_fonts )
-    jdocbookStyles( libraries.pressgang_style )
+//    jdocbookXsl( libraries.pressgang_xslt )
+//    jdocbookXsl( libraries.pressgang_fonts )
+//    jdocbookStyles( libraries.pressgang_style )
 
     jbossLoggingTool( libraries.logging_processor )
 
     deployerJars( 'org.apache.maven.wagon:wagon-http:1.0' )
 }
 
-jdocbook {
-    // apply shared formatting config ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    format('html_single') {
-        finalName = "index.html"
-        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml-single.xsl"
-    }
-    format('html') {
-        finalName = "index.html"
-        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
-    }
-    reference {
-        masterSourceDocumentName = 'master.xml'
-        useRelativeImageUris = false
-    }
-}
-
-stageStyles_reference.doLast {
-    logger.lifecycle( "Staging style resources")
-    copy {
-        into project.file( "${project.buildDir}/docbook/stage/reference/images" )
-        from project.file( 'src/main/docbook/reference/en-US' )
-        include '**/images/*.png'
-        includeEmptyDirs = false
-    }
-    copy {
-        into project.file( "${project.buildDir}/docbook/stage/reference" )
-        from project.file( 'src/main/docbook/style' )
-        includeEmptyDirs = false
-    }
-}
-
-// MacOS fun-ness ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-ext.toolsJar = file("${System.getProperty('java.home')}/../lib/tools.jar")
-if ( ext.toolsJar.exists() ) {
-    dependencies{
-        testCompile files( toolsJar )
-    }
-}
-
-compileJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
-compileTestJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
+//jdocbook {
+//    // apply shared formatting config ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//    format('html_single') {
+//        finalName = "index.html"
+//        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml-single.xsl"
+//    }
+//    format('html') {
+//        finalName = "index.html"
+//        stylesheet = "classpath:/xslt/org/hibernate/jdocbook/xslt/xhtml.xsl"
+//    }
+//    reference {
+//        masterSourceDocumentName = 'master.xml'
+//        useRelativeImageUris = false
+//    }
+//}
+//
+//stageStyles_reference.doLast {
+//    logger.lifecycle( "Staging style resources")
+//    copy {
+//        into project.file( "${project.buildDir}/docbook/stage/reference/images" )
+//        from project.file( 'src/main/docbook/reference/en-US' )
+//        include '**/images/*.png'
+//        includeEmptyDirs = false
+//    }
+//    copy {
+//        into project.file( "${project.buildDir}/docbook/stage/reference" )
+//        from project.file( 'src/main/docbook/style' )
+//        includeEmptyDirs = false
+//    }
+//}
 
 // Configure test task ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 test {
@@ -150,13 +166,17 @@ processTestResources.doLast( {
 } )
 
 // Set up jar manifest information ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-manifest.mainAttributes(
-        provider: 'gradle',
-        'Implementation-Url': 'http://hibernate.org',
-        'Implementation-Version': version,
-        'Implementation-Vendor': 'Hibernate.org',
-        'Implementation-Vendor-Id': 'org.hibernate'
-)
+jar {
+    manifest {
+        attributes(
+                provider: 'gradle',
+                'Implementation-Url': 'http://hibernate.org',
+                'Implementation-Version': version,
+                'Implementation-Vendor': 'Hibernate.org',
+                'Implementation-Vendor-Id': 'org.hibernate'
+        )
+    }
+}
 
 // Prepare upload and install tasks (including POM information) ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 task sourcesJar(type: Jar, dependsOn: compileJava) {
@@ -219,8 +239,24 @@ uploadArchives {
     }
 }
 
-
 // Configure gradlew generation ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.9'
+    gradleVersion = '4.6'
+    distributionType = 'ALL'
 }
+
+buildScan {
+    licenseAgreementUrl = 'https://gradle.com/terms-of-service'
+    licenseAgree = 'yes'
+
+    recipe 'git-commit', baseUrl: 'https://github.com/hibernate/hibernate-orm/tree'
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    //compileJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
+    //compileTestJava.options.define(compilerArgs: ["-proc:none", "-encoding", "UTF-8"])
+}
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"

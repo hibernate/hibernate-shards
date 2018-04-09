@@ -1,0 +1,9 @@
+= Hibernate ORM {majorMinorVersion} Shards Guide
+Steve Ebersole, Vlad Mihalcea
+:toc:
+:toclevels: 3
+
+include::Preface.adoc[]
+
+:numbered:
+
