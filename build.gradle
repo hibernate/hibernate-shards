@@ -105,8 +105,6 @@ dependencies {
     testRuntime( libraries.slf4j_api )
     testRuntime( libraries.slf4j_log4j12 )
     testRuntime( libraries.jcl_slf4j )
-    testRuntime( libraries.jcl_api )
-    testRuntime( libraries.jcl )
 
 //    jdocbookXsl( libraries.pressgang_xslt )
 //    jdocbookXsl( libraries.pressgang_fonts )

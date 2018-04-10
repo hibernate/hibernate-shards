@@ -29,7 +29,7 @@ class EnableFilterOpenSessionEvent implements OpenSessionEvent {
 
 	private final String filterName;
 
-	public EnableFilterOpenSessionEvent(final String filterName) {
+	EnableFilterOpenSessionEvent(final String filterName) {
 		this.filterName = filterName;
 	}
 

@@ -23,7 +23,7 @@
 
     <class name="Building" table="Building">
         <id name="buildingId" type="long">
-            <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
+            <generator class="org.hibernate.shards.id.ShardedTableGenerator"/>
         </id>
         <property name="name" not-null="true"/>
         <bag name="floors" lazy="true" table="Floor" inverse="true" order-by="floorId asc" cascade="all">
@@ -42,7 +42,7 @@
 
     <class name="Elevator">
         <id name="elevatorId" type="long">
-            <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
+            <generator class="org.hibernate.shards.id.ShardedTableGenerator"/>
         </id>
         <many-to-one name="building" column="buildingId" not-null="true" class="Building"/>
         <bag name="floors" lazy="true" table="FloorElevator" order-by="floorId asc">
@@ -53,7 +53,7 @@
 
     <class name="Escalator">
         <id name="escalatorId" type="long">
-            <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
+            <generator class="org.hibernate.shards.id.ShardedTableGenerator"/>
         </id>
         <one-to-one name="bottomFloor"/>
         <one-to-one name="topFloor"/>
@@ -61,7 +61,7 @@
 
     <class name="Tenant">
         <id name="tenantId" type="long">
-            <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
+            <generator class="org.hibernate.shards.id.ShardedTableGenerator"/>
         </id>
         <property name="name" not-null="true"/>
         <bag name="buildings" lazy="true" table="BuildingTenant" order-by="buildingId asc">
@@ -76,7 +76,7 @@
 
     <class name="Person">
         <id name="personId" type="long">
-            <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
+            <generator class="org.hibernate.shards.id.ShardedTableGenerator"/>
         </id>
         <property name="name" not-null="true"/>
         <many-to-one name="employer" column="tenantId" not-null="false" class="Tenant"/>
@@ -85,7 +85,7 @@
 
     <class name="Office">
         <id name="officeId" type="long">
-            <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
+            <generator class="org.hibernate.shards.id.ShardedTableGenerator"/>
         </id>
         <property name="label" not-null="true"/>
         <many-to-one name="floor" column="floorId" not-null="false" class="Floor"/>
@@ -98,14 +98,14 @@
 
     <class name="Window">
         <id name="windowId" type="long">
-            <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
+            <generator class="org.hibernate.shards.id.ShardedTableGenerator"/>
         </id>
         <property name="opens" not-null="true"/>
     </class>
 
     <class name="Floor">
         <id name="floorId" type="long">
-            <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
+            <generator class="org.hibernate.shards.id.ShardedTableGenerator"/>
         </id>
         <property name="number" not-null="true"/>
         <property name="squareFeet" not-null="false"/>
@@ -126,7 +126,7 @@
 
     <class name="IdIsBaseType" table="IdIsBaseType">
         <id name="idIsBaseTypeId" type="big_integer">
-            <generator class="org.hibernate.shards.id.ShardedTableHiLoGenerator"/>
+            <generator class="org.hibernate.shards.id.ShardedTableGenerator"/>
         </id>
         <property name="value" not-null="true"/>
     </class>

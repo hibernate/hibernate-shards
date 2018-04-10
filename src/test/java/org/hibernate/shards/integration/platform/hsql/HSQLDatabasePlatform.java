@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -20,12 +20,12 @@ package org.hibernate.shards.integration.platform.hsql;
 
 import java.util.List;
 
-import org.hsqldb.jdbcDriver;
-
 import org.hibernate.shards.integration.IdGenType;
 import org.hibernate.shards.integration.platform.BaseDatabasePlatform;
 import org.hibernate.shards.integration.platform.DatabasePlatform;
 import org.hibernate.shards.util.Lists;
+
+import org.hsqldb.jdbcDriver;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -42,8 +42,7 @@ public class HSQLDatabasePlatform extends BaseDatabasePlatform {
 	private static final Iterable<String> CREATE_TABLE_STATEMENTS = Lists.newArrayList(
 			"CREATE TABLE sample_table (id DECIMAL(40,0) PRIMARY KEY, str_col VARCHAR(256))",
 			"CREATE TABLE sample_table2 (id DECIMAL(40,0) PRIMARY KEY, str_col VARCHAR(256))",
-			"CREATE TABLE hibernate_unique_key (id IDENTITY, next_hi DECIMAL(40,0))",
-			"INSERT INTO hibernate_unique_key(next_hi) VALUES(1)",
+			"CREATE TABLE hibernate_sequences ( sequence_name VARCHAR (255) not null, next_val BIGINT, primary key ( sequence_name ) )",
 			"CREATE TABLE Elevator (elevatorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0))",
 			"CREATE TABLE Building (buildingId DECIMAL(40,0) PRIMARY KEY, name VARCHAR(50))",
 			"CREATE TABLE Floor (floorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0), upEscalatorId DECIMAL(40,0), downEscalatorId DECIMAL(40,0), number DECIMAL(40,0), squareFeet DECIMAL(40, 4))",
@@ -59,16 +58,18 @@ public class HSQLDatabasePlatform extends BaseDatabasePlatform {
 	);
 
 	protected static final List<String> DROP_TABLE_STATEMENTS = Lists.newArrayList(
-			"SHUTDOWN" // this deletes the whole database!
+			"DROP SCHEMA PUBLIC CASCADE" // this deletes the whole database!
 	);
 
 	protected HSQLDatabasePlatform() {
 	}
 
+	@Override
 	public Iterable<String> getCreateTableStatements(IdGenType idGenType) {
 		return CREATE_TABLE_STATEMENTS;
 	}
 
+	@Override
 	public Iterable<String> getDropTableStatements(IdGenType idGenType) {
 		return DROP_TABLE_STATEMENTS;
 	}
@@ -77,18 +78,22 @@ public class HSQLDatabasePlatform extends BaseDatabasePlatform {
 		return PLATFORM;
 	}
 
+	@Override
 	public String getUrl(int index) {
 		return IN_MEMORY_DB_URL_PREFIX + "shard" + index;
 	}
 
+	@Override
 	public String getUser() {
 		return IN_MEMORY_DB_USER;
 	}
 
+	@Override
 	public String getPassword() {
 		return IN_MEMORY_DB_PASSWORD;
 	}
 
+	@Override
 	public String getName() {
 		return "hsql";
 	}

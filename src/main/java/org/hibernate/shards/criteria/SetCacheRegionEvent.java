@@ -41,6 +41,7 @@ class SetCacheRegionEvent implements CriteriaEvent {
 		this.cacheRegion = cacheRegion;
 	}
 
+	@Override
 	public void onEvent(Criteria criteria) {
 		criteria.setCacheRegion( cacheRegion );
 	}

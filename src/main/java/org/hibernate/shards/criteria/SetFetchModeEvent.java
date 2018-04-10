@@ -47,6 +47,7 @@ class SetFetchModeEvent implements CriteriaEvent {
 		this.mode = mode;
 	}
 
+	@Override
 	public void onEvent(Criteria criteria) {
 		criteria.setFetchMode( associationPath, mode );
 	}

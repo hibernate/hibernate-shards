@@ -13,7 +13,6 @@ public class PermutationHelper {
 	private static final int MAX_SHARDS = 3;
 
 	public static Iterable<Object[]> data() {
-
 		final List<Object[]> parameters = Lists.newArrayList();
 
 		for ( final Permutation permutation : buildPermutationList() ) {

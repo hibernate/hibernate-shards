@@ -30,7 +30,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.cfg.NotYetImplementedException;
 import org.hibernate.criterion.AvgProjection;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
@@ -53,7 +52,7 @@ import org.hibernate.transform.ResultTransformer;
 public class ShardedCriteriaImpl implements ShardedCriteria {
 
 	private static final Iterable<CriteriaEvent> NO_CRITERIA_EVENTS =
-			Collections.unmodifiableList( new ArrayList<CriteriaEvent>() );
+			Collections.unmodifiableList(new ArrayList<>() );
 
 	// unique id for this ShardedCriteria
 	private final CriteriaId criteriaId;
@@ -97,8 +96,8 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 		this.shards = shards;
 		this.criteriaFactory = criteriaFactory;
 		this.shardAccessStrategy = shardAccessStrategy;
-		this.criteriaCollector = new ExitOperationsCriteriaCollector();
-		this.criteriaCollector.setSessionFactory( shards.get( 0 ).getSessionFactoryImplementor() );
+		criteriaCollector = new ExitOperationsCriteriaCollector();
+		criteriaCollector.setSessionFactory( shards.get( 0 ).getSessionFactoryImplementor() );
 	}
 
 	@Override
@@ -348,7 +347,7 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 			}
 		};
 
-		/**
+		/*
 		 * We don't support shard selection for criteria queries.  If you want
 		 * custom shards, create a ShardedSession with only the shards you want.
 		 * We're going to concatenate all our results and then use our
@@ -380,7 +379,7 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 			}
 		};
 
-		/**
+		/*
 		 * We don't support shard selection for criteria queries.  If you want
 		 * custom shards, create a ShardedSession with only the shards you want.
 		 * We're going to return the first non-null result we get from a shard.
@@ -388,7 +387,7 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 		return shardAccessStrategy.apply(
 				shards,
 				shardOp,
-				new FirstNonNullResultExitStrategy<Object>(),
+				new FirstNonNullResultExitStrategy<>(),
 				criteriaCollector
 		);
 	}
@@ -484,34 +483,33 @@ public class ShardedCriteriaImpl implements ShardedCriteria {
 
 	@Override
 	public Criteria createAlias(String associationPath, String alias, JoinType joinType) throws HibernateException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Criteria createAlias(String associationPath, String alias, JoinType joinType, Criterion withClause)
 			throws HibernateException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Criteria createCriteria(String associationPath, JoinType joinType) throws HibernateException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Criteria createCriteria(String associationPath, String alias, JoinType joinType) throws HibernateException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Criteria createCriteria(String associationPath, String alias, JoinType joinType, Criterion withClause)
 			throws HibernateException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Criteria addQueryHint(String hint) {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 }

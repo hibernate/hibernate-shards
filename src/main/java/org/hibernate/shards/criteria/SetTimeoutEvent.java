@@ -41,6 +41,7 @@ class SetTimeoutEvent implements CriteriaEvent {
 		this.timeout = timeout;
 	}
 
+	@Override
 	public void onEvent(Criteria criteria) {
 		criteria.setTimeout( timeout );
 	}

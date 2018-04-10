@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -19,17 +19,10 @@
 package org.hibernate.shards.integration.model;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Map;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -44,8 +37,14 @@ import org.hibernate.shards.model.Tenant;
 import org.hibernate.shards.util.JdbcUtil;
 import org.hibernate.shards.util.Lists;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+
 import static org.hibernate.shards.integration.model.ModelDataFactory.person;
 import static org.hibernate.shards.integration.model.ModelDataFactory.tenant;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -64,8 +63,7 @@ public class MemoryLeakTest {
 	}
 
 	private void deleteDatabase(final DatabasePlatform dbPlatform) throws SQLException {
-		final Connection conn = getConnection( dbPlatform );
-		try {
+		try (Connection conn = getConnection( dbPlatform )) {
 			for ( final String statement : dbPlatform.getDropTableStatements( IdGenType.SIMPLE ) ) {
 				try {
 					JdbcUtil.executeUpdate( conn, statement, false );
@@ -75,20 +73,13 @@ public class MemoryLeakTest {
 				}
 			}
 		}
-		finally {
-			conn.close();
-		}
 	}
 
 	private void createDatabase(final DatabasePlatform dbPlatform) throws SQLException {
-		final Connection conn = getConnection( dbPlatform );
-		try {
+		try (Connection conn = getConnection( dbPlatform )) {
 			for ( final String statement : dbPlatform.getCreateTableStatements( IdGenType.SIMPLE ) ) {
 				JdbcUtil.executeUpdate( conn, statement, false );
 			}
-		}
-		finally {
-			conn.close();
 		}
 	}
 
@@ -108,7 +99,7 @@ public class MemoryLeakTest {
 	}
 
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() {
 		try {
 			session.close();
 		}
@@ -119,9 +110,7 @@ public class MemoryLeakTest {
 
 	@Test
 	@Ignore("Discover a way to do memory leak test with hibernate.")
-	public void testLeak() throws SQLException, ClassNotFoundException, NoSuchFieldException, IllegalAccessException,
-			NoSuchMethodException, InvocationTargetException {
-
+	public void testLeak() throws NoSuchFieldException, IllegalAccessException {
 		Person p;
 		try {
 			session.beginTransaction();
@@ -141,7 +130,7 @@ public class MemoryLeakTest {
 		try {
 			final SessionImpl sessionImpl = (SessionImpl) session;
 			final Map map = (Map) f.get( sessionImpl.getPersistenceContext() );
-			Assert.assertEquals( 1, map.size() );
+			assertEquals( 1, map.size() );
 		}
 		finally {
 			f.setAccessible( isAccessible );

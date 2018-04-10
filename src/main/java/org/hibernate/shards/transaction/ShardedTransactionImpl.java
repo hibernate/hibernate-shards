@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -24,19 +24,19 @@ import java.util.List;
 import javax.transaction.Status;
 import javax.transaction.Synchronization;
 
-import org.jboss.logging.Logger;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.TransactionException;
-import org.hibernate.engine.transaction.spi.LocalStatus;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardedTransaction;
 import org.hibernate.shards.engine.ShardedSessionImplementor;
 import org.hibernate.shards.session.OpenSessionEvent;
 import org.hibernate.shards.session.SetupTransactionOpenSessionEvent;
 import org.hibernate.shards.util.Lists;
+
+import org.jboss.logging.Logger;
 
 /**
  * @author Tomislav Nad
@@ -52,12 +52,13 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 	private boolean committed;
 	private boolean commitFailed;
 	private List<Synchronization> synchronizations;
-	private boolean timeoutSet;
-	private int timeout;
+	private boolean timeOutSet;
+	private int timeOut = -1;
+	private boolean rollbackOnly;
 
 	public ShardedTransactionImpl(final ShardedSessionImplementor ssi) {
 		final OpenSessionEvent osEvent = new SetupTransactionOpenSessionEvent( this );
-		transactions = Collections.synchronizedList( new ArrayList<Transaction>() );
+		transactions = Collections.synchronizedList( new ArrayList<>() );
 		for ( final Shard shard : ssi.getShards() ) {
 			if ( shard.getSession() != null ) {
 				transactions.add( shard.getSession().getTransaction() );
@@ -75,8 +76,8 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 		if ( begun ) {
 			session.beginTransaction();
 		}
-		if ( timeoutSet ) {
-			session.getTransaction().setTimeout( timeout );
+		if ( timeOutSet ) {
+			session.getTransaction().setTimeout( timeOut );
 		}
 	}
 
@@ -156,7 +157,7 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 		boolean rollbackException = false;
 		HibernateException firstRollbackException = null;
 		for ( Transaction t : transactions ) {
-			if ( t.wasCommitted() ) {
+			if ( !t.getStatus().canRollback() ) {
 				continue;
 			}
 			try {
@@ -178,18 +179,51 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 	}
 
 	@Override
-	public boolean wasRolledBack() throws HibernateException {
-		return rolledBack;
+	public void setRollbackOnly() {
+		if ( !begun && !commitFailed ) {
+			throw new TransactionException( "Transaction not successfully started" );
+		}
+		for ( Transaction t : transactions ) {
+			if ( t.getStatus() != TransactionStatus.ROLLED_BACK ) {
+				t.setRollbackOnly();
+			}
+		}
+		rollbackOnly = true;
 	}
 
 	@Override
-	public boolean wasCommitted() throws HibernateException {
-		return committed;
+	public boolean getRollbackOnly() {
+		return rollbackOnly;
 	}
 
 	@Override
 	public boolean isActive() throws HibernateException {
-		return begun && !(rolledBack || committed || commitFailed);
+		return begun && !( rolledBack || committed || commitFailed );
+	}
+
+	@Override
+	public TransactionStatus getStatus() {
+		if ( committed ) {
+			return TransactionStatus.COMMITTED;
+		}
+
+		if ( commitFailed ) {
+			return TransactionStatus.FAILED_COMMIT;
+		}
+
+		if ( rolledBack ) {
+			return TransactionStatus.ROLLED_BACK;
+		}
+
+		if ( rollbackOnly ) {
+			return TransactionStatus.MARKED_ROLLBACK;
+		}
+
+		if ( begun ) {
+			return TransactionStatus.ACTIVE;
+		}
+
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -205,10 +239,10 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 
 	@Override
 	public void setTimeout(final int seconds) {
-		timeoutSet = true;
-		timeout = seconds;
+		timeOutSet = true;
+		timeOut = seconds;
 		for ( final Transaction t : transactions ) {
-			t.setTimeout( timeout );
+			t.setTimeout( timeOut );
 		}
 	}
 
@@ -239,24 +273,8 @@ public class ShardedTransactionImpl implements ShardedTransaction {
 		}
 	}
 
-	//todo impl these methods
-	@Override
-	public LocalStatus getLocalStatus() {
-		return null;
-	}
-
-	@Override
-	public boolean isInitiator() {
-		return false;
-	}
-
-	@Override
-	public boolean isParticipating() {
-		return false;
-	}
-
 	@Override
 	public int getTimeout() {
-		return 0;
+		return timeOut;
 	}
 }

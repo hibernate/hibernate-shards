@@ -26,7 +26,8 @@ import org.hibernate.type.Type;
  * @author Maulik Shah
  */
 public class SetParameterEvent implements QueryEvent {
-	private static enum CtorType {
+
+	private enum CtorType {
 		POSITION_VAL,
 		POSITION_VAL_TYPE,
 		NAME_VAL,
@@ -39,7 +40,6 @@ public class SetParameterEvent implements QueryEvent {
 	private final Object val;
 	private final Type type;
 	private final String name;
-
 
 	private SetParameterEvent(CtorType ctorType, int position, String name, Object val, Type type) {
 		this.ctorType = ctorType;
@@ -65,6 +65,7 @@ public class SetParameterEvent implements QueryEvent {
 		this( CtorType.NAME_VAL, -1, name, val, null );
 	}
 
+	@Override
 	public void onEvent(Query query) {
 		switch ( ctorType ) {
 			case POSITION_VAL:

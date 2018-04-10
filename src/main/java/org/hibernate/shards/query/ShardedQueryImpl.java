@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -18,27 +18,37 @@
 
 package org.hibernate.shards.query;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Stream;
+import javax.persistence.FlushModeType;
+import javax.persistence.LockModeType;
+import javax.persistence.Parameter;
+import javax.persistence.TemporalType;
 
 import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
-import org.hibernate.Query;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.cfg.NotYetImplementedException;
+import org.hibernate.engine.spi.RowSelection;
+import org.hibernate.query.ParameterMetadata;
+import org.hibernate.query.Query;
+import org.hibernate.query.QueryParameter;
+import org.hibernate.query.QueryProducer;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardOperation;
 import org.hibernate.shards.strategy.access.ShardAccessStrategy;
@@ -65,7 +75,7 @@ import org.hibernate.type.Type;
  * <p/>
  * {@inheritDoc}
  */
-public class ShardedQueryImpl implements ShardedQuery {
+public class ShardedQueryImpl<R> implements ShardedQuery<R> {
 
 	private final QueryId queryId;
 	private final List<Shard> shards;
@@ -122,6 +132,11 @@ public class ShardedQueryImpl implements ShardedQuery {
 	}
 
 	@Override
+	public ParameterMetadata getParameterMetadata() {
+		return null;
+	}
+
+	@Override
 	public Type[] getReturnTypes() throws HibernateException {
 		return getOrEstablishSomeQuery().getReturnTypes();
 	}
@@ -146,13 +161,93 @@ public class ShardedQueryImpl implements ShardedQuery {
 	 * @throws HibernateException
 	 */
 	@Override
-	public Iterator iterate() throws HibernateException {
-		/**
+	public Iterator<R> iterate() throws HibernateException {
+		/*
 		 * TODO(maulik) Hibernate in Action says these two methods are equivalent
 		 * in what the content that they return but are implemented differently.
 		 * We should figure out the difference and implement correctly.
 		 */
 		return list().iterator();
+	}
+
+	@Override
+	public QueryProducer getProducer() {
+		return getOrEstablishSomeQuery().getProducer();
+	}
+
+	@Override
+	public RowSelection getQueryOptions() {
+		return getOrEstablishSomeQuery().getQueryOptions();
+	}
+
+	@Override
+	public Optional<R> uniqueResultOptional() {
+		return Optional.empty();
+	}
+
+	@Override
+	public Stream<R> stream() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(Parameter<Instant> param, Instant value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(Parameter<LocalDateTime> param, LocalDateTime value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(Parameter<ZonedDateTime> param, ZonedDateTime value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(Parameter<OffsetDateTime> param, OffsetDateTime value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(String name, Instant value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(String name, LocalDateTime value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(String name, ZonedDateTime value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(String name, OffsetDateTime value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(int position, Instant value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(int position, LocalDateTime value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(int position, ZonedDateTime value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(int position, OffsetDateTime value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -189,7 +284,7 @@ public class ShardedQueryImpl implements ShardedQuery {
 	 * @throws HibernateException
 	 */
 	@Override
-	public List list() throws HibernateException {
+	public List<R> list() throws HibernateException {
 		final ShardOperation<List<Object>> shardOp = new ShardOperation<List<Object>>() {
 
 			@Override
@@ -204,11 +299,11 @@ public class ShardedQueryImpl implements ShardedQuery {
 			}
 		};
 
-		/**
+		/*
 		 * We don't support shard selection for HQL queries.  If you want
 		 * custom shards, create a ShardedSession with only the shards you want.
 		 */
-		return shardAccessStrategy.apply(
+		return (List<R>) shardAccessStrategy.apply(
 				shards,
 				shardOp,
 				new ConcatenateListsExitStrategy(),
@@ -227,11 +322,11 @@ public class ShardedQueryImpl implements ShardedQuery {
 	 * @throws HibernateException
 	 */
 	@Override
-	public Object uniqueResult() throws HibernateException {
-		final ShardOperation<Object> shardOp = new ShardOperation<Object>() {
+	public R uniqueResult() throws HibernateException {
+		final ShardOperation<R> shardOp = new ShardOperation<R>() {
 
 			@Override
-			public Object execute(final Shard shard) {
+			public R execute(final Shard shard) {
 				shard.establishQuery( ShardedQueryImpl.this );
 				return shard.uniqueResult( queryId );
 			}
@@ -242,16 +337,21 @@ public class ShardedQueryImpl implements ShardedQuery {
 			}
 		};
 
-		/**
+		/*
 		 * We don't support shard selection for HQL queries.  If you want
 		 * custom shards, create a ShardedSession with only the shards you want.
 		 */
 		return shardAccessStrategy.apply(
 				shards,
 				shardOp,
-				new FirstNonNullResultExitStrategy<Object>(),
+				new FirstNonNullResultExitStrategy<>(),
 				queryCollector
 		);
+	}
+
+	@Override
+	public FlushMode getHibernateFlushMode() {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -259,14 +359,13 @@ public class ShardedQueryImpl implements ShardedQuery {
 	 */
 	@Override
 	public int executeUpdate() throws HibernateException {
-
 		final ShardOperation<List<Object>> shardOp = new ShardOperation<List<Object>>() {
 
 			@Override
 			public List<Object> execute(final Shard shard) {
 				shard.establishQuery( ShardedQueryImpl.this );
 				int tmp = shard.executeUpdate( queryId );
-				return Collections.singletonList( (Object) tmp );
+				return Collections.singletonList( tmp );
 			}
 
 			@Override
@@ -290,15 +389,40 @@ public class ShardedQueryImpl implements ShardedQuery {
 	}
 
 	@Override
-	public Query setMaxResults(final int maxResults) {
+	public Query<R> setMaxResults(final int maxResults) {
 		queryCollector.setMaxResults( maxResults );
 		return this;
 	}
 
 	@Override
-	public Query setFirstResult(final int firstResult) {
+	public Query<R> setFirstResult(final int firstResult) {
 		queryCollector.setFirstResult( firstResult );
 		return this;
+	}
+
+	@Override
+	public Query<R> setHint(String hintName, Object value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Map<String, Object> getHints() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> Query<R> setParameter(Parameter<T> param, T value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(Parameter<Calendar> param, Calendar value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(Parameter<Date> param, Date value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -315,322 +439,259 @@ public class ShardedQueryImpl implements ShardedQuery {
 	}
 
 	@Override
-	public Query setReadOnly(final boolean readOnly) {
+	public Query<R> setReadOnly(final boolean readOnly) {
 		return setQueryEvent( new SetReadOnlyEvent( readOnly ) );
 	}
 
 	@Override
-	public Query setCacheable(final boolean cacheable) {
-		return setQueryEvent( new SetCacheableEvent( cacheable ) );
-	}
-
-	@Override
-	public Query setCacheRegion(final String cacheRegion) {
-		return setQueryEvent( new SetCacheRegionEvent( cacheRegion ) );
-	}
-
-	@Override
-	public Query setTimeout(final int timeout) {
-		return setQueryEvent( new SetTimeoutEvent( timeout ) );
-	}
-
-	@Override
-	public Query setFetchSize(final int fetchSize) {
-		return setQueryEvent( new SetFetchSizeEvent( fetchSize ) );
-	}
-
-	@Override
-	public Query setLockOptions(final LockOptions lockOptions) {
-		return setQueryEvent( new SetLockOptionsEvent( lockOptions ) );
-	}
-
-	@Override
-	public Query setLockMode(final String alias, final LockMode lockMode) {
-		return setQueryEvent( new SetLockModeEvent( alias, lockMode ) );
-	}
-
-	@Override
-	public Query setComment(final String comment) {
-		return setQueryEvent( new SetCommentEvent( comment ) );
-	}
-
-	@Override
-	public Query setFlushMode(final FlushMode flushMode) {
+	public Query<R> setHibernateFlushMode(FlushMode flushMode) {
 		return setQueryEvent( new SetFlushModeEvent( flushMode ) );
 	}
 
 	@Override
-	public Query setCacheMode(final CacheMode cacheMode) {
+	public Query<R> setCacheable(final boolean cacheable) {
+		return setQueryEvent( new SetCacheableEvent( cacheable ) );
+	}
+
+	@Override
+	public Query<R> setCacheRegion(final String cacheRegion) {
+		return setQueryEvent( new SetCacheRegionEvent( cacheRegion ) );
+	}
+
+	@Override
+	public Query<R> setTimeout(final int timeout) {
+		return setQueryEvent( new SetTimeoutEvent( timeout ) );
+	}
+
+	@Override
+	public Query<R> setFetchSize(final int fetchSize) {
+		return setQueryEvent( new SetFetchSizeEvent( fetchSize ) );
+	}
+
+	@Override
+	public Query<R> setLockOptions(final LockOptions lockOptions) {
+		return setQueryEvent( new SetLockOptionsEvent( lockOptions ) );
+	}
+
+	@Override
+	public Query<R> setLockMode(final String alias, final LockMode lockMode) {
+		return setQueryEvent( new SetLockModeEvent( alias, lockMode ) );
+	}
+
+	@Override
+	public Query<R> setComment(final String comment) {
+		return setQueryEvent( new SetCommentEvent( comment ) );
+	}
+
+	@Override
+	public Query<R> setCacheMode(final CacheMode cacheMode) {
 		return setQueryEvent( new SetCacheModeEvent( cacheMode ) );
 	}
 
 	@Override
-	public Query setParameter(final int position, final Object val, final Type type) {
+	public Query<R> setParameter(final int position, final Object val, final Type type) {
 		return setQueryEvent( new SetParameterEvent( position, val, type ) );
 	}
 
 	@Override
-	public Query setParameter(final String name, final Object val, final Type type) {
+	public <P> Query<R> setParameter(QueryParameter<P> parameter, P val, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <P> Query<R> setParameter(String name, P val, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setFlushMode(FlushModeType flushMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setLockMode(LockModeType lockMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public LockModeType getLockMode() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T unwrap(Class<T> cls) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(final String name, final Object val, final Type type) {
 		return setQueryEvent( new SetParameterEvent( name, val, type ) );
 	}
 
 	@Override
-	public Query setParameter(final int position, final Object val) throws HibernateException {
+	public Query<R> setParameter(String name, Calendar value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(String name, Date value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(final int position, final Object val) throws HibernateException {
 		return setQueryEvent( new SetParameterEvent( position, val ) );
 	}
 
 	@Override
-	public Query setParameter(final String name, final Object val) throws HibernateException {
+	public Query<R> setParameter(int position, Calendar value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(int position, Date value, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Set<Parameter<?>> getParameters() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Parameter<?> getParameter(String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> Parameter<T> getParameter(String name, Class<T> type) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Parameter<?> getParameter(int position) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> Parameter<T> getParameter(int position, Class<T> type) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isBound(Parameter<?> param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T getParameterValue(Parameter<T> param) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object getParameterValue(String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object getParameterValue(int position) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> Query<R> setParameter(QueryParameter<T> parameter, T val) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <P> Query<R> setParameter(int position, P val, TemporalType temporalType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <P> Query<R> setParameter(QueryParameter<P> parameter, P val, Type type) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameter(final String name, final Object val) throws HibernateException {
 		return setQueryEvent( new SetParameterEvent( name, val ) );
 	}
 
 	@Override
-	public Query setParameters(final Object[] values, final Type[] types) throws HibernateException {
-		return setQueryEvent( new SetParametersEvent( values, types ) );
-	}
-
-	@Override
-	public Query setParameterList(final String name, final Collection vals, final Type type) throws HibernateException {
+	public Query<R> setParameterList(final String name, final Collection vals, final Type type)
+			throws HibernateException {
 		return setQueryEvent( new SetParameterListEvent( name, vals, type ) );
 	}
 
 	@Override
-	public Query setParameterList(final String name, final Collection vals) throws HibernateException {
+	public org.hibernate.Query<R> setParameterList(int position, Collection values, Type type) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameterList(final String name, final Collection vals) throws HibernateException {
 		return setQueryEvent( new SetParameterListEvent( name, vals ) );
 	}
 
 	@Override
-	public Query setParameterList(final String name, final Object[] vals, final Type type) throws HibernateException {
+	public org.hibernate.Query<R> setParameterList(int position, Collection values) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query<R> setParameterList(final String name, final Object[] vals, final Type type)
+			throws HibernateException {
 		return setQueryEvent( new SetParameterListEvent( name, vals, type ) );
 	}
 
 	@Override
-	public Query setParameterList(final String name, final Object[] vals) throws HibernateException {
+	public org.hibernate.Query<R> setParameterList(int position, Object[] values, Type type) {
+		return setQueryEvent( new SetParameterListEvent( position, values, type ) );
+	}
+
+	@Override
+	public Query<R> setParameterList(final String name, final Object[] vals) throws HibernateException {
 		return setQueryEvent( new SetParameterListEvent( name, vals ) );
 	}
 
 	@Override
-	public Query setProperties(final Object bean) throws HibernateException {
+	public org.hibernate.Query<R> setParameterList(int position, Object[] values) {
+		return setQueryEvent( new SetParameterListEvent( position, values ) );
+	}
+
+	@Override
+	public Query<R> setProperties(final Object bean) throws HibernateException {
 		return setQueryEvent( new SetPropertiesEvent( bean ) );
 	}
 
 	@Override
-	public Query setString(final int position, final String val) {
-		return setQueryEvent( new SetStringEvent( position, val ) );
+	public Query<R> setEntity(final int position, final Object val) {
+		return setQueryEvent( new SetParameterEvent( position, val ) );
 	}
 
 	@Override
-	public Query setCharacter(final int position, final char val) {
-		return setQueryEvent( new SetCharacterEvent( position, val ) );
+	public Query<R> setEntity(final String name, final Object val) {
+		return setQueryEvent( new SetParameterEvent( name, val ) );
 	}
 
 	@Override
-	public Query setBoolean(final int position, final boolean val) {
-		return setQueryEvent( new SetBooleanEvent( position, val ) );
+	public Type determineProperBooleanType(int position, Object value, Type defaultType) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Query setByte(int position, byte val) {
-		return setQueryEvent( new SetByteEvent( position, val ) );
+	public Type determineProperBooleanType(String name, Object value, Type defaultType) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Query setShort(final int position, final short val) {
-		return setQueryEvent( new SetShortEvent( position, val ) );
-	}
-
-	@Override
-	public Query setInteger(final int position, final int val) {
-		return setQueryEvent( new SetIntegerEvent( position, val ) );
-	}
-
-	@Override
-	public Query setLong(final int position, final long val) {
-		return setQueryEvent( new SetLongEvent( position, val ) );
-	}
-
-	@Override
-	public Query setFloat(final int position, final float val) {
-		return setQueryEvent( new SetFloatEvent( position, val ) );
-	}
-
-	@Override
-	public Query setDouble(final int position, final double val) {
-		return setQueryEvent( new SetDoubleEvent( position, val ) );
-	}
-
-	@Override
-	public Query setBinary(final int position, final byte[] val) {
-		return setQueryEvent( new SetBinaryEvent( position, val ) );
-	}
-
-	@Override
-	public Query setText(final int position, final String val) {
-		final QueryEvent event = new SetTextEvent( position, val );
-		return setQueryEvent( event );
-	}
-
-	@Override
-	public Query setSerializable(final int position, final Serializable val) {
-		return setQueryEvent( new SetSerializableEvent( position, val ) );
-	}
-
-	@Override
-	public Query setLocale(final int position, final Locale locale) {
-		return setQueryEvent( new SetLocaleEvent( position, locale ) );
-	}
-
-	@Override
-	public Query setBigDecimal(final int position, final BigDecimal number) {
-		return setQueryEvent( new SetBigDecimalEvent( position, number ) );
-	}
-
-	@Override
-	public Query setBigInteger(final int position, final BigInteger number) {
-		return setQueryEvent( new SetBigIntegerEvent( position, number ) );
-	}
-
-	@Override
-	public Query setDate(final int position, final Date date) {
-		return setQueryEvent( new SetDateEvent( position, date ) );
-	}
-
-	@Override
-	public Query setTime(final int position, final Date date) {
-		return setQueryEvent( new SetTimeEvent( position, date ) );
-	}
-
-	@Override
-	public Query setTimestamp(final int position, final Date date) {
-		return setQueryEvent( new SetTimestampEvent( position, date ) );
-	}
-
-	@Override
-	public Query setCalendar(final int position, final Calendar calendar) {
-		return setQueryEvent( new SetCalendarEvent( position, calendar ) );
-	}
-
-	@Override
-	public Query setCalendarDate(final int position, final Calendar calendar) {
-		return setQueryEvent( new SetCalendarDateEvent( position, calendar ) );
-	}
-
-	@Override
-	public Query setString(final String name, final String val) {
-		return setQueryEvent( new SetStringEvent( name, val ) );
-	}
-
-	@Override
-	public Query setCharacter(final String name, final char val) {
-		return setQueryEvent( new SetCharacterEvent( name, val ) );
-	}
-
-	@Override
-	public Query setBoolean(final String name, final boolean val) {
-		return setQueryEvent( new SetBooleanEvent( name, val ) );
-	}
-
-	@Override
-	public Query setByte(final String name, final byte val) {
-		return setQueryEvent( new SetByteEvent( name, val ) );
-	}
-
-	@Override
-	public Query setShort(final String name, final short val) {
-		return setQueryEvent( new SetShortEvent( name, val ) );
-	}
-
-	@Override
-	public Query setInteger(final String name, final int val) {
-		return setQueryEvent( new SetIntegerEvent( name, val ) );
-	}
-
-	@Override
-	public Query setLong(final String name, final long val) {
-		return setQueryEvent( new SetLongEvent( name, val ) );
-	}
-
-	@Override
-	public Query setFloat(final String name, final float val) {
-		return setQueryEvent( new SetFloatEvent( name, val ) );
-	}
-
-	@Override
-	public Query setDouble(final String name, final double val) {
-		return setQueryEvent( new SetDoubleEvent( name, val ) );
-	}
-
-	@Override
-	public Query setBinary(final String name, final byte[] val) {
-		return setQueryEvent( new SetBinaryEvent( name, val ) );
-	}
-
-	@Override
-	public Query setText(final String name, final String val) {
-		return setQueryEvent( new SetTextEvent( name, val ) );
-	}
-
-	@Override
-	public Query setSerializable(final String name, final Serializable val) {
-		return setQueryEvent( new SetSerializableEvent( name, val ) );
-	}
-
-	@Override
-	public Query setLocale(final String name, final Locale locale) {
-		return setQueryEvent( new SetLocaleEvent( name, locale ) );
-	}
-
-	@Override
-	public Query setBigDecimal(final String name, final BigDecimal number) {
-		return setQueryEvent( new SetBigDecimalEvent( name, number ) );
-	}
-
-	@Override
-	public Query setBigInteger(final String name, final BigInteger number) {
-		return setQueryEvent( new SetBigIntegerEvent( name, number ) );
-	}
-
-	@Override
-	public Query setDate(final String name, final Date date) {
-		return setQueryEvent( new SetDateEvent( name, date ) );
-	}
-
-	@Override
-	public Query setTime(final String name, final Date date) {
-		return setQueryEvent( new SetTimeEvent( name, date ) );
-	}
-
-	@Override
-	public Query setTimestamp(final String name, final Date date) {
-		return setQueryEvent( new SetTimestampEvent( name, date ) );
-	}
-
-	@Override
-	public Query setCalendar(final String name, final Calendar calendar) {
-		return setQueryEvent( new SetCalendarEvent( name, calendar ) );
-	}
-
-	@Override
-	public Query setCalendarDate(final String name, final Calendar calendar) {
-		return setQueryEvent( new SetCalendarDateEvent( name, calendar ) );
-	}
-
-	@Override
-	public Query setEntity(final int position, final Object val) {
-		return setQueryEvent( new SetEntityEvent( position, val ) );
-	}
-
-	@Override
-	public Query setEntity(final String name, final Object val) {
-		return setQueryEvent( new SetEntityEvent( name, val ) );
-	}
-
-	@Override
-	public Query setResultTransformer(final ResultTransformer transformer) {
+	public Query<R> setResultTransformer(final ResultTransformer transformer) {
 		return setQueryEvent( new SetResultTransformerEvent( transformer ) );
 	}
 
-	public Query setProperties(Map map) throws HibernateException {
+	@Override
+	public Query<R> setProperties(Map map) throws HibernateException {
 		return setQueryEvent( new SetPropertiesEvent( map ) );
 	}
 
@@ -653,7 +714,7 @@ public class ShardedQueryImpl implements ShardedQuery {
 		return query;
 	}
 
-	private Query setQueryEvent(final QueryEvent queryEvent) throws HibernateException {
+	private Query<R> setQueryEvent(final QueryEvent queryEvent) throws HibernateException {
 		for ( final Shard shard : shards ) {
 			if ( shard.getQueryById( queryId ) != null ) {
 				queryEvent.onEvent( shard.getQueryById( queryId ) );
@@ -666,68 +727,62 @@ public class ShardedQueryImpl implements ShardedQuery {
 	}
 
 	@Override
-	public Integer getMaxResults() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+	public int getMaxResults() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Integer getFirstResult() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+	public int getFirstResult() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public LockOptions getLockOptions() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public String getComment() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Query addQueryHint(String hint) {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+	public Query<R> addQueryHint(String hint) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public FlushMode getFlushMode() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+	public <P> Query<R> setParameterList(QueryParameter<P> parameter, Collection<P> values) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public FlushModeType getFlushMode() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public CacheMode getCacheMode() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public boolean isCacheable() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public String getCacheRegion() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Integer getTimeout() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Integer getFetchSize() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 }

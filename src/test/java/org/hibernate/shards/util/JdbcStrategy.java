@@ -22,5 +22,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public interface JdbcStrategy {
+
 	void extractData(ResultSet rs) throws SQLException;
 }

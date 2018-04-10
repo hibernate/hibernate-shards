@@ -144,10 +144,10 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
 
 	@Override
 	public List<Object> apply(List<Object> result) {
-		/**
+		/*
 		 * Herein lies the glory
 		 *
-		 * hibernate has done as much as it can, we're going to have to deal with
+		 * Hibernate has done as much as it can, we're going to have to deal with
 		 * the rest in memory.
 		 *
 		 * The hierarchy of operations is this so far:
@@ -202,6 +202,7 @@ public class ExitOperationsCriteriaCollector implements ExitOperationsCollector 
 	 *
 	 * @param sessionFactoryImplementor the session factory implementor to set
 	 */
+	@Override
 	public void setSessionFactory(final SessionFactoryImplementor sessionFactoryImplementor) {
 		this.sessionFactoryImplementor = sessionFactoryImplementor;
 	}

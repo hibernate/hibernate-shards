@@ -27,12 +27,12 @@ import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Interceptor;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.shards.criteria.CriteriaEvent;
 import org.hibernate.shards.criteria.CriteriaId;
 import org.hibernate.shards.criteria.ShardedCriteria;
+import org.hibernate.query.Query;
 import org.hibernate.shards.query.QueryEvent;
 import org.hibernate.shards.query.QueryId;
 import org.hibernate.shards.query.ShardedQuery;
@@ -67,21 +67,21 @@ public class ShardImpl implements Shard {
 	private Session session;
 
 	// events that need to fire when the Session is opened
-	private final LinkedList<OpenSessionEvent> openSessionEvents = new LinkedList<OpenSessionEvent>();
+	private final LinkedList<OpenSessionEvent> openSessionEvents = new LinkedList<>();
 
 	// maps criteria ids to Criteria objects for quick lookup
-	private Map<CriteriaId, Criteria> criteriaMap = new HashMap<CriteriaId, Criteria>();
+	private Map<CriteriaId, Criteria> criteriaMap = new HashMap<>();
 
 	// maps query ids to Query objects for quick lookup
-	private Map<QueryId, Query> queryMap = new HashMap<QueryId, Query>();
+	private Map<QueryId, Query> queryMap = new HashMap<>();
 
 	// maps criteria ids to lists of criteria events.  The criteria events
 	// need to fire when the actual Criteria is established
-	private Map<CriteriaId, LinkedList<CriteriaEvent>> criteriaEventMap = new HashMap<CriteriaId, LinkedList<CriteriaEvent>>();
+	private Map<CriteriaId, LinkedList<CriteriaEvent>> criteriaEventMap = new HashMap<>();
 
 	// maps query ids to lists of query events.  The query events
 	// need to fire when the actual Query is established
-	private Map<QueryId, LinkedList<QueryEvent>> queryEventMap = new HashMap<QueryId, LinkedList<QueryEvent>>();
+	private Map<QueryId, LinkedList<QueryEvent>> queryEventMap = new HashMap<>();
 
 	/**
 	 * Construct a ShardImpl
@@ -265,6 +265,7 @@ public class ShardImpl implements Shard {
 		return hashCode;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Object> list(final CriteriaId criteriaId) {
 		return criteriaMap.get( criteriaId ).list();
@@ -277,7 +278,7 @@ public class ShardImpl implements Shard {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Object> list(final QueryId queryId) {
+	public <R> List<R> list(final QueryId queryId) {
 		return queryMap.get( queryId ).list();
 	}
 
@@ -287,8 +288,8 @@ public class ShardImpl implements Shard {
 	}
 
 	@Override
-	public Object uniqueResult(final QueryId queryId) {
-		return queryMap.get( queryId ).uniqueResult();
+	public <R> R uniqueResult(final QueryId queryId) {
+		return (R) queryMap.get( queryId ).uniqueResult();
 	}
 
 	@Override

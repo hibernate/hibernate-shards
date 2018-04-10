@@ -28,11 +28,11 @@ import org.hibernate.shards.ShardId;
 import org.hibernate.shards.strategy.ShardStrategyFactory;
 
 /**
- * This class extends ShardedSessionFactoryImpl and is constructed by supplying
- * a subset of shardIds that are primarily owned by a ShardedSessionFactoryImpl.
+ * This class extends {@link ShardedSessionFactoryImpl} and is constructed by supplying
+ * a subset of shardIds that are primarily owned by a {@link ShardedSessionFactoryImpl}.
  * The purpose of this class is to override the .close() method in order to
  * prevent the SubsetShardedSessionFactoryImpl from closing any session
- * factories that belong to a ShardedSessionFactoryImpl.
+ * factories that belong to a {@link ShardedSessionFactoryImpl}.
  *
  * @author Maulik Shah@google.com (Maulik Shah)
  */

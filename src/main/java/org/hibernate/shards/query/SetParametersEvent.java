@@ -34,8 +34,15 @@ public class SetParametersEvent implements QueryEvent {
 		this.types = types;
 	}
 
+	@Override
 	public void onEvent(Query query) {
-		query.setParameters( values, types );
-	}
+		if ( values == null && types == null ) {
+			return;
+		}
 
+		assert values.length == types.length;
+		for ( int i = 0; i < values.length; i++ ) {
+			query.setParameter( i, values[i], types[i] );
+		}
+	}
 }

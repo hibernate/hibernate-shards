@@ -20,13 +20,14 @@ package org.hibernate.shards.session;
 
 import java.io.Serializable;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import org.hibernate.CallbackException;
 import org.hibernate.Interceptor;
 import org.hibernate.shards.defaultmock.InterceptorDefaultMock;
 import org.hibernate.type.Type;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -63,9 +64,9 @@ public class CrossShardRelationshipDetectingInterceptorDecoratorTest {
 		CrossShardRelationshipDetectingInterceptorDecorator decorator =
 				new CrossShardRelationshipDetectingInterceptorDecorator( crdi, interceptor );
 
-		Assert.assertTrue( decorator.onFlushDirty( null, null, null, null, null, null ) );
-		Assert.assertTrue( onFlushDirtyCalled[0] );
-		Assert.assertTrue( onFlushDirtyCalled[1] );
+		assertTrue( decorator.onFlushDirty( null, null, null, null, null, null ) );
+		assertTrue( onFlushDirtyCalled[0] );
+		assertTrue( onFlushDirtyCalled[1] );
 	}
 
 	@Test
@@ -93,7 +94,7 @@ public class CrossShardRelationshipDetectingInterceptorDecoratorTest {
 				new CrossShardRelationshipDetectingInterceptorDecorator( crdi, interceptor );
 
 		decorator.onCollectionUpdate( null, null );
-		Assert.assertTrue( onCollectionUpdateCalled[0] );
-		Assert.assertTrue( onCollectionUpdateCalled[1] );
+		assertTrue( onCollectionUpdateCalled[0] );
+		assertTrue( onCollectionUpdateCalled[1] );
 	}
 }

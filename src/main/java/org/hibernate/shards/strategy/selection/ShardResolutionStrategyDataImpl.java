@@ -23,12 +23,12 @@ import java.io.Serializable;
 /**
  * @author maxr@google.com (Max Ross)
  */
-public final class ShardResolutionStrategyDataImpl implements ShardResolutionStrategyData {
+public final class ShardResolutionStrategyDataImpl<R> implements ShardResolutionStrategyData {
 
 	private final String entityName;
 	private final Serializable id;
 
-	public ShardResolutionStrategyDataImpl(final Class<?> clazz, final Serializable id) {
+	public ShardResolutionStrategyDataImpl(final Class<R> clazz, final Serializable id) {
 		this( clazz.getName(), id );
 	}
 

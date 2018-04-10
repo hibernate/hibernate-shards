@@ -18,8 +18,8 @@
 
 package org.hibernate.shards.query;
 
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
+import org.hibernate.query.Query;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.Session;
 
 /**
@@ -29,5 +29,5 @@ public interface QueryFactory {
 
 	Query createQuery(Session session);
 
-	SQLQuery createSQLQuery(Session session);
+	NativeQuery createSQLQuery(Session session);
 }

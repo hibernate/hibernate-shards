@@ -1,24 +1,22 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
 
 package org.hibernate.shards;
-
-import junit.framework.TestCase;
 
 import org.hibernate.shards.strategy.ShardStrategyImpl;
 import org.hibernate.shards.strategy.access.ShardAccessStrategy;
@@ -28,11 +26,16 @@ import org.hibernate.shards.strategy.resolution.ShardResolutionStrategyDefaultMo
 import org.hibernate.shards.strategy.selection.ShardSelectionStrategy;
 import org.hibernate.shards.strategy.selection.ShardSelectionStrategyDefaultMock;
 
+import org.junit.Test;
+
+import static org.junit.Assert.fail;
+
 /**
  * @author maxr@google.com (Max Ross)
  */
-public class InstanceShardStrategyImplTest extends TestCase {
+public class InstanceShardStrategyImplTest {
 
+	@Test
 	public void testCtor() {
 		try {
 			new ShardStrategyImpl( null, null, null );
@@ -77,7 +80,6 @@ public class InstanceShardStrategyImplTest extends TestCase {
 			// good
 		}
 
-
 		try {
 			new ShardStrategyImpl( null, srs, sas );
 			fail( "expected npe" );
@@ -85,6 +87,7 @@ public class InstanceShardStrategyImplTest extends TestCase {
 		catch (NullPointerException npe) {
 			// good
 		}
+
 		new ShardStrategyImpl( sss, srs, sas );
 	}
 }

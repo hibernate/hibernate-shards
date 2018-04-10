@@ -37,6 +37,7 @@ public class CreateSubcriteriaEvent implements CriteriaEvent {
 		this.subcriteriaRegistrar = subcriteriaRegistrar;
 	}
 
+	@Override
 	public void onEvent(Criteria criteria) {
 		subcriteriaRegistrar.establishSubcriteria( criteria, subcriteriaFactory );
 	}

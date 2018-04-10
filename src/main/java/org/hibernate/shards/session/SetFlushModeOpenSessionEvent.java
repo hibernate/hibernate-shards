@@ -30,10 +30,11 @@ class SetFlushModeOpenSessionEvent implements OpenSessionEvent {
 
 	private final FlushMode flushMode;
 
-	public SetFlushModeOpenSessionEvent(FlushMode flushMode) {
+	SetFlushModeOpenSessionEvent(FlushMode flushMode) {
 		this.flushMode = flushMode;
 	}
 
+	@Override
 	public void onOpenSession(Session session) {
 		session.setFlushMode( flushMode );
 	}

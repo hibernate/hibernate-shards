@@ -28,6 +28,8 @@ public interface DatabasePlatformFactory {
 	DatabasePlatform getDatabasePlatform();
 
 	DatabasePlatformFactory FACTORY = new DatabasePlatformFactory() {
+
+		@Override
 		public DatabasePlatform getDatabasePlatform() {
 			String platformClassStr = System.getProperty( "hibernate.shard.database.platform" );
 			if ( StringUtil.isEmptyOrWhitespace( platformClassStr ) ) {

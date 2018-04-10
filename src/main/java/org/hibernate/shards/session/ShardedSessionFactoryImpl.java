@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -18,22 +18,22 @@
 
 package org.hibernate.shards.session;
 
-import java.io.Serializable;
 import java.sql.Connection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import javax.naming.NamingException;
 import javax.naming.Reference;
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceUnitUtil;
+import javax.persistence.Query;
+import javax.persistence.SynchronizationType;
+import javax.persistence.criteria.CriteriaBuilder;
 
-import org.jboss.logging.Logger;
-
-import org.hibernate.Cache;
 import org.hibernate.CustomEntityDirtinessStrategy;
-import org.hibernate.EntityNameResolver;
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
 import org.hibernate.MappingException;
@@ -43,35 +43,26 @@ import org.hibernate.SessionFactoryObserver;
 import org.hibernate.StatelessSession;
 import org.hibernate.StatelessSessionBuilder;
 import org.hibernate.TypeHelper;
-import org.hibernate.cache.spi.QueryCache;
-import org.hibernate.cache.spi.Region;
-import org.hibernate.cache.spi.UpdateTimestampsCache;
-import org.hibernate.cfg.NotYetImplementedException;
+import org.hibernate.boot.spi.SessionFactoryOptions;
 import org.hibernate.cfg.Settings;
 import org.hibernate.context.spi.CurrentTenantIdentifierResolver;
-import org.hibernate.dialect.Dialect;
 import org.hibernate.dialect.function.SQLFunctionRegistry;
-import org.hibernate.engine.ResultSetMappingDefinition;
 import org.hibernate.engine.jdbc.spi.JdbcServices;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.hibernate.engine.profile.FetchProfile;
 import org.hibernate.engine.query.spi.QueryPlanCache;
+import org.hibernate.engine.spi.CacheImplementor;
 import org.hibernate.engine.spi.FilterDefinition;
-import org.hibernate.engine.spi.NamedQueryDefinition;
-import org.hibernate.engine.spi.NamedSQLQueryDefinition;
 import org.hibernate.engine.spi.SessionBuilderImplementor;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
-import org.hibernate.exception.spi.SQLExceptionConverter;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.id.factory.IdentifierGeneratorFactory;
-import org.hibernate.internal.NamedQueryRepository;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.metadata.CollectionMetadata;
-import org.hibernate.persister.collection.CollectionPersister;
+import org.hibernate.metamodel.spi.MetamodelImplementor;
 import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.proxy.EntityNotFoundDelegate;
-import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
+import org.hibernate.query.spi.NamedQueryRepository;
 import org.hibernate.service.spi.ServiceRegistryImplementor;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.engine.ShardedSessionFactoryImplementor;
@@ -82,11 +73,12 @@ import org.hibernate.shards.util.Iterables;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.shards.util.Sets;
-import org.hibernate.stat.Statistics;
 import org.hibernate.stat.internal.ConcurrentStatisticsImpl;
 import org.hibernate.stat.spi.StatisticsImplementor;
 import org.hibernate.type.Type;
 import org.hibernate.type.TypeResolver;
+
+import org.jboss.logging.Logger;
 
 /**
  * Shard-aware implementation of {@link SessionFactory}.
@@ -122,7 +114,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	private final boolean checkAllAssociatedObjectsForDifferentShards;
 
 	// Statistics aggregated across all contained SessionFactories
-	private final Statistics statistics = new ConcurrentStatisticsImpl( this );
+	private final StatisticsImplementor statistics = new ConcurrentStatisticsImpl( this );
 
 	// our lovely logger
 	private static final Logger LOG = Logger.getLogger( ShardedSessionFactoryImpl.class );
@@ -146,7 +138,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	public ShardedSessionFactoryImpl(
 			final List<ShardId> shardIds,
 			final Map<SessionFactoryImplementor,
-			Set<ShardId>> sessionFactoryShardIdMap,
+					Set<ShardId>> sessionFactoryShardIdMap,
 			final ShardStrategyFactory shardStrategyFactory,
 			final Set<Class<?>> classesWithoutTopLevelSaveSupport,
 			final boolean checkAllAssociatedObjectsForDifferentShards) {
@@ -156,9 +148,9 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 		Preconditions.checkNotNull( shardStrategyFactory );
 		Preconditions.checkNotNull( classesWithoutTopLevelSaveSupport );
 
-		this.sessionFactories = Lists.newArrayList( sessionFactoryShardIdMap.keySet() );
-		this.sessionFactoryShardIdMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
-		this.fullSessionFactoryShardIdMap = sessionFactoryShardIdMap;
+		sessionFactories = Lists.newArrayList( sessionFactoryShardIdMap.keySet() );
+		this.sessionFactoryShardIdMap = new HashMap<>();
+		fullSessionFactoryShardIdMap = sessionFactoryShardIdMap;
 		this.classesWithoutTopLevelSaveSupport = Sets.newHashSet( classesWithoutTopLevelSaveSupport );
 		this.checkAllAssociatedObjectsForDifferentShards = checkAllAssociatedObjectsForDifferentShards;
 
@@ -198,7 +190,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 		}
 		controlSessionFactory = controlSessionFactoryToSet;
 		// now that we have all our shard ids, construct our shard strategy
-		this.shardStrategy = shardStrategyFactory.newShardStrategy( shardIds );
+		shardStrategy = shardStrategyFactory.newShardStrategy( shardIds );
 		setupIdGenerators();
 	}
 
@@ -236,13 +228,10 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	 */
 	private void setupIdGenerators() {
 		for ( SessionFactoryImplementor sfi : sessionFactories ) {
-			for ( Object obj : sfi.getAllClassMetadata().values() ) {
-				ClassMetadata cmd = (ClassMetadata) obj;
-				EntityPersister ep = sfi.getEntityPersister( cmd.getEntityName() );
+			for ( EntityPersister ep : sfi.getMetamodel().entityPersisters().values() ) {
 				if ( ep.getIdentifierGenerator() instanceof GeneratorRequiringControlSessionProvider ) {
-					((GeneratorRequiringControlSessionProvider) ep.getIdentifierGenerator()).setControlSessionProvider(
-							this
-					);
+					( (GeneratorRequiringControlSessionProvider) ep.getIdentifierGenerator() )
+							.setControlSessionProvider( this );
 				}
 			}
 		}
@@ -253,7 +242,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 		return sessionFactoryShardIdMap;
 	}
 
-	/**
+	/*
 	 * Unsupported.  This is a technical decision.  We would need a
 	 * ShardedConnection in order to make this work, but since this method is
 	 * exposed on the public api we can't force clients to provide it.  And
@@ -354,7 +343,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	 * Unsupported.  This is a scope decision, not a technical decision.
 	 */
 	@Override
-	public Statistics getStatistics() {
+	public StatisticsImplementor getStatistics() {
 		return statistics;
 	}
 
@@ -388,74 +377,31 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	}
 
 	@Override
-	public Cache getCache() {
+	public CacheImplementor getCache() {
+		throw new UnsupportedOperationException();
 		// assumption is that all session factories are configured the same way,
 		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getCache();
+		//return getAnyFactory().getCache();
 	}
 
 	@Override
-	@Deprecated
-	public void evict(final Class persistentClass) throws HibernateException {
-		for ( final SessionFactory sf : sessionFactories ) {
-			sf.getCache().evictEntityRegion( persistentClass );
-		}
+	public PersistenceUnitUtil getPersistenceUnitUtil() {
+		return getAnyFactory().getPersistenceUnitUtil();
 	}
 
 	@Override
-	@Deprecated
-	public void evict(final Class persistentClass, final Serializable id) throws HibernateException {
-		for ( final SessionFactory sf : sessionFactories ) {
-			sf.getCache().evictEntity( persistentClass, id );
-		}
+	public void addNamedQuery(String name, Query query) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	@Deprecated
-	public void evictEntity(final String entityName) throws HibernateException {
-		for ( final SessionFactory sf : sessionFactories ) {
-			sf.getCache().evictEntityRegion( entityName );
-		}
+	public <T> T unwrap(Class<T> cls) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	@Deprecated
-	public void evictEntity(final String entityName, final Serializable id) throws HibernateException {
-		for ( final SessionFactory sf : sessionFactories ) {
-			sf.getCache().evictEntity( entityName, id );
-		}
-	}
-
-	@Override
-	@Deprecated
-	public void evictCollection(final String roleName) throws HibernateException {
-		for ( final SessionFactory sf : sessionFactories ) {
-			sf.getCache().evictCollectionRegion( roleName );
-		}
-	}
-
-	@Override
-	@Deprecated
-	public void evictCollection(final String roleName, final Serializable id) throws HibernateException {
-		for ( final SessionFactory sf : sessionFactories ) {
-			sf.getCache().evictCollection( roleName, id );
-		}
-	}
-
-	@Override
-	@Deprecated
-	public void evictQueries() throws HibernateException {
-		for ( final SessionFactory sf : sessionFactories ) {
-			sf.getCache().evictQueryRegions();
-		}
-	}
-
-	@Override
-	@Deprecated
-	public void evictQueries(final String cacheRegion) throws HibernateException {
-		for ( final SessionFactory sf : sessionFactories ) {
-			sf.getCache().evictQueryRegion( cacheRegion );
-		}
+	public <T> void addNamedEntityGraph(String graphName, EntityGraph<T> entityGraph) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -576,41 +522,22 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	}
 
 	@Override
-	public Properties getProperties() {
+	public Map<String, Object> getProperties() {
 		// assumption is that all session factories are configured the same way,
 		// so it doesn't matter which session factory answers this question
 		return getAnyFactory().getProperties();
 	}
 
 	@Override
-	public EntityPersister getEntityPersister(final String entityName) throws MappingException {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getEntityPersister( entityName );
-	}
-
-	@Override
-	public CollectionPersister getCollectionPersister(final String role) throws MappingException {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getCollectionPersister( role );
-	}
-
-	@Override
-	public Dialect getDialect() {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getDialect();
-	}
-
-	@Override
+	@Deprecated
 	public Interceptor getInterceptor() {
 		// assumption is that all session factories are configured the same way,
 		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getInterceptor();
+		return getAnyFactory().getSessionFactoryOptions().getInterceptor();
 	}
 
 	@Override
+	@Deprecated
 	public QueryPlanCache getQueryPlanCache() {
 		// assumption is that all session factories are configured the same way,
 		// so it doesn't matter which session factory answers this question
@@ -618,38 +545,10 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	}
 
 	@Override
-	public Type[] getReturnTypes(final String queryString) throws HibernateException {
+	public EntityGraph findEntityGraphByName(String name) {
 		// assumption is that all session factories are configured the same way,
 		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getReturnTypes( queryString );
-	}
-
-	@Override
-	public String[] getReturnAliases(final String queryString) throws HibernateException {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getReturnAliases( queryString );
-	}
-
-	@Override
-	public ConnectionProvider getConnectionProvider() {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getConnectionProvider();
-	}
-
-	@Override
-	public String[] getImplementors(final String className) throws MappingException {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getImplementors( className );
-	}
-
-	@Override
-	public String getImportedClassName(final String name) {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getImportedClassName( name );
+		return getAnyFactory().findEntityGraphByName( name );
 	}
 
 //    @Override
@@ -660,62 +559,7 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 //    }
 
 	@Override
-	public QueryCache getQueryCache() {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getQueryCache();
-	}
-
-	@Override
-	public QueryCache getQueryCache(final String regionName) throws HibernateException {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getQueryCache( regionName );
-	}
-
-	@Override
-	public UpdateTimestampsCache getUpdateTimestampsCache() {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getUpdateTimestampsCache();
-	}
-
-	@Override
-	public StatisticsImplementor getStatisticsImplementor() {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getStatisticsImplementor();
-	}
-
-	@Override
-	public NamedQueryDefinition getNamedQuery(final String queryName) {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getNamedQuery( queryName );
-	}
-
-	@Override
-	public NamedSQLQueryDefinition getNamedSQLQuery(final String queryName) {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getNamedSQLQuery( queryName );
-	}
-
-	@Override
-	public ResultSetMappingDefinition getResultSetMapping(final String name) {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getResultSetMapping( name );
-	}
-
-	@Override
-	public Region getSecondLevelCacheRegion(final String regionName) {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getSecondLevelCacheRegion( regionName );
-	}
-
-	@Override
+	@Deprecated
 	public Map getAllSecondLevelCacheRegions() {
 		// assumption is that all session factories are configured the same way,
 		// so it doesn't matter which session factory answers this question
@@ -723,17 +567,51 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	}
 
 	@Override
-	public SQLExceptionConverter getSQLExceptionConverter() {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getSQLExceptionConverter();
-	}
-
-	@Override
+	@Deprecated
 	public Settings getSettings() {
 		// assumption is that all session factories are configured the same way,
 		// so it doesn't matter which session factory answers this question
 		return getAnyFactory().getSettings();
+	}
+
+	@Override
+	public <T> List<EntityGraph<? super T>> findEntityGraphsByType(Class<T> entityClass) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityManager createEntityManager() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityManager createEntityManager(Map map) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityManager createEntityManager(SynchronizationType synchronizationType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityManager createEntityManager(SynchronizationType synchronizationType, Map map) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public CriteriaBuilder getCriteriaBuilder() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public MetamodelImplementor getMetamodel() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isOpen() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -752,13 +630,6 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 //                               final ConnectionReleaseMode connectionReleaseMode) throws HibernateException {
 //        throw new UnsupportedOperationException();
 //    }
-	@Override
-	public Set<String> getCollectionRolesByEntityParticipant(final String entityName) {
-		// assumption is that all session factories are configured the same way,
-		// so it doesn't matter which session factory answers this question
-		return getAnyFactory().getCollectionRolesByEntityParticipant( entityName );
-	}
-
 	@Override
 	@Deprecated
 	public IdentifierGeneratorFactory getIdentifierGeneratorFactory() {
@@ -824,32 +695,22 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	}
 
 	@Override
+	public String getUuid() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String getName() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public SessionBuilderImplementor withOptions() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Map<String, EntityPersister> getEntityPersisters() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Map<String, CollectionPersister> getCollectionPersisters() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public JdbcServices getJdbcServices() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Region getNaturalIdCacheRegion(String regionName) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public SqlExceptionHelper getSQLExceptionHelper() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -879,28 +740,24 @@ public class ShardedSessionFactoryImpl implements ShardedSessionFactoryImplement
 	}
 
 	@Override
-	public void registerNamedQueryDefinition(String name, NamedQueryDefinition definition) {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
-	}
-
-	@Override
-	public void registerNamedSQLQueryDefinition(String name, NamedSQLQueryDefinition definition) {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
-
-	}
-
-	@Override
+	@Deprecated
 	public NamedQueryRepository getNamedQueryRepository() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Iterable<EntityNameResolver> iterateEntityNameResolvers() {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+	public DeserializationResolver getDeserializationResolver() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Type resolveParameterBindType(Object bindValue) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Type resolveParameterBindType(Class clazz) {
+		throw new UnsupportedOperationException();
 	}
 }
 

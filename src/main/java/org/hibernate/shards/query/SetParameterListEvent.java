@@ -29,7 +29,9 @@ import org.hibernate.type.Type;
  */
 public class SetParameterListEvent implements QueryEvent {
 
-	private static enum CtorType {
+	private enum CtorType {
+		POS_VALS_OBJ_ARR,
+		POS_VALS_OBJ_ARR_TYPE,
 		NAME_VALS_COLL_TYPE,
 		NAME_VALS_COLL,
 		NAME_VALS_OBJ_ARR,
@@ -37,12 +39,14 @@ public class SetParameterListEvent implements QueryEvent {
 	}
 
 	private final CtorType ctorType;
+	private final int position;
 	private final String name;
 	private final Collection valsColl;
 	private final Object[] valsArr;
 	private final Type type;
 
-	private SetParameterListEvent(CtorType ctorType, String name, Collection valsColl, Object[] valsArr, Type type) {
+	private SetParameterListEvent(CtorType ctorType, int position, String name, Collection valsColl, Object[] valsArr, Type type) {
+		this.position = position;
 		this.ctorType = ctorType;
 		this.name = name;
 		this.valsColl = valsColl;
@@ -51,24 +55,36 @@ public class SetParameterListEvent implements QueryEvent {
 	}
 
 	public SetParameterListEvent(String name, Collection vals, Type type) {
-		this( CtorType.NAME_VALS_COLL_TYPE, name, vals, null, type );
+		this( CtorType.NAME_VALS_COLL_TYPE, -1, name, vals, null, type );
 	}
 
 	public SetParameterListEvent(String name, Collection vals) {
-		this( CtorType.NAME_VALS_COLL, name, vals, null, null );
+		this( CtorType.NAME_VALS_COLL, -1, name, vals, null, null );
 	}
 
 	public SetParameterListEvent(String name, Object[] vals) {
-		this( CtorType.NAME_VALS_OBJ_ARR, name, null, vals, null );
+		this( CtorType.NAME_VALS_OBJ_ARR, -1, name, null, vals, null );
 	}
 
 	public SetParameterListEvent(String name, Object[] vals, Type type) {
-		this( CtorType.NAME_VALS_OBJ_ARR_TYPE, name, null, vals, type );
+		this( CtorType.NAME_VALS_OBJ_ARR_TYPE, -1, name, null, vals, type );
 	}
 
+	public SetParameterListEvent(int position, Object[] values) {
+		this( CtorType.POS_VALS_OBJ_ARR, position, null, null, null, null );
+	}
+
+	public SetParameterListEvent(int position, Object[] values, Type type) {
+		this( CtorType.POS_VALS_OBJ_ARR_TYPE, position, null, null, null, type );
+	}
 
 	public void onEvent(Query query) {
 		switch ( ctorType ) {
+			case POS_VALS_OBJ_ARR:
+				query.setParameterList( position, valsArr );
+				break;
+			case POS_VALS_OBJ_ARR_TYPE:
+				query.setParameterList( position, valsArr, type );
 			case NAME_VALS_COLL_TYPE:
 				query.setParameterList( name, valsColl, type );
 				break;

@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -29,13 +29,11 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.shards.ShardId;
 import org.hibernate.shards.ShardedConfiguration;
 import org.hibernate.shards.cfg.ConfigurationToShardConfigurationAdapter;
 import org.hibernate.shards.cfg.ShardConfiguration;
 import org.hibernate.shards.integration.IdGenType;
 import org.hibernate.shards.loadbalance.RoundRobinShardLoadBalancer;
-import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.ShardStrategyFactory;
 import org.hibernate.shards.strategy.ShardStrategyImpl;
 import org.hibernate.shards.strategy.access.SequentialShardAccessStrategy;
@@ -66,8 +64,7 @@ public class WeatherReportApp {
 
 		addData();
 
-		Session session = sessionFactory.openSession();
-		try {
+		try (Session session = sessionFactory.openSession()) {
 			Criteria criteria = session.createCriteria( WeatherReport.class );
 			List count = criteria.list();
 			System.out.println( count.size() );
@@ -75,14 +72,10 @@ public class WeatherReportApp {
 			List reports = criteria.list();
 			System.out.println( reports.size() );
 		}
-		finally {
-			session.close();
-		}
 	}
 
 	private void addData() {
-		Session session = sessionFactory.openSession();
-		try {
+		try (Session session = sessionFactory.openSession()) {
 			session.beginTransaction();
 			WeatherReport report = new WeatherReport();
 			report.setContinent( "North America" );
@@ -109,9 +102,6 @@ public class WeatherReportApp {
 			session.save( report );
 			session.getTransaction().commit();
 		}
-		finally {
-			session.close();
-		}
 	}
 
 	private void createSchema() throws SQLException {
@@ -125,7 +115,7 @@ public class WeatherReportApp {
 		Configuration prototypeConfig = new Configuration()
 				.configure( getClass().getResource( "hibernate0.cfg.xml" ) );
 		prototypeConfig.addURL( getClass().getResource( "weather.hbm.xml" ) );
-		List<ShardConfiguration> shardConfigs = new ArrayList<ShardConfiguration>();
+		List<ShardConfiguration> shardConfigs = new ArrayList<>();
 		shardConfigs.add( buildShardConfig( getClass().getResource( "hibernate0.cfg.xml" ) ) );
 		shardConfigs.add( buildShardConfig( getClass().getResource( "hibernate1.cfg.xml" ) ) );
 		shardConfigs.add( buildShardConfig( getClass().getResource( "hibernate2.cfg.xml" ) ) );
@@ -138,24 +128,17 @@ public class WeatherReportApp {
 		return shardedConfig.buildShardedSessionFactory();
 	}
 
-	ShardStrategyFactory buildShardStrategyFactory() {
-		return new ShardStrategyFactory() {
-			public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
-				RoundRobinShardLoadBalancer loadBalancer
-						= new RoundRobinShardLoadBalancer( shardIds );
-				ShardSelectionStrategy pss = new RoundRobinShardSelectionStrategy(
-						loadBalancer
-				);
-				ShardResolutionStrategy prs = new AllShardsShardResolutionStrategy(
-						shardIds
-				);
-				ShardAccessStrategy pas = new SequentialShardAccessStrategy();
-				return new ShardStrategyImpl( pss, prs, pas );
-			}
+	private ShardStrategyFactory buildShardStrategyFactory() {
+		return shardIds -> {
+			RoundRobinShardLoadBalancer loadBalancer = new RoundRobinShardLoadBalancer( shardIds );
+			ShardSelectionStrategy pss = new RoundRobinShardSelectionStrategy( loadBalancer );
+			ShardResolutionStrategy prs = new AllShardsShardResolutionStrategy( shardIds );
+			ShardAccessStrategy pas = new SequentialShardAccessStrategy();
+			return new ShardStrategyImpl( pss, prs, pas );
 		};
 	}
 
-	ShardConfiguration buildShardConfig(URL configFile) {
+	private ShardConfiguration buildShardConfig(URL configFile) {
 		Configuration config = new Configuration().configure( configFile );
 		return new ConfigurationToShardConfigurationAdapter( config );
 	}

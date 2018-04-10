@@ -32,8 +32,9 @@ public class SetFlushModeEvent implements QueryEvent {
 		this.flushMode = flushMode;
 	}
 
+	@Override
 	public void onEvent(Query query) {
-		query.setFlushMode( flushMode );
+		query.setHibernateFlushMode( flushMode );
 	}
 
 }

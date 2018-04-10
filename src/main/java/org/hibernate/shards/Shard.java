@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
+import org.hibernate.query.Query;
 import org.hibernate.Session;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.shards.criteria.CriteriaEvent;
@@ -129,7 +129,7 @@ public interface Shard {
 	/**
 	 * @see Query#list()
 	 */
-	List<Object> list(QueryId queryId);
+	<R> List<R> list(QueryId queryId);
 
 	/**
 	 *
@@ -139,5 +139,5 @@ public interface Shard {
 	/**
 	 * @see Query#uniqueResult()
 	 */
-	Object uniqueResult(QueryId queryId);
+	<R> R uniqueResult(QueryId queryId);
 }

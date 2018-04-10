@@ -42,6 +42,7 @@ class SetCacheableEvent implements CriteriaEvent {
 		this.cacheable = cacheable;
 	}
 
+	@Override
 	public void onEvent(Criteria criteria) {
 		criteria.setCacheable( cacheable );
 	}

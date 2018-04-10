@@ -7,7 +7,7 @@ class EnableFetchProfileOpenSessionEvent implements OpenSessionEvent {
 
 	private final String name;
 
-	public EnableFetchProfileOpenSessionEvent(final String name) {
+	EnableFetchProfileOpenSessionEvent(final String name) {
 		this.name = name;
 	}
 

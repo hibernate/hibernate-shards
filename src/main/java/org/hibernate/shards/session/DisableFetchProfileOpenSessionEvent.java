@@ -12,7 +12,7 @@ class DisableFetchProfileOpenSessionEvent implements OpenSessionEvent {
 
 	private final String name;
 
-	public DisableFetchProfileOpenSessionEvent(final String name) {
+	DisableFetchProfileOpenSessionEvent(final String name) {
 		this.name = name;
 	}
 

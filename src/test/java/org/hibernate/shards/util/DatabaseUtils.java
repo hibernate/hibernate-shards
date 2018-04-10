@@ -41,8 +41,7 @@ public class DatabaseUtils {
 
 	public static void destroyDatabase(final int index, final IdGenType idGenType) throws SQLException {
 		final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-		final Connection conn = createConnection( index );
-		try {
+		try (Connection conn = createConnection( index )) {
 			for ( final String statement : dbPlatform.getDropTableStatements( idGenType ) ) {
 				try {
 					JdbcUtil.executeUpdate( conn, statement, false );
@@ -52,21 +51,14 @@ public class DatabaseUtils {
 				}
 			}
 		}
-		finally {
-			conn.close();
-		}
 	}
 
 	public static void createDatabase(final int index, final IdGenType idGenType) throws SQLException {
 		final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
-		final Connection conn = createConnection( index );
-		try {
+		try (Connection conn = createConnection( index )) {
 			for ( final String statement : dbPlatform.getCreateTableStatements( idGenType ) ) {
 				JdbcUtil.executeUpdate( conn, statement, false );
 			}
-		}
-		finally {
-			conn.close();
 		}
 	}
 }

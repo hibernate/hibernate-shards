@@ -25,6 +25,8 @@ import org.hibernate.shards.ShardId;
 /**
  * @author maxr@google.com (Max Ross)
  */
+@FunctionalInterface
 public interface ShardStrategyFactory {
+
 	ShardStrategy newShardStrategy(List<ShardId> shardIds);
 }

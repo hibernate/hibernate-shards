@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -21,27 +21,29 @@ package org.hibernate.shards.strategy.exit;
 import java.util.Collections;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.hibernate.criterion.Order;
 import org.hibernate.shards.criteria.InMemoryOrderBy;
 import org.hibernate.shards.util.Lists;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+
 /**
  * @author Maulik Shah
  */
-public class OrderExitOperationTest extends TestCase {
+public class OrderExitOperationTest {
 
-	private class MyInt {
+	private static class MyInt {
 
 		private final Integer i;
 		private final String name;
 		private final MyInt innerMyInt;
 
-		public MyInt(int i, String name, MyInt inner) {
+		MyInt(int i, String name, MyInt inner) {
 			this.i = i;
 			this.name = name;
-			this.innerMyInt = inner;
+			innerMyInt = inner;
 		}
 
 		public MyInt getInnerMyInt() {
@@ -59,12 +61,13 @@ public class OrderExitOperationTest extends TestCase {
 		@Override
 		public boolean equals(Object obj) {
 			MyInt myInt = (MyInt) obj;
-			return this.getName().equals( myInt.getName() ) && this.getValue().equals( myInt.getValue() );
+			return getName().equals( myInt.getName() ) && getValue().equals( myInt.getValue() );
 		}
 	}
 
+	@Test
 	@SuppressWarnings("unchecked")
-	public void testApplySingleOrdering() throws Exception {
+	public void testApplySingleOrdering() {
 		List<Object> data = Lists.newArrayList();
 		data.add( new MyInt( 3, "tomislav", null ) );
 		data.add( new MyInt( 1, "bomb", null ) );
@@ -93,8 +96,9 @@ public class OrderExitOperationTest extends TestCase {
 		assertEquals( 1, sortedList.get( 4 ).getValue() );
 	}
 
+	@Test
 	@SuppressWarnings("unchecked")
-	public void testApplySingleNestedOrdering() throws Exception {
+	public void testApplySingleNestedOrdering() {
 		List<Object> data = Lists.newArrayList();
 		data.add( new MyInt( 3, "tomislav", new MyInt( 3, "tomislav", null ) ) );
 		data.add( new MyInt( 1, "bomb", new MyInt( 1, "bomb", null ) ) );
@@ -123,6 +127,7 @@ public class OrderExitOperationTest extends TestCase {
 		assertEquals( 1, sortedList.get( 4 ).getValue() );
 	}
 
+	@Test
 	@SuppressWarnings("unchecked")
 	public void testApplyMultipleOrderings() {
 		List<Object> data = Lists.newArrayList();
@@ -149,6 +154,7 @@ public class OrderExitOperationTest extends TestCase {
 		assertEquals( 27, sortedList.get( 4 ).getValue() );
 	}
 
+	@Test
 	@SuppressWarnings("unchecked")
 	public void testApplyMultipleNestedOrderings() {
 		List<Object> data = Lists.newArrayList();
@@ -175,6 +181,7 @@ public class OrderExitOperationTest extends TestCase {
 		assertEquals( 27, sortedList.get( 4 ).getValue() );
 	}
 
+	@Test
 	@SuppressWarnings("unchecked")
 	public void testApplyMultipleMixedOrderings() {
 		List<Object> data = Lists.newArrayList();

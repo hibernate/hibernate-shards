@@ -26,8 +26,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.jboss.logging.Logger;
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.FlushModeType;
+import javax.persistence.LockModeType;
+import javax.persistence.StoredProcedureQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.metamodel.Metamodel;
 
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
@@ -39,10 +47,9 @@ import org.hibernate.Interceptor;
 import org.hibernate.LobHelper;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
+import org.hibernate.MultiIdentifierLoadAccess;
 import org.hibernate.NaturalIdLoadAccess;
-import org.hibernate.Query;
 import org.hibernate.ReplicationMode;
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.SessionEventListener;
 import org.hibernate.SessionException;
@@ -53,7 +60,6 @@ import org.hibernate.TransientObjectException;
 import org.hibernate.TypeHelper;
 import org.hibernate.UnknownProfileException;
 import org.hibernate.UnresolvableObjectException;
-import org.hibernate.cfg.NotYetImplementedException;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.id.IdentifierGenerator;
@@ -62,6 +68,9 @@ import org.hibernate.jdbc.Work;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.procedure.ProcedureCall;
 import org.hibernate.proxy.HibernateProxy;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.hibernate.shards.CrossShardAssociationException;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardId;
@@ -95,6 +104,8 @@ import org.hibernate.shards.util.Sets;
 import org.hibernate.stat.SessionStatistics;
 import org.hibernate.type.Type;
 
+import org.jboss.logging.Logger;
+
 /**
  * Concrete implementation of a ShardedSession, and also the central component of
  * Hibernate Shards' internal implementation. This class exposes two interfaces;
@@ -106,7 +117,7 @@ import org.hibernate.type.Type;
  */
 public class ShardedSessionImpl implements ShardedSession, ShardedSessionImplementor, ShardIdResolver {
 
-	private static ThreadLocal<ShardId> currentSubgraphShardId = new ThreadLocal<ShardId>();
+	private static ThreadLocal<ShardId> currentSubgraphShardId = new ThreadLocal<>();
 
 	private final ShardedSessionFactoryImplementor shardedSessionFactory;
 
@@ -175,21 +186,21 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			final boolean checkAllAssociatedObjectsForDifferentShards) {
 
 		this.shardedSessionFactory = shardedSessionFactory;
-		this.shards = buildShardListFromSessionFactoryShardIdMap(
+		shards = buildShardListFromSessionFactoryShardIdMap(
 				shardedSessionFactory.getSessionFactoryShardIdMap(),
 				checkAllAssociatedObjectsForDifferentShards,
 				this,
 				interceptor
 		);
 
-		this.shardIdsToShards = buildShardIdsToShardsMap();
+		shardIdsToShards = buildShardIdsToShardsMap();
 		this.shardStrategy = shardStrategy;
 		this.classesWithoutTopLevelSaveSupport = classesWithoutTopLevelSaveSupport;
 		this.checkAllAssociatedObjectsForDifferentShards = checkAllAssociatedObjectsForDifferentShards;
 	}
 
 	private Map<ShardId, Shard> buildShardIdsToShardsMap() {
-		final Map<ShardId, Shard> map = new HashMap<ShardId, Shard>();
+		final Map<ShardId, Shard> map = new HashMap<>();
 		for ( final Shard shard : shards ) {
 			for ( final ShardId shardId : shard.getShardIds() ) {
 				map.put( shardId, shard );
@@ -265,12 +276,12 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		return Pair.of( new InterceptorList( interceptorList ), openSessionEvent );
 	}
 
-	private Object applyGetOperation(final ShardOperation<Object> shardOp, final ShardResolutionStrategyData srsd) {
+	private <R> R applyGetOperation(final ShardOperation<R> shardOp, final ShardResolutionStrategyData srsd) {
 		final List<ShardId> shardIds = selectShardIdsFromShardResolutionStrategyData( srsd );
 		return shardStrategy.getShardAccessStrategy().apply(
 				shardIdListToShardList( shardIds ),
 				shardOp,
-				new FirstNonNullResultExitStrategy<Object>(),
+				new FirstNonNullResultExitStrategy<>(),
 				new ExitOperationsQueryCollector()
 		);
 	}
@@ -289,34 +300,35 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	}
 
 	@Override
-	public Object get(final Class clazz, final Serializable id) throws HibernateException {
-		final ShardOperation<Object> shardOp = new ShardOperation<Object>() {
-			public Object execute(Shard shard) {
+	public <T> T get(final Class<T> clazz, final Serializable id) throws HibernateException {
+		final ShardOperation<T> shardOp = new ShardOperation<T>() {
+
+		    @Override
+			public T execute(Shard shard) {
 				return shard.establishSession().get( clazz, id );
 			}
 
+			@Override
 			public String getOperationName() {
 				return "get(Class class, Serializable id)";
 			}
 		};
 
-		return applyGetOperation( shardOp, new ShardResolutionStrategyDataImpl( clazz, id ) );
+		return applyGetOperation( shardOp, new ShardResolutionStrategyDataImpl<>( clazz, id ) );
 	}
 
 	@Deprecated
 	@Override
-	public Object get(final Class clazz, final Serializable id, final LockMode lockMode) throws HibernateException {
+	public <T> T get(final Class<T> clazz, final Serializable id, final LockMode lockMode) throws HibernateException {
 		return get( clazz, id, new LockOptions( lockMode ) );
 	}
 
 	@Override
-	public Object get(final Class clazz, final Serializable id, final LockOptions lockOptions)
-			throws HibernateException {
-
-		final ShardOperation<Object> shardOp = new ShardOperation<Object>() {
+	public <T> T get(final Class<T> clazz, final Serializable id, final LockOptions lockOptions) throws HibernateException {
+		final ShardOperation<T> shardOp = new ShardOperation<T>() {
 
 			@Override
-			public Object execute(Shard shard) {
+			public T execute(Shard shard) {
 				return shard.establishSession().get( clazz, id, lockOptions );
 			}
 
@@ -326,12 +338,11 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			}
 		};
 
-		return applyGetOperation( shardOp, new ShardResolutionStrategyDataImpl( clazz, id ) );
+		return applyGetOperation( shardOp, new ShardResolutionStrategyDataImpl<>(clazz, id) );
 	}
 
 	@Override
 	public Object get(final String entityName, final Serializable id) throws HibernateException {
-
 		final ShardOperation<Object> shardOp = new ShardOperation<Object>() {
 
 			@Override
@@ -348,11 +359,8 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		return applyGetOperation( shardOp, new ShardResolutionStrategyDataImpl( entityName, id ) );
 	}
 
-	@Deprecated
 	@Override
-	public Object get(final String entityName, final Serializable id, final LockMode lockMode)
-			throws HibernateException {
-
+	public Object get(final String entityName, final Serializable id, final LockMode lockMode) throws HibernateException {
 		return get( entityName, id, new LockOptions( lockMode ) );
 	}
 
@@ -397,18 +405,43 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	}
 
 	@Override
+	public void setFlushMode(FlushModeType flushMode) {
+        throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void setFlushMode(final FlushMode flushMode) {
 		setOpenSessionEvent( new SetFlushModeOpenSessionEvent( flushMode ) );
 	}
 
 	@Override
-	public FlushMode getFlushMode() {
+	public FlushModeType getFlushMode() {
 		// all shards must have the same flush mode
 		Session someSession = getSomeSession();
 		if ( someSession == null ) {
 			someSession = shards.get( 0 ).establishSession();
 		}
 		return someSession.getFlushMode();
+	}
+
+	@Override
+	public void lock(Object entity, LockModeType lockMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void lock(Object entity, LockModeType lockMode, Map<String, Object> properties) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setHibernateFlushMode(FlushMode flushMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public FlushMode getHibernateFlushMode() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -432,7 +465,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	}
 
 	@Override
-	public Connection close() throws HibernateException {
+	public void close() throws HibernateException {
 		List<Throwable> thrown = null;
 		for ( final Shard shard : shards ) {
 			if ( shard.getSession() != null ) {
@@ -463,9 +496,6 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			throw new HibernateException( first );
 		}
 		closed = true;
-
-		// TODO(maxr) what should I return here?
-		return null;
 	}
 
 	@Override
@@ -538,6 +568,11 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	}
 
 	@Override
+	public boolean contains(String entityName, Object object) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public boolean contains(final Object object) {
 		for ( final Shard shard : shards ) {
 			if ( shard.getSession() != null ) {
@@ -551,6 +586,21 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	}
 
 	@Override
+	public LockModeType getLockMode(Object entity) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setProperty(String propertyName, Object value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Map<String, Object> getProperties() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void evict(final Object object) throws HibernateException {
 		for ( final Shard shard : shards ) {
 			if ( shard.getSession() != null ) {
@@ -561,23 +611,23 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 
 	@Deprecated
 	@Override
-	public Object load(final Class clazz, final Serializable id, final LockMode lockMode) throws HibernateException {
+	public <T> T load(final Class<T> clazz, final Serializable id, final LockMode lockMode) throws HibernateException {
 		return load( clazz, id, new LockOptions( lockMode ) );
 	}
 
 	@Override
-	public Object load(final Class theClass, final Serializable id, final LockOptions lockOptions)
+	public <T> T load(final Class<T> theClass, final Serializable id, final LockOptions lockOptions)
 			throws HibernateException {
 
 		final List<ShardId> shardIds = selectShardIdsFromShardResolutionStrategyData(
-				new ShardResolutionStrategyDataImpl( theClass, id )
+				new ShardResolutionStrategyDataImpl<>( theClass, id )
 		);
 
 		if ( shardIds.size() == 1 ) {
 			return shardIdsToShards.get( shardIds.get( 0 ) ).establishSession().load( theClass, id, lockOptions );
 		}
 
-		final Object result = get( theClass, id, lockOptions );
+		final T result = get( theClass, id, lockOptions );
 		if ( result == null ) {
 			shardedSessionFactory.getEntityNotFoundDelegate().handleEntityNotFound( theClass.getName(), id );
 		}
@@ -612,17 +662,17 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	}
 
 	@Override
-	public Object load(final Class clazz, final Serializable id) throws HibernateException {
+	public <T> T load(final Class<T> clazz, final Serializable id) throws HibernateException {
 
 		final List<ShardId> shardIds = selectShardIdsFromShardResolutionStrategyData(
-				new ShardResolutionStrategyDataImpl( clazz, id )
+				new ShardResolutionStrategyDataImpl<>( clazz, id )
 		);
 
 		if ( shardIds.size() == 1 ) {
 			return shardIdsToShards.get( shardIds.get( 0 ) ).establishSession().load( clazz, id );
 		}
 
-		final Object result = get( clazz, id );
+		final T result = get( clazz, id );
 		if ( result == null ) {
 			shardedSessionFactory.getEntityNotFoundDelegate().handleEntityNotFound( clazz.getName(), id );
 		}
@@ -651,7 +701,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	public void load(final Object object, final Serializable id) throws HibernateException {
 
 		final List<ShardId> shardIds = selectShardIdsFromShardResolutionStrategyData(
-				new ShardResolutionStrategyDataImpl( object.getClass(), id )
+				new ShardResolutionStrategyDataImpl<>( object.getClass(), id )
 		);
 
 		if ( shardIds.size() == 1 ) {
@@ -680,7 +730,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 
 		final Serializable id = extractId( object );
 		final List<ShardId> shardIds = selectShardIdsFromShardResolutionStrategyData(
-				new ShardResolutionStrategyDataImpl( object.getClass(), id )
+				new ShardResolutionStrategyDataImpl<>( object.getClass(), id )
 		);
 
 		if ( shardIds.size() == 1 ) {
@@ -717,7 +767,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		}
 		Preconditions.checkNotNull( shardId );
 		setCurrentSubgraphShardId( shardId );
-		LOG.debug( String.format( "Saving object of type %s to shard %s", object.getClass(), shardId ) );
+		LOG.debugf( "Saving object of type %s to shard %s", object.getClass(), shardId );
 		return shardIdsToShards.get( shardId ).establishSession().save( entityName, object );
 	}
 
@@ -745,12 +795,10 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		if ( lockedShard ) {
 			lockedShardId = shardId;
 		}
-		LOG.debug(
-				String.format(
-						"Selected shard %d for object of type %s",
-						shardId.getId(),
-						obj.getClass().getName()
-				)
+		LOG.debugf(
+				"Selected shard %d for object of type %s",
+				shardId.getId(),
+				obj.getClass().getName()
 		);
 		return shardId;
 	}
@@ -789,7 +837,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 				values
 		) ) {
 			if ( pair.getFirst().isCollectionType() ) {
-				/**
+				/*
 				 * collection types are more expensive to evaluate (might involve
 				 * lazy-loading the contents of the collection from the db), so
 				 * let's hold off until the end on the chance that we can fail
@@ -804,7 +852,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			}
 			else {
 				shardId = checkForConflictingShardId( shardId, obj.getClass(), pair.getSecond() );
-				/**
+				/*
 				 * if we're not checking for different shards, return as soon as we've
 				 * got one
 				 */
@@ -817,7 +865,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			for ( final Object collEntry : Iterables.concat( collections ) ) {
 				shardId = checkForConflictingShardId( shardId, obj.getClass(), collEntry );
 				if ( shardId != null && !checkAllAssociatedObjectsForDifferentShards ) {
-					/**
+					/*
 					 * if we're not checking for different shards, return as soon as we've
 					 * got one
 					 */
@@ -900,7 +948,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			return;
 		}
 
-		/**
+		/*
 		 * Too bad, we've got a detached object that could be on more than 1 shard.
 		 * The only safe way to handle this is to try and lookup the object, and if
 		 * it exists, do a merge, and if it doesn't, do a save.
@@ -956,7 +1004,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			return;
 		}
 
-		/**
+		/*
 		 * Too bad, we've got a detached object that could be on more than 1 shard.
 		 * The only safe way to perform the update is to load the object and then
 		 * do a merge.
@@ -970,7 +1018,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		}
 
 		if ( shardId == null ) {
-			/**
+			/*
 			 * This is an error condition.  In order to provide the same behavior
 			 * as a non-sharded session we're just going to dispatch the update
 			 * to a random shard (we know it will fail because either we don't have
@@ -984,6 +1032,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		}
 	}
 
+	@Override
 	public void update(final Object object) throws HibernateException {
 		applyUpdateOperation( SIMPLE_UPDATE_OPERATION, object );
 	}
@@ -1056,8 +1105,37 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	}
 
 	@Override
-	public void persist(final String entityName, final Object object) throws HibernateException {
+	public void remove(Object entity) {
+		throw new UnsupportedOperationException();
+	}
 
+	@Override
+	public <T> T find(Class<T> entityClass, Object primaryKey) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T find(Class<T> entityClass, Object primaryKey, Map<String, Object> properties) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T getReference(Class<T> entityClass, Object primaryKey) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void persist(final String entityName, final Object object) throws HibernateException {
 		// TODO(tomislav): what if we have detached object?
 		ShardId shardId = getShardIdForObject( object );
 		if ( shardId == null ) {
@@ -1065,7 +1143,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		}
 		Preconditions.checkNotNull( shardId );
 		setCurrentSubgraphShardId( shardId );
-		LOG.debug( String.format( "Persisting object of type %s to shard %s", object.getClass(), shardId ) );
+		LOG.debugf( "Persisting object of type %s to shard %s", object.getClass(), shardId );
 		shardIdsToShards.get( shardId ).establishSession().persist( entityName, object );
 	}
 
@@ -1076,7 +1154,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			op.delete( shardIdsToShards.get( shardId ), object );
 			return;
 		}
-		/**
+		/*
 		 * Detached object.
 		 * We can't just try to delete on each shard because if you have an
 		 * object associated with Session x and you try to delete that object in
@@ -1092,7 +1170,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			op.delete( potentialShards.get( 0 ), object );
 			return;
 		}
-		/**
+		/*
 		 * Too bad, we've got a detached object that could be on more than 1 shard.
 		 * The only safe way to perform the delete is to load the object before
 		 * deleting.
@@ -1116,12 +1194,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 
 	@Override
 	public void delete(final String entityName, final Object object) throws HibernateException {
-		final DeleteOperation op = new DeleteOperation() {
-			@Override
-			public void delete(Shard shard, Object object) {
-				shard.establishSession().delete( entityName, object );
-			}
-		};
+		final DeleteOperation op = (shard, obj) -> shard.establishSession().delete( entityName, obj);
 		applyDeleteOperation( op, object );
 	}
 
@@ -1169,15 +1242,23 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 
 	@Override
 	public void refresh(final Object object) throws HibernateException {
-		final RefreshOperation op = new RefreshOperation() {
-
-			@Override
-			public void refresh(Shard shard, Object object) {
-				shard.establishSession().refresh( object );
-			}
-		};
-
+		final RefreshOperation op = (shard, obj) -> shard.establishSession().refresh(obj);
 		applyRefreshOperation( op, object );
+	}
+
+	@Override
+	public void refresh(Object entity, Map<String, Object> properties) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void refresh(Object entity, LockModeType lockMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void refresh(Object entity, LockModeType lockMode, Map<String, Object> properties) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
@@ -1188,25 +1269,19 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 
 	@Override
 	public void refresh(final Object object, final LockOptions lockOptions) throws HibernateException {
-
-		final RefreshOperation op = new RefreshOperation() {
-
-			@Override
-			public void refresh(Shard shard, Object object) {
-				shard.establishSession().refresh( object, lockOptions );
-			}
-		};
-
+		final RefreshOperation op = (shard, obj) -> shard.establishSession().refresh(obj, lockOptions );
 		applyRefreshOperation( op, object );
 	}
 
 	@Override
 	public LockMode getCurrentLockMode(final Object object) throws HibernateException {
 		final ShardOperation<LockMode> invoker = new ShardOperation<LockMode>() {
+			@Override
 			public LockMode execute(final Shard s) {
 				return s.establishSession().getCurrentLockMode( object );
 			}
 
+			@Override
 			public String getOperationName() {
 				return "getCurrentLockmode(Object object)";
 			}
@@ -1225,10 +1300,45 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	@Override
 	public Transaction getTransaction() {
 		errorIfClosed();
-		if ( transaction == null || transaction.wasCommitted() || transaction.wasRolledBack()) {
+		if ( transaction == null || transaction.getStatus().isOneOf(TransactionStatus.COMMITTED) || transaction.getRollbackOnly()) {
 			transaction = new ShardedTransactionImpl( this );
 		}
 		return transaction;
+	}
+
+	@Override
+	public EntityManagerFactory getEntityManagerFactory() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public CriteriaBuilder getCriteriaBuilder() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Metamodel getMetamodel() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> EntityGraph<T> createEntityGraph(Class<T> rootType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityGraph<?> createEntityGraph(String graphName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityGraph<?> getEntityGraph(String graphName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> List<EntityGraph<? super T>> getEntityGraphs(Class<T> entityClass) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -1261,6 +1371,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		);
 	}
 
+	@Override
 	public Criteria createCriteria(final String entityName, final String alias) {
 		return new ShardedCriteriaImpl(
 				new CriteriaId( nextCriteriaId++ ),
@@ -1268,6 +1379,16 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 				new CriteriaFactoryImpl( entityName, alias ),
 				shardStrategy.getShardAccessStrategy()
 		);
+	}
+
+	@Override
+	public Integer getJdbcBatchSize() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setJdbcBatchSize(Integer jdbcBatchSize) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -1281,13 +1402,118 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	}
 
 	@Override
-	public SQLQuery createSQLQuery(final String queryString) throws HibernateException {
-		return new ShardedSQLQueryImpl(
+	public <T> Query<T> createQuery(String queryString, Class<T> resultType) {
+		return new ShardedQueryImpl<>(
 				new QueryId( nextQueryId++ ),
 				shards,
 				new AdHocQueryFactoryImpl( queryString ),
 				shardStrategy.getShardAccessStrategy()
 		);
+	}
+
+	@Override
+	public Query createNamedQuery(String name) {
+		return new ShardedQueryImpl(
+				new QueryId( nextQueryId++ ),
+				shards,
+				new NamedQueryFactoryImpl( name ),
+				shardStrategy.getShardAccessStrategy()
+		);
+	}
+
+	@Override
+	public <T> Query<T> createQuery(CriteriaQuery<T> criteriaQuery) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query createQuery(CriteriaUpdate updateQuery) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Query createQuery(CriteriaDelete deleteQuery) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> Query<T> createNamedQuery(String name, Class<T> resultType) {
+		return new ShardedQueryImpl<>(
+				new QueryId( nextQueryId++ ),
+				shards,
+				new NamedQueryFactoryImpl( name ),
+				shardStrategy.getShardAccessStrategy()
+		);
+	}
+
+	@Override
+	public NativeQuery createNativeQuery(String sqlString, Class resultClass) {
+		return new ShardedSQLQueryImpl<>(
+				new QueryId( nextQueryId++ ),
+				shards,
+				new AdHocQueryFactoryImpl( sqlString ),
+				shardStrategy.getShardAccessStrategy()
+		);
+	}
+
+	@Override
+	public StoredProcedureQuery createNamedStoredProcedureQuery(String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public StoredProcedureQuery createStoredProcedureQuery(String procedureName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public StoredProcedureQuery createStoredProcedureQuery(String procedureName, Class... resultClasses) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public StoredProcedureQuery createStoredProcedureQuery(String procedureName, String... resultSetMappings) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void joinTransaction() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isJoinedToTransaction() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T unwrap(Class<T> cls) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object getDelegate() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public NativeQuery createNativeQuery(String sqlString) {
+		return new ShardedSQLQueryImpl<>(
+				new QueryId( nextQueryId++ ),
+				shards,
+				new AdHocQueryFactoryImpl( sqlString ),
+				shardStrategy.getShardAccessStrategy()
+		);
+	}
+
+	@Override
+	public NativeQuery createNativeQuery(String sqlString, String resultSetMapping) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public NativeQuery getNamedNativeQuery(String name) {
+		throw new UnsupportedOperationException();
 	}
 
 	/**
@@ -1337,8 +1563,12 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	}
 
 	@Override
-	public String getEntityName(final Object object) throws HibernateException {
+	public void detach(Object entity) {
+		throw new UnsupportedOperationException();
+	}
 
+	@Override
+	public String getEntityName(final Object object) throws HibernateException {
 		final ShardOperation<String> invoker = new ShardOperation<String>() {
 
 			@Override
@@ -1426,15 +1656,6 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		// we do not allow application-supplied connections, so we can always return null
 		return null;
 	}
-//
-//    /**
-//     * @deprecated
-//     */
-//    @Override
-//    @Deprecated
-//    public void reconnect() throws HibernateException {
-//        throw new UnsupportedOperationException();
-//    }
 
 	/**
 	 * Unsupported.  This is a technical decision.
@@ -1554,7 +1775,7 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 			}
 			else {
 				// HSHARDS-64
-				final ShardResolutionStrategyData srsd = new ShardResolutionStrategyDataImpl(
+				final ShardResolutionStrategyData srsd = new ShardResolutionStrategyDataImpl<>(
 						obj.getClass(),
 						getIdentifier( obj )
 				);
@@ -1661,6 +1882,11 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 		return shardStrategy.getShardResolutionStrategy().selectShardIdsFromShardResolutionStrategyData( srsd );
 	}
 
+	@Override
+	public Session getSession() {
+		return null;
+	}
+
 	private static class ShardedLockRequest implements LockRequest {
 
 		private final LockOptions lockOptions;
@@ -1747,89 +1973,94 @@ public class ShardedSessionImpl implements ShardedSession, ShardedSessionImpleme
 	//todo impl these methods
 
 	@Override
-	public IdentifierLoadAccess byId(Class entityClass) {
-		throw new NotYetImplementedException();
+	public <T> IdentifierLoadAccess<T> byId(Class<T> entityClass) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public SharedSessionBuilder sessionWithOptions() {
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void refresh(String entityName, Object object) {
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void refresh(String entityName, Object object, LockOptions lockOptions) {
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public IdentifierLoadAccess byId(String entityName) {
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> MultiIdentifierLoadAccess<T> byMultipleIds(Class<T> entityClass) {
+		return null;
+	}
+
+	@Override
+	public MultiIdentifierLoadAccess byMultipleIds(String entityName) {
+		return null;
 	}
 
 	@Override
 	public NaturalIdLoadAccess byNaturalId(String entityName) {
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public NaturalIdLoadAccess byNaturalId(Class entityClass) {
-		throw new NotYetImplementedException();
+	public <T> NaturalIdLoadAccess<T> byNaturalId(Class<T> entityClass) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public SimpleNaturalIdLoadAccess bySimpleNaturalId(String entityName) {
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public SimpleNaturalIdLoadAccess bySimpleNaturalId(Class entityClass) {
-		throw new NotYetImplementedException();
+	public <T> SimpleNaturalIdLoadAccess<T> bySimpleNaturalId(Class<T> entityClass) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public <T> T doReturningWork(ReturningWork<T> work) throws HibernateException {
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public String getTenantIdentifier() {
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 	// end todo
 
 
 	@Override
 	public void addEventListeners(SessionEventListener... listeners) {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public ProcedureCall getNamedProcedureCall(String name) {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public ProcedureCall createStoredProcedureCall(String procedureName) {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public ProcedureCall createStoredProcedureCall(String procedureName, Class... resultClasses) {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public ProcedureCall createStoredProcedureCall(String procedureName, String... resultSetMappings) {
-		//todo may be UnsupportedOperationException
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 }

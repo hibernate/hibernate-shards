@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -18,9 +18,13 @@
 
 package org.hibernate.shards.integration;
 
+import java.io.FileNotFoundException;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +33,6 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -49,7 +49,6 @@ import org.hibernate.shards.session.ShardAware;
 import org.hibernate.shards.session.ShardedSession;
 import org.hibernate.shards.session.ShardedSessionFactory;
 import org.hibernate.shards.session.ShardedSessionImpl;
-import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.ShardStrategyFactory;
 import org.hibernate.shards.strategy.ShardStrategyImpl;
 import org.hibernate.shards.strategy.access.ParallelShardAccessStrategy;
@@ -61,6 +60,12 @@ import org.hibernate.shards.strategy.selection.RoundRobinShardSelectionStrategy;
 import org.hibernate.shards.strategy.selection.ShardSelectionStrategy;
 import org.hibernate.shards.util.DatabaseUtils;
 import org.hibernate.shards.util.Lists;
+
+import org.junit.After;
+import org.junit.Before;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Base class for all sharding integration tests.
@@ -99,7 +104,7 @@ public abstract class BaseShardingIntegrationTestCase {
 
 	@Before
 	public void beforeTest() throws Exception {
-		this.setUp();
+		setUp();
 	}
 
 	protected void setUp() throws Exception {
@@ -133,7 +138,7 @@ public abstract class BaseShardingIntegrationTestCase {
 	}
 
 	protected Map<Integer, Integer> buildVirtualShardToShardMap() {
-		final Map<Integer, Integer> virtualShardToShardMap = new HashMap<Integer, Integer>();
+		final Map<Integer, Integer> virtualShardToShardMap = new HashMap<>();
 		if ( isVirtualShardingEnabled() ) {
 			for ( int i = 0; i < getNumShards(); ++i ) {
 				virtualShardToShardMap.put( i, i % getNumDatabases() );
@@ -142,14 +147,18 @@ public abstract class BaseShardingIntegrationTestCase {
 		return virtualShardToShardMap;
 	}
 
-	private Configuration buildPrototypeConfig() {
+	private Configuration buildPrototypeConfig() throws URISyntaxException, FileNotFoundException {
 		final DatabasePlatform dbPlatform = DatabasePlatformFactory.FACTORY.getDatabasePlatform();
 		final String dbPlatformConfigDirectory = "platform/" + dbPlatform.getName().toLowerCase() + "/config/";
 		final String configurationFile = dbPlatformConfigDirectory + "shard0.hibernate.cfg.xml";
 		final IdGenType idGenType = getIdGenType();
 		final Configuration config = createPrototypeConfiguration();
 		config.configure( BaseShardingIntegrationTestCase.class.getResource( configurationFile ) );
-		config.addURL( BaseShardingIntegrationTestCase.class.getResource( dbPlatformConfigDirectory + idGenType.getMappingFile() ) );
+
+		final URL resource = BaseShardingIntegrationTestCase.class
+				.getResource( dbPlatformConfigDirectory + idGenType.getMappingFile() );
+		config.addCacheableFile( Paths.get( resource.toURI() ).toFile() );
+
 		return config;
 	}
 
@@ -175,14 +184,12 @@ public abstract class BaseShardingIntegrationTestCase {
 	}
 
 	protected ShardStrategyFactory buildShardStrategyFactory() {
-		return new ShardStrategyFactory() {
-			public ShardStrategy newShardStrategy(List<ShardId> shardIds) {
-				final RoundRobinShardLoadBalancer loadBalancer = new RoundRobinShardLoadBalancer( shardIds );
-				final ShardSelectionStrategy sss = new RoundRobinShardSelectionStrategy( loadBalancer );
-				final ShardResolutionStrategy srs = new AllShardsShardResolutionStrategy( shardIds );
-				final ShardAccessStrategy sas = getShardAccessStrategy();
-				return new ShardStrategyImpl( sss, srs, sas );
-			}
+		return shardIds -> {
+			final RoundRobinShardLoadBalancer loadBalancer = new RoundRobinShardLoadBalancer( shardIds );
+			final ShardSelectionStrategy sss = new RoundRobinShardSelectionStrategy( loadBalancer );
+			final ShardResolutionStrategy srs = new AllShardsShardResolutionStrategy( shardIds );
+			final ShardAccessStrategy sas = getShardAccessStrategy();
+			return new ShardStrategyImpl( sss, srs, sas );
 		};
 	}
 
@@ -253,7 +260,7 @@ public abstract class BaseShardingIntegrationTestCase {
 
 	protected <T> T reloadAssertNotNull(final T reloadMe) {
 		final T result = reload( reloadMe );
-		Assert.assertNotNull( result );
+		assertNotNull( result );
 		return result;
 	}
 
@@ -263,7 +270,7 @@ public abstract class BaseShardingIntegrationTestCase {
 
 	protected <T> T reloadAssertNotNull(final Session session, final T reloadMe) {
 		final T result = reload( session, reloadMe );
-		Assert.assertNotNull( result );
+		assertNotNull( result );
 		return result;
 	}
 
@@ -275,13 +282,7 @@ public abstract class BaseShardingIntegrationTestCase {
 			final Method m = clazz.getMethod( "get" + className + "Id" );
 			return (T) get( session, clazz, (Serializable) m.invoke( reloadMe ) );
 		}
-		catch (NoSuchMethodException e) {
-			throw new RuntimeException( e );
-		}
-		catch (IllegalAccessException e) {
-			throw new RuntimeException( e );
-		}
-		catch (InvocationTargetException e) {
+		catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 			throw new RuntimeException( e );
 		}
 	}
@@ -289,7 +290,7 @@ public abstract class BaseShardingIntegrationTestCase {
 	protected ShardId getShardIdForObject(final Object obj) {
 		final ShardId shardId = session.getShardIdForObject( obj );
 		if ( obj instanceof ShardAware ) {
-			Assert.assertEquals( ((ShardAware) obj).getShardId(), shardId );
+			assertEquals( ( (ShardAware) obj ).getShardId(), shardId );
 		}
 		return shardId;
 	}
@@ -313,13 +314,13 @@ public abstract class BaseShardingIntegrationTestCase {
 		public Thread newThread(final Runnable r) {
 			final Thread t = Executors.defaultThreadFactory().newThread( r );
 			t.setDaemon( true );
-			t.setName( "T" + (nextThreadId++) );
+			t.setName( "T" + ( nextThreadId++ ) );
 			return t;
 		}
 	};
 
 	private ThreadPoolExecutor buildThreadPoolExecutor() {
-		return new ThreadPoolExecutor( 10, 50, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), FACTORY );
+		return new ThreadPoolExecutor( 10, 50, 60, TimeUnit.SECONDS, new SynchronousQueue<>(), FACTORY );
 	}
 
 	/**
@@ -353,7 +354,7 @@ public abstract class BaseShardingIntegrationTestCase {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> T get(final Session session, final Class<?> clazz, final Serializable id) {
-		return (T) session.get( clazz, id );
+	protected <T> T get(final Session session, final Class<T> clazz, final Serializable id) {
+		return session.get( clazz, id );
 	}
 }

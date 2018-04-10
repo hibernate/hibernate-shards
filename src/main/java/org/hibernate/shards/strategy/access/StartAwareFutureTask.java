@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -65,22 +65,22 @@ class StartAwareFutureTask extends FutureTask<Void> {
 	@Override
 	public void run() {
 
-		log.debug( String.format( "Task %d: Run invoked.", id ) );
+		log.debugf( "Task %d: Run invoked.", id );
 		synchronized (this) {
 			if ( cancelled ) {
-				log.debug( String.format( "Task %d: Task will not run.", id ) );
+				log.debugf( "Task %d: Task will not run.", id );
 				return;
 			}
 			runCalled = true;
 		}
-		log.debug( String.format( "Task %d: Task will run.", id ) );
+		log.debugf( "Task %d: Task will run.", id );
 		super.run();
 	}
 
 	@Override
 	public synchronized boolean cancel(final boolean mayInterruptIfRunning) {
 		if ( runCalled ) {
-			/**
+			/*
 			 * If run has already been called we can't call super.  That's because
 			 * super.cancel might be called in between the time we leave the
 			 * synchronization block in run() and the time we call super.run().
@@ -94,7 +94,7 @@ class StartAwareFutureTask extends FutureTask<Void> {
 		}
 		boolean result = superCancel( mayInterruptIfRunning );
 		cancelled = true;
-		log.debug( String.format( "Task %d: Task cancelled.", id ) );
+		log.debugf( "Task %d: Task cancelled.", id );
 		return result;
 	}
 

@@ -30,6 +30,7 @@ import org.hibernate.Session;
  *
  * @author maxr@google.com (Max Ross)
  */
+@FunctionalInterface
 public interface OpenSessionEvent {
 
 	/**

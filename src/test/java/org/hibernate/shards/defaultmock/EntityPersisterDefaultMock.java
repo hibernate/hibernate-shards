@@ -20,27 +20,29 @@ package org.hibernate.shards.defaultmock;
 
 import java.io.Serializable;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
 import org.hibernate.MappingException;
-import org.hibernate.bytecode.spi.EntityInstrumentationMetadata;
+import org.hibernate.bytecode.spi.BytecodeEnhancementMetadata;
 import org.hibernate.cache.spi.access.EntityRegionAccessStrategy;
 import org.hibernate.cache.spi.access.NaturalIdRegionAccessStrategy;
 import org.hibernate.cache.spi.entry.CacheEntry;
 import org.hibernate.cache.spi.entry.CacheEntryStructure;
 import org.hibernate.engine.spi.CascadeStyle;
+import org.hibernate.engine.spi.EntityEntryFactory;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.engine.spi.ValueInclusion;
 import org.hibernate.id.IdentifierGenerator;
 import org.hibernate.internal.FilterAliasGenerator;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.persister.entity.EntityPersister;
+import org.hibernate.persister.entity.MultiLoadOptions;
 import org.hibernate.persister.walking.spi.AttributeDefinition;
 import org.hibernate.persister.walking.spi.EntityIdentifierDefinition;
 import org.hibernate.tuple.entity.EntityMetamodel;
@@ -60,6 +62,11 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 
 	@Override
 	public SessionFactoryImplementor getFactory() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityEntryFactory getEntityEntryFactory() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -135,20 +142,19 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 
 	@Override
 	public int[] findDirty(
-			final Object[] x,
-			final Object[] y,
-			final Object owner,
-			final SessionImplementor session) throws HibernateException {
-
+			Object[] currentState,
+			Object[] previousState,
+			Object owner,
+			SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public int[] findModified(
-			final Object[] old,
-			final Object[] current,
-			final Object object,
-			final SessionImplementor session) throws HibernateException {
-
+			Object[] old,
+			Object[] current,
+			Object object,
+			SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -194,8 +200,8 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 
 	@Override
 	public Object[] getNaturalIdentifierSnapshot(
-			final Serializable id,
-			final SessionImplementor session) throws HibernateException {
+			Serializable id,
+			SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -210,22 +216,46 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 	}
 
 	@Override
-	public Object load(
-			final Serializable id, final Object optionalObject, final LockMode lockMode,
-			final SessionImplementor session) throws HibernateException {
+	public Serializable loadEntityIdByNaturalId(
+			Object[] naturalIdValues,
+			LockOptions lockOptions,
+			SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Object load(Serializable id, Object optionalObject, LockOptions lockOptions, SessionImplementor session)
-			throws HibernateException {
+	public Object load(
+			Serializable id,
+			Object optionalObject,
+			LockMode lockMode,
+			SharedSessionContractImplementor session) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object load(
+			Serializable id,
+			Object optionalObject,
+			LockOptions lockOptions,
+			SharedSessionContractImplementor session) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public List multiLoad(
+			Serializable[] ids,
+			SharedSessionContractImplementor session,
+			MultiLoadOptions loadOptions) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void lock(
-			final Serializable id, final Object version, final Object object,
-			final LockMode lockMode, final SessionImplementor session) throws HibernateException {
+			Serializable id,
+			Object version,
+			Object object,
+			LockMode lockMode,
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -235,45 +265,47 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 			Object version,
 			Object object,
 			LockOptions lockOptions,
-			SessionImplementor session) throws HibernateException {
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void insert(
-			final Serializable id, final Object[] fields, final Object object,
-			final SessionImplementor session) throws HibernateException {
+			Serializable id,
+			Object[] fields,
+			Object object,
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Serializable insert(
-			final Object[] fields,
-			final Object object,
-			final SessionImplementor session) throws HibernateException {
+			Object[] fields,
+			Object object,
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void delete(
-			final Serializable id,
-			final Object version,
-			final Object object,
-			final SessionImplementor session) throws HibernateException {
+			Serializable id,
+			Object version,
+			Object object,
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void update(
-			final Serializable id,
-			final Object[] fields,
-			final int[] dirtyFields,
-			final boolean hasDirtyCollection,
-			final Object[] oldFields,
-			final Object oldVersion,
-			final Object object,
-			final Object rowId,
-			final SessionImplementor session) throws HibernateException {
+			Serializable id,
+			Object[] fields,
+			int[] dirtyFields,
+			boolean hasDirtyCollection,
+			Object[] oldFields,
+			Object oldVersion,
+			Object object,
+			Object rowId,
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -343,6 +375,16 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 	}
 
 	@Override
+	public boolean canReadFromCache() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean canWriteToCache() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public boolean hasCache() {
 		throw new UnsupportedOperationException();
 	}
@@ -354,6 +396,15 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 
 	@Override
 	public CacheEntryStructure getCacheEntryStructure() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public CacheEntry buildCacheEntry(
+			Object entity,
+			Object[] state,
+			Object version,
+			SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -374,21 +425,31 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 
 	@Override
 	public Object[] getDatabaseSnapshot(
-			final Serializable id,
-			final SessionImplementor session) throws HibernateException {
+			Serializable id,
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Object getCurrentVersion(final Serializable id, final SessionImplementor session) throws HibernateException {
+	public Serializable getIdByUniqueKey(
+			Serializable key,
+			String uniquePropertyName,
+			SharedSessionContractImplementor session) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object getCurrentVersion(
+			Serializable id,
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Object forceVersionIncrement(
-			final Serializable id,
-			final Object currentVersion,
-			final SessionImplementor session) throws HibernateException {
+			Serializable id,
+			Object currentVersion,
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -408,75 +469,48 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 	}
 
 	@Override
-	public void afterInitialize(
-			final Object entity,
-			final boolean lazyPropertiesAreUnfetched,
-			final SessionImplementor session) {
+	public void afterInitialize(Object entity, SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public void afterReassociate(final Object entity, final SessionImplementor session) {
+	public void afterReassociate(Object entity, SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Object createProxy(final Serializable id, final SessionImplementor session) throws HibernateException {
+	public Object createProxy(Serializable id, SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Boolean isTransient(final Object object, final SessionImplementor session) throws HibernateException {
+	public Boolean isTransient(Object object, SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Object[] getPropertyValuesToInsert(
-			final Object object,
-			final Map mergeMap,
-			final SessionImplementor session) throws HibernateException {
+			Object object,
+			Map mergeMap,
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void processInsertGeneratedProperties(
-			final Serializable id,
-			final Object entity,
-			final Object[] state,
-			final SessionImplementor session) {
+			Serializable id,
+			Object entity,
+			Object[] state,
+			SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void processUpdateGeneratedProperties(
-			final Serializable id,
-			final Object entity,
-			final Object[] state,
-			final SessionImplementor session) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Serializable getIdentifier(Object entity, SessionImplementor session) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void setIdentifier(Object entity, Serializable id, SessionImplementor session) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Object instantiate(Serializable id, SessionImplementor session) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void resetIdentifier(
+			Serializable id,
 			Object entity,
-			Serializable currentId,
-			Object currentVersion,
-			SessionImplementor session) {
+			Object[] state,
+			SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -501,25 +535,12 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 	}
 
 	@Override
-	public Serializable loadEntityIdByNaturalId(
-			Object[] naturalIdValues,
-			LockOptions lockOptions,
-			SessionImplementor session) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
 	public boolean hasNaturalIdCache() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public NaturalIdRegionAccessStrategy getNaturalIdCacheAccessStrategy() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Serializable getIdByUniqueKey(Serializable key, String uniquePropertyName, SessionImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -569,7 +590,29 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 	}
 
 	@Override
+	public Serializable getIdentifier(
+			Object entity,
+			SharedSessionContractImplementor session) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setIdentifier(
+			Object entity,
+			Serializable id,
+			SharedSessionContractImplementor session) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public Object getVersion(Object object) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object instantiate(
+			Serializable id,
+			SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -580,6 +623,15 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 
 	@Override
 	public boolean hasUninitializedLazyProperties(Object object) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void resetIdentifier(
+			Object entity,
+			Serializable currentId,
+			Object currentVersion,
+			SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -599,7 +651,7 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 	}
 
 	@Override
-	public EntityInstrumentationMetadata getInstrumentationMetadata() {
+	public BytecodeEnhancementMetadata getInstrumentationMetadata() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -609,21 +661,12 @@ public class EntityPersisterDefaultMock implements EntityPersister {
 	}
 
 	@Override
+	public int[] resolveAttributeIndexes(String[] attributeNames) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void generateEntityDefinition() {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public CacheEntry buildCacheEntry(
-			Object entity,
-			Object[] state,
-			Object version,
-			SessionImplementor session) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public int[] resolveAttributeIndexes(Set<String> properties) {
 		throw new UnsupportedOperationException();
 	}
 

@@ -41,6 +41,7 @@ class AddOrderEvent implements CriteriaEvent {
 		this.order = order;
 	}
 
+	@Override
 	public void onEvent(Criteria criteria) {
 		criteria.addOrder( order );
 	}

@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -23,22 +23,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import javax.naming.NamingException;
 
-import junit.framework.TestCase;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Interceptor;
-import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
-import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
-import org.hibernate.cfg.Settings;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.service.ServiceRegistry;
+import org.hibernate.metamodel.spi.MetamodelImplementor;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.shards.ShardId;
+import org.hibernate.shards.defaultmock.MetamodelImplementorDefaultMock;
 import org.hibernate.shards.defaultmock.SessionFactoryDefaultMock;
 import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.ShardStrategyDefaultMock;
@@ -46,23 +42,32 @@ import org.hibernate.shards.strategy.ShardStrategyFactory;
 import org.hibernate.shards.strategy.ShardStrategyFactoryDefaultMock;
 import org.hibernate.shards.util.Sets;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 /**
  * @author maxr@google.com (Max Ross)
  */
-public class ShardedSessionFactoryImplTest extends TestCase {
+public class ShardedSessionFactoryImplTest {
+
 	private SessionFactoryImplementor sf;
 	private ShardId shardId;
 
-	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 		sf = new SessionFactoryDefaultMock() {
+
 			@Override
-			public Settings getSettings() {
-				Configuration config = new Configuration();
-				Properties prop = new Properties();
-				prop.setProperty( Environment.SESSION_FACTORY_NAME, "1" );
-				prop.setProperty( Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect" );
-				return config.buildSettings( prop, getServiceRegistry() );
+			public Map<String, Object> getProperties() {
+				Map<String, Object> prop = new HashMap<>();
+				prop.put( Environment.SESSION_FACTORY_NAME, "1" );
+				prop.put( Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect" );
+				return prop;
 			}
 
 			@Override
@@ -73,7 +78,13 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 			public Map<String, ClassMetadata> getAllClassMetadata() throws HibernateException {
 				return Collections.emptyMap();
 			}
+
+			@Override
+			public MetamodelImplementor getMetamodel() {
+				return new MetamodelImplementorMock();
+			}
 		};
+
 		shardId = new ShardId( 1 );
 	}
 
@@ -86,8 +97,9 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 		};
 	}
 
+	@Test
 	public void testCtors() {
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<>();
 		Set<Class<?>> crsl = Collections.emptySet();
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
 		try {
@@ -106,7 +118,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 			// good
 		}
 
-		sfMap.put( this.sf, Sets.newHashSet( shardId ) );
+		sfMap.put( sf, Sets.newHashSet( shardId ) );
 		try {
 			new ShardedSessionFactoryImpl( sfMap, null, crsl, false );
 			fail( "expected npe" );
@@ -127,19 +139,18 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 		ssfi.close();
 	}
 
+	@Test
 	public void testOpenSessionWithUserSuppliedConnection() {
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
-		ShardedSessionFactory ssf =
-				new ShardedSessionFactoryImpl(
-						sfMap,
-						shardStrategyFactory,
-						Collections.<Class<?>>emptySet(),
-						false
-				);
-		try {
+		try (ShardedSessionFactory ssf = new ShardedSessionFactoryImpl(
+				sfMap,
+				shardStrategyFactory,
+				Collections.emptySet(),
+				false
+		)) {
 			Connection conn = null;
 			try {
 				ssf.withOptions().connection( conn ).openSession();
@@ -157,24 +168,20 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 				// good
 			}
 		}
-		finally {
-			ssf.close();
-		}
 	}
 
+	@Test
 	public void testOpenStatelessSessionWithUserSuppliedConnection() {
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
-		ShardedSessionFactory ssf =
-				new ShardedSessionFactoryImpl(
-						sfMap,
-						shardStrategyFactory,
-						Collections.<Class<?>>emptySet(),
-						false
-				);
-		try {
+		try (ShardedSessionFactory ssf = new ShardedSessionFactoryImpl(
+				sfMap,
+				shardStrategyFactory,
+				Collections.emptySet(),
+				false
+		)) {
 			Connection conn = null;
 			try {
 				ssf.openStatelessSession( conn );
@@ -184,11 +191,9 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 				// good
 			}
 		}
-		finally {
-			ssf.close();
-		}
 	}
 
+	@Test
 	public void testIsClosed() {
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
 
@@ -200,12 +205,11 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 			}
 
 			@Override
-			public Settings getSettings() {
-				Configuration config = new Configuration();
-				Properties prop = new Properties();
-				prop.setProperty( Environment.SESSION_FACTORY_NAME, "1" );
-				prop.setProperty( Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect" );
-				return config.buildSettings( prop, getServiceRegistry() );
+			public Map<String, Object> getProperties() {
+				Map<String, Object> prop = new HashMap<>();
+				prop.put( Environment.SESSION_FACTORY_NAME, "1" );
+				prop.put( Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect" );
+				return prop;
 			}
 
 			@Override
@@ -213,17 +217,23 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 			}
 
 			@Override
-			public Map getAllClassMetadata() throws HibernateException {
+			public Map<String, ClassMetadata> getAllClassMetadata() throws HibernateException {
 				return Collections.emptyMap();
 			}
+
+			@Override
+			public MetamodelImplementor getMetamodel() {
+				return new MetamodelImplementorMock();
+			}
 		};
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
+
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<>();
 		sfMap.put( mock1, Sets.newHashSet( new ShardId( 1 ) ) );
 		ShardedSessionFactory ssf =
 				new ShardedSessionFactoryImpl(
 						sfMap,
 						shardStrategyFactory,
-						Collections.<Class<?>>emptySet(),
+						Collections.emptySet(),
 						false
 				);
 		try {
@@ -232,6 +242,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 		finally {
 			ssf.close();
 		}
+
 		SessionFactoryDefaultMock mock2 = new SessionFactoryDefaultMock() {
 
 			@Override
@@ -240,12 +251,11 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 			}
 
 			@Override
-			public Settings getSettings() {
-				Configuration config = new Configuration();
-				Properties prop = new Properties();
-				prop.setProperty( Environment.SESSION_FACTORY_NAME, "2" );
-				prop.setProperty( Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect" );
-				return config.buildSettings( prop, getServiceRegistry() );
+			public Map<String, Object> getProperties() {
+				Map<String, Object> prop = new HashMap<>();
+				prop.put( Environment.SESSION_FACTORY_NAME, "2" );
+				prop.put( Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect" );
+				return prop;
 			}
 
 			@Override
@@ -253,18 +263,24 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 			}
 
 			@Override
-			public Map getAllClassMetadata() throws HibernateException {
+			public Map<String, ClassMetadata> getAllClassMetadata() throws HibernateException {
 				return Collections.emptyMap();
 			}
+
+			@Override
+			public MetamodelImplementor getMetamodel() {
+				return new MetamodelImplementorMock();
+			}
 		};
+
 		sfMap.put( mock2, Sets.newHashSet( new ShardId( 2 ) ) );
-		ssf =
-				new ShardedSessionFactoryImpl(
-						sfMap,
-						shardStrategyFactory,
-						Collections.<Class<?>>emptySet(),
-						false
-				);
+		ssf = new ShardedSessionFactoryImpl(
+				sfMap,
+				shardStrategyFactory,
+				Collections.emptySet(),
+				false
+		);
+
 		try {
 			assertTrue( ssf.isClosed() );
 		}
@@ -273,117 +289,117 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testGetReference() throws NamingException {
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
-		ShardedSessionFactory ssf =
-				new ShardedSessionFactoryImpl(
-						sfMap,
-						shardStrategyFactory,
-						Collections.<Class<?>>emptySet(),
-						false
-				);
-		try {
+		try (ShardedSessionFactory ssf = new ShardedSessionFactoryImpl(
+				sfMap,
+				shardStrategyFactory,
+				Collections.emptySet(),
+				false
+		)) {
 			ssf.getReference();
 			fail( "Expected uoe" );
 		}
 		catch (UnsupportedOperationException uoe) {
 			// good
 		}
-		finally {
-			ssf.close();
-		}
 	}
 
+	@Test
 	public void testGetStatistics() {
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
-		ShardedSessionFactory ssf =
-				new ShardedSessionFactoryImpl(
-						sfMap,
-						shardStrategyFactory,
-						Collections.<Class<?>>emptySet(),
-						false
-				);
+		ShardedSessionFactory ssf = new ShardedSessionFactoryImpl(
+				sfMap,
+				shardStrategyFactory,
+				Collections.emptySet(),
+				false
+		);
 		assertNotNull( ssf.getStatistics() );
 	}
 
+	@Test
 	public void testFinalizeOnOpenSession() throws Throwable {
-
-		final boolean[] closeCalled = {false};
+		final boolean[] closeCalled = { false };
 
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
-		ShardedSessionFactoryImpl ssf =
-				new ShardedSessionFactoryImpl(
-						sfMap,
-						shardStrategyFactory,
-						Collections.<Class<?>>emptySet(),
-						false
-				) {
-					@Override
-					public void close() throws HibernateException {
-						closeCalled[0] = true;
-						super.close();
-					}
+		ShardedSessionFactoryImpl ssf = new ShardedSessionFactoryImpl(
+				sfMap,
+				shardStrategyFactory,
+				Collections.emptySet(),
+				false
+		) {
+			@Override
+			public void close() throws HibernateException {
+				closeCalled[0] = true;
+				super.close();
+			}
 
-					@Override
-					public boolean isClosed() {
-						return false;
-					}
-				};
+			@Override
+			public boolean isClosed() {
+				return false;
+			}
+		};
+
 		ssf.finalize();
+
 		assertTrue( closeCalled[0] );
 	}
 
+	@Test
 	public void testFinalizeOnClosedSession() throws Throwable {
-		final boolean[] closeCalled = {false};
+		final boolean[] closeCalled = { false };
 
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<>();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
-		ShardedSessionFactoryImpl ssf =
-				new ShardedSessionFactoryImpl(
-						sfMap,
-						shardStrategyFactory,
-						Collections.<Class<?>>emptySet(),
-						false
-				) {
-					@Override
-					public void close() throws HibernateException {
-						closeCalled[0] = true;
-						super.close();
-					}
+		ShardedSessionFactoryImpl ssf = new ShardedSessionFactoryImpl(
+				sfMap,
+				shardStrategyFactory,
+				Collections.emptySet(),
+				false
+		) {
+			@Override
+			public void close() throws HibernateException {
+				closeCalled[0] = true;
+				super.close();
+			}
 
-					@Override
-					public boolean isClosed() {
-						return true;
-					}
-				};
+			@Override
+			public boolean isClosed() {
+				return true;
+			}
+		};
+
 		ssf.finalize();
+
 		assertFalse( closeCalled[0] );
 	}
 
+	@Test
 	public void testFailsWhenMultipleSessionFactoriesHaveSameShardId() {
-		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
+		Map<SessionFactoryImplementor, Set<ShardId>> sfMap = new HashMap<>();
 		Set<Class<?>> crsl = Collections.emptySet();
 		ShardStrategyFactory shardStrategyFactory = buildStrategyFactoryDefaultMock();
 		sfMap.put( sf, Sets.newHashSet( shardId ) );
 
 		SessionFactoryImplementor sf2 = new SessionFactoryDefaultMock() {
+
 			@Override
-			public Settings getSettings() {
-				Configuration config = new Configuration();
-				Properties prop = new Properties();
-				prop.setProperty( Environment.SESSION_FACTORY_NAME, "1" );
-				prop.setProperty( Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect" );
-				return config.buildSettings( prop, getServiceRegistry() );
+			public Map<String, Object> getProperties() {
+				Map<String, Object> prop = new HashMap<>();
+				prop.put( Environment.SESSION_FACTORY_NAME, "1" );
+				prop.put( Environment.DIALECT, "org.hibernate.dialect.MySQLInnoDBDialect" );
+				return prop;
 			}
 
 			@Override
@@ -391,7 +407,7 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 			}
 
 			@Override
-			public Map getAllClassMetadata() throws HibernateException {
+			public Map<String, ClassMetadata> getAllClassMetadata() throws HibernateException {
 				return Collections.emptyMap();
 			}
 		};
@@ -407,7 +423,11 @@ public class ShardedSessionFactoryImplTest extends TestCase {
 		}
 	}
 
-	ServiceRegistry getServiceRegistry() {
-		return new StandardServiceRegistryBuilder().build();
+	private static class MetamodelImplementorMock extends MetamodelImplementorDefaultMock {
+
+		@Override
+		public Map<String, EntityPersister> entityPersisters() {
+			return Collections.emptyMap();
+		}
 	}
 }

@@ -18,18 +18,19 @@
 
 package org.hibernate.shards.id;
 
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Properties;
-
-import org.hibernate.dialect.Dialect;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.MappingException;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.id.UUIDHexGenerator;
 import org.hibernate.internal.util.config.ConfigurationHelper;
+import org.hibernate.service.ServiceRegistry;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.session.ShardedSessionImpl;
 import org.hibernate.shards.util.Preconditions;
 import org.hibernate.type.Type;
+
+import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Properties;
 
 /**
  * Supports generation of either 32-character hex String UUID or 128 bit
@@ -44,7 +45,7 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncod
 	private static final String ZERO_STRING = "00000000000000000000000000000000";
 	private static final String ID_TYPE_PROPERTY = "sharded-uuid-type";
 
-	private static enum IdType {STRING, INTEGER}
+	private enum IdType {STRING, INTEGER}
 
 	private int getShardId() {
 		final ShardId shardId = ShardedSessionImpl.getCurrentSubgraphShardId();
@@ -52,6 +53,7 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncod
 		return shardId.getId();
 	}
 
+	@Override
 	public ShardId extractShardId(final Serializable identifier) {
 		Preconditions.checkNotNull( identifier );
 		String hexId;
@@ -83,7 +85,7 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncod
 	}
 
 	@Override
-	public Serializable generate(final SessionImplementor session, final Object object) {
+	public Serializable generate(SharedSessionContractImplementor session, Object obj) {
 
 		final String id = format( (short) getShardId() ) +
 				format( getIP() ) +
@@ -106,7 +108,7 @@ public class ShardedUUIDGenerator extends UUIDHexGenerator implements ShardEncod
 	}
 
 	@Override
-	public void configure(final Type type, final Properties params, final Dialect d) {
+	public void configure(Type type, Properties params, ServiceRegistry serviceRegistry) throws MappingException {
 		this.idType = IdType.valueOf( ConfigurationHelper.getString( ID_TYPE_PROPERTY, params, "INTEGER" ) );
 	}
 }

@@ -29,7 +29,7 @@ class SetDefaultReadOnlyOpenSessionEvent implements OpenSessionEvent {
 
 	private final boolean readOnly;
 
-	public SetDefaultReadOnlyOpenSessionEvent(boolean readOnly) {
+	SetDefaultReadOnlyOpenSessionEvent(boolean readOnly) {
 		this.readOnly = readOnly;
 	}
 

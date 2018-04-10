@@ -17,15 +17,15 @@
  */
 package org.hibernate.shards.integration.model;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import org.hibernate.shards.PermutationHelper;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
 import org.hibernate.shards.integration.Permutation;
 import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.IdIsBaseType;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import static org.hibernate.shards.integration.model.ModelDataFactory.building;
 import static org.junit.Assert.assertEquals;
@@ -92,7 +92,7 @@ public class ModelIntegrationTest extends BaseShardingIntegrationTestCase {
 		assertEquals( b.getShardId(), bReloaded.getShardId() );
 	}
 
-	@Parameterized.Parameters()
+	@Parameterized.Parameters(name = "{index}: {0}")
 	public static Iterable<Object[]> data() {
 		return PermutationHelper.data();
 	}

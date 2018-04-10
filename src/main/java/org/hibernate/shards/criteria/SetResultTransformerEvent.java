@@ -42,6 +42,7 @@ class SetResultTransformerEvent implements CriteriaEvent {
 		this.resultTransformer = resultTransformer;
 	}
 
+	@Override
 	public void onEvent(Criteria criteria) {
 		criteria.setResultTransformer( resultTransformer );
 	}

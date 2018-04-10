@@ -116,6 +116,7 @@ public class CriteriaFactoryImpl implements CriteriaFactory {
 		this( MethodSig.ENTITY_AND_ALIAS, null, alias, entityName );
 	}
 
+	@Override
 	public Criteria createCriteria(Session session) {
 		switch ( methodSig ) {
 			case CLASS:

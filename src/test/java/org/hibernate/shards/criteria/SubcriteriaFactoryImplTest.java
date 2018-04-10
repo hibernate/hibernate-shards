@@ -18,13 +18,15 @@
 
 package org.hibernate.shards.criteria;
 
-import org.junit.Assert;
-import org.junit.Test;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
 import org.hibernate.shards.util.Lists;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -47,15 +49,15 @@ public class SubcriteriaFactoryImplTest {
 		};
 
 		sfi.createSubcriteria( crit, NO_EVENTS );
-		Assert.assertTrue( called[0] );
+		assertTrue( called[0] );
 		called[0] = false;
 
 		MyCriteriaEvent mce1 = new MyCriteriaEvent();
 		MyCriteriaEvent mce2 = new MyCriteriaEvent();
 		sfi.createSubcriteria( crit, Lists.<CriteriaEvent>newArrayList( mce1, mce2 ) );
-		Assert.assertTrue( called[0] );
-		Assert.assertEquals( 1, mce1.numOnEventCalls );
-		Assert.assertEquals( 1, mce2.numOnEventCalls );
+		assertTrue( called[0] );
+		assertEquals( 1, mce1.numOnEventCalls );
+		assertEquals( 1, mce2.numOnEventCalls );
 	}
 
 	@Test
@@ -71,15 +73,15 @@ public class SubcriteriaFactoryImplTest {
 			}
 		};
 		sfi.createSubcriteria( crit, NO_EVENTS );
-		Assert.assertTrue( called[0] );
+		assertTrue( called[0] );
 		called[0] = false;
 
 		MyCriteriaEvent mce1 = new MyCriteriaEvent();
 		MyCriteriaEvent mce2 = new MyCriteriaEvent();
 		sfi.createSubcriteria( crit, Lists.<CriteriaEvent>newArrayList( mce1, mce2 ) );
-		Assert.assertTrue( called[0] );
-		Assert.assertEquals( 1, mce1.numOnEventCalls );
-		Assert.assertEquals( 1, mce2.numOnEventCalls );
+		assertTrue( called[0] );
+		assertEquals( 1, mce1.numOnEventCalls );
+		assertEquals( 1, mce2.numOnEventCalls );
 	}
 
 	public void testOnOpenSessionAssocPathAndAlias() {
@@ -94,15 +96,15 @@ public class SubcriteriaFactoryImplTest {
 			}
 		};
 		sfi.createSubcriteria( crit, NO_EVENTS );
-		Assert.assertTrue( called[0] );
+		assertTrue( called[0] );
 		called[0] = false;
 
 		MyCriteriaEvent mce1 = new MyCriteriaEvent();
 		MyCriteriaEvent mce2 = new MyCriteriaEvent();
 		sfi.createSubcriteria( crit, Lists.<CriteriaEvent>newArrayList( mce1, mce2 ) );
-		Assert.assertTrue( called[0] );
-		Assert.assertEquals( 1, mce1.numOnEventCalls );
-		Assert.assertEquals( 1, mce2.numOnEventCalls );
+		assertTrue( called[0] );
+		assertEquals( 1, mce1.numOnEventCalls );
+		assertEquals( 1, mce2.numOnEventCalls );
 	}
 
 	public void testOnOpenSessionAssocPathAndAliasAndJoinType() {
@@ -117,20 +119,21 @@ public class SubcriteriaFactoryImplTest {
 			}
 		};
 		sfi.createSubcriteria( crit, NO_EVENTS );
-		Assert.assertTrue( called[0] );
+		assertTrue( called[0] );
 		called[0] = false;
 
 		MyCriteriaEvent mce1 = new MyCriteriaEvent();
 		MyCriteriaEvent mce2 = new MyCriteriaEvent();
 		sfi.createSubcriteria( crit, Lists.<CriteriaEvent>newArrayList( mce1, mce2 ) );
-		Assert.assertTrue( called[0] );
-		Assert.assertEquals( 1, mce1.numOnEventCalls );
-		Assert.assertEquals( 1, mce2.numOnEventCalls );
+		assertTrue( called[0] );
+		assertEquals( 1, mce1.numOnEventCalls );
+		assertEquals( 1, mce2.numOnEventCalls );
 	}
 
 	private static final class MyCriteriaEvent implements CriteriaEvent {
 		private int numOnEventCalls;
 
+		@Override
 		public void onEvent(Criteria criteria) {
 			numOnEventCalls++;
 		}

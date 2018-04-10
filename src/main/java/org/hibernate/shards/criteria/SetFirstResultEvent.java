@@ -41,6 +41,7 @@ class SetFirstResultEvent implements CriteriaEvent {
 		this.firstResult = firstResult;
 	}
 
+	@Override
 	public void onEvent(Criteria criteria) {
 		criteria.setFirstResult( firstResult );
 	}

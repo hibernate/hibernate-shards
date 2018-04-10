@@ -32,6 +32,7 @@ import org.hibernate.type.Type;
  */
 public class InterceptorDefaultMock implements Interceptor {
 
+	@Override
 	public boolean onLoad(
 			Object entity,
 			Serializable id,
@@ -41,6 +42,7 @@ public class InterceptorDefaultMock implements Interceptor {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean onFlushDirty(
 			Object entity,
 			Serializable id,
@@ -51,6 +53,7 @@ public class InterceptorDefaultMock implements Interceptor {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public boolean onSave(
 			Object entity,
 			Serializable id,
@@ -60,6 +63,7 @@ public class InterceptorDefaultMock implements Interceptor {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void onDelete(
 			Object entity,
 			Serializable id,
@@ -69,33 +73,40 @@ public class InterceptorDefaultMock implements Interceptor {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void onCollectionRecreate(Object collection, Serializable key)
 			throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void onCollectionRemove(Object collection, Serializable key)
 			throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void onCollectionUpdate(Object collection, Serializable key)
 			throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void preFlush(Iterator entities) throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void postFlush(Iterator entities) throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Boolean isTransient(Object entity) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public int[] findDirty(
 			Object entity,
 			Serializable id,
@@ -106,6 +117,7 @@ public class InterceptorDefaultMock implements Interceptor {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Object instantiate(
 			String entityName,
 			EntityMode entityMode,
@@ -113,27 +125,33 @@ public class InterceptorDefaultMock implements Interceptor {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public String getEntityName(Object object) throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public Object getEntity(String entityName, Serializable id)
 			throws CallbackException {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void afterTransactionBegin(Transaction tx) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void beforeTransactionCompletion(Transaction tx) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public void afterTransactionCompletion(Transaction tx) {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
 	public String onPrepareStatement(String sql) {
 		throw new UnsupportedOperationException();
 	}

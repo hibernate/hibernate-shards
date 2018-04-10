@@ -65,7 +65,7 @@ public class ExitOperationUtilsTest {
 
 	private class MySubInt extends MyInt {
 
-		public MySubInt(int i, String name, String rank) {
+		MySubInt(int i, String name, String rank) {
 			super( i, name, rank );
 		}
 	}

@@ -18,10 +18,10 @@
 
 package org.hibernate.shards.query;
 
-import org.hibernate.SQLQuery;
+import org.hibernate.query.NativeQuery;
 
 /**
  * @author aviadl@sentrigo.com (Aviad Lichtenstadt)
  */
-public interface ShardedSQLQuery extends ShardedQuery, SQLQuery {
+public interface ShardedSQLQuery<T> extends ShardedQuery<T>, NativeQuery<T> {
 }

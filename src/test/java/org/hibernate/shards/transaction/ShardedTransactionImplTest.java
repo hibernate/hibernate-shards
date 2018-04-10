@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -21,23 +21,29 @@ package org.hibernate.shards.transaction;
 import java.util.List;
 import javax.transaction.Synchronization;
 
-import junit.framework.TestCase;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.TransactionException;
+import org.hibernate.resource.transaction.spi.TransactionStatus;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardDefaultMock;
 import org.hibernate.shards.ShardedTransactionDefaultMock;
 import org.hibernate.shards.defaultmock.SessionDefaultMock;
-import org.hibernate.shards.engine.ShardedSessionImplementorDefaultMock;
+import org.hibernate.shards.defaultmock.ShardedSessionImplementorDefaultMock;
 import org.hibernate.shards.util.Lists;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * @author Tomislav Nad
  */
-public class ShardedTransactionImplTest extends TestCase {
+public class ShardedTransactionImplTest {
 
 	private ShardedTransactionImpl sti;
 	private TransactionStub transaction1;
@@ -70,11 +76,6 @@ public class ShardedTransactionImplTest extends TestCase {
 			if ( fail ) {
 				throw new TransactionException( "failed" );
 			}
-		}
-
-		@Override
-		public boolean wasCommitted() throws HibernateException {
-			return wasCommitted;
 		}
 
 		@Override
@@ -131,10 +132,9 @@ public class ShardedTransactionImplTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() {
-		TransactionStub transaction1
-				= new TransactionStub();
+	@Before
+	public void setUp() {
+		TransactionStub transaction1 = new TransactionStub();
 		this.transaction1 = new TransactionStub();
 		List<Shard> shards = Lists.newArrayList();
 		shards.add( new MockShard( new MockSession( transaction1 ) ) );
@@ -142,17 +142,18 @@ public class ShardedTransactionImplTest extends TestCase {
 		sti = new ShardedTransactionImpl( new MockShardedSessionImplementor( shards ) );
 	}
 
+	@Test
 	public void testBeginSimple() {
 		sti.begin();
 		assertTrue( sti.isActive() );
-		assertFalse( sti.wasCommitted() );
-		assertFalse( sti.wasRolledBack() );
+		assertFalse( sti.getStatus().isOneOf( TransactionStatus.COMMITTED ) );
+		assertFalse( sti.getStatus().isOneOf( TransactionStatus.ROLLED_BACK ) );
 
 		// test double begin
 		sti.begin();
 		assertTrue( sti.isActive() );
-		assertFalse( sti.wasCommitted() );
-		assertFalse( sti.wasRolledBack() );
+		assertFalse( sti.getStatus().isOneOf( TransactionStatus.COMMITTED ) );
+		assertFalse( sti.getStatus().isOneOf( TransactionStatus.ROLLED_BACK ) );
 
 		// test begin after commit failed
 		transaction1.fail = true;
@@ -173,6 +174,7 @@ public class ShardedTransactionImplTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testBeginWithOneFailedTransaction() {
 		transaction1.fail = true;
 		try {
@@ -186,10 +188,11 @@ public class ShardedTransactionImplTest extends TestCase {
 		transaction1.fail = false;
 		sti.begin();
 		assertTrue( sti.isActive() );
-		assertFalse( sti.wasCommitted() );
-		assertFalse( sti.wasRolledBack() );
+		assertFalse( sti.getStatus().isOneOf( TransactionStatus.COMMITTED ) );
+		assertFalse( sti.getStatus().isOneOf( TransactionStatus.ROLLED_BACK ) );
 	}
 
+	@Test
 	public void testCommitSimple() {
 		try {
 			sti.commit();
@@ -201,10 +204,11 @@ public class ShardedTransactionImplTest extends TestCase {
 
 		sti.begin();
 		sti.commit();
-		assertTrue( sti.wasCommitted() );
+		assertTrue( sti.getStatus().isOneOf( TransactionStatus.COMMITTED ) );
 		assertFalse( sti.isActive() );
 	}
 
+	@Test
 	public void testCommitWithOneFailedTransaction() {
 		sti.begin();
 		transaction1.fail = true;
@@ -213,11 +217,12 @@ public class ShardedTransactionImplTest extends TestCase {
 			fail();
 		}
 		catch (HibernateException he) {
-			assertFalse( sti.wasCommitted() );
+			assertFalse( sti.getStatus().isOneOf( TransactionStatus.COMMITTED ) );
 			assertTrue( he.getCause() instanceof HibernateException );
 		}
 	}
 
+	@Test
 	public void testRollbackSimple() {
 		try {
 			sti.rollback();
@@ -225,12 +230,12 @@ public class ShardedTransactionImplTest extends TestCase {
 		}
 		catch (HibernateException he) {
 			// good
-			assertFalse( sti.wasRolledBack() );
+			assertFalse( sti.getStatus().isOneOf( TransactionStatus.ROLLED_BACK ) );
 		}
 
 		sti.begin();
 		sti.rollback();
-		assertTrue( sti.wasRolledBack() );
+		assertTrue( sti.getStatus().isOneOf( TransactionStatus.ROLLED_BACK ) );
 
 		sti.commit();
 		try {
@@ -239,7 +244,7 @@ public class ShardedTransactionImplTest extends TestCase {
 		}
 		catch (HibernateException he) {
 			// good
-			assertTrue( sti.wasRolledBack() );
+			assertTrue( sti.getStatus().isOneOf( TransactionStatus.ROLLED_BACK ) );
 		}
 
 		sti.begin();
@@ -248,13 +253,14 @@ public class ShardedTransactionImplTest extends TestCase {
 			sti.commit();
 		}
 		catch (HibernateException he) {
-			assertFalse( sti.wasRolledBack() );
+			assertFalse( sti.getStatus().isOneOf( TransactionStatus.ROLLED_BACK ) );
 			assertTrue( he.getCause() instanceof HibernateException );
 			sti.rollback();
-			assertTrue( sti.wasRolledBack() );
+			assertTrue( sti.getStatus().isOneOf( TransactionStatus.ROLLED_BACK ) );
 		}
 	}
 
+	@Test
 	public void testRollbackWithOneFailedTransaction() {
 		sti.begin();
 		transaction1.fail = true;
@@ -262,19 +268,20 @@ public class ShardedTransactionImplTest extends TestCase {
 			sti.rollback();
 		}
 		catch (HibernateException he) {
-			assertFalse( sti.wasRolledBack() );
+			assertFalse( sti.getStatus().isOneOf( TransactionStatus.ROLLED_BACK ) );
 			assertTrue( he.getCause() instanceof HibernateException );
 		}
 	}
 
+	@Test
 	public void testMultipleIterations() {
 		sti.begin();
 		sti.commit();
 
 		sti.begin();
 		assertTrue( sti.isActive() );
-		assertFalse( sti.wasCommitted() );
+		assertFalse( sti.getStatus().isOneOf( TransactionStatus.COMMITTED ) );
 		sti.commit();
-		assertTrue( sti.wasCommitted() );
+		assertTrue( sti.getStatus().isOneOf( TransactionStatus.COMMITTED ) );
 	}
 }

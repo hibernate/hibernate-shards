@@ -30,7 +30,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.LockMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.cfg.NotYetImplementedException;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projection;
@@ -43,8 +42,8 @@ import org.hibernate.transform.ResultTransformer;
 /**
  * Concrete implementation of the {@link ShardedSubcriteria} interface.
  * You'll notice that this class does not extend {@link ShardedCriteria}.
- * Why? Because {@link org.hibernate.internal.CriteriaImpl.Subcriteria} doesn't extend {@link Criteria}.  We
- * don't actually need the entire {@link Criteria} interface.
+ * Why? Because {@link org.hibernate.internal.CriteriaImpl.Subcriteria} doesn't extend {@link Criteria}.
+ * We don't actually need the entire {@link Criteria} interface.
  *
  * @author maxr@google.com (Max Ross)
  */
@@ -58,11 +57,11 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	final ShardedCriteria parent;
 
 	// maps shards to actual Criteria objects
-	private final Map<Shard, Criteria> shardToCriteriaMap = new HashMap<Shard, Criteria>();
+	private final Map<Shard, Criteria> shardToCriteriaMap = new HashMap<>();
 
 	// maps shards to lists of criteria events that need to be applied
 	// when the actual Criteria objects are established
-	private final Map<Shard, List<CriteriaEvent>> shardToEventListMap = new HashMap<Shard, List<CriteriaEvent>>();
+	private final Map<Shard, List<CriteriaEvent>> shardToEventListMap = new HashMap<>();
 
 	private final ExitOperationsCriteriaCollector criteriaCollector;
 
@@ -137,12 +136,14 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	}
 
 	@Override
+	@Deprecated
 	public Criteria createAlias(final String associationPath, final String alias, final int joinType)
 			throws HibernateException {
 		return setSubcriteriaEvent( new CreateAliasEvent( associationPath, alias, joinType ) );
 	}
 
 	@Override
+	@Deprecated
 	public Criteria createAlias(
 			final String associationPath,
 			final String alias,
@@ -328,9 +329,9 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	}
 
 	@Override
+	@Deprecated
 	public Criteria createCriteria(final String associationPath, final int joinType) throws HibernateException {
-		final SubcriteriaFactory factory = new SubcriteriaFactoryImpl( associationPath, joinType );
-		return createSubcriteria( factory, associationPath );
+		return createCriteria( associationPath, JoinType.parse(joinType) );
 	}
 
 	@Override
@@ -340,20 +341,20 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	}
 
 	@Override
+	@Deprecated
 	public Criteria createCriteria(final String associationPath, final String alias, final int joinType)
 			throws HibernateException {
-		final SubcriteriaFactory factory = new SubcriteriaFactoryImpl( associationPath, alias, joinType );
-		return createSubcriteria( factory, associationPath );
+		return createCriteria( associationPath, alias, JoinType.parse(joinType) );
 	}
 
 	@Override
+	@Deprecated
 	public Criteria createCriteria(
 			final String associationPath,
 			final String alias,
 			final int joinType,
 			final Criterion withClause) throws HibernateException {
-		final SubcriteriaFactory factory = new SubcriteriaFactoryImpl( associationPath, alias, joinType, withClause );
-		return createSubcriteria( factory, associationPath );
+		return createCriteria( associationPath, alias, JoinType.parse(joinType), withClause );
 	}
 
 	@Override
@@ -374,20 +375,14 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	}
 
 	SubcriteriaRegistrar getSubcriteriaRegistrar(final Shard shard) {
-		return new SubcriteriaRegistrar() {
-
-			@Override
-			public void establishSubcriteria(
-					final Criteria parentCriteria,
-					final SubcriteriaFactory subcriteriaFactory) {
-				List<CriteriaEvent> criteriaEvents = shardToEventListMap.get( shard );
-				// create the subcrit with the proper list of events
-				Criteria newCrit = subcriteriaFactory.createSubcriteria( parentCriteria, criteriaEvents );
-				// clear the list of events
-				criteriaEvents.clear();
-				// add it to our map
-				shardToCriteriaMap.put( shard, newCrit );
-			}
+		return (parentCriteria, subcriteriaFactory) -> {
+			List<CriteriaEvent> criteriaEvents = shardToEventListMap.get( shard );
+			// create the subcrit with the proper list of events
+			Criteria newCrit = subcriteriaFactory.createSubcriteria( parentCriteria, criteriaEvents );
+			// clear the list of events
+			criteriaEvents.clear();
+			// add it to our map
+			shardToCriteriaMap.put( shard, newCrit );
 		};
 	}
 
@@ -399,6 +394,7 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 		return shardToEventListMap;
 	}
 
+	@FunctionalInterface
 	interface SubcriteriaRegistrar {
 		void establishSubcriteria(Criteria parentCriteria, SubcriteriaFactory subcriteriaFactory);
 	}
@@ -406,33 +402,33 @@ class ShardedSubcriteriaImpl implements ShardedSubcriteria {
 	//TODO impl these methods
 	@Override
 	public Criteria createAlias(String associationPath, String alias, JoinType joinType) throws HibernateException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Criteria createAlias(String associationPath, String alias, JoinType joinType, Criterion withClause)
 			throws HibernateException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Criteria createCriteria(String associationPath, JoinType joinType) throws HibernateException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Criteria createCriteria(String associationPath, String alias, JoinType joinType) throws HibernateException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Criteria createCriteria(String associationPath, String alias, JoinType joinType, Criterion withClause)
 			throws HibernateException {
-		return null;
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public Criteria addQueryHint(String hint) {
-		throw new NotYetImplementedException();
+		throw new UnsupportedOperationException();
 	}
 }

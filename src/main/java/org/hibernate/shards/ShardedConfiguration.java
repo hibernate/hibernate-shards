@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -21,27 +21,28 @@ package org.hibernate.shards;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-
-import org.jboss.logging.Logger;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.internal.util.config.ConfigurationHelper;
-import org.hibernate.mapping.OneToOne;
-import org.hibernate.mapping.PersistentClass;
-import org.hibernate.mapping.Property;
+import org.hibernate.persister.entity.EntityPersister;
 import org.hibernate.shards.cfg.ShardConfiguration;
 import org.hibernate.shards.cfg.ShardedEnvironment;
+import org.hibernate.shards.session.ShardedSessionException;
 import org.hibernate.shards.session.ShardedSessionFactory;
 import org.hibernate.shards.session.ShardedSessionFactoryImpl;
 import org.hibernate.shards.strategy.ShardStrategyFactory;
 import org.hibernate.shards.util.Preconditions;
+import org.hibernate.type.OneToOneType;
+import org.hibernate.type.Type;
+
+import org.jboss.logging.Logger;
 
 /**
  * Like regular Hibernate's Configuration, this class helps construct your
@@ -92,7 +93,7 @@ public class ShardedConfiguration {
 			final List<ShardConfiguration> shardConfigs,
 			final ShardStrategyFactory shardStrategyFactory) {
 
-		this( prototypeConfiguration, shardConfigs, shardStrategyFactory, Collections.<Integer, Integer>emptyMap() );
+		this( prototypeConfiguration, shardConfigs, shardStrategyFactory, Collections.emptyMap() );
 	}
 
 	/**
@@ -144,24 +145,17 @@ public class ShardedConfiguration {
 
 		if ( !virtualShardToShardMap.isEmpty() ) {
 			// build the map from shard to set of virtual shards
-			shardToVirtualShardIdMap = new HashMap<Integer, Set<ShardId>>();
+			shardToVirtualShardIdMap = new HashMap<>();
 			for ( Map.Entry<Integer, Integer> entry : virtualShardToShardMap.entrySet() ) {
-				Set<ShardId> set = shardToVirtualShardIdMap.get( entry.getValue() );
+				Set<ShardId> set = shardToVirtualShardIdMap.computeIfAbsent( entry.getValue(), k -> new HashSet<>() );
 				// see if we already have a set of virtual shards
-				if ( set == null ) {
-					// we don't, so create it and add it to the map
-					set = new HashSet<ShardId>();
-					shardToVirtualShardIdMap.put( entry.getValue(), set );
-				}
+				// we don't, so create it and add it to the map
 				set.add( new ShardId( entry.getKey() ) );
 			}
 		}
 		else {
 			shardToVirtualShardIdMap = Collections.emptyMap();
 		}
-
-		// Initializes the mapping configuration.
-		this.prototypeConfiguration.buildMappings();
 	}
 
 	/**
@@ -169,13 +163,7 @@ public class ShardedConfiguration {
 	 * the shard-specific configs passed into the constructor.
 	 */
 	public ShardedSessionFactory buildShardedSessionFactory() {
-		final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactories = new HashMap<SessionFactoryImplementor, Set<ShardId>>();
-		// since all configs get their mappings from the prototype config, and we
-		// get the set of classes that don't support top-level saves from the mappings,
-		// we can get the set from the prototype and then just reuse it.
-		final Set<Class<?>> classesWithoutTopLevelSaveSupport =
-				determineClassesWithoutTopLevelSaveSupport( prototypeConfiguration );
-
+		final Map<SessionFactoryImplementor, Set<ShardId>> sessionFactories = new HashMap<>();
 		for ( final ShardConfiguration config : shardConfigs ) {
 			populatePrototypeWithVariableProperties( config );
 			// get the shardId from the shard-specific config
@@ -206,6 +194,16 @@ public class ShardedConfiguration {
 						true
 				);
 
+		// since all configs get their mappings from the prototype config, and we
+		// get the set of classes that don't support top-level saves from the mappings,
+		// we can get the set from the prototype and then just reuse it.
+		final Optional<SessionFactoryImplementor> first = sessionFactories.keySet().stream().findFirst();
+		if ( !first.isPresent() ) {
+			throw new ShardedSessionException( "No session factory configured" );
+		}
+		final Set<Class<?>> classesWithoutTopLevelSaveSupport =
+				determineClassesWithoutTopLevelSaveSupport( first.get() );
+
 		return new ShardedSessionFactoryImpl(
 				sessionFactories,
 				shardStrategyFactory,
@@ -218,14 +216,13 @@ public class ShardedConfiguration {
 	 * @return the Set of mapped classes that don't support top level saves
 	 */
 	@SuppressWarnings("unchecked")
-	private Set<Class<?>> determineClassesWithoutTopLevelSaveSupport(final Configuration prototypeConfig) {
-		final Set<Class<?>> classesWithoutTopLevelSaveSupport = new HashSet<Class<?>>();
-		for ( final Iterator<PersistentClass> pcIter = prototypeConfig.getClassMappings(); pcIter.hasNext(); ) {
-			final PersistentClass pc = pcIter.next();
-			for ( final Iterator<Property> propIter = pc.getPropertyIterator(); propIter.hasNext(); ) {
-				if ( doesNotSupportTopLevelSave( propIter.next() ) ) {
+	private Set<Class<?>> determineClassesWithoutTopLevelSaveSupport(final SessionFactoryImplementor sfi) {
+		final Set<Class<?>> classesWithoutTopLevelSaveSupport = new HashSet<>();
+		for ( final EntityPersister pc : sfi.getMetamodel().entityPersisters().values() ) {
+			for ( final Type propertyType : pc.getClassMetadata().getPropertyTypes() ) {
+				if ( doesNotSupportTopLevelSave( propertyType ) ) {
 					final Class<?> mappedClass = pc.getMappedClass();
-					LOG.info( String.format( "Class %s does not support top-level saves.", mappedClass.getName() ) );
+					LOG.infof( "Class %s does not support top-level saves.", mappedClass.getName() );
 					classesWithoutTopLevelSaveSupport.add( mappedClass );
 					break;
 				}
@@ -239,9 +236,8 @@ public class ShardedConfiguration {
 	 * definitely can't be saved as top-level objects (not part of a cascade and
 	 * no properties from which the shard can be inferred)
 	 */
-	boolean doesNotSupportTopLevelSave(final Property property) {
-		return property.getValue() != null &&
-				OneToOne.class.isAssignableFrom( property.getValue().getClass() );
+	boolean doesNotSupportTopLevelSave(final Type property) {
+		return property instanceof OneToOneType;
 	}
 
 	/**
@@ -265,7 +261,7 @@ public class ShardedConfiguration {
 	 * Set the key to the given value on the given config, but only if the
 	 * value is not null.
 	 */
-	static void safeSet(final Configuration config, final String key, final String value) {
+	private static void safeSet(final Configuration config, final String key, final String value) {
 		if ( value != null ) {
 			config.setProperty( key, value );
 		}

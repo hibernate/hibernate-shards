@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -21,45 +21,53 @@ package org.hibernate.shards;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
-
-import org.mockito.Mockito;
-
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.cfg.Environment;
-import org.hibernate.cfg.Mappings;
 import org.hibernate.dialect.HSQLDialect;
 import org.hibernate.mapping.ManyToOne;
 import org.hibernate.mapping.OneToOne;
 import org.hibernate.mapping.Property;
-import org.hibernate.mapping.RootClass;
-import org.hibernate.mapping.Table;
+import org.hibernate.mapping.Value;
 import org.hibernate.shards.cfg.ShardConfiguration;
 import org.hibernate.shards.session.ShardedSessionFactoryImpl;
 import org.hibernate.shards.strategy.ShardStrategy;
 import org.hibernate.shards.strategy.ShardStrategyFactoryDefaultMock;
 import org.hibernate.shards.util.Lists;
+import org.hibernate.type.LongType;
+import org.hibernate.type.ManyToOneType;
+import org.hibernate.type.OneToOneType;
+
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
+import org.mockito.quality.Strictness;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author Maulik Shah
  */
 public class ShardedConfigurationTest {
 
+	@Rule
+	public final MockitoRule mockitoRule = MockitoJUnit.rule().strictness( Strictness.STRICT_STUBS );
+
 	private MyShardStrategyFactory shardStrategyFactory;
 	private ShardConfiguration shardConfig;
 	private ShardedConfiguration shardedConfiguration;
 
 	@Before
-	public void setUp() throws Exception {
-
+	public void setUp() {
 		shardStrategyFactory = new MyShardStrategyFactory();
 		Configuration protoConfig = new Configuration();
 		protoConfig.setProperty( Environment.DIALECT, HSQLDialect.class.getName() );
@@ -82,7 +90,7 @@ public class ShardedConfigurationTest {
 	}
 
 	@Test
-	public void testBuildShardedSessionFactoryPreconditions() throws Exception {
+	public void testBuildShardedSessionFactoryPreconditions() {
 		final List<ShardConfiguration> shardConfigs = Lists.newArrayList( shardConfig );
 		try {
 			new ShardedConfiguration( null, shardConfigs, shardStrategyFactory );
@@ -136,16 +144,24 @@ public class ShardedConfigurationTest {
 		assertEquals( 1, sfList.size() );
 	}
 
+	@Test
 	public void testRequiresShardLock() {
-		final Mappings mappingsMock = Mockito.mock( Mappings.class );
 		final Property property = new Property();
-		assertFalse( shardedConfiguration.doesNotSupportTopLevelSave( property ) );
-		final ManyToOne mto = new ManyToOne( mappingsMock, new Table() );
+
+		final Value simpleValue = mock( Value.class );
+		when( simpleValue.getType() ).thenReturn( LongType.INSTANCE );
+		property.setValue( simpleValue );
+		assertFalse( shardedConfiguration.doesNotSupportTopLevelSave( property.getType() ) );
+
+		final ManyToOne mto = mock( ManyToOne.class );
+		when( mto.getType() ).thenReturn( mock( ManyToOneType.class ) );
 		property.setValue( mto );
-		assertFalse( shardedConfiguration.doesNotSupportTopLevelSave( property ) );
-		final OneToOne oto = new OneToOne( mappingsMock, new Table(), new RootClass() );
+		assertFalse( shardedConfiguration.doesNotSupportTopLevelSave( property.getType() ) );
+
+		final OneToOne oto = mock( OneToOne.class );
+		when( oto.getType() ).thenReturn( mock( OneToOneType.class ) );
 		property.setValue( oto );
-		assertTrue( shardedConfiguration.doesNotSupportTopLevelSave( property ) );
+		assertTrue( shardedConfiguration.doesNotSupportTopLevelSave( property.getType() ) );
 	}
 
 	private class MyShardStrategyFactory extends ShardStrategyFactoryDefaultMock {
@@ -166,7 +182,7 @@ public class ShardedConfigurationTest {
 		private final String driverClass;
 		private final String dialect;
 
-		public MyShardConfig(
+		MyShardConfig(
 				String user,
 				String url,
 				String password,

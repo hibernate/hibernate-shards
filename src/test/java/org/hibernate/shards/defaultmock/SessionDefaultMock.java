@@ -20,6 +20,8 @@ package org.hibernate.shards.defaultmock;
 
 import java.io.Serializable;
 import java.sql.Connection;
+import java.util.List;
+import java.util.Map;
 
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
@@ -30,6 +32,7 @@ import org.hibernate.IdentifierLoadAccess;
 import org.hibernate.LobHelper;
 import org.hibernate.LockMode;
 import org.hibernate.LockOptions;
+import org.hibernate.MultiIdentifierLoadAccess;
 import org.hibernate.NaturalIdLoadAccess;
 import org.hibernate.Query;
 import org.hibernate.ReplicationMode;
@@ -45,7 +48,23 @@ import org.hibernate.UnknownProfileException;
 import org.hibernate.jdbc.ReturningWork;
 import org.hibernate.jdbc.Work;
 import org.hibernate.procedure.ProcedureCall;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.internal.NativeQueryImpl;
+import org.hibernate.query.internal.QueryImpl;
+import org.hibernate.query.spi.NativeQueryImplementor;
+import org.hibernate.query.spi.QueryImplementor;
 import org.hibernate.stat.SessionStatistics;
+
+import javax.persistence.EntityGraph;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.FlushModeType;
+import javax.persistence.LockModeType;
+import javax.persistence.StoredProcedureQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.CriteriaUpdate;
+import javax.persistence.metamodel.Metamodel;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -53,7 +72,7 @@ import org.hibernate.stat.SessionStatistics;
 public class SessionDefaultMock implements Session {
 
 	@Override
-	public IdentifierLoadAccess byId(Class entityClass) {
+	public <T> IdentifierLoadAccess<T> byId(Class<T> entityClass) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -78,12 +97,22 @@ public class SessionDefaultMock implements Session {
 	}
 
 	@Override
+	public <T> MultiIdentifierLoadAccess<T> byMultipleIds(Class<T> entityClass) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public MultiIdentifierLoadAccess byMultipleIds(String entityName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public NaturalIdLoadAccess byNaturalId(String entityName) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public NaturalIdLoadAccess byNaturalId(Class entityClass) {
+	public <T> NaturalIdLoadAccess<T> byNaturalId(Class<T> entityClass) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -93,7 +122,7 @@ public class SessionDefaultMock implements Session {
 	}
 
 	@Override
-	public SimpleNaturalIdLoadAccess bySimpleNaturalId(Class entityClass) {
+	public <T> SimpleNaturalIdLoadAccess<T> bySimpleNaturalId(Class<T> entityClass) {
 		throw new UnsupportedOperationException();
 	}
 
@@ -113,12 +142,37 @@ public class SessionDefaultMock implements Session {
 	}
 
 	@Override
+	public void setFlushMode(FlushModeType flushMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void setFlushMode(FlushMode flushMode) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public FlushMode getFlushMode() {
+	public FlushModeType getFlushMode() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void lock(Object entity, LockModeType lockMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void lock(Object entity, LockModeType lockMode, Map<String, Object> properties) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setHibernateFlushMode(FlushMode flushMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public FlushMode getHibernateFlushMode() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -138,7 +192,7 @@ public class SessionDefaultMock implements Session {
 	}
 
 	@Override
-	public Connection close() throws HibernateException {
+	public void close() throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -178,7 +232,27 @@ public class SessionDefaultMock implements Session {
 	}
 
 	@Override
+	public boolean contains(String entityName, Object object) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public boolean contains(Object object) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public LockModeType getLockMode(Object entity) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setProperty(String propertyName, Object value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Map<String, Object> getProperties() {
 		throw new UnsupportedOperationException();
 	}
 
@@ -189,12 +263,12 @@ public class SessionDefaultMock implements Session {
 
 	@Deprecated
 	@Override
-	public Object load(Class theClass, Serializable id, LockMode lockMode) throws HibernateException {
+	public <T> T load(Class<T> theClass, Serializable id, LockMode lockMode) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Object load(Class theClass, Serializable id, LockOptions lockOptions) throws HibernateException {
+	public <T> T load(Class<T> theClass, Serializable id, LockOptions lockOptions) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -210,7 +284,7 @@ public class SessionDefaultMock implements Session {
 	}
 
 	@Override
-	public Object load(Class theClass, Serializable id) throws HibernateException {
+	public <T> T load(Class<T> theClass, Serializable id) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -280,6 +354,36 @@ public class SessionDefaultMock implements Session {
 	}
 
 	@Override
+	public void remove(Object entity) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T find(Class<T> entityClass, Object primaryKey) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T find(Class<T> entityClass, Object primaryKey, Map<String, Object> properties) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T getReference(Class<T> entityClass, Object primaryKey) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public void persist(String entityName, Object object) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
@@ -316,6 +420,21 @@ public class SessionDefaultMock implements Session {
 		throw new UnsupportedOperationException();
 	}
 
+	@Override
+	public void refresh(Object entity, Map<String, Object> properties) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void refresh(Object entity, LockModeType lockMode) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void refresh(Object entity, LockModeType lockMode, Map<String, Object> properties) {
+		throw new UnsupportedOperationException();
+	}
+
 	@Deprecated
 	@Override
 	public void refresh(Object object, LockMode lockMode) throws HibernateException {
@@ -343,6 +462,41 @@ public class SessionDefaultMock implements Session {
 	}
 
 	@Override
+	public EntityManagerFactory getEntityManagerFactory() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public CriteriaBuilder getCriteriaBuilder() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Metamodel getMetamodel() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> EntityGraph<T> createEntityGraph(Class<T> rootType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityGraph<?> createEntityGraph(String graphName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public EntityGraph<?> getEntityGraph(String graphName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> List<EntityGraph<? super T>> getEntityGraphs(Class<T> entityClass) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public Criteria createCriteria(Class persistentClass) {
 		throw new UnsupportedOperationException();
 	}
@@ -363,22 +517,127 @@ public class SessionDefaultMock implements Session {
 	}
 
 	@Override
-	public Query createQuery(String queryString) throws HibernateException {
+	public Integer getJdbcBatchSize() {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public SQLQuery createSQLQuery(String queryString) throws HibernateException {
+	public void setJdbcBatchSize(Integer jdbcBatchSize) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Query createFilter(Object collection, String queryString) throws HibernateException {
+	public QueryImplementor createQuery(String queryString) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Query getNamedQuery(String queryName) throws HibernateException {
+	public <T> org.hibernate.query.Query<T> createQuery(String queryString, Class<T> resultType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public org.hibernate.query.Query createNamedQuery(String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> org.hibernate.query.Query<T> createQuery(CriteriaQuery<T> criteriaQuery) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public org.hibernate.query.Query createQuery(CriteriaUpdate updateQuery) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public org.hibernate.query.Query createQuery(CriteriaDelete deleteQuery) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> org.hibernate.query.Query<T> createNamedQuery(String name, Class<T> resultType) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public NativeQuery createNativeQuery(String sqlString, Class resultClass) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public StoredProcedureQuery createNamedStoredProcedureQuery(String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public StoredProcedureQuery createStoredProcedureQuery(String procedureName) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public StoredProcedureQuery createStoredProcedureQuery(String procedureName, Class... resultClasses) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public StoredProcedureQuery createStoredProcedureQuery(String procedureName, String... resultSetMappings) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void joinTransaction() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isJoinedToTransaction() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T unwrap(Class<T> cls) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object getDelegate() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public NativeQueryImplementor createSQLQuery(String queryString) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public NativeQuery createNativeQuery(String sqlString) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public NativeQuery createNativeQuery(String sqlString, String resultSetMapping) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public NativeQuery getNamedSQLQuery(String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public NativeQuery getNamedNativeQuery(String name) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public org.hibernate.query.Query createFilter(Object collection, String queryString) throws HibernateException {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public QueryImplementor getNamedQuery(String queryName) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -388,18 +647,23 @@ public class SessionDefaultMock implements Session {
 	}
 
 	@Override
-	public Object get(Class clazz, Serializable id) throws HibernateException {
+	public void detach(Object entity) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public <T> T get(Class<T> clazz, Serializable id) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Deprecated
 	@Override
-	public Object get(Class clazz, Serializable id, LockMode lockMode) throws HibernateException {
+	public <T> T get(Class<T> clazz, Serializable id, LockMode lockMode) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public Object get(Class clazz, Serializable id, LockOptions lockOptions) throws HibernateException {
+	public <T> T get(Class<T> clazz, Serializable id, LockOptions lockOptions) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -516,6 +780,11 @@ public class SessionDefaultMock implements Session {
 
 	@Override
 	public ProcedureCall createStoredProcedureCall(String procedureName, String... resultSetMappings) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Session getSession() {
 		throw new UnsupportedOperationException();
 	}
 }

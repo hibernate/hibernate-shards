@@ -36,7 +36,7 @@ class AddCriterionEvent implements CriteriaEvent {
 		this.criterion = criterion;
 	}
 
-
+	@Override
 	public void onEvent(Criteria criteria) {
 		criteria.add( criterion );
 	}

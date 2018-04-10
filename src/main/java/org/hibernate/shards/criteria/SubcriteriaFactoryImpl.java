@@ -134,6 +134,7 @@ public class SubcriteriaFactoryImpl implements SubcriteriaFactory {
 		this( MethodSig.ASSOCIATION_AND_ALIAS_AND_JOIN_TYPE_AND_CRITERION, association, joinType, alias, criterion );
 	}
 
+	@Override
 	public Criteria createSubcriteria(final Criteria parent, final Iterable<CriteriaEvent> events) {
 		// call the right overload to actually create the Criteria
 		Criteria newCriterion;

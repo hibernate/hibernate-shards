@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -20,9 +20,6 @@ package org.hibernate.shards.criteria;
 
 import java.util.List;
 import java.util.Set;
-
-import org.junit.Assert;
-import org.junit.Test;
 
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
@@ -35,6 +32,13 @@ import org.hibernate.shards.defaultmock.CriteriaDefaultMock;
 import org.hibernate.shards.util.Lists;
 import org.hibernate.shards.util.Sets;
 
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author maxr@google.com (Max Ross)
  */
@@ -42,7 +46,7 @@ public class ShardedSubcriteriaImplTest {
 
 	@Test
 	public void testInit() {
-		final int[] next = {0};
+		final int[] next = { 0 };
 		class MyShard extends ShardDefaultMock {
 			@Override
 			public Set<ShardId> getShardIds() {
@@ -58,14 +62,14 @@ public class ShardedSubcriteriaImplTest {
 				collector,
 				""
 		);
-		Assert.assertEquals( shards.size(), ss.getShardToCriteriaMap().size() );
-		Assert.assertEquals( shards.size(), ss.getShardToEventListMap().size() );
+		assertEquals( shards.size(), ss.getShardToCriteriaMap().size() );
+		assertEquals( shards.size(), ss.getShardToEventListMap().size() );
 	}
 
 	@Test
 	public void testListDelegatesToParent() {
 		final List<Shard> shards = Lists.<Shard>newArrayList( new ShardDefaultMock() );
-		final boolean[] called = {false};
+		final boolean[] called = { false };
 		final ShardedCriteria parent = new ShardedCriteriaDefaultMock() {
 			@Override
 			public List list() throws HibernateException {
@@ -76,13 +80,13 @@ public class ShardedSubcriteriaImplTest {
 		final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
 		final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl( shards, parent, collector, "" );
 		ss.list();
-		Assert.assertTrue( called[0] );
+		assertTrue( called[0] );
 	}
 
 	@Test
 	public void testUniqueResultDelegatesToParent() {
 		List<Shard> shards = Lists.<Shard>newArrayList( new ShardDefaultMock() );
-		final boolean[] called = {false};
+		final boolean[] called = { false };
 		ShardedCriteria parent = new ShardedCriteriaDefaultMock() {
 			@Override
 			public Object uniqueResult() throws HibernateException {
@@ -93,14 +97,14 @@ public class ShardedSubcriteriaImplTest {
 		final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
 		final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl( shards, parent, collector, "" );
 		ss.uniqueResult();
-		Assert.assertTrue( called[0] );
+		assertTrue( called[0] );
 	}
 
 	@Test
 	public void testScrollDelegatesToParent() {
 		final List<Shard> shards = Lists.<Shard>newArrayList( new ShardDefaultMock() );
-		final boolean[] scrollNoArgsCalled = {false};
-		final boolean[] scroll1ArgCalled = {false};
+		final boolean[] scrollNoArgsCalled = { false };
+		final boolean[] scroll1ArgCalled = { false };
 		final ShardedCriteria parent = new ShardedCriteriaDefaultMock() {
 			@Override
 			public ScrollableResults scroll() throws HibernateException {
@@ -117,13 +121,13 @@ public class ShardedSubcriteriaImplTest {
 		final ExitOperationsCriteriaCollector collector = new ExitOperationsCriteriaCollector();
 		final ShardedSubcriteriaImpl ss = new ShardedSubcriteriaImpl( shards, parent, collector, "" );
 		ss.scroll();
-		Assert.assertTrue( scrollNoArgsCalled[0] );
-		Assert.assertFalse( scroll1ArgCalled[0] );
+		assertTrue( scrollNoArgsCalled[0] );
+		assertFalse( scroll1ArgCalled[0] );
 
 		scrollNoArgsCalled[0] = false;
 		ss.scroll( ScrollMode.FORWARD_ONLY );
-		Assert.assertFalse( scrollNoArgsCalled[0] );
-		Assert.assertTrue( scroll1ArgCalled[0] );
+		assertFalse( scrollNoArgsCalled[0] );
+		assertTrue( scroll1ArgCalled[0] );
 	}
 
 	@Test
@@ -152,9 +156,9 @@ public class ShardedSubcriteriaImplTest {
 		final Criteria parentCrit = new CriteriaDefaultMock();
 		ss.getSubcriteriaRegistrar( shard ).establishSubcriteria( parentCrit, factory );
 		ss.getSubcriteriaRegistrar( someOtherShard ).establishSubcriteria( parentCrit, factory );
-		Assert.assertTrue( ss.getShardToEventListMap().get( shard ).isEmpty() );
-		Assert.assertTrue( ss.getShardToEventListMap().get( someOtherShard ).isEmpty() );
-		Assert.assertSame( subcritToReturn, ss.getShardToCriteriaMap().get( shard ) );
-		Assert.assertSame( subcritToReturn, ss.getShardToCriteriaMap().get( someOtherShard ) );
+		assertTrue( ss.getShardToEventListMap().get( shard ).isEmpty() );
+		assertTrue( ss.getShardToEventListMap().get( someOtherShard ).isEmpty() );
+		assertSame( subcritToReturn, ss.getShardToCriteriaMap().get( shard ) );
+		assertSame( subcritToReturn, ss.getShardToCriteriaMap().get( someOtherShard ) );
 	}
 }

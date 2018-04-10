@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -20,16 +20,18 @@ package org.hibernate.shards.integration.id;
 
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
 import org.hibernate.shards.PermutationHelper;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
 import org.hibernate.shards.integration.Permutation;
 import org.hibernate.shards.model.Building;
 import org.hibernate.shards.util.Lists;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Tomislav Nad
@@ -49,11 +51,11 @@ public class IdGeneratorPermutedIntegrationTest extends BaseShardingIntegrationT
 		session.save( b );
 		session.getTransaction().commit();
 		resetSession();
-		Assert.assertNotNull( b.getBuildingId() );
+		assertNotNull( b.getBuildingId() );
 
-		Building b2 = (Building) session.get( Building.class, b.getBuildingId() );
-		Assert.assertNotNull( b2 );
-		Assert.assertEquals( b.getName(), b2.getName() );
+		Building b2 = session.get( Building.class, b.getBuildingId() );
+		assertNotNull( b2 );
+		assertEquals( b.getName(), b2.getName() );
 	}
 
 	@Test
@@ -69,13 +71,13 @@ public class IdGeneratorPermutedIntegrationTest extends BaseShardingIntegrationT
 		session.getTransaction().commit();
 		resetSession();
 		for ( Building b : buildings ) {
-			Assert.assertNotNull( b.getBuildingId() );
-			Building returnedBuilding = (Building) session.get( Building.class, b.getBuildingId() );
-			Assert.assertEquals( b.getName(), returnedBuilding.getName() );
+			assertNotNull( b.getBuildingId() );
+			Building returnedBuilding = session.get( Building.class, b.getBuildingId() );
+			assertEquals( b.getName(), returnedBuilding.getName() );
 		}
 	}
 
-	@Parameterized.Parameters()
+	@Parameterized.Parameters(name = "{index}: {0}")
 	public static Iterable<Object[]> data() {
 		return PermutationHelper.data();
 	}

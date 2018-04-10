@@ -26,6 +26,7 @@ import org.hibernate.Session;
  */
 public class CriteriaFactoryDefaultMock implements CriteriaFactory {
 
+	@Override
 	public Criteria createCriteria(Session session) {
 		throw new UnsupportedOperationException();
 	}

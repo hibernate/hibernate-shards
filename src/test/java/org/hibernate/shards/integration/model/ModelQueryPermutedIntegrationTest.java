@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -21,13 +21,8 @@ package org.hibernate.shards.integration.model;
 import java.util.Collection;
 import java.util.List;
 
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import org.hibernate.Query;
 import org.hibernate.QueryException;
+import org.hibernate.query.Query;
 import org.hibernate.shards.PermutationHelper;
 import org.hibernate.shards.integration.BaseShardingIntegrationTestCase;
 import org.hibernate.shards.integration.Permutation;
@@ -35,6 +30,11 @@ import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.Floor;
 import org.hibernate.shards.model.Office;
 import org.hibernate.shards.util.Lists;
+
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -107,8 +107,7 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
 	@Test
 	public void testLoadAllBuildings() {
 		String queryString = "from Building";
-		Query query = session.createQuery( queryString );
-		@SuppressWarnings("unchecked")
+		Query<Building> query = session.createQuery( queryString, Building.class );
 		List<Building> buildings = query.list();
 		assertEquals( 2, buildings.size() );
 		assertTrue( buildings.contains( b1 ) );
@@ -118,16 +117,15 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
 	@Test
 	public void testLoadBuildingByName() {
 		String queryString = "select b from Building as b where b.name=:name";
-		Query query = session.createQuery( queryString ).setString( "name", "b2" );
-		Building b2Reloaded = (Building) query.uniqueResult();
+		Query<Building> query = session.createQuery( queryString, Building.class ).setParameter( "name", "b2" );
+		Building b2Reloaded = query.uniqueResult();
 		assertEquals( b2.getBuildingId(), b2Reloaded.getBuildingId() );
 	}
 
 	@Test
 	public void testLoadBuildingsByLikeName() {
 		String queryString = "select b from Building as b where b.name like :name";
-		Query query = session.createQuery( queryString ).setString( "name", "b%" );
-		@SuppressWarnings("unchecked")
+		Query<Building> query = session.createQuery( queryString, Building.class ).setParameter( "name", "b%" );
 		List<Building> buildings = query.list();
 		assertEquals( 2, buildings.size() );
 		assertTrue( buildings.contains( b1 ) );
@@ -137,8 +135,7 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
 	@Test
 	public void testLoadHighFloors() {
 		String queryString = "select f from Floor as f where f.number >= 3";
-		Query query = session.createQuery( queryString );
-		@SuppressWarnings("unchecked")
+		Query<Floor> query = session.createQuery( queryString, Floor.class );
 		List<Floor> floors = query.list();
 		assertEquals( 1, floors.size() );
 	}
@@ -146,8 +143,7 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
 	@Test
 	public void testLoadBuildingsWithHighFloors() {
 		String queryString = "select f from Floor as f where f.number >= 3";
-		Query query = session.createQuery( queryString );
-		@SuppressWarnings("unchecked")
+		Query<Floor> query = session.createQuery( queryString, Floor.class );
 		List<Floor> floors = query.list();
 		assertEquals( 1, floors.size() );
 	}
@@ -155,16 +151,14 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
 	@Test
 	public void testLoadBuildingsWithHighFloorsAndLargeOffices() {
 		String queryString = "select b from Building b join b.floors floor join floor.offices office where office.label = 'LAHGE'";
-		Query query = session.createQuery( queryString );
-		@SuppressWarnings("unchecked")
+		Query<Building> query = session.createQuery( queryString, Building.class );
 		List<Building> buildings = query.list();
 		assertEquals( 2, buildings.size() );
 	}
 
 	@Test
 	public void testNamedQuery() {
-		Query query = session.getNamedQuery( "SelectFloorsHigherThan" );
-		query.setInteger( "lowestFloor", 3 );
+		Query query = session.getNamedQuery( "SelectFloorsHigherThan" ).setParameter( "lowestFloor", 3 );
 		@SuppressWarnings("unchecked")
 		List<Floor> floors = query.list();
 		assertEquals( 1, floors.size() );
@@ -173,8 +167,7 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
 	@Test
 	public void testSetMaxResults() {
 		final String queryString = "select f from Floor as f";
-		final Query query = session.createQuery( queryString ).setMaxResults( 1 );
-		@SuppressWarnings("unchecked")
+		final Query<Floor> query = session.createQuery( queryString, Floor.class ).setMaxResults( 1 );
 		List<Floor> floors = query.list();
 		assertEquals( 1, floors.size() );
 	}
@@ -182,8 +175,7 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
 	@Test
 	public void testSetFirstResultQuery() {
 		final String queryString = "select f from Floor as f";
-		final Query query = session.createQuery( queryString ).setFirstResult( 2 );
-		@SuppressWarnings("unchecked")
+		final Query<Floor> query = session.createQuery( queryString, Floor.class ).setFirstResult( 2 );
 		List<Floor> floors = query.list();
 		assertEquals( 2, floors.size() );
 	}
@@ -201,7 +193,7 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
 
 	@Test
 	public void testCreateSimpleFilter() {
-		Building b = (Building) session.get( Building.class, b1.getBuildingId() );
+		Building b = session.get( Building.class, b1.getBuildingId() );
 		assertNotNull( b );
 		Collection<Floor> coll = b.getFloors();
 		Query query = session.createFilter( coll, "" );
@@ -212,7 +204,7 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
 
 	@Test
 	public void testCreateFancyFilter() {
-		Building b = (Building) session.get( Building.class, b1.getBuildingId() );
+		Building b = session.get( Building.class, b1.getBuildingId() );
 		assertNotNull( b );
 		Collection<Floor> coll = b.getFloors();
 		Query query = session.createFilter( coll, "where number > 2" );
@@ -225,15 +217,17 @@ public class ModelQueryPermutedIntegrationTest extends BaseShardingIntegrationTe
 	public void testCreateFilterForUnattachedCollection() {
 		List<Floor> floors = Lists.newArrayList();
 		try {
+			session.beginTransaction();
 			session.createFilter( floors, "" );
 			fail( "expected query exception" );
 		}
 		catch (QueryException qe) {
 			// good
+			session.getTransaction().rollback();
 		}
 	}
 
-	@Parameterized.Parameters()
+	@Parameterized.Parameters(name = "{index}: {0}")
 	public static Iterable<Object[]> data() {
 		return PermutationHelper.data();
 	}

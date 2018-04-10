@@ -23,7 +23,7 @@ package org.hibernate.shards.integration;
  */
 public enum IdGenType {
 	SIMPLE( "mappings.hbm.xml", false ),
-	SHARD_HI_LO( "mappings-shardedTableHiLo.hbm.xml", false ),
+	SHARD_HI_LO( "mappings-shardedTableGenerator.hbm.xml", false ),
 	SHARD_UUID( "mappings-shardedUUID.hbm.xml", true );
 
 	private final String mappingFile;

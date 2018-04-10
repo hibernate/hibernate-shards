@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 
-import org.jboss.logging.Logger;
-
 import org.hibernate.HibernateException;
 import org.hibernate.shards.Shard;
 import org.hibernate.shards.ShardOperation;
 import org.hibernate.shards.strategy.exit.ExitStrategy;
+
+import org.jboss.logging.Logger;
 
 /**
  * Runs a single operation on a single shard, collecting the result of the
@@ -40,9 +40,9 @@ import org.hibernate.shards.strategy.exit.ExitStrategy;
  */
 class ParallelShardOperationCallable<T> implements Callable<Void> {
 
-	private static final boolean INTERRUPT_IF_RUNNING = false;
+	private static final Logger log = Logger.getLogger( ParallelShardOperationCallable.class );
 
-	private final Logger log = Logger.getLogger( getClass() );
+	private static final boolean INTERRUPT_IF_RUNNING = false;
 
 	private final CountDownLatch startSignal;
 
@@ -72,43 +72,40 @@ class ParallelShardOperationCallable<T> implements Callable<Void> {
 		this.futureTasks = futureTasks;
 	}
 
+	@Override
 	public Void call() throws Exception {
 		try {
 			waitForStartSignal();
-			log.debug(
-					String.format(
-							"Starting execution of %s against shard %s",
-							operation.getOperationName(),
-							shard
-					)
+			log.debugf(
+					"Starting execution of %s against shard %s",
+					operation.getOperationName(),
+					shard
 			);
-			/**
+
+			/*
 			 * If addResult() returns true it means there is no more work to be
 			 * performed.  Cancel all the outstanding tasks.
 			 */
 			if ( exitStrategy.addResult( operation.execute( shard ), shard ) ) {
-				log.debug(
-						String.format(
-								"Short-circuiting execution of %s on other threads after execution against shard %s",
-								operation.getOperationName(),
-								shard
-						)
+				log.debugf(
+						"Short-circuiting execution of %s on other threads after execution against shard %s",
+						operation.getOperationName(),
+						shard
 				);
-				/**
+
+				/*
 				 * It's ok to cancel ourselves because StartAwareFutureTask.cancel()
 				 * will return false if a task has already started executing, and we're
 				 * already executing.
 				 */
-
-				log.debug(
-						String.format(
-								"Checking %d future tasks to see if they need to be cancelled.",
-								futureTasks.size()
-						)
+				log.debugf(
+						"Checking %d future tasks to see if they need to be cancelled.",
+						futureTasks.size()
 				);
+
 				for ( final StartAwareFutureTask ft : futureTasks ) {
-					log.debug( String.format( "Preparing to cancel future task %d.", ft.getId() ) );
-					/**
+					log.debugf( "Preparing to cancel future task %d.", ft.getId() );
+					/*
 					 * If a task was successfully cancelled that means it had not yet
 					 * started running.  Since the task won't run, the task won't be
 					 * able to decrement the CountDownLatch.  We need to decrement
@@ -124,23 +121,19 @@ class ParallelShardOperationCallable<T> implements Callable<Void> {
 				}
 			}
 			else {
-				log.debug(
-						String.format(
-								"No need to short-cirtcuit execution of %s on other threads after execution against shard %s",
-								operation.getOperationName(),
-								shard
-						)
+				log.debugf(
+						"No need to short-cirtcuit execution of %s on other threads after execution against shard %s",
+						operation.getOperationName(),
+						shard
 				);
 			}
 		}
 		finally {
 			// counter must get decremented no matter what
-			log.debug(
-					String.format(
-							"Decrementing counter for operation %s on shard %s",
-							operation.getOperationName(),
-							shard
-					)
+			log.debugf(
+					"Decrementing counter for operation %s on shard %s",
+					operation.getOperationName(),
+					shard
 			);
 			doneSignal.countDown();
 		}

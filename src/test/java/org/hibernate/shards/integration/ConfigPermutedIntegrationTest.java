@@ -18,13 +18,14 @@
 
 package org.hibernate.shards.integration;
 
-import org.junit.Assert;
+import org.hibernate.shards.PermutationHelper;
+import org.hibernate.shards.session.ShardedSessionImpl;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import org.hibernate.shards.PermutationHelper;
-import org.hibernate.shards.session.ShardedSessionImpl;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -38,10 +39,10 @@ public class ConfigPermutedIntegrationTest extends BaseShardingIntegrationTestCa
 
 	@Test
 	public void testShardedEnvironment() {
-		Assert.assertTrue( ((ShardedSessionImpl) session).getCheckAllAssociatedObjectsForDifferentShards() );
+		assertTrue( ( (ShardedSessionImpl) session ).getCheckAllAssociatedObjectsForDifferentShards() );
 	}
 
-	@Parameterized.Parameters()
+	@Parameterized.Parameters(name = "{index}: {0}")
 	public static Iterable<Object[]> data() {
 		return PermutationHelper.data();
 	}

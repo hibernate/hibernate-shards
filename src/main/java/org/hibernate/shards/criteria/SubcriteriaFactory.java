@@ -36,5 +36,4 @@ public interface SubcriteriaFactory {
 	 * @return a criteria with the given parent and events
 	 */
 	Criteria createSubcriteria(Criteria parent, Iterable<CriteriaEvent> events);
-
 }

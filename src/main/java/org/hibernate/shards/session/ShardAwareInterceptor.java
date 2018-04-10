@@ -1,12 +1,3 @@
-package org.hibernate.shards.session;
-
-import java.io.Serializable;
-
-import org.hibernate.CallbackException;
-import org.hibernate.EmptyInterceptor;
-import org.hibernate.shards.util.Preconditions;
-import org.hibernate.type.Type;
-
 /**
  * Copyright (C) 2007 Google Inc.
  *
@@ -24,6 +15,15 @@ import org.hibernate.type.Type;
  * along with this library; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
  */
+
+package org.hibernate.shards.session;
+
+import java.io.Serializable;
+
+import org.hibernate.CallbackException;
+import org.hibernate.EmptyInterceptor;
+import org.hibernate.shards.util.Preconditions;
+import org.hibernate.type.Type;
 
 /**
  * Interceptor that sets the {@link org.hibernate.shards.ShardId} of any object
@@ -63,7 +63,7 @@ public class ShardAwareInterceptor extends EmptyInterceptor {
 		return setShardId( entity );
 	}
 
-	boolean setShardId(final Object entity) {
+	private boolean setShardId(final Object entity) {
 		boolean result = false;
 		if ( entity instanceof ShardAware ) {
 			final ShardAware shardAware = (ShardAware) entity;

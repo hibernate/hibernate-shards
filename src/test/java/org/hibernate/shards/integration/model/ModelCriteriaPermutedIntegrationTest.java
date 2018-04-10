@@ -1,16 +1,16 @@
 /**
  * Copyright (C) 2007 Google Inc.
- *
+ * <p>
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
-
+ * <p>
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
-
+ * <p>
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
@@ -20,11 +20,6 @@ package org.hibernate.shards.integration.model;
 
 import java.math.BigDecimal;
 import java.util.List;
-
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
@@ -37,6 +32,13 @@ import org.hibernate.shards.model.Building;
 import org.hibernate.shards.model.Floor;
 import org.hibernate.shards.model.Office;
 import org.hibernate.shards.util.Lists;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author maxr@google.com (Max Ross)
@@ -110,9 +112,9 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 	public void testLoadAllBuildings() {
 		final Criteria criteria = session.createCriteria( Building.class );
 		final List<Building> buildings = list( criteria );
-		Assert.assertEquals( 2, buildings.size() );
-		Assert.assertTrue( buildings.contains( b1 ) );
-		Assert.assertTrue( buildings.contains( b2 ) );
+		assertEquals( 2, buildings.size() );
+		assertTrue( buildings.contains( b1 ) );
+		assertTrue( buildings.contains( b2 ) );
 	}
 
 	@Test
@@ -121,9 +123,9 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		// forces us to initialize an actual Criteria object
 		criteria.getAlias();
 		final List<Building> buildings = list( criteria );
-		Assert.assertEquals( 2, buildings.size() );
-		Assert.assertTrue( buildings.contains( b1 ) );
-		Assert.assertTrue( buildings.contains( b2 ) );
+		assertEquals( 2, buildings.size() );
+		assertTrue( buildings.contains( b1 ) );
+		assertTrue( buildings.contains( b2 ) );
 	}
 
 	@Test
@@ -131,7 +133,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		final Criteria criteria = session.createCriteria( Building.class );
 		criteria.add( Restrictions.eq( "name", "b2" ) );
 		final Building b2Reloaded = uniqueResult( criteria );
-		Assert.assertEquals( b2.getBuildingId(), b2Reloaded.getBuildingId() );
+		assertEquals( b2.getBuildingId(), b2Reloaded.getBuildingId() );
 	}
 
 	@Test
@@ -140,7 +142,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		// forces us to initialize an actual Criteria object
 		criteria.getAlias();
 		Building b2Reloaded = uniqueResult( criteria );
-		Assert.assertEquals( b2.getBuildingId(), b2Reloaded.getBuildingId() );
+		assertEquals( b2.getBuildingId(), b2Reloaded.getBuildingId() );
 	}
 
 	@Test
@@ -148,9 +150,9 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		final Criteria criteria = session.createCriteria( Building.class );
 		criteria.add( Restrictions.in( "name", Lists.newArrayList( "b1", "b2" ) ) );
 		final List<Building> buildings = list( criteria );
-		Assert.assertEquals( 2, buildings.size() );
-		Assert.assertTrue( buildings.contains( b1 ) );
-		Assert.assertTrue( buildings.contains( b2 ) );
+		assertEquals( 2, buildings.size() );
+		assertTrue( buildings.contains( b1 ) );
+		assertTrue( buildings.contains( b2 ) );
 	}
 
 	@Test
@@ -158,8 +160,8 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		final Criteria criteria = session.createCriteria( Floor.class );
 		criteria.add( Restrictions.ge( "number", 3 ) );
 		final List<Floor> floors = list( criteria );
-		Assert.assertEquals( 1, floors.size() );
-		Assert.assertTrue( floors.contains( b1f3 ) );
+		assertEquals( 1, floors.size() );
+		assertTrue( floors.contains( b1f3 ) );
 	}
 
 	@Test
@@ -168,7 +170,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		final Criteria floorCriteria = criteria.createCriteria( "floors" );
 		floorCriteria.add( Restrictions.ge( "number", 3 ) );
 		final List<Building> l = list( criteria );
-		Assert.assertEquals( 1, l.size() );
+		assertEquals( 1, l.size() );
 	}
 
 	@Test
@@ -179,7 +181,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		// forces us to initialize an actual Criteria object
 		criteria.getAlias();
 		final List<Building> l = list( criteria );
-		Assert.assertEquals( 1, l.size() );
+		assertEquals( 1, l.size() );
 	}
 
 	@Test
@@ -190,7 +192,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		// forces us to initialize an actual Criteria object
 		floorCriteria.getAlias();
 		final List<Building> l = list( criteria );
-		Assert.assertEquals( 1, l.size() );
+		assertEquals( 1, l.size() );
 	}
 
 	@Test
@@ -201,7 +203,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		// forces us to initialize an actual Criteria object
 		floorCriteria.getAlias();
 		final List<Building> l = list( floorCriteria );
-		Assert.assertEquals( 1, l.size() );
+		assertEquals( 1, l.size() );
 	}
 
 	@Test
@@ -212,7 +214,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		// forces us to initialize an actual Criteria object
 		criteria.getAlias();
 		final List<Building> l = list( floorCriteria );
-		Assert.assertEquals( 1, l.size() );
+		assertEquals( 1, l.size() );
 	}
 
 	@Test
@@ -222,7 +224,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		floorCriteria.add( Restrictions.ge( "number", 3 ) );
 		// note how we execute the query via the floorCriteria
 		final List<Building> l = list( floorCriteria );
-		Assert.assertEquals( 1, l.size() );
+		assertEquals( 1, l.size() );
 	}
 
 	@Test
@@ -232,7 +234,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		final Criteria officeCriteria = floorCriteria.createCriteria( "offices" );
 		officeCriteria.add( Restrictions.eq( "label", "LAHGE" ) );
 		final List<Building> l = list( criteria );
-		Assert.assertEquals( 2, l.size() );
+		assertEquals( 2, l.size() );
 	}
 
 	@Test
@@ -243,7 +245,7 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		officeCriteria.add( Restrictions.eq( "label", "LAHGE" ) );
 		// now how we execute the query via the floorcrit
 		final List<Building> l = list( officeCriteria );
-		Assert.assertEquals( 2, l.size() );
+		assertEquals( 2, l.size() );
 	}
 
 	@Test
@@ -254,12 +256,12 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		officeCriteria.add( Restrictions.eq( "label", "LAHGE" ) );
 		// now how we execute the query via the floorcrit
 		final List<Integer> result = list( officeCriteria );
-		Assert.assertEquals( 1, result.size() );
+		assertEquals( 1, result.size() );
 		int total = 0;
 		for ( final int shardTotal : result ) {
 			total += shardTotal;
 		}
-		Assert.assertEquals( 2, total );
+		assertEquals( 2, total );
 	}
 
 	@Test
@@ -267,14 +269,14 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 		final Criteria criteria = session.createCriteria( Floor.class )
 				.setProjection( Projections.avg( "squareFeet" ) );
 		final List<Double> result = list( criteria );
-		Assert.assertEquals( 1, result.size() );
-		Assert.assertEquals( Double.valueOf( 20.0 ), result.get( 0 ) );
+		assertEquals( 1, result.size() );
+		assertEquals( Double.valueOf( 20.0 ), result.get( 0 ) );
 	}
 
 	@Test
 	public void testMaxResults() {
 		final Criteria criteria = session.createCriteria( Building.class ).setMaxResults( 1 );
-		Assert.assertEquals( 1, list( criteria ).size() );
+		assertEquals( 1, list( criteria ).size() );
 	}
 
 	@Test
@@ -294,9 +296,9 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 				.setMaxResults( 2 );
 
 		final List<Building> buildings = list( criteria );
-		Assert.assertEquals( 2, buildings.size() );
-		Assert.assertEquals( b3, buildings.get( 0 ) );
-		Assert.assertEquals( b2, buildings.get( 1 ) );
+		assertEquals( 2, buildings.size() );
+		assertEquals( b3, buildings.get( 0 ) );
+		assertEquals( b2, buildings.get( 1 ) );
 	}
 
 	@Test
@@ -321,17 +323,17 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 				.setMaxResults( 2 );
 
 		final List<Building> buildings = list( criteria );
-		Assert.assertEquals( 2, buildings.size() );
-		Assert.assertEquals( b3, buildings.get( 0 ) );
-		Assert.assertEquals( b2, buildings.get( 1 ) );
+		assertEquals( 2, buildings.size() );
+		assertEquals( b3, buildings.get( 0 ) );
+		assertEquals( b2, buildings.get( 1 ) );
 	}
 
 	@Test
 	public void testAggregateProjection() {
 		final Criteria criteria = session.createCriteria( Floor.class ).setProjection( Projections.sum( "number" ) );
 		final List<BigDecimal> l = list( criteria );
-		Assert.assertEquals( 1, l.size() );
-		Assert.assertEquals( BigDecimal.valueOf( 7 ), l.get( 0 ) );
+		assertEquals( 1, l.size() );
+		assertEquals( BigDecimal.valueOf( 7 ), l.get( 0 ) );
 	}
 
 	@Test
@@ -351,13 +353,12 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 				.setMaxResults( 3 )
 				.setProjection( Projections.sum( "number" ) );
 		final List<BigDecimal> results = list( criteria );
-		Assert.assertEquals( 1, results.size() );
-		Assert.assertEquals( BigDecimal.valueOf( 204 ), results.get( 0 ) );
+		assertEquals( 1, results.size() );
+		assertEquals( BigDecimal.valueOf( 204 ), results.get( 0 ) );
 	}
 
 	@Test
 	public void testMultiOrdering() {
-
 		final Criteria criteria = session.createCriteria( Office.class )
 				.addOrder( Order.asc( "label" ) )
 				.createCriteria( "floor" )
@@ -365,10 +366,10 @@ public class ModelCriteriaPermutedIntegrationTest extends BaseShardingIntegratio
 				.addOrder( Order.desc( "name" ) );
 		final List<Office> listResult = list( criteria );
 		final List<Office> answer = Lists.newArrayList( b2f1o1, b1f3o2, b1f3o1 );
-		Assert.assertEquals(answer, listResult);
+		assertEquals( answer, listResult );
 	}
 
-	@Parameterized.Parameters()
+	@Parameterized.Parameters(name = "{index}: {0}")
 	public static Iterable<Object[]> data() {
 		return PermutationHelper.data();
 	}

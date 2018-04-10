@@ -22,7 +22,7 @@ import java.io.Serializable;
 import java.util.Map;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.Type;
 
@@ -117,24 +117,10 @@ public class ClassMetadataDefaultMock implements ClassMetadata {
 	}
 
 	@Override
-	public Object[] getPropertyValuesToInsert(Object entity, Map mergeMap, SessionImplementor session)
-			throws HibernateException {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public Object instantiate(Serializable id, SessionImplementor session) {
-		throw new UnsupportedOperationException();
-	}
-
-
-	@Override
-	public Serializable getIdentifier(Object entity, SessionImplementor session) {
-		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public void setIdentifier(Object entity, Serializable id, SessionImplementor session) {
+	public Object[] getPropertyValuesToInsert(
+			Object entity,
+			Map mergeMap,
+			SharedSessionContractImplementor session) throws HibernateException {
 		throw new UnsupportedOperationException();
 	}
 
@@ -144,7 +130,22 @@ public class ClassMetadataDefaultMock implements ClassMetadata {
 	}
 
 	@Override
+	public Serializable getIdentifier(Object entity, SharedSessionContractImplementor session) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setIdentifier(Object entity, Serializable id, SharedSessionContractImplementor session) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public Class getMappedClass() {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Object instantiate(Serializable id, SharedSessionContractImplementor session) {
 		throw new UnsupportedOperationException();
 	}
 

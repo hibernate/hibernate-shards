@@ -38,8 +38,7 @@ public class MySQLDatabasePlatform extends BaseDatabasePlatform {
     protected static final DatabasePlatform PLATFORM = new MySQLDatabasePlatform();
 
     private static final Iterable<String> CREATE_TABLE_STATEMENTS = Lists.newArrayList(
-            "CREATE TABLE hibernate_unique_key (id DECIMAL(40,0) PRIMARY KEY, next_hi DECIMAL(40,0))"
-            , "INSERT INTO hibernate_unique_key(id, next_hi) VALUES(1,1)"
+            "CREATE TABLE hibernate_sequences ( sequence_name VARCHAR (255) not null, next_val BIGINT, primary key ( sequence_name ) )"
             , "CREATE TABLE sample_table (id DECIMAL(40,0) PRIMARY KEY, str_col VARCHAR(256))"
             , "CREATE TABLE sample_table2 (id DECIMAL(40,0) PRIMARY KEY, str_col VARCHAR(256))"
             , "CREATE TABLE Elevator (elevatorId DECIMAL(40,0) PRIMARY KEY, buildingId DECIMAL(40,0))"
@@ -54,7 +53,7 @@ public class MySQLDatabasePlatform extends BaseDatabasePlatform {
     );
 
     protected static final List<String> DROP_TABLE_STATEMENTS = Lists.newArrayList(
-            "DROP TABLE hibernate_unique_key",
+            "DROP TABLE hibernate_sequences",
             "DROP TABLE sample_table",
             "DROP TABLE sample_table2",
             "DROP TABLE Elevator",
@@ -68,10 +67,12 @@ public class MySQLDatabasePlatform extends BaseDatabasePlatform {
             "DROP TABLE Person"
     );
 
+    @Override
     public Iterable<String> getCreateTableStatements(IdGenType idGenType) {
         return CREATE_TABLE_STATEMENTS;
     }
 
+    @Override
     public Iterable<String> getDropTableStatements(IdGenType idGenType) {
         return DROP_TABLE_STATEMENTS;
     }
@@ -80,18 +81,22 @@ public class MySQLDatabasePlatform extends BaseDatabasePlatform {
         return PLATFORM;
     }
 
+    @Override
     public String getUrl(int index) {
         return DB_URL_PREFIX + index;
     }
 
+    @Override
     public String getUser() {
         return DB_USER;
     }
 
+    @Override
     public String getPassword() {
         return DB_PASSWORD;
     }
 
+    @Override
     public String getName() {
         return "mysql";
     }
