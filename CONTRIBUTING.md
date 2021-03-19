@@ -19,12 +19,12 @@ the linked page, this also includes:
 ## Create the working (topic) branch
 Create a "topic" branch on which you will work.  The convention is to name the branch
 using the JIRA issue key.  If there is not already a Jira issue covering the work you
-want to do, create one.  Assuming you will be working from the master branch and working
-on the Jira HSHARDS-123 : `git checkout -b HSHARDS-123 master`
+want to do, create one.  Assuming you will be working from the `main` branch and working
+on the Jira HSHARDS-123 : `git checkout -b HSHARDS-123 main`
 
 
 ## Code
-Do yo thang!
+Do your thing!
 
 ## Commit
 

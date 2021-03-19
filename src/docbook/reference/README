@@ -33,7 +33,7 @@ See http://www.hibernate.org/Download/DownloadOverview
 
 2. Working on the original language
 
-The original and master language is English, hence the "en" subdirectory
+The original and base language is English, hence the "en" subdirectory
 in /doc/reference/ is authorative. We use "id" and "revision" attributes on
 XML elements to track changes. Here are the rules, they are mandatory:
 
